@@ -42,8 +42,10 @@ module.exports = appInfo => {
 
     // mongoose配置
     exports.mongoose = {
-        url: 'mongodb://127.0.0.1/example',
-        options: {},
+        url: 'mongodb://127.0.0.1:27017/zane_performance',
+        options: {
+            server: { poolSize: 20 },
+        },
     };
 
     return config;
