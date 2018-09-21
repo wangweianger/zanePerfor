@@ -25,10 +25,10 @@ module.exports = appInfo => {
         mapping: {
             '.html': 'ejs',
         },
-    }
+    };
     config.ejs = {
         layout: 'layout.html',
-    }
+    };
 
     // redis配置
     config.redis = {
@@ -38,7 +38,7 @@ module.exports = appInfo => {
             password: 'auth',
             db: 0,
         },
-    }
+    };
 
     // mongoose配置
     exports.mongoose = {
