@@ -14,6 +14,5 @@ module.exports = app => {
     });
 
     PvUvIpSchema.index({ pv: 1, uv: 1, ip: 1, data_time: -1 });
-
     return mongoose.model('Pvuvip', PvUvIpSchema);
 };

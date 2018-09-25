@@ -1,6 +1,13 @@
 'use strict';
 
 module.exports = app => {
+    const apiV1Router = app.router.namespace('/api/v1');
+    const { controller } = app;
+    const { usereport } = controller.api;
+
+    apiV1Router.get('/user/report', usereport.userPort);
+
+
     // const apiV1Router = app.router.namespace('/api/v1');
     // const { controller, middleware } = app;
 
