@@ -4,7 +4,7 @@ module.exports = appInfo => {
     const config = exports = {};
 
     // use for cookie sign key, should change to your own and keep security
-    config.keys = appInfo.name + '_1536915742607_3127';
+    config.keys = '_1536915742607_3127';
 
     // add your config here
     config.middleware = [];
@@ -47,6 +47,30 @@ module.exports = appInfo => {
             server: { poolSize: 20 },
         },
     };
+
+    // exports.security = {
+    //     csrf: {
+    //         enable: false,
+    //     },
+    // };
+
+    config.bodyParser = {
+        jsonLimit: '10mb',
+        formLimit: '10mb',
+    };
+
+    config.security = {
+        domainWhiteList:['http://127.0.0.1:18090'],
+        csrf: {
+            ignore: '/api/v1/user/report',
+        },
+    };
+
+    config.cors = {
+        origin: '*',
+        allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
+    };
+
 
     return config;
 };

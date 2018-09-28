@@ -12,12 +12,12 @@ module.exports = app => {
         ip: { type: String },
         mark_page: { type: String },
         mark_user: { type: String },
-        page_times: { type: Mixed },
+        page_times: { type: Date, default: Date.now },
         url: { type: String },
         pre_url: { type: String },
     });
 
     ReportSchema.index({ app_id: -1, create_time: 1, ip: -1, url: -1 });
 
-    return mongoose.model('Report', ReportSchema);
+    return mongoose.model('Usereport', ReportSchema);
 };

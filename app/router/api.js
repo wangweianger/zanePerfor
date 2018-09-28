@@ -5,7 +5,7 @@ module.exports = app => {
     const { controller } = app;
     const { usereport } = controller.api;
 
-    apiV1Router.get('/user/report', usereport.userPort);
+    apiV1Router.post('/user/report', usereport.userPort);
 
 
     // const apiV1Router = app.router.namespace('/api/v1');
