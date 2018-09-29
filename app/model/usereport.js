@@ -12,9 +12,13 @@ module.exports = app => {
         ip: { type: String },
         mark_page: { type: String },
         mark_user: { type: String },
-        page_times: { type: Date, default: Date.now },
         url: { type: String },
         pre_url: { type: String },
+        performance: { type: Mixed },
+        error_list: { type: Mixed },
+        resource_list: { type: Mixed },
+        screenwidth: { type: Number },
+        screenheight: { type: Number },
     });
 
     ReportSchema.index({ app_id: -1, create_time: 1, ip: -1, url: -1 });

@@ -9,23 +9,28 @@ class UseReportService extends Service {
         const query = ctx.request.body;
         const ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
 
+        // 参数校验
+        if (!query.appId) throw new Error('app_id不能为空');
+
         const report = ctx.model.Usereport();
-        report.app_id = '';
-        report.create_time = '';
+        report.app_id = query.appId;
+        report.create_time = new Date(query.time);
         report.user_agent = query.appVersion;
         report.ip = ip;
-        report.mark_page = '';
-        report.mark_user = '';
-        report.page_times = new Date(query.time);
+        report.mark_page = query.markPage;
+        report.mark_user = query.markUser;
         report.url = query.page;
-        report.pre_url = '';
+        report.pre_url = query.preUrl;
+        report.performance = query.performance;
+        report.error_list = query.errorList;
+        report.resource_list = query.resourceList;
+        report.screenwidth = query.screenwidth;
+        report.screenheight = query.screenheight;
+
         const result = report.save();
-
-        result.then((data)=>{
+        result.then(data => {
             console.log(data);
-        })
-
-        console.log(result);
+        });
         return result;
     }
 }
