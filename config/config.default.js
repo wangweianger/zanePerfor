@@ -41,18 +41,34 @@ module.exports = appInfo => {
     };
 
     // mongoose配置
-    exports.mongoose = {
-        url: 'mongodb://127.0.0.1:27017/zane_performance',
-        options: {
-            server: { poolSize: 20 },
-        },
-    };
-
-    // exports.security = {
-    //     csrf: {
-    //         enable: false,
+    // config.mongoose = {
+    //     client: {
+    //         url: 'mongodb://127.0.0.1:27017/performance_1',
+    //         options: {
+    //             server: { poolSize: 20 },
+    //         },
     //     },
     // };
+
+    // mongoose配置
+    config.mongoose = {
+        clients: {
+            // 主数据库 负责存储数据
+            db1: {
+                url: 'mongodb://127.0.0.1:27017/performance_1',
+                options: {
+                    server: { poolSize: 20 },
+                },
+            },
+            // 重数据库 复制读取数据
+            db2: {
+                url: 'mongodb://127.0.0.1:27018/performance_2',
+                options: {
+                    server: { poolSize: 20 },
+                },
+            },
+        },
+    };
 
     config.bodyParser = {
         jsonLimit: '10mb',

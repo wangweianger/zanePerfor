@@ -4,6 +4,7 @@ module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
     const Mixed = Schema.Types.Mixed;
+    const conn = app.mongooseDB.get('db1');
 
     const ReportSchema = new Schema({
         app_id: { type: String },
@@ -23,5 +24,5 @@ module.exports = app => {
 
     ReportSchema.index({ app_id: -1, create_time: 1, ip: -1, url: -1 });
 
-    return mongoose.model('Usereport', ReportSchema);
+    return conn.model('Usereport', ReportSchema);
 };

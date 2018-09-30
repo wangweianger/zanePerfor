@@ -4,6 +4,7 @@ module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
     const ObjectId = Schema.ObjectId;
+    const conn = app.mongooseDB.get('db2');
 
     const MessageSchema = new Schema({
         type: { type: String },
@@ -17,5 +18,5 @@ module.exports = app => {
 
     MessageSchema.index({ master_id: 1, has_read: -1, create_at: -1 });
 
-    return mongoose.model('Message', MessageSchema);
+    return conn.model('Message', MessageSchema);
 };

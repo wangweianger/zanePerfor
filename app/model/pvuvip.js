@@ -4,6 +4,7 @@ module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
     const ObjectId = Schema.ObjectId;
+    const conn = app.mongooseDB.get('db2');
 
     const PvUvIpSchema = new Schema({
         id: { type: ObjectId },
@@ -14,5 +15,6 @@ module.exports = app => {
     });
 
     PvUvIpSchema.index({ pv: 1, uv: 1, ip: 1, data_time: -1 });
-    return mongoose.model('Pvuvip', PvUvIpSchema);
+
+    return conn.model('Pvuvip', PvUvIpSchema);
 };
