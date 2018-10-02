@@ -20,6 +20,7 @@
     "egg-view-ejs": "^2.0.0",
     "eslint": "^4.11.0",
     "eslint-config-egg": "^6.0.0",
+    "ua-parser-js": "^0.7.18",
     "webstorm-disable-index": "^1.2.0"
   },
   "engines": {
