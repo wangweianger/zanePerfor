@@ -12,9 +12,9 @@ class WebReportService extends Service {
         // 参数校验
         if (!query.appId) throw new Error('app_id不能为空');
 
-        const report = ctx.model.WebReport();
+        const report = ctx.model.Web.WebReport();
         report.app_id = query.appId;
-        report.create_time = new Date(query.time);
+        report.create_time = query.time;
         report.user_agent = query.appVersion;
         report.ip = ip;
         report.mark_page = query.markPage;

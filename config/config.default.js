@@ -19,6 +19,8 @@ module.exports = () => {
     // 务必修改config.debug = true;
     config.session_secret = 'node_club_secret';
 
+    config.web_tash_time = '10s';
+
     // ejs模板
     config.view = {
         defaultExtension: '.html',
