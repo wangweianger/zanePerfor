@@ -1,0 +1,29 @@
+'use strict';
+
+module.exports = app => {
+    const mongoose = app.mongoose;
+    const Schema = mongoose.Schema;
+    const conn = app.mongooseDB.get('db2');
+
+    const WebErrorsSchema = new Schema({
+        app_id: { type: String }, // 所属系统
+        url: { type: String }, // 访问页面的url
+        create_time: { type: Date, default: Date.now }, // 用户访问时间
+        msg: { type: String }, // 错误信息
+        category: { type: String }, // 错误类型
+        resource_url: { type: String }, // 错误资源URL
+        target: { type: String }, // 资源类型
+        type: { type: String }, // 错误类型
+        status: { type: String }, // HTTP状态码
+        text: { type: String }, // 资源错误提示
+        col: { type: String }, // js错误列号
+        line: { type: String }, // js错误行号
+        querydata: { type: String }, // http请求参数
+        method: { type: String }, // 资源请求方式
+        fullurl: { type: String }, // 完整url
+    });
+
+    WebErrorsSchema.index({ app_id: -1, create_time: 1, mark_page: -1, mark_user: -1, url: -1 });
+
+    return conn.model('WebEnvironment', WebErrorsSchema);
+};

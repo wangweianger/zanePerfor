@@ -2,17 +2,17 @@
 
 const Service = require('egg').Service;
 
-class UseReportService extends Service {
+class WebReportService extends Service {
 
     // 保存用户上报的数据
-    saveUseReportData(ctx) {
+    saveWebReportData(ctx) {
         const query = ctx.request.body;
         const ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
 
         // 参数校验
         if (!query.appId) throw new Error('app_id不能为空');
 
-        const report = ctx.model.Usereport();
+        const report = ctx.model.WebReport();
         report.app_id = query.appId;
         report.create_time = new Date(query.time);
         report.user_agent = query.appVersion;
@@ -35,4 +35,4 @@ class UseReportService extends Service {
     }
 }
 
-module.exports = UseReportService;
+module.exports = WebReportService;

@@ -2,14 +2,15 @@
 
 const Controller = require('egg').Controller;
 
-class UserReportController extends Controller {
+class ReportController extends Controller {
 
-    // 用户数据上报
-    async userPort() {
+    // web用户数据上报
+    async webReport() {
         const { ctx } = this;
         ctx.set('Access-Control-Allow-Origin', '*');
         ctx.set('Content-Type', 'application/json;charset=UTF-8');
-        const list = await ctx.service.userport.saveUseReportData(ctx);
+
+        const list = await ctx.service.webReport.saveWebReportData(ctx);
         ctx.body = {
             code: 1000,
             data: list,
@@ -17,4 +18,4 @@ class UserReportController extends Controller {
     }
 }
 
-module.exports = UserReportController;
+module.exports = ReportController;

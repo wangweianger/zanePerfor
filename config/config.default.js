@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = appInfo => {
+module.exports = () => {
     const config = exports = {};
 
     // use for cookie sign key, should change to your own and keep security
@@ -45,14 +45,14 @@ module.exports = appInfo => {
         clients: {
             // 主数据库 负责存储数据
             db1: {
-                url: 'mongodb://127.0.0.1:27017/performance_1',
+                url: 'mongodb://127.0.0.1:27017/performance',
                 options: {
                     server: { poolSize: 20 },
                 },
             },
             // 重数据库 复制读取数据
             db2: {
-                url: 'mongodb://127.0.0.1:27018/performance_2',
+                url: 'mongodb://127.0.0.1:27018/performance',
                 options: {
                     server: { poolSize: 20 },
                 },
@@ -66,9 +66,9 @@ module.exports = appInfo => {
     };
 
     config.security = {
-        domainWhiteList:['http://127.0.0.1:18090'],
+        domainWhiteList: [ 'http://127.0.0.1:18090' ],
         csrf: {
-            ignore: '/api/v1/user/report',
+            ignore: '/api/v1/report/**',
         },
     };
 
@@ -96,9 +96,6 @@ module.exports = appInfo => {
             // json hander
             ctx.body = { message: 'error' };
             ctx.status = 500;
-        },
-        jsonp(err, ctx) {
-            // 一般来说，不需要特殊针对 jsonp 进行错误定义，jsonp 的错误处理会自动调用 json 错误处理，并包装成 jsonp 的响应格式
         },
     };
 
