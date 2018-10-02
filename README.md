@@ -21,6 +21,11 @@ $ npm run dev
 $ open http://localhost:7001/
 ```
 
+### mongodb数据库说明
+>  * db1(27017) 负责存储用户上报的数据
+>  * db2(27018) 是db1的从库，主要负责执行定时任务向db3中存储数据
+>  * db3(27019) 负责储存处理好的数据，并提供给页面展示
+
 ### MongoDB主从复制架构
 链接地址：https://blog.seosiwei.com/detail/39
 
