@@ -53,6 +53,11 @@ module.exports = () => {
             // 重数据库 复制读取数据
             db2: {
                 url: 'mongodb://127.0.0.1:27018/performance',
+                options: {},
+            },
+            // 定时任务执行完之后存储到数据库3
+            db3: {
+                url: 'mongodb://127.0.0.1:27019/performance',
                 options: {
                     server: { poolSize: 20 },
                 },

@@ -3,7 +3,7 @@
 module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
-    const conn = app.mongooseDB.get('db2');
+    const conn = app.mongooseDB.get('db3');
 
     const WebEnvironmentSchema = new Schema({
         app_id: { type: String }, // 所属系统

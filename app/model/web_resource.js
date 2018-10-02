@@ -3,7 +3,7 @@
 module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
-    const conn = app.mongooseDB.get('db2');
+    const conn = app.mongooseDB.get('db3');
 
     const WebResourceSchema = new Schema({
         app_id: { type: String }, // 所属系统
@@ -17,5 +17,5 @@ module.exports = app => {
 
     WebResourceSchema.index({ app_id: -1, create_time: 1, mark_page: -1, mark_user: -1, url: -1 });
 
-    return conn.model('WebEnvironment', WebResourceSchema);
+    return conn.model('WebResource', WebResourceSchema);
 };
