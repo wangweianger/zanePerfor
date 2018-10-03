@@ -19,6 +19,7 @@ module.exports = () => {
     // 务必修改config.debug = true;
     config.session_secret = 'node_club_secret';
 
+    // web网页端执行定时任务时间
     config.web_tash_time = '10s';
 
     // ejs模板
@@ -45,17 +46,13 @@ module.exports = () => {
     // mongoose配置
     config.mongoose = {
         clients: {
-            // 主数据库 负责存储数据
+            // 主库:负责存储数据 从库：复责读取数据
             db1: {
-                url: 'mongodb://127.0.0.1:27017/performance',
+                url: 'mongodb://127.0.0.1:27017,127.0.0.1:27018/performance?replicaSet=performance',
                 options: {
+                    mongos: true,
                     server: { poolSize: 20 },
                 },
-            },
-            // 重数据库 复制读取数据
-            db2: {
-                url: 'mongodb://127.0.0.1:27018/performance',
-                options: {},
             },
             // 定时任务执行完之后存储到数据库3
             db3: {
@@ -86,23 +83,16 @@ module.exports = () => {
 
     config.onerror = {
         all(err, ctx) {
-            // 在此处定义针对所有响应类型的错误处理方法
-            // 注意，定义了 config.all 之后，其他错误处理方法不会再生效
+            // 统一错误处理
+            ctx.body = JSON.stringify({
+                code: 1001,
+                desc: err.toString().replace('Error: ', ''),
+            });
+            ctx.status = 200;
+            // 统一错误日志打印
             console.log('----------error信息begin----------');
             console.log(err);
             console.log('----------error信息end----------');
-            ctx.body = 'error';
-            ctx.status = 500;
-        },
-        html(err, ctx) {
-            // html hander
-            ctx.body = '<h3>error</h3>';
-            ctx.status = 500;
-        },
-        json(err, ctx) {
-            // json hander
-            ctx.body = { message: 'error' };
-            ctx.status = 500;
         },
     };
 

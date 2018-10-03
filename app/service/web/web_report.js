@@ -10,7 +10,7 @@ class WebReportService extends Service {
         const ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
 
         // 参数校验
-        if (!query.appId) throw new Error('app_id不能为空');
+        if (!query.appId) throw new Error('web端上报数据操作：app_id不能为空');
 
         const report = ctx.model.Web.WebReport();
         report.app_id = query.appId;
@@ -28,9 +28,6 @@ class WebReportService extends Service {
         report.screenheight = query.screenheight;
 
         const result = report.save();
-        result.then(data => {
-            console.log(data);
-        });
         return result;
     }
 }

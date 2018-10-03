@@ -23,28 +23,31 @@ class DataTimedTaskService extends Service {
     }
 
     // 存储数据
-    saveDataToDb3(data) {
+    async saveDataToDb3(data) {
         if (!data && !data.length) return;
-
         // 遍历数据
-        data.forEach(item => {
-            this.savePages(item);
-            this.forEachResources(item);
+        data.forEach(async item => {
+            const system = await this.service.web.webSystem.getSystemForAppId(item.app_id);
+            this.savePages(item, system.slow_page_time);
+            this.forEachResources(item, system);
             this.saveErrors(item);
             this.saveEnvironment(item);
         });
     }
 
     // 储存网页性能数据
-    savePages(item) {
+    savePages(item, slowPageTime = 5) {
         const pages = this.ctx.model.Web.WebPages();
         const performance = item.performance;
+
+        slowPageTime = slowPageTime * 1000;
+        const speedType = performance.lodt >= slowPageTime ? 2 : 1;
 
         pages.app_id = item.app_id;
         pages.create_time = item.create_time;
         pages.url = item.url;
         pages.pre_url = item.pre_url;
-        pages.speed_type = 1;
+        pages.speed_type = speedType;
         pages.mark_page = item.mark_page;
         pages.mark_user = item.mark_user;
         pages.load_time = performance.lodt;
@@ -65,29 +68,33 @@ class DataTimedTaskService extends Service {
     }
 
     // 根据资源类型存储不同数据
-    forEachResources(data) {
+    forEachResources(data, system) {
         if (!data.resource_list && !data.resource_list.length) return;
 
         // 遍历所有资源进行存储
         data.resource_list.forEach(item => {
             if (item.type === 'xmlhttprequest') {
-                this.saveAjaxs(data, item);
+                this.saveAjaxs(data, item, system.slow_ajax_time);
             } else {
-                this.saveResours(data, item);
+                this.saveResours(data, item, system);
             }
         });
     }
 
     // 存储ajax信息
-    saveAjaxs(data, item) {
+    saveAjaxs(data, item, slowAjaxTime = 2) {
         const newurl = url.parse(item.name);
         const newName = newurl.protocol + '//' + newurl.host + newurl.pathname;
         const querydata = newurl.query ? JSON.stringify(querystring.parse(newurl.query)) : '{}';
 
+        const duration = parseInt(item.duration || 0);
+        slowAjaxTime = slowAjaxTime * 1000;
+        const speedType = duration >= slowAjaxTime ? 2 : 1;
+
         const ajaxs = this.ctx.model.Web.WebAjaxs();
         ajaxs.app_id = data.app_id;
         ajaxs.create_time = data.create_time;
-        ajaxs.speed_type = 1;
+        ajaxs.speed_type = speedType;
         ajaxs.url = newName;
         ajaxs.method = item.method;
         ajaxs.duration = item.duration;
@@ -101,12 +108,26 @@ class DataTimedTaskService extends Service {
     }
 
     // 储存网页资源性能数据
-    saveResours(data, item) {
+    saveResours(data, item, system) {
+        let slowTime = 2;
+        let speedType = 1;
+        const duration = parseInt(item.duration || 0);
+
+        if (item.type === 'link') {
+            slowTime = (system.slow_css_time || 2) * 1000;
+        } else if (item.type === 'script') {
+            slowTime = (system.slow_js_time || 2) * 1000;
+        } else if (item.type === 'img') {
+            slowTime = (system.slow_img_time || 2) * 1000;
+        }
+
+        speedType = duration >= slowTime ? 2 : 1;
+
         const resours = this.ctx.model.Web.WebResource();
         resours.app_id = data.app_id;
         resours.create_time = data.create_time;
         resours.url = data.url;
-        resours.speed_type = 1;
+        resours.speed_type = speedType;
         resours.resource_datas = JSON.stringify(item);
         resours.mark_page = data.mark_page;
         resours.mark_user = data.mark_user;
@@ -118,7 +139,7 @@ class DataTimedTaskService extends Service {
     saveErrors(data) {
         if (!data.error_list && !data.error_list.length) return;
         data.error_list.forEach(item => {
-            const newurl = url.parse(item.data.resourceUrl||'');
+            const newurl = url.parse(item.data.resourceUrl || '');
             const newName = newurl.protocol + '//' + newurl.host + newurl.pathname;
             const querydata = newurl.query ? JSON.stringify(querystring.parse(newurl.query)) : '{}';
 
