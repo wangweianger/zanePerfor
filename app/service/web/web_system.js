@@ -6,8 +6,7 @@ class WebSystemService extends Service {
 
     // 保存用户上报的数据
     async saveSystemData(ctx) {
-        // const query = ctx.request.body;
-        const query = ctx.request.query;
+        const query = ctx.request.body;
         // 参数校验
         if (!query.systemDomain) throw new Error('新增系统信息操作：系统域名不能为空');
         if (!query.systemName) throw new Error('新增系统信息操作：系统名称不能为空');

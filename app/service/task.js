@@ -10,14 +10,17 @@ class DataTimedTaskService extends Service {
 
     // 把db2的数据经过加工之后同步到db3中 的定时任务
     async saveWebReportDatas() {
-        const beginTime = await this.app.redis.get('web_task_begin_time');
+        let beginTime = await this.app.redis.get('web_task_begin_time');
         const endTime = new Date();
-        beginTime ? await this.app.redis.set('web_task_begin_time', endTime) :
-            await this.app.redis.set('web_task_begin_time', new Date());
+        const query = { create_time: { $lt: endTime } };
 
-        const datas = await this.ctx.model.Web.WebReport.where('create_time')
-            .gt(beginTime)
-            .lt(endTime)
+        if (beginTime) {
+            beginTime = new Date(new Date(beginTime).getTime() + 1000);
+            query.create_time.$gt = beginTime;
+        }
+
+        const datas = await this.ctx.model.Web.WebReport.find(query)
+            .sort({ create_time: 1 })
             .exec();
         this.saveDataToDb3(datas);
     }
@@ -25,13 +28,15 @@ class DataTimedTaskService extends Service {
     // 存储数据
     async saveDataToDb3(data) {
         if (!data && !data.length) return;
+        const length = data.length - 1;
         // 遍历数据
-        data.forEach(async item => {
+        data.forEach(async (item, index) => {
             const system = await this.service.web.webSystem.getSystemForAppId(item.app_id);
             this.savePages(item, system.slow_page_time);
             this.forEachResources(item, system);
             this.saveErrors(item);
             this.saveEnvironment(item);
+            if (index === length) this.app.redis.set('web_task_begin_time', item.create_time);
         });
     }
 
