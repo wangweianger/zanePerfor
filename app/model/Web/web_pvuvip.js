@@ -3,6 +3,7 @@
 module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
+    const Mixed = Schema.Types.Mixed;
     const conn = app.mongooseDB.get('db3');
 
     const WebPvUvIpSchema = new Schema({
@@ -11,6 +12,8 @@ module.exports = app => {
         uv: { type: Number }, // uv统计
         ip: { type: Number }, // ip统计
         create_time: { type: Date, default: Date.now },
+        uv_set: { type: Mixed },
+        ip_set: { type: Mixed },
     });
 
     WebPvUvIpSchema.index({ app_id: -1, create_time: 1 });

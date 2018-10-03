@@ -20,7 +20,10 @@ module.exports = () => {
     config.session_secret = 'node_club_secret';
 
     // web网页端执行定时任务时间
-    config.web_tash_time = '10s';
+    config.web_task_time = '0 */1 * * * *';
+
+    // 执行pvuvip定时任务的时间间隔 每分钟定时执行一次
+    config.pvuvip_task_time = '0 */1 * * * *';
 
     // ejs模板
     config.view = {
