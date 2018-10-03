@@ -10,7 +10,7 @@ module.exports = app => {
 
     // ----------------系统配置相关---------------
     // 新增系统
-    apiV1Router.post('system/add', system.addNewSystem);
+    apiV1Router.get('system/add', system.addNewSystem);
     // 修改系统
     apiV1Router.post('system/update', system.updateSystem);
 

@@ -60,6 +60,7 @@ class DataTimedTaskService extends Service {
         pages.tcp_time = performance.tcpt;
         pages.dom_time = performance.domt;
         // pages.resource_time = performance.domt;
+        pages.resource_list = item.resource_list;
         pages.white_time = performance.wit;
         pages.redirect_time = performance.rdit;
         pages.unload_time = performance.uodt;
@@ -127,6 +128,8 @@ class DataTimedTaskService extends Service {
         }
 
         speedType = duration >= slowTime ? 2 : 1;
+        // 因为相关性能远远 这里只存储慢资源
+        if (duration < slowTime) return;
 
         const resours = this.ctx.model.Web.WebResource();
         resours.app_id = data.app_id;

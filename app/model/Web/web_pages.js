@@ -18,6 +18,7 @@ module.exports = app => {
         tcp_time: { type: Number }, // TCP连接时间
         dom_time: { type: Number }, // DOM构建时间 单位：ms
         resource_time: { type: Number }, // 资源加载耗时 单位：ms
+        resource_list: { type: Array }, // 资源性能数据列表
         white_time: { type: Number }, // 白屏时间 单位：ms
         redirect_time: { type: Number }, // 页面重定向时间
         unload_time: { type: Number }, // unload 时间
