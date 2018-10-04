@@ -8,10 +8,10 @@ module.exports = app => {
     const ipLibrarySchema = new Schema({
         ip: { type: String }, // ip
         country: { type: String }, // 国家
-        region: { type: String }, // 省
+        province: { type: String }, // 省
         city: { type: String }, // 市
-        region_id: { type: Number }, // 省编号
-        city_id: { type: Number }, // 市编号
+        latitude: { type: Number }, // 纬度
+        longitude: { type: Number }, // 经度
     });
 
     ipLibrarySchema.index({ ip: -1, region: -1, city: -1, isp: -1 });

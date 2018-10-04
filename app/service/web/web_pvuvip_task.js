@@ -1,13 +1,15 @@
 'use strict';
-
+const parser = require('cron-parser');
 const Service = require('egg').Service;
 
 class WebReportService extends Service {
 
     // 获得web端 pvuvip
     async getWebPvUvIpByTime() {
-        const endTime = new Date().getTime();
-        const beginTime = endTime - 60000;
+        const interval = parser.parseExpression(this.app.config.web_task_time);
+        interval.prev();
+        const endTime = new Date(interval.prev().toString());
+        const beginTime = new Date(endTime.getTime() - 60000);
 
         const query = { create_time: { $gt: beginTime, $lt: endTime } };
         // const query = { create_time: { $lt: endTime } };

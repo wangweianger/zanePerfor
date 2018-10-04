@@ -25,6 +25,12 @@ module.exports = () => {
     // 执行pvuvip定时任务的时间间隔 每分钟定时执行一次
     config.pvuvip_task_time = '0 */1 * * * *';
 
+    // 执行ip地理位置转换的定时任务 每分钟定时执行一次
+    config.ip_task_time = '0 */1 * * * *';
+
+    // 百度地图api key
+    config.BAIDUAK = '36UI4dIyIfCVKQWW7hoeSIuM';
+
     // ejs模板
     config.view = {
         defaultExtension: '.html',
