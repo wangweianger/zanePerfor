@@ -69,8 +69,8 @@ class WebSystemService extends Service {
     async getSystemForAppId(appId) {
         if (!appId) throw new Error('查询某个系统信：app_id不能为空');
 
-        const result = await this.app.redis.get(appId);
-        return result;
+        const result = await this.app.redis.get(appId) || '{}';
+        return JSON.parse(result);
     }
 }
 

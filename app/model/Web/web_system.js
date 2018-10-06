@@ -13,7 +13,7 @@ module.exports = app => {
         user_id: { type: Mixed }, // 应用所属用户ID
         create_time: { type: Date, default: Date.now }, // 用户访问时间
         script: { type: String }, // 获取页面统计脚本
-        is_use: { type: String, default: 0 }, // 是否需要统计  0：是  1：否
+        is_use: { type: Number, default: 0 }, // 是否需要统计  0：是  1：否
         slow_page_time: { type: Number, default: 5 }, // 页面加载页面阀值  单位：s
         slow_js_time: { type: Number, default: 2 }, // js慢资源阀值 单位：s
         slow_css_time: { type: Number, default: 2 }, // 慢加载css资源阀值  单位：S

@@ -3,7 +3,10 @@
 module.exports = app => {
     const apiV1Router = app.router.namespace('/api/v1/');
     const { controller } = app;
-    const { report, system } = controller.api;
+    const { report, system, script } = controller.api;
+
+    // ----------------浏览器端script脚本---------------
+    apiV1Router.get('script/web', script.getWebScript);
 
     // 浏览器用户数据上报
     apiV1Router.post('report/web', report.webReport);

@@ -9,7 +9,7 @@ module.exports = app => {
         },
         // 定时处理上报的数据
         async task(ctx) {
-            await ctx.service.ipTask.saveGetIpDatas();
+            await ctx.service.web.webIpTask.saveGetIpDatas();
         },
     };
 };

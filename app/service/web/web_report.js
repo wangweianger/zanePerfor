@@ -9,6 +9,10 @@ class WebReportService extends Service {
         const query = ctx.request.body;
         const ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
 
+        // 获得cookie参数
+        const markuser = ctx.cookies.get('markuser') || '';
+        const markpage = ctx.cookies.get('markpage') || '';
+
         // 参数校验
         if (!query.appId) throw new Error('web端上报数据操作：app_id不能为空');
 
@@ -17,8 +21,8 @@ class WebReportService extends Service {
         report.create_time = query.time;
         report.user_agent = query.appVersion;
         report.ip = ip;
-        report.mark_page = query.markPage;
-        report.mark_user = query.markUser;
+        report.mark_page = markpage;
+        report.mark_user = markuser;
         report.url = query.page;
         report.pre_url = query.preUrl;
         report.performance = query.performance;
@@ -26,9 +30,9 @@ class WebReportService extends Service {
         report.resource_list = query.resourceList;
         report.screenwidth = query.screenwidth;
         report.screenheight = query.screenheight;
+        report.save();
 
-        const result = report.save();
-        return result;
+        return {};
     }
 }
 

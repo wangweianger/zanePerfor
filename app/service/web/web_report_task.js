@@ -32,10 +32,11 @@ class DataTimedTaskService extends Service {
         // 遍历数据
         data.forEach(async (item, index) => {
             const system = await this.service.web.webSystem.getSystemForAppId(item.app_id);
-            this.savePages(item, system.slow_page_time);
-            this.forEachResources(item, system);
-            this.saveErrors(item);
-            this.saveEnvironment(item);
+            if (system.is_use !== 0) return;
+            if (system.is_statisi_pages === 0) this.savePages(item, system.slow_page_time);
+            if (system.is_statisi_resource === 0 || system.is_statisi_ajax === 0) this.forEachResources(item, system);
+            if (system.is_statisi_error === 0) this.saveErrors(item);
+            if (system.is_statisi_system === 0) this.saveEnvironment(item);
             if (index === length) this.app.redis.set('web_task_begin_time', item.create_time);
         });
     }
@@ -80,9 +81,9 @@ class DataTimedTaskService extends Service {
         // 遍历所有资源进行存储
         data.resource_list.forEach(item => {
             if (item.type === 'xmlhttprequest') {
-                this.saveAjaxs(data, item, system.slow_ajax_time);
+                if (system.is_statisi_ajax === 0) this.saveAjaxs(data, item, system.slow_ajax_time);
             } else {
-                this.saveResours(data, item, system);
+                if (system.is_statisi_resource === 0) this.saveResours(data, item, system);
             }
         });
     }

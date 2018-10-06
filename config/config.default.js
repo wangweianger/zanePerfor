@@ -79,14 +79,15 @@ module.exports = () => {
     };
 
     config.security = {
-        domainWhiteList: [ 'http://127.0.0.1:18090' ],
+        domainWhiteList: ['http://127.0.0.1:18090', 'http://127.0.0.1:18091' ],
         csrf: {
             ignore: '/api/v1/report/**',
         },
     };
 
     config.cors = {
-        origin: '*',
+        // origin: '*',
+        credentials: true,
         allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
     };
 
