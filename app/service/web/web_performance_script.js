@@ -8,7 +8,7 @@ class WebPerformanceScriptService extends Service {
         const query = ctx.request.query;
         const appId = query.appId;
         const USESDK = query.USESDK || 'FALSE';
-
+        // await this.setSYSTEMredis(appId);
         await this.setUserCookie(ctx);
         return USESDK === 'FALSE' ? await this.reduceScriptText(appId) : '';
     }
@@ -217,9 +217,8 @@ class WebPerformanceScriptService extends Service {
                         addData:ADDDATA,
                         screenwidth:w,
                         screenheight:h,
-                        appId:'C9B26D11F343B3B9FA903DA858064225'
+                        appId:'${appId}',
                     }
-                    // console.log(JSON.stringify(result))
                     fn&&fn(result)
                     if(!fn && window.fetch){
                         fetch(opt.domain,{ 
@@ -526,6 +525,31 @@ class WebPerformanceScriptService extends Service {
         }catch(err){}}`;
 
         return script;
+    }
+
+    async setSYSTEMredis(appId) {
+        const json = {
+            is_use: 0,
+            slow_page_time: 5,
+            slow_js_time: 2,
+            slow_css_time: 2,
+            slow_img_time: 2,
+            slow_ajax_time: 2,
+            is_statisi_pages: 0,
+            is_statisi_ajax: 0,
+            is_statisi_resource: 0,
+            is_statisi_system: 0,
+            is_statisi_error: 0,
+            _id: '5bb47beb779be91d13e91fd6',
+            create_time: '2018-10-03T08:20:59.793Z',
+            system_domain: 'blog.seosiwei.com',
+            system_name: 'zaneblog',
+            app_id: 'D3D9B9AA45B56F6E424F57EFB36B063B',
+            user_id: [],
+            script: '',
+            __v: 0,
+        };
+        this.app.redis.set(appId, JSON.stringify(json));
     }
 }
 

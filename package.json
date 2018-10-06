@@ -1,7 +1,7 @@
 {
   "name": "egg-mongoose-performance-system",
   "version": "1.0.0",
-  "description": "你我您官网",
+  "description": "前端性能监控系统",
   "private": true,
   "dependencies": {
     "egg": "^2.2.1",
