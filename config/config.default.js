@@ -74,12 +74,12 @@ module.exports = () => {
     };
 
     config.bodyParser = {
-        jsonLimit: '10mb',
-        formLimit: '10mb',
+        jsonLimit: '5mb',
+        formLimit: '5mb',
     };
 
     config.security = {
-        domainWhiteList: ['http://127.0.0.1:18090', 'http://127.0.0.1:18091' ],
+        domainWhiteList: [ 'http://127.0.0.1:18090' ],
         csrf: {
             ignore: '/api/v1/report/**',
         },

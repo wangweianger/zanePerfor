@@ -208,9 +208,7 @@ class WebPerformanceScriptService extends Service {
                     let h = document.documentElement.clientHeight || document.body.clientHeight;
                     let result = {
                         time:new Date().getTime(),
-                        page:conf.page,
                         preUrl:conf.preUrl,
-                        appVersion:conf.appVersion,
                         errorList:conf.errorList,
                         performance:conf.performance,
                         resourceList:conf.resourceList,
