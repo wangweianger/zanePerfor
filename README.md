@@ -24,6 +24,9 @@ $ npm run dev
 $ open http://localhost:7001/
 ```
 
+### web网页sdk 页面性能、资源、错误、ajax，fetch请求上报sdk performance-report：
+https://github.com/wangweianger/web-performance-report
+
 ### mongodb数据库说明
 >  * db1(27017) db1负责用户数据上报的写操作
 >  * db2(27018) db2是db1的从库（不一定：有可能db1是从库）负责同步db1的数据 所有的读操作在从库中执行
