@@ -7,7 +7,7 @@
     font-weight: 400;
     src: local('Montserrat Regular'), local('Montserrat-Regular'), url('../font/JTUSjIg1_i6t8kCHKm459WlhzQ.woff') format('woff');
 }
-body{background: #f9f9f9;font-family: 'Montserrat', sans-serif,'微软雅黑';}
+body{background: #f9fafb;font-family: 'Montserrat', sans-serif,'微软雅黑';}
 /*字体结束*/
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td, header, hgroup, nav, section, article, aside, footer, figure, figcaption, menu, button { 
   margin: 0; padding: 0;};
@@ -59,6 +59,7 @@ table.table .light_color{
     padding:8px 15px;
     border:solid 1px #ddd;
     border-radius:3px;
+    cursor:pointer;
 }
 .btn-main{
     color:#fff;
