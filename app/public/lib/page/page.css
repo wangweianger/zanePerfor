@@ -1,0 +1,10 @@
+/*分页插件样式*/
+/**width: 1180px; margin: 0 auto; text-align: center; */
+.copot-page{width: 100%;color:#555555;}
+#copot-page{padding: 10px 0; color: #a9a9a9;}
+.copot-page a{display:inline-block;padding:5px 10px;border:solid 1px #E7E7E7;border-radius:3px;margin-right:5px;text-decoration:none;font-size:12px;background:#fff; color: #a9a9a9;}
+.copot-page a:hover{background:#887FFE;color:#fff;}
+.copot-page a.nowPage{background:#887FFE;border:solid 1px #887FFE;color:#fff;} 
+.copot-page .Page-search-span{margin:0 5px 0 15px;}
+.copot-page #Page-search{width:40px;height:28px;padding-left:10px;margin:0 3px;border:solid 1px #E7E7E7;}
+.copot-page #pageSearch{width:40px;height:28px;font-size:12px;border:solid 1px #887FFE;background:#887FFE;color:#fff;cursor:pointer; }

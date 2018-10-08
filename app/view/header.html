@@ -1,4 +1,53 @@
-<div calss="common_header">
-	公共头部
-	<hr>
+<div class="com_header">
+	<div class="logo">
+		<img src="/public/img/logo.png" alt="logo">
+		<div class="title">前端性能监控系统</div>
+	</div>
+	<div class="right">
+		<div class="item">汪微</div>
+		<div class="item">我的应用</div>
+		<div class="item">退出登录</div>
+	</div>
 </div>
+<style scoped>
+	.com_header {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0 20px;
+		width: 100%;
+		height: 60px;
+		background: #fff;
+		box-shadow: 0 1px 2px rgba(150, 150, 150, 0.3);
+		font-weight:300;
+	}
+	.com_header .logo {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		font-size: 28px;
+	}
+	.com_header .logo img {
+		height: 40px;
+		margin-right: 10px;
+	}
+	.com_header .right {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		font-size: 16px;
+	}
+	.com_header .right .item {
+		height:60px;
+		line-height:60px;
+		padding:0 15px;
+		cursor:pointer;
+	}
+	.com_header .right .item:hover{
+		background:#eee;
+		color:rgba(129,139,251,1);
+	}
+</style>
+<script>
+</script>
