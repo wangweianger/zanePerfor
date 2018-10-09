@@ -17,6 +17,13 @@ class SystemController extends Controller {
         const result = await ctx.service.web.webSystem.updateSystemData(ctx);
         return result;
     }
+
+    // 根据用户id获取系统列表
+    async getSysForUserId() {
+        const { ctx } = this;
+        const result = await ctx.service.web.webSystem.getSysForUserId(ctx);
+        return result;
+    }
 }
 
 module.exports = SystemController;

@@ -22,6 +22,8 @@ a { -webkit-touch-callout: none; text-decoration: none; outline: 0; color:#6f8fb
 em, i { font-style: normal; }
 iframe { display: none; }
 
+[v-cloak] {display: none; }
+
 .mt10{margin-top:10px;}
 .mt20{margin-top:20px;}
 .mt30{margin-top:30px;}
@@ -53,7 +55,6 @@ table.table .light_color{
     background:#f7f9fa;
 }
 
-
 .btn{
     font-size:14px;
     padding:8px 15px;
@@ -61,8 +62,21 @@ table.table .light_color{
     border-radius:3px;
     cursor:pointer;
 }
+.btn-default{
+    color:#8776f7;
+    background:#fff;
+    border:solid 1px #8776f7;
+}
+.btn-default:hover{
+    color:#A79AFE;
+    border:solid 1px #A79AFE;
+}
 .btn-main{
     color:#fff;
+    background:#8776f7;
+    border:solid 1px #8776f7;
+}
+.btn-main:hover{
     background:#A79AFE;
     border:solid 1px #A79AFE;
 }
@@ -72,7 +86,7 @@ table.table .light_color{
 .com_title{
     display: flex;
     flex-direction: row;
-    align-items: cneter;
+    align-items: center;
     justify-content: space-between;
     font-size:25px;
     font-weight:300;

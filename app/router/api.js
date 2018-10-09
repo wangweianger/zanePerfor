@@ -16,6 +16,8 @@ module.exports = app => {
     apiV1Router.get('system/add', system.addNewSystem);
     // 修改系统
     apiV1Router.post('system/update', system.updateSystem);
+    // 根据用户ID获得系统信息
+    apiV1Router.get('system/getMsgForUserId', system.getSysForUserId);
 
 
     // const apiV1Router = app.router.namespace('/api/v1');

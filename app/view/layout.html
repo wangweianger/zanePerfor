@@ -6,17 +6,26 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="https://pm.seosiwei.com/images/common/favicon.ico" type="image/x-icon">
+        <!-- css -->
         <link rel="stylesheet" type="text/css" href="/public/css/base.css">
-        <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
-        <script src="//cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-        <script src="//cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>
-        <script src="//cdn.bootcss.com/echarts/3.8.4/echarts.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/public/lib/popup/popup.css">
+        <link rel="stylesheet" type="text/css" href="/public/lib/page/page.css">
+        <!-- js -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.5.0/vue.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/echarts/4.0.0/echarts.min.js"></script>
+        <script src="/public/lib/popup/popup.js"></script>
+        <script src="/public/lib/page/page.js"></script>
+        <script src="/public/js/config.js"></script>
+        <script src="/public/js/util.js"></script>
+        <script src="/public/js/vue-filters.js"></script>
+        <script src="/public/js/vue-components.js"></script>
     </head>
     <body>
         <div id='main'>
             <% include ./header.html %>
             <%- body %>
-            <!-- <% include ./footer.html %> -->
+            <% include ./footer.html %>
         </div>
     </body>
 </html>

@@ -72,6 +72,16 @@ class WebSystemService extends Service {
         const result = await this.app.redis.get(appId) || '{}';
         return JSON.parse(result);
     }
+
+    // 根据用户id获取系统列表
+    async getSysForUserId(ctx) {
+        const userId = ctx.request.query.userId;
+        if (!userId) throw new Error('根据用户ID查询系统信息：userId不能为空');
+        const result = await ctx.model.Web.WebSystem.where('user_id').elemMatch({ $eq: userId });
+        ctx.body = this.app.result({
+            data: result,
+        });
+    }
 }
 
 module.exports = WebSystemService;

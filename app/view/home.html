@@ -1,33 +1,39 @@
-<div class="com_content home_body">
+<style scoped>
+	.home_body {
+		width: 80%;
+		margin: 100px auto 100px;
+	}
+</style>
+<div class="com_content home_body" id="home_body" v-cloak>
 	<div class="com_title">
 		<div class="h1">应用列表</div>
 		<div class="right">
 			<button class="btn btn-main">+添加应用</button>
 		</div>
 	</div>
-	<div class="com_block com_between mt50">
+	<div class="com_block com_between mt50" v-for="item in datalist">
 		<div class="left">
 			<img class="icon" src="https://cdn.seosiwei.com/TBaCKyXadN6xBnM4YGND6fxTBwQj68Ya.png?imageslim">
-			<div class="h1 mt10">WEB应用</div>
-			<button class="btn mt30 btn-main">设置</button>
+			<div class="h1 mt10">{{item.type|systemType}}</div>
+			<button class="btn mt30 btn-default">设置</button>
 			<button class="btn mt10 btn-main">进入</button>
 		</div>
 		<div class="right">
 			<div class="item">
 				<span class="l"><span class="icon"></span>应用名称：</span>
-				<span class="r lightcolor">我的个人博客</span>
+				<span class="r lightcolor">{{item.system_name}}</span>
 			</div>
 			<div class="item">
 				<span class="l"><span class="icon"></span>应用链接：</span>
-				<span class="r lightcolor">https://blog.seosiwei.com</span>
+				<span class="r lightcolor">{{item.system_domain}}</span>
 			</div>
 			<div class="item">
 				<span class="l"><span class="icon"></span>appId：</span>
-				<span class="r lightcolor">D4706F48ED362AB581D73CCEE3DC4985</span>
+				<span class="r lightcolor">{{item.app_id}}</span>
 			</div>
 			<div class="item">
 				<span class="l"><span class="icon"></span>是否开启项目统计：</span>
-				<span class="r lightcolor">是</span>
+				<span class="r lightcolor">{{item.is_use==0?'是':'否'}}</span>
 			</div>
 			<table class="table mt20">
 				<tr class="light_color">
@@ -36,36 +42,57 @@
 					<th class="tc">CSS资源阀值</th>
 					<th class="tc">IMG资源阀值</th>
 					<th class="tc">AJAX加载阀值</th>
-					<th class="tc">是否统计页面</th>
-					<th class="tc">是否统计页面</th>
-					<th class="tc">是否统计AJAX</th>
-					<th class="tc">是否统计页面资源</th>
+					<th class="tc">是否统计页面性能</th>
+					<th class="tc">是否统计AJAX性能</th>
+					<th class="tc">是否统计页面资源性能</th>
 					<th class="tc">是否统计用户系统信息</th>
 					<th class="tc">是否统计错误信息</th>
 				</tr>
 				<tr>
-					<td class="tc">8s</td>
-					<td class="tc">2s</td>
-					<td class="tc">2s</td>
-					<td class="tc">2s</td>
-					<td class="tc">2s</td>
-					<td class="tc">是</td>
-					<td class="tc">是</td>
-					<td class="tc">是</td>
-					<td class="tc">是</td>
-					<td class="tc">是</td>
-					<td class="tc">是</td>
+					<td class="tc">{{item.slow_page_time}}s</td>
+					<td class="tc">{{item.slow_js_time}}s</td>
+					<td class="tc">{{item.slow_css_time}}s</td>
+					<td class="tc">{{item.slow_img_time}}s</td>
+					<td class="tc">{{item.slow_ajax_time}}s</td>
+					<td class="tc">{{item.is_statisi_pages==0?'是':'否'}}</td>
+					<td class="tc">{{item.is_statisi_ajax==0?'是':'否'}}</td>
+					<td class="tc">{{item.is_statisi_resource==0?'是':'否'}}</td>
+					<td class="tc">{{item.is_statisi_system==0?'是':'否'}}</td>
+					<td class="tc">{{item.is_statisi_error==0?'是':'否'}}</td>
 				</tr>
 			</table>
 		</div>
 	</div>
 </div>
-<style scoped>
-	.home_body{
-		width:80%;
-		margin:100px auto 0;
-	}
-
-</style>
 <script>
+	new Vue({
+		el: '#home_body',
+		data: function () {
+			return {
+				userId:'zane',
+				datalist:[],
+			}
+		},
+		filters: {
+			systemType: window.Filter.systemType,
+		},
+		mounted() {
+			this.getMsgForUserId();
+		},
+		methods: {
+			getMsgForUserId() {
+				if (!this.userId) {
+					popup.alert({ type: 'msg', title: '用户id不能为空!' }); return false;
+				}
+				util.ajax({
+					type:'get',
+					url: config.baseApi + 'api/v1/system/getMsgForUserId?userId=' + this.userId,
+					success:  (data) => {
+						if(data.data && data.data.length)
+							this.datalist = data.data;
+					}
+				})
+			},
+		}
+	})
 </script>

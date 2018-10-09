@@ -3,14 +3,14 @@
 module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
-    const Mixed = Schema.Types.Mixed;
     const conn = app.mongooseDB.get('db3');
 
     const WebResourceSchema = new Schema({
         system_domain: { type: String }, // 系统 域名
         system_name: { type: String }, // 系统名称
         app_id: { type: String }, // 系统appId标识
-        user_id: { type: Mixed }, // 应用所属用户ID
+        type: { type: String }, // 浏览器：browser  微信小程序 ：wxminipro
+        user_id: { type: Array }, // 应用所属用户ID
         create_time: { type: Date, default: Date.now }, // 用户访问时间
         script: { type: String }, // 获取页面统计脚本
         is_use: { type: Number, default: 0 }, // 是否需要统计  0：是  1：否

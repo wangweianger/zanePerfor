@@ -1,5 +1,5 @@
+/* eslint-disable */
 
-require('./popup.css'); 
 //构造函数
 function PopLayer(){
     this.setting={};
@@ -223,8 +223,7 @@ window.middle=function(){
     main.css({marginTop:-main.height()/2-20+"px"}); 
 }
 
-
-module.exports=new PopLayer();
+window.popup = new PopLayer();
 
 
 
