@@ -3,7 +3,7 @@
 module.exports = app => {
     const apiV1Router = app.router.namespace('/api/v1/');
     const { controller } = app;
-    const { report, system } = controller.api;
+    const { report, system, pvuvip } = controller.api;
 
     // ----------------浏览器端script脚本获取---------------
     apiV1Router.get('report/webscript', report.getWebScript);
@@ -19,6 +19,9 @@ module.exports = app => {
     // 根据用户ID获得系统信息
     apiV1Router.get('system/getMsgForUserId', system.getSysForUserId);
 
+    // ----------------pv uv ip---------------
+    // 实时获取pv uv ip信息
+    apiV1Router.post('pvuvip/getPvUvIpInterval', pvuvip.getPvUvIpInterval);
 
     // const apiV1Router = app.router.namespace('/api/v1');
     // const { controller, middleware } = app;

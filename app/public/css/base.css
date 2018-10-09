@@ -28,10 +28,12 @@ iframe { display: none; }
 .mt20{margin-top:20px;}
 .mt30{margin-top:30px;}
 .mt50{margin-top:50px;}
-.mb10{margin-top:10px;}
-.mb20{margin-top:20px;}
-.mb30{margin-top:30px;}
-.mb50{margin-top:50px;}
+.mb10{margin-bottom:10px;}
+.mb20{margin-bottom:20px;}
+.mb30{margin-bottom:30px;}
+.mb50{margin-bottom:50px;}
+.mb100{margin-bottom:100px;}
+.pb100{padding-bottom:100px;}
 
 .lightcolor{color:#999;}
 .maincolor{color:#A79AFE;}
@@ -92,6 +94,7 @@ table.table .light_color{
     font-weight:300;
 }
 .com_block{
+    overflow:hidden;
     background-color: #fff;
     border-radius: 4px;
     box-shadow: 0 1px 2px rgba(150,150,150,0.3);
@@ -137,6 +140,70 @@ table.table .light_color{
     width:150px;
     font-weight:400;
 }
+.com_content_body{
+    margin:80px 10px 0 250px; 
+}
+.com_h1{
+    font-size:30px;
+    font-weight:300;
+}
+.com_h2{
+   font-size:22px;
+    font-weight:300; 
+}
+.com_slide_tab_x{
+    display: flex;
+    flex-direction: row;
+    height:40px;
+    align-items: center;
+    font-size:16px;
+    color:#9a9a9a;
+    position: relative;
+}
+.com_slide_tab_x:after{
+    content:'';
+    display: block;
+    position: absolute;
+    left:0;
+    bottom:0;
+    width:100%;
+    height:1px;
+    background:#e1e1e1;
+}
+.com_slide_tab_x .item{
+    padding:0 25px;
+    height:40px;
+    position: relative;
+    cursor: pointer;
+}
+.com_slide_tab_x .item:after{
+    content:'';
+    display: block;
+    position: absolute;
+    left:0;
+    bottom:0;
+    width:100%;
+    height:2px;
+    background:#8776f7;
+    display: none;
+}
+.com_slide_tab_x .active:after{
+    display:block;
+}
 
-
+/****阿里icon*****/
+@font-face {
+  font-family: 'iconfont';  /* project id 865153 */
+  src: url('//at.alicdn.com/t/font_865153_fri2ehpc0jo.eot');
+  src: url('//at.alicdn.com/t/font_865153_fri2ehpc0jo.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_865153_fri2ehpc0jo.woff') format('woff'),
+  url('//at.alicdn.com/t/font_865153_fri2ehpc0jo.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_865153_fri2ehpc0jo.svg#iconfont') format('svg');
+}
+.iconfont {
+    font-family:"iconfont";
+	font-size:16px;
+	font-style:normal;
+	vertical-align: middle;
+}
 

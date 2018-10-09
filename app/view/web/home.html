@@ -1,0 +1,98 @@
+<% include ./side.html %>
+<style scoped>
+</style>
+<div class="com_content_body main pb100" id="vue_id">
+	<h1 class="com_h1">数据分析</h1>
+	<div class="com_slide_tab_x mt30 mb30">
+		<div class="item">概况</div>
+		<div class="item active">PV</div>
+		<div class="item">UV</div>
+		<div class="item">IP</div>
+	</div>
+	<div class="com_block">
+		<h1 class="com_h2 mb20">实时访问PV</h1>
+		<div id="mountNode"></div>
+	</div>
+</div>
+
+<script>
+new Vue({
+	el: '#vue_id',
+	data: function () {
+		return {
+			beginTime:'2018-10-06 07:26:00.000Z',
+			endTime:'2018-10-06 08:26:00.000Z',
+			type:'m',
+			appId:'C9B26D11F343B3B9FA903DA858064225',
+			datalist:[]
+		}
+	},
+	mounted() {
+		this.getMsgForUserId();
+	},
+	methods: {
+		getMsgForUserId(type='m'){
+			util.ajax({
+				url: `${config.baseApi}api/v1/pvuvip/getPvUvIpInterval`,
+				data:{
+					type:this.type,
+					appId: this.appId,
+					beginTime:this.beginTime,
+					endTime:this.endTime,
+				},
+				success: (data) => {
+					if(data.data && data.data.length){
+						data.data.forEach(item=>{
+							let time = '';
+							if(type === 'm'){
+								time = new Date(item.time).format('mm');
+							}else if(type === 'h'){
+								time = new Date(item.time).format('HH');
+							}else if(type === 'd'){
+								time = new Date(item.time).format('dd');
+							}
+							const array = [{
+								country: 'pv',
+								year: time,
+								value: item.pv
+							},{
+								country: 'uv',
+								year: time,
+								value: item.uv
+							}, {
+								country: 'ip',
+								year: time,
+								value: item.ip
+							},]
+							this.datalist = this.datalist.concat(array)
+						})
+						this.drow(this.datalist);
+					}
+					
+				}
+			})
+		},
+		drow(data){
+			data = data.slice(-20);
+			console.log(data)
+			var chart = new G2.Chart({
+				container: 'mountNode',
+				forceFit: true,
+				height: 400,
+				padding: [30, 20, 100, 50]
+			});
+			chart.source(data);
+			chart.tooltip({
+				crosshairs: {
+					type: 'line'
+				}
+			});
+			chart.areaStack().position('year*value').color('country');
+			chart.lineStack().position('year*value').color('country').size(2);
+			chart.render();
+		}
+	},
+})
+
+
+</script>

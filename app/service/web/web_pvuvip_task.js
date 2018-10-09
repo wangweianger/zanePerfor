@@ -1,7 +1,6 @@
 'use strict';
 const parser = require('cron-parser');
 const Service = require('egg').Service;
-
 class WebReportService extends Service {
 
     // 获得web端 pvuvip

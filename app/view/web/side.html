@@ -1,0 +1,58 @@
+<style scoped>
+	.com_side{
+		position: fixed;
+		left:0;
+		top:80px;
+		width:200px;
+		height:100%;
+		border-right:solid 1px #e7e7eb;
+	}
+	.com_side .list{
+		overflow:hidden;
+	}
+	.com_side .item{
+		width:100%;
+		height:50px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: left;
+		padding-left:30px;
+		position: relative;
+		color:#777;
+	}
+	.com_side .item:after{
+		content:'';
+		display:block;
+		position: absolute;
+		left:0;
+		top:0;
+		width:5px;
+		height:50px;
+		background:#8776f7;
+		display:none;
+	}
+	.com_side .iconfont{
+		font-size:22px;
+	}
+	.com_side .title{
+		font-size:14px;
+		margin-left:20px;
+	}
+	.com_side .active{
+		color:#8776f7;
+	}
+	.com_side .active:after{
+		display:block;
+	}
+</style>
+<div class="com_side">
+	<div class="list">
+		<a href="">
+			<div class="item active">
+				<span class="iconfont">&#xe625;</span>
+				<span class="title">数据分析</span>
+			</div>
+		</a>
+	</div>
+</div>

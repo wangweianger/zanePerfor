@@ -81,6 +81,7 @@ module.exports = () => {
     config.security = {
         domainWhiteList: [ 'http://127.0.0.1:18090' ],
         csrf: {
+            enable: false,
             ignore: '/api/v1/report/**',
         },
     };
