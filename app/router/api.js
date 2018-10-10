@@ -20,8 +20,10 @@ module.exports = app => {
     apiV1Router.get('system/getMsgForUserId', system.getSysForUserId);
 
     // ----------------pv uv ip---------------
-    // 实时获取pv uv ip信息
-    apiV1Router.post('pvuvip/getPvUvIpInterval', pvuvip.getPvUvIpInterval);
+    // 实时获取pv uv ip信息 （多条数据）
+    apiV1Router.post('pvuvip/getPvUvIpList', pvuvip.getPvUvIpList);
+    // 实时获取pv uv ip信息 （单条数据）
+    apiV1Router.post('pvuvip/getPvUvIpOne', pvuvip.getPvUvIpOne);
 
     // const apiV1Router = app.router.namespace('/api/v1');
     // const { controller, middleware } = app;

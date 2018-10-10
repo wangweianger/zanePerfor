@@ -5,35 +5,44 @@
 	<h1 class="com_h1">数据分析</h1>
 	<div class="com_slide_tab_x mt30 mb30">
 		<div class="item">概况</div>
-		<div class="item active">PV</div>
-		<div class="item">UV</div>
-		<div class="item">IP</div>
+		<div class="item active">PV|UV|IP</div>
 	</div>
+	<div class="com_topic mb20"><span class="iconfont">&#xe605;</span> 实时数据处理同步可能有2分钟以内的延迟，每分钟统计一次。</div>
 	<div class="com_block">
 		<h1 class="com_h2 mb20">实时访问PV</h1>
-		<div id="mountNode"></div>
+		<div id="pvuvip_pv" style="height:400px"></div>
+	</div>
+	<div class="com_block">
+		<h1 class="com_h2 mb20">实时访问UV</h1>
+		<div id="pvuvip_uv" style="height:400px"></div>
+	</div>
+	<div class="com_block">
+		<h1 class="com_h2 mb20">实时访问IP</h1>
+		<div id="pvuvip_ip" style="height:400px"></div>
 	</div>
 </div>
 
 <script>
+let myChartPV, myChartUV, myChartIP;
 new Vue({
 	el: '#vue_id',
 	data: function () {
 		return {
-			beginTime:'2018-10-06 07:26:00.000Z',
-			endTime:'2018-10-06 08:26:00.000Z',
+			beginTime:'',
+			endTime:'',
 			type:'m',
-			appId:'C9B26D11F343B3B9FA903DA858064225',
-			datalist:[]
+			timer:null,
+			appId:'D3D9B9AA45B56F6E424F57EFB36B063B',
+			datalist:[],
 		}
 	},
 	mounted() {
-		this.getMsgForUserId();
+		this.getPvUvIpList();
 	},
 	methods: {
-		getMsgForUserId(type='m'){
+		getPvUvIpList(isInter){
 			util.ajax({
-				url: `${config.baseApi}api/v1/pvuvip/getPvUvIpInterval`,
+				url: `${config.baseApi}api/v1/pvuvip/getPvUvIpList`,
 				data:{
 					type:this.type,
 					appId: this.appId,
@@ -42,54 +51,150 @@ new Vue({
 				},
 				success: (data) => {
 					if(data.data && data.data.length){
+						const xAxislist = [];
+						const itemlist1 = [];
+						const itemlist2 = [];
+						const itemlist3 = [];
 						data.data.forEach(item=>{
-							let time = '';
-							if(type === 'm'){
+							if(this.type === 'm'){
 								time = new Date(item.time).format('mm');
-							}else if(type === 'h'){
+							}else if(this.type === 'h'){
 								time = new Date(item.time).format('HH');
-							}else if(type === 'd'){
+							}else if(this.type === 'd'){
 								time = new Date(item.time).format('dd');
 							}
-							const array = [{
-								country: 'pv',
-								year: time,
-								value: item.pv
-							},{
-								country: 'uv',
-								year: time,
-								value: item.uv
-							}, {
-								country: 'ip',
-								year: time,
-								value: item.ip
-							},]
-							this.datalist = this.datalist.concat(array)
-						})
-						this.drow(this.datalist);
+							xAxislist.push(time);
+							itemlist1.push(item.pv)
+							itemlist2.push(item.uv)
+							itemlist3.push(item.ip)
+						});
+						this.drow('PV',xAxislist, itemlist1);
+						this.drow('UV', xAxislist, itemlist1);
+						this.drow('IP', xAxislist, itemlist1);
+						this.timer = setInterval(() => {
+							this.getPvUvIpOne();
+						}, 60000)
 					}
-					
 				}
 			})
 		},
-		drow(data){
-			data = data.slice(-20);
-			console.log(data)
-			var chart = new G2.Chart({
-				container: 'mountNode',
-				forceFit: true,
-				height: 400,
-				padding: [30, 20, 100, 50]
-			});
-			chart.source(data);
-			chart.tooltip({
-				crosshairs: {
-					type: 'line'
+		getPvUvIpOne(myChart){
+			util.ajax({
+				url: `${config.baseApi}api/v1/pvuvip/getPvUvIpOne`,
+				data: {
+					type: this.type,
+					appId: this.appId,
+				},
+				success: (data) => {
+					let datas = data.data;
+					if (this.type === 'm') {
+						time = new Date(datas.time).format('mm');
+					} else if (this.type === 'h') {
+						time = new Date(datas.time).format('HH');
+					} else if (this.type === 'd') {
+						time = new Date(datas.time).format('dd');
+					}
+					// 动态数据接口 addData
+					myChartPV.addData([0, datas.pv, false, false, time]);
+					myChartUV.addData([0, datas.uv, false, false, time]);
+					myChartIP.addData([0, datas.ip, false, false, time]);
 				}
-			});
-			chart.areaStack().position('year*value').color('country');
-			chart.lineStack().position('year*value').color('country').size(2);
-			chart.render();
+			})
+		},
+		drow(type, xAxislist, itemlist){
+			// 基于准备好的dom，初始化echarts图表
+			let color = '';
+			if(type=='PV'){
+				myChartPV = echarts.init(document.getElementById('pvuvip_pv'));
+				color = '#42aaff'
+			}else if(type == 'UV'){
+				myChartUV = echarts.init(document.getElementById('pvuvip_uv'));
+				color = '#58d17e'
+			}else if(type == 'IP'){
+				myChartIP = echarts.init(document.getElementById('pvuvip_ip'));
+				color = '#f46d85'
+			}
+			const option = {
+				tooltip: {
+					trigger: 'axis'
+				},
+				legend: {
+					data: [type]
+				},
+				color:[color],
+				toolbox: {
+					show: false,
+					feature: {
+						mark: { show: true },
+						magicType: { show: true, type: ['line', 'bar', 'stack', 'tiled'] },
+						restore: { show: true },
+						saveAsImage: { show: false }
+					}
+				},
+				grid:{
+					borderWidth:0,
+				},
+				xAxis: [
+					{
+						type: 'category',
+						data: xAxislist,
+						splitLine: {
+							show: false,
+						},
+						axisTick: {
+							show: true,
+							lineStyle: {
+								color: '#ddd',
+							}
+						},
+						axisLabel: {
+							show: true,
+							textStyle: {
+								color: '#B7B7B7'
+							},
+						},
+					}
+				],
+				yAxis: [
+					{
+						type: 'value',
+						axisLabel: {
+							show: true,
+							textStyle: {
+								color: '#B7B7B7',
+							}
+						},
+						splitLine: {
+							show: true,
+							lineStyle: {
+								type: 'dashed',
+								color: '#eee',
+								width: 1,
+							}
+						},
+						axisLine: {
+							show: false,
+						},
+					}
+				],
+				series: [
+					{
+						name: type,
+						type: 'line',
+						smooth: true,
+						itemStyle: { normal: { areaStyle: { type: 'default' } } },
+						data: itemlist
+					},
+				]
+			};
+			// 为echarts对象加载数据 
+			if (type == 'PV') {
+				myChartPV.setOption(option); 
+			} else if (type == 'UV') {
+				myChartUV.setOption(option); 
+			} else if (type == 'IP') {
+				myChartIP.setOption(option); 
+			}
 		}
 	},
 })
