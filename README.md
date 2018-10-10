@@ -42,3 +42,7 @@ https://github.com/wangweianger/web-performance-report
 
 ### mongodb可视化工具推荐 Robomongo
 链接地址：https://robomongo.org/download
+
+### DEMO图片
+![](https://github.com/wangweianger/web-performance-monitoring-system/blob/master/demo/01.png "")
+![](https://github.com/wangweianger/web-performance-monitoring-system/blob/master/demo/02.png "")

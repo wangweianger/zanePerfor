@@ -1,24 +1,67 @@
 <% include ./side.html %>
 <style scoped>
+	.survey{
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+	.survey .com{
+		font-size:50px;
+		width:300px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+	.survey .pv{
+		font-size:80px;
+		font-weight:bold;
+		color:#8776f7;
+	}
+	.survey .com span{
+		font-size:16px;
+		margin-right:20px;
+	}
+	
 </style>
-<div class="com_content_body main pb100" id="vue_id">
+<div class="com_content_body main pb100" id="vue_id" v-cloak>
 	<h1 class="com_h1">数据分析</h1>
 	<div class="com_slide_tab_x mt30 mb30">
-		<div class="item">概况</div>
-		<div class="item active">PV|UV|IP</div>
+		<div class="item" :class="{'active':lable==1}" @click="checkoutLabel(1)">概况</div>
+		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">PV|UV|IP</div>
 	</div>
-	<div class="com_topic mb20"><span class="iconfont">&#xe605;</span> 实时数据处理同步可能有2分钟以内的延迟，每分钟统计一次。</div>
-	<div class="com_block">
-		<h1 class="com_h2 mb20">实时访问PV</h1>
-		<div id="pvuvip_pv" style="height:400px"></div>
+	<div v-if="lable==1">
+		<div class="com_topic mb20"><span class="iconfont">&#xe605;</span>实时概况处理同步有1分钟以内的延迟。</div>
+		<div class="com_block">
+			<h1 class="com_h2 mb20">今日概况</h1>
+			<div class="survey">
+				<div class="com pv ml50"><span>PV: </span>{{surveydata.today.pv}}</div>
+				<div class="com uv"><span>UV: </span>{{surveydata.today.uv}}</div>
+				<div class="com ip"><span>IP: </span>{{surveydata.today.ip}}</div>
+			</div>
+		</div>
+		<div class="com_block mt20">
+			<h1 class="com_h2 mb20">昨日概况</h1>
+			<div class="survey">
+				<div class="com pv ml50"><span>PV: </span>{{surveydata.yesterday.pv}}</div>
+				<div class="com uv"><span>UV: </span>{{surveydata.yesterday.uv}}</div>
+				<div class="com ip"><span>IP: </span>{{surveydata.yesterday.ip}}</div>
+			</div>
+		</div>
 	</div>
-	<div class="com_block">
-		<h1 class="com_h2 mb20">实时访问UV</h1>
-		<div id="pvuvip_uv" style="height:400px"></div>
-	</div>
-	<div class="com_block">
-		<h1 class="com_h2 mb20">实时访问IP</h1>
-		<div id="pvuvip_ip" style="height:400px"></div>
+	<div v-if="lable==2">
+		<div class="com_topic mb20"><span class="iconfont">&#xe605;</span> 实时数据处理同步有2分钟以内的延迟，实时统计每分钟执行一次。</div>
+		<div class="com_block">
+			<h1 class="com_h2 mb20">实时访问PV</h1>
+			<div id="pvuvip_pv" style="height:400px"></div>
+		</div>
+		<div class="com_block mt20">
+			<h1 class="com_h2 mb20">实时访问UV</h1>
+			<div id="pvuvip_uv" style="height:400px"></div>
+		</div>
+		<div class="com_block mt20">
+			<h1 class="com_h2 mb20">实时访问IP</h1>
+			<div id="pvuvip_ip" style="height:400px"></div>
+		</div>
 	</div>
 </div>
 
@@ -28,23 +71,50 @@ new Vue({
 	el: '#vue_id',
 	data: function () {
 		return {
+			lable:1, //1:概况 2：pv|uv|ip
 			beginTime:'',
 			endTime:'',
-			type:'m',
 			timer:null,
 			appId:'D3D9B9AA45B56F6E424F57EFB36B063B',
 			datalist:[],
+			surveydata:{ today:{}, yesterday:{}},
 		}
 	},
 	mounted() {
-		this.getPvUvIpList();
+		this.getPvUvIpSurvey();
 	},
 	methods: {
+		checkoutLabel(lable){
+			this.lable = lable;
+			this.beginTime = '';
+			this.endTime = '';
+
+			if(lable == 1){
+				this.getPvUvIpSurvey();
+			}else if(lable == 2){
+				this.getPvUvIpList();
+			};
+		},
+		// 概况
+		getPvUvIpSurvey(){
+			util.ajax({
+				type:'get',
+				url: `${config.baseApi}api/v1/pvuvip/getPvUvIpSurvey`,
+				data:{
+					appId:this.appId,
+					beginTime: this.beginTime,
+					endTime: this.beginTime,
+				},
+				success: (data) => {
+					this.surveydata = data.data;
+				}
+			})
+		},
 		getPvUvIpList(isInter){
+			clearInterval(this.timer);
 			util.ajax({
 				url: `${config.baseApi}api/v1/pvuvip/getPvUvIpList`,
 				data:{
-					type:this.type,
 					appId: this.appId,
 					beginTime:this.beginTime,
 					endTime:this.endTime,
@@ -56,21 +126,15 @@ new Vue({
 						const itemlist2 = [];
 						const itemlist3 = [];
 						data.data.forEach(item=>{
-							if(this.type === 'm'){
-								time = new Date(item.time).format('mm');
-							}else if(this.type === 'h'){
-								time = new Date(item.time).format('HH');
-							}else if(this.type === 'd'){
-								time = new Date(item.time).format('dd');
-							}
+							let time = new Date(item.time).format('mm');
 							xAxislist.push(time);
 							itemlist1.push(item.pv)
 							itemlist2.push(item.uv)
 							itemlist3.push(item.ip)
 						});
 						this.drow('PV',xAxislist, itemlist1);
-						this.drow('UV', xAxislist, itemlist1);
-						this.drow('IP', xAxislist, itemlist1);
+						this.drow('UV', xAxislist, itemlist2);
+						this.drow('IP', xAxislist, itemlist3);
 						this.timer = setInterval(() => {
 							this.getPvUvIpOne();
 						}, 60000)
@@ -78,7 +142,7 @@ new Vue({
 				}
 			})
 		},
-		getPvUvIpOne(myChart){
+		getPvUvIpOne(){
 			util.ajax({
 				url: `${config.baseApi}api/v1/pvuvip/getPvUvIpOne`,
 				data: {
@@ -87,17 +151,11 @@ new Vue({
 				},
 				success: (data) => {
 					let datas = data.data;
-					if (this.type === 'm') {
-						time = new Date(datas.time).format('mm');
-					} else if (this.type === 'h') {
-						time = new Date(datas.time).format('HH');
-					} else if (this.type === 'd') {
-						time = new Date(datas.time).format('dd');
-					}
+					let time = new Date(datas.time).format('mm');
 					// 动态数据接口 addData
-					myChartPV.addData([0, datas.pv, false, false, time]);
-					myChartUV.addData([0, datas.uv, false, false, time]);
-					myChartIP.addData([0, datas.ip, false, false, time]);
+					myChartPV.addData(0, datas.pv, false, false, time);
+					myChartUV.addData(0, datas.uv, false, false, time);
+					myChartIP.addData(0, datas.ip, false, false, time);
 				}
 			})
 		},

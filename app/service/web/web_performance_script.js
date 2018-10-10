@@ -76,7 +76,7 @@ class WebPerformanceScriptService extends Service {
                 // 上报地址
                 domain:'http://localhost/api',
                 // 脚本延迟上报时间
-                outtime:1000,
+                outtime:300,
                 // ajax请求时需要过滤的url信息
                 filterUrl:['http://localhost:35729/livereload.js?snipver=1','http://localhost:8000/sockjs-node/info'],
                 // 是否上报页面性能数据

@@ -33,6 +33,9 @@ iframe { display: none; }
 .mb30{margin-bottom:30px;}
 .mb50{margin-bottom:50px;}
 .mb100{margin-bottom:100px;}
+.ml50{margin-left:50px;}
+.ml100{margin-left:100px;}
+
 .pb100{padding-bottom:100px;}
 
 .lightcolor{color:#999;}
