@@ -26,6 +26,23 @@ class PvUvIpController extends Controller {
             },
         });
     }
+    // 某日概况
+    async getPvUvIpSurveyOne() {
+        const { ctx } = this;
+        const query = ctx.request.query;
+        const appId = query.appId;
+        const beginTime = query.beginTime;
+        const endTime = query.endTime;
+        if (!appId) throw new Error('pvuvip概况统计：appId不能为空');
+        if (!beginTime) throw new Error('pvuvip概况统计：beginTime不能为空');
+        if (!endTime) throw new Error('pvuvip概况统计：endTime不能为空');
+
+        const result = await ctx.service.web.webPvuvip.getPvUvIpSurvey(appId, beginTime, endTime);
+
+        ctx.body = this.app.result({
+            data: result,
+        });
+    }
     // 获得多条数据
     async getPvUvIpList() {
         const { ctx } = this;

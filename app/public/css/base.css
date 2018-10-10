@@ -40,6 +40,7 @@ iframe { display: none; }
 
 .lightcolor{color:#999;}
 .maincolor{color:#A79AFE;}
+.tipscolor{color:#e15f63;font-size:14px;}
 .tc{text-align:center;}
 
 table.table tr{
@@ -60,6 +61,14 @@ table.table .light_color{
     background:#f7f9fa;
 }
 
+.inp{
+    height:35px;
+    border:solid 1px #eee;
+    width:300px;
+    padding-left:10px;
+    background:#f9f9f9;
+    font-size:14px;
+}
 .btn{
     font-size:14px;
     padding:8px 15px;

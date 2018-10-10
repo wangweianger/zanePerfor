@@ -22,6 +22,8 @@ module.exports = app => {
     // ----------------pv uv ip---------------
     // 获得实时统计概况
     apiV1Router.get('pvuvip/getPvUvIpSurvey', pvuvip.getPvUvIpSurvey);
+    // 获得某日统计概况
+    apiV1Router.get('pvuvip/getPvUvIpSurveyOne', pvuvip.getPvUvIpSurveyOne);
     // 实时获取pv uv ip信息 （多条数据）
     apiV1Router.post('pvuvip/getPvUvIpList', pvuvip.getPvUvIpList);
     // 实时获取pv uv ip信息 （单条数据）
