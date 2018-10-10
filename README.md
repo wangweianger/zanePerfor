@@ -44,5 +44,5 @@ https://github.com/wangweianger/web-performance-report
 链接地址：https://robomongo.org/download
 
 ### DEMO图片
-![](https://github.com/wangweianger/web-performance-monitoring-system/blob/master/demo/01.png "")
-![](https://github.com/wangweianger/web-performance-monitoring-system/blob/master/demo/02.png "")
+![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/01.png "")
+![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/02.png "")
