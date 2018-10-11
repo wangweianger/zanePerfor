@@ -47,18 +47,29 @@
 	}
 </style>
 <div class="com_side">
-	<div class="list">
+	<div class="list" id="side-main-nav">
 		<a href="/web/home">
-			<div class="item">
+			<li class="item" data-mark="home">
 				<span class="iconfont">&#xe625;</span>
 				<span class="title">数据分析</span>
-			</div>
+			</li>
 		</a>
 		<a href="/web/pages">
-			<div class="item active">
+			<li class="item" data-mark="pages">
 				<span class="iconfont">&#xe6ea;</span>
 				<span class="title">访问页面</span>
-			</div>
+			</li>
 		</a>
 	</div>
 </div>
+<script>
+	var href = location.href;
+	var liobjs = $('#side-main-nav').find('li')
+	for (var i = 0, len = liobjs.length; i < len; i++) {
+		var attrr = $(liobjs[i]).attr('data-mark')
+		if (href.indexOf(attrr) != -1) {
+			liobjs.removeClass('active')
+			$(liobjs[i]).addClass('active')
+		}
+	}
+</script>

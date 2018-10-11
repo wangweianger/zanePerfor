@@ -36,6 +36,7 @@ class PvuvivService extends Service {
             } },
             { $skip: (pageNo-1) * pageSize  },
             { $limit: pageSize },
+            { $sort: { count: -1 } },
         ]).exec();
 
         return {
