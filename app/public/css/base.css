@@ -82,8 +82,11 @@ table.table tr td{
     border:solid 1px #eee;
     padding:8px;
 }
-table.table .light_color{
-    background:#f7f9fa;
+table.table tr th:nth-child(even){
+    background: #f1efff; 
+}
+table.table tr:nth-child(odd){
+    background: #f5f4ff; 
 }
 
 .inp{

@@ -10,8 +10,10 @@ class PvuvivService extends Service {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
         type = type * 1;
-
-        const query = { $match: { app_id: appId, speed_type: type, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } };
+        
+        const query = { $match: { app_id: appId, speed_type: type } };
+        if (beginTime && endTime)
+            query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
         // 请求总条数
         const count = await this.ctx.model.Web.WebPages.aggregate([
             query,
