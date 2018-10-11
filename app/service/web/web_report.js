@@ -13,8 +13,6 @@ class WebReportService extends Service {
         const markuser = ctx.cookies.get('markuser') || '';
         const markpage = ctx.cookies.get('markpage') || '';
 
-        console.log(ctx.headers);
-
         // 参数校验
         if (!query.appId) throw new Error('web端上报数据操作：app_id不能为空');
 

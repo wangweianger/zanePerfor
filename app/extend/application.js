@@ -3,6 +3,12 @@
 const md5 = require('md5');
 
 module.exports = {
+    // 生成model中间件
+    middlewareModel(dbname, modelname) {
+        const WebPagesSchema = this.WebReportSchema;
+        const conn = this.mongooseDB.get(dbname);
+        return conn.model(modelname, WebPagesSchema);
+    },
     /* 生成随机字符串 */
     randomString(len) {
         len = len || 32;
