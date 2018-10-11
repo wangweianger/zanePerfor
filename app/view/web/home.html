@@ -32,7 +32,7 @@
 		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">PV|UV|IP</div>
 	</div>
 	<div v-show="lable==1">
-		<div class="com_topic mb20"><span class="iconfont">&#xe605;</span>实时概况处理同步有1分钟以内的延迟。</div>
+		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span>实时概况处理同步有1分钟以内的延迟。</div>
 		<div class="com_block mt20">
 			<h1 class="com_h2 mb20">查询某日概况</h1>
 			<div class='search mb20'>
@@ -62,7 +62,7 @@
 		</div>
 	</div>
 	<div v-show="lable==2">
-		<div class="com_topic mb20"><span class="iconfont">&#xe605;</span> 实时数据处理同步有2分钟以内的延迟，实时统计每分钟执行一次。</div>
+		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span> 实时数据处理同步有2分钟以内的延迟，实时统计每分钟执行一次。</div>
 		<div class='search search_1 mb20'>
 			<input id="zane-calendar-2" class="inp" type="text" placeholder="时间粒度选择30分钟以内">
 			<div class="tipscolor mt10" v-if="errText">{{errText}}</div>
@@ -192,7 +192,7 @@ new Vue({
 					const itemlist2 = [];
 					const itemlist3 = [];
 					data.data.forEach(item=>{
-						let time = new Date(item.time).format('mm');
+						let time = new Date(item.time).format('HH:mm');
 						xAxislist.push(time);
 						itemlist1.push(item.pv)
 						itemlist2.push(item.uv)
@@ -267,13 +267,14 @@ new Vue({
 						axisTick: {
 							show: true,
 							lineStyle: {
-								color: '#ddd',
+								color: '#eee',
 							}
 						},
 						axisLabel: {
 							show: true,
 							textStyle: {
-								color: '#B7B7B7'
+								color: '#B7B7B7',
+								fontSize:10,
 							},
 						},
 					}

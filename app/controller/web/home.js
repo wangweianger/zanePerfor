@@ -7,7 +7,9 @@ class HomeController extends Controller {
     async systemlist() {
         const { ctx } = this;
         await ctx.render('home', {
-            data: {},
+            data: {
+                title: '应用列表',
+            },
         });
     }
 
@@ -15,7 +17,19 @@ class HomeController extends Controller {
     async webhome() {
         const { ctx } = this;
         await ctx.render('web/home', {
-            data: {},
+            data: {
+                title: '网页PV,UV,IP统计',
+            },
+        });
+    }
+
+    // 访问页面性能数据
+    async webpages() {
+        const { ctx } = this;
+        await ctx.render('web/pages', {
+            data: {
+                title: '页面性能数据',
+            },
         });
     }
 }

@@ -31,6 +31,9 @@ module.exports = () => {
     // 百度地图api key
     config.BAIDUAK = '36UI4dIyIfCVKQWW7hoeSIuM';
 
+    // 分页条数
+    config.pageSize = 20;
+
     // ejs模板
     config.view = {
         defaultExtension: '.html',

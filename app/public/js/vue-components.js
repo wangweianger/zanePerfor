@@ -2,10 +2,10 @@
 
 let Component = {
     commonsearch:{
-        template: `<div class="search">
-            <a href="/addSystem"><button class="cursor">+添加应用</button></a>
+        template: `<div class="component_search mr20">
+            <a href="/addSystem"><button class="btn btn-main">+添加应用</button></a>
             <div class="select">
-                <span class="times"><span class="iconfont">&#xe66c;</span>{{timeText}}<span class="iconfont">&#xe698;</span></span>
+                <span class="times"><span class="iconfont">&#xe60b;</span>{{timeText}}<span class="iconfont">&#xe63b;</span></span>
                 <div class="select-time">
                     <li data-time="0" data-text="全部">全部</li>
                     <li data-time="0.5" data-text="最近30分钟">30分钟</li>

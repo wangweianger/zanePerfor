@@ -18,7 +18,7 @@ fieldset, img { border: 0; }
 li { list-style: none; }
 input, textarea, select { font-family: inherit; font-size: inherit; font-weight: inherit; outline: none; -webkit-appearence: none; -ms-appearence: none; }
 button, html input[type="button"], input[type="reset"], input[type="submit"] { border: none; background: none; -webkit-appearance: none; outline: none; }
-a { -webkit-touch-callout: none; text-decoration: none; outline: 0; color:#6f8fb7;text-decoration:none;}
+a { -webkit-touch-callout: none; text-decoration: none; outline: 0; color:#8776f7;text-decoration:none;}
 em, i { font-style: normal; }
 iframe { display: none; }
 
@@ -35,14 +35,39 @@ iframe { display: none; }
 .mb100{margin-bottom:100px;}
 .ml50{margin-left:50px;}
 .ml100{margin-left:100px;}
+.mr20{margin-right:20px;}
 
 .pb100{padding-bottom:100px;}
 
 .lightcolor{color:#999;}
 .maincolor{color:#A79AFE;}
 .tipscolor{color:#e15f63;font-size:14px;}
+.red{color:red;}
 .tc{text-align:center;}
+.bold{font-weight:bold;}
 
+.fl{float:left;}
+.fr{float:right;}
+
+/****阿里icon*****/
+@font-face {
+  font-family: 'iconfont';  /* project id 865153 */
+  src: url('//at.alicdn.com/t/font_865153_ficb3wtiikk.eot');
+  src: url('//at.alicdn.com/t/font_865153_ficb3wtiikk.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_865153_ficb3wtiikk.woff') format('woff'),
+  url('//at.alicdn.com/t/font_865153_ficb3wtiikk.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_865153_ficb3wtiikk.svg#iconfont') format('svg');
+}
+.iconfont {
+    font-family:"iconfont";
+	font-size:16px;
+	font-style:normal;
+	vertical-align: middle;
+}
+/****table*****/
+table{
+    width:100%;
+}
 table.table tr{
     border:solid 1px #eee;
 }
@@ -217,19 +242,84 @@ table.table .light_color{
     margin-right:5px;
 }
 
-/****阿里icon*****/
-@font-face {
-  font-family: 'iconfont';  /* project id 865153 */
-  src: url('//at.alicdn.com/t/font_865153_nc84j86rjka.eot');
-  src: url('//at.alicdn.com/t/font_865153_nc84j86rjka.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_865153_nc84j86rjka.woff') format('woff'),
-  url('//at.alicdn.com/t/font_865153_nc84j86rjka.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_865153_nc84j86rjka.svg#iconfont') format('svg');
+/**********公共时间搜索************/
+.component_search{
+    float: right;
+    width: 222px;
 }
-.iconfont {
-    font-family:"iconfont";
-	font-size:16px;
-	font-style:normal;
-	vertical-align: middle;
+.component_search button {
+    float: left;
+    padding: 6px 10px;
+    font-size: 12px;
+    margin: 10px 10px 0 0; 
 }
-
+.component_search .select {
+    float: left;
+    position: relative;
+    cursor: pointer; 
+}
+.component_search .select .times {
+    width: 120px;
+    height: 30px;
+    line-height: 30px;
+    border-radius:3px;
+    margin-top: 10px;
+    display: inline-block;
+    color:#8776f7;
+    font-size:14px;
+    text-align:center;
+    border: solid 1px #8776f7; 
+    overflow:hidden;
+}
+.component_search .select .times span {
+    color: #8776f7;
+    margin: 0 5px; 
+    font-size:14px;
+}
+.component_search .select .select-time {
+    width: 660px;
+    display: none;
+    position: absolute;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    border: 1px solid #dedede;
+    right: 0;
+    top: 50px;
+    z-index: 100000;
+    background: #fff;
+    padding: 15px; 
+}
+.component_search .select .select-time li {
+    display: block;
+    background: #f2f2f2;
+    padding: 0 15px;
+    line-height: 46px;
+    font-size: 12px;
+    color: #757575;
+    display: inline-block;
+    margin-right: 10px;
+    cursor: pointer;
+    border-radius: 5px; 
+}
+.component_search .select .select-time li:hover {
+    background: #a79af9;
+    color:#fff;
+}
+.component_search .select .select-time li.active {
+    background: #9181f8; 
+    color:#fff;
+}
+.component_search .select .select-time .btn {
+    float: none;
+    padding: .8rem;
+    margin: 0;
+    border-radius: 3px;
+    cursor: pointer; 
+}
+.component_search .select .select-time .select_time_active {
+    background: #458ef9;
+    color: #fff; 
+}
+.component_search .select .select-time .select_time_active:hover {
+    background: #458ef9;
+    color: #fff; 
+}

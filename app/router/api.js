@@ -3,7 +3,7 @@
 module.exports = app => {
     const apiV1Router = app.router.namespace('/api/v1/');
     const { controller } = app;
-    const { report, system, pvuvip } = controller.api;
+    const { report, system, pvuvip, pages } = controller.api;
 
     // ----------------浏览器端script脚本获取---------------
     apiV1Router.get('report/webscript', report.getWebScript);
@@ -29,6 +29,9 @@ module.exports = app => {
     // 实时获取pv uv ip信息 （单条数据）
     apiV1Router.post('pvuvip/getPvUvIpOne', pvuvip.getPvUvIpOne);
 
+    // ----------------页面性能分析---------------
+    // 平均列表
+    apiV1Router.get('pages/getAveragePageList', pages.getAveragePageList);
 
     // const apiV1Router = app.router.namespace('/api/v1');
     // const { controller, middleware } = app;

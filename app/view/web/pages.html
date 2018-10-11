@@ -1,0 +1,132 @@
+<% include ./side.html %>
+<style scoped>
+	.com_top_title:after{
+		content:'';
+		display:block;
+		clear:both;
+	}
+	table.table{
+		background:#fff;
+	}
+	table.table .light_color th{
+		font-weight:400;
+	}
+	table.table tr td{
+		font-size:12px;
+	}
+</style>
+<div class="com_content_body main pb100" id="pages" v-cloak>
+	<div class="com_top_title">
+		<h1 class="com_h1 fl">页面性能</h1>
+		<commonsearch :done="getinit"></commonsearch>
+	</div>
+	<div class="com_topic mb20 mt20"><span class="iconfont">&#xe63a;</span>统计某一页面的平均访问性能指标。</div>
+	<div>
+		<table class="table" v-if="listdata.length">
+			<tr class="light_color">
+				<th>URL</th>
+				<th>调用次数</th>
+				<th>页面加载时间</th>
+				<th>白屏时间</th>
+				<th>DOM构建时间</th>
+				<th>解析dom耗时</th>
+				<th>DNS解析时间</th>
+				<th>TCP连接时间</th>
+				<th>页面重定向时间</th>
+				<th>unload时间</th>
+				<th>request请求耗时</th>
+				<th>页面准备时间</th>
+			</tr>
+			<tr v-for="item in listdata">
+				<td><a href="">{{item._id}}</a></td>
+				<td class="tc">{{item.count}}</td>
+				<td class="red tc">{{item.load_time|toFixed(true)}}</td>
+				<td class="red tc">{{item.white_time|toFixed}}</td>
+				<td class="tc">{{item.dom_time|toFixed(true)}}</td>
+				<td class="tc">{{item.analysisDom_time|toFixed}}</td>
+				<td class="tc">{{item.dns_time|toFixed}}</td>
+				<td class="tc">{{item.tcp_time|toFixed}}</td>
+				<td class="tc">{{item.redirect_time|toFixed}}</td>
+				<td class="tc">{{item.unload_time|toFixed}}</td>
+				<td class="tc">{{item.request_time|toFixed}}</td>
+				<td class="tc">{{item.ready_time|toFixed}}</td>
+			</tr>
+		</table>
+	</div>
+	<!--  分页 -->
+	<div class="common_page_style" v-show="isLoadend&&listdata.length">
+		<div id="copot-page" class="copot-page"></div>
+	</div>
+	<!-- 暂无数据 -->
+	<div class="tc" v-if="!listdata.length">暂无数据!</div>
+</div>
+
+<script>
+	new Vue({
+		el: '#pages',
+		data: function () {
+			return {
+				listdata: [],
+				pageNo: 1,
+				pageSize: config.pageSize,
+				totalNum: 0,
+				beginTime: '',
+				endTime: '',
+				isLoadend: false,
+				appId: 'D3D9B9AA45B56F6E424F57EFB36B063B',
+				type:1, //访问速度类型 1：正常  2：慢
+			}
+		},
+		filters: {
+			toFixed: window.Filter.toFixed
+		},
+		mounted() {
+			this.getinit();
+		},
+		methods: {
+			getinit() {
+				this.isLoadend = false;
+				let times = util.getSearchTime()
+				this.beginTime = times.beginTime
+				this.endTime = times.endTime
+
+				util.ajax({
+					type:'get',
+					url: config.baseApi + 'api/v1/pages/getAveragePageList',
+					data: {
+						type:this.type,
+						appId:this.appId,
+						pageNo: this.pageNo,
+						pageSize: this.pageSize,
+						beginTime: this.beginTime,
+						endTime: this.endTime,
+					},
+					success: data => {
+						this.isLoadend = true;
+						if (!data.data.datalist && !data.data.datalist.length) return;
+						this.listdata = data.data.datalist;
+						new Page({
+							parent: $("#copot-page"),
+							nowPage: this.pageNo,
+							pageSize: this.pageSize,
+							totalCount: data.data.totalNum,
+							callback: (nowPage, totalPage) => {
+								this.pageNo = nowPage;
+								this.getinit();
+							}
+						});
+					}
+				})
+			},
+			gotodetail(item) {
+				if (this.slow && this.slow == 'slow') {
+					util.setStorage('session', 'slowpagesItemData', JSON.stringify(item))
+					location.href = "/slowpages/detail?type=zane"
+				} else {
+					util.setStorage('session', 'pagesItemData', JSON.stringify(item))
+					location.href = "/pages/detail?type=zane"
+				}
+			}
+		}
+	})
+</script>
