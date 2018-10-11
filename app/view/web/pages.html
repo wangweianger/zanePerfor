@@ -22,7 +22,7 @@
 	</div>
 	<div class="com_topic mb20 mt20"><span class="iconfont">&#xe63a;</span>统计某一页面的平均访问性能指标。</div>
 	<div>
-		<table class="table" v-if="listdata.length">
+		<table class="table" v-if="isLoadend&&listdata.length">
 			<tr class="light_color">
 				<th>URL</th>
 				<th>调用次数</th>
@@ -54,7 +54,7 @@
 		</table>
 	</div>
 	<!--  分页 -->
-	<div class="common_page_style" v-show="isLoadend&&listdata.length">
+	<div class="common_page_style mt10" v-show="isLoadend&&listdata.length">
 		<div id="copot-page" class="copot-page"></div>
 	</div>
 	<!-- 暂无数据 -->

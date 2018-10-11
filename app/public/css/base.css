@@ -82,13 +82,15 @@ table.table tr td{
     border:solid 1px #eee;
     padding:8px;
 }
+table.table tr th:nth-child(odd){
+    background: #f7f9fa; 
+}
 table.table tr th:nth-child(even){
-    background: #f1efff; 
+    background: #f4f4f4; 
 }
 table.table tr:nth-child(odd){
-    background: #f5f4ff; 
+    background: #f7f9fa; 
 }
-
 .inp{
     height:35px;
     border:solid 1px #eee;
