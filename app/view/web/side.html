@@ -2,10 +2,12 @@
 	.com_side{
 		position: fixed;
 		left:0;
-		top:80px;
+		top:60px;
 		width:200px;
 		height:100%;
-		border-right:solid 1px #e7e7eb;
+		padding-top:20px;
+		background:#fff;
+		border-right:solid 1px #f1f1f1;
 	}
 	.com_side .list{
 		overflow:hidden;
@@ -48,18 +50,18 @@
 </style>
 <div class="com_side">
 	<div class="list" id="side-main-nav">
-		<a href="/web/home">
-			<li class="item" data-mark="home">
-				<span class="iconfont">&#xe625;</span>
-				<span class="title">数据分析</span>
-			</li>
-		</a>
-		<a href="/web/pages">
-			<li class="item" data-mark="pages">
+		<a href="/web/home"><li class="item" data-mark="home">
+			<span class="iconfont">&#xe625;</span>
+			<span class="title">数据分析</span>
+		</li></a>
+		<a href="/web/pages"><li class="item" data-mark="pages">
 				<span class="iconfont">&#xe6ea;</span>
 				<span class="title">访问页面</span>
-			</li>
-		</a>
+		</li></a>
+		<a href="/web/pages?type=2"><li class="item" data-mark="type">
+			<span class="iconfont">&#xe615;</span>
+			<span class="title">慢页面追踪</span>
+		</li></a>
 	</div>
 </div>
 <script>

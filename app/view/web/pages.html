@@ -17,7 +17,7 @@
 </style>
 <div class="com_content_body main pb100" id="pages" v-cloak>
 	<div class="com_top_title">
-		<h1 class="com_h1 fl">页面性能</h1>
+		<h1 class="com_h1 fl">{{type==1?'页面性能':'慢资源追踪'}}</h1>
 		<commonsearch :done="getinit"></commonsearch>
 	</div>
 	<div class="com_topic mb20 mt20"><span class="iconfont">&#xe63a;</span>统计某一页面的平均访问性能指标。</div>
@@ -54,7 +54,7 @@
 		</table>
 	</div>
 	<!--  分页 -->
-	<div class="common_page_style mt10" v-show="isLoadend&&listdata.length">
+	<div class="tc common_page_style mt10" v-show="isLoadend&&listdata.length">
 		<div id="copot-page" class="copot-page"></div>
 	</div>
 	<!-- 暂无数据 -->
@@ -74,13 +74,14 @@
 				endTime: '',
 				isLoadend: false,
 				appId: 'D3D9B9AA45B56F6E424F57EFB36B063B',
-				type:1, //访问速度类型 1：正常  2：慢
+				type: util.getQueryString('type') || 1, //访问速度类型 1：正常  2：慢
 			}
 		},
 		filters: {
 			toFixed: window.Filter.toFixed
 		},
 		mounted() {
+			console.log(this.type)
 			this.getinit();
 		},
 		methods: {
