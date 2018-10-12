@@ -22,10 +22,33 @@
 	</div>
 	<div class="com_topic mb20 mt20"><span class="iconfont">&#xe63a;</span>统计某一页面的平均访问性能指标。</div>
 	<div>
+		<!-- 公共搜索条件 -->
+		<div class="com_search">
+			<div class="item">
+				<div>
+					<input class="inp" v-model="url" placeholder="选填、输入完整域名地址" type="text">
+					<button class="btn btn-default" @click="searchForUrl">搜索</button>
+				</div>
+				<div class="ml30">
+					<input id="zane-calendar-1" class="inp w-200" type="text" placeholder="选择日期查询">
+				</div>
+				<div class="com_select_item ml30" :class="{'active':isCity}" @click="isSelectCity"><span class="iconfont">&#xe63c;</span>按城市分类</div>
+				<div class="ml10">
+					<input class="inp w-200" v-model="city" placeholder="选填、输入城市名字查询" type="text">
+					<button class="btn btn-default" @click="searchForCity">搜索</button>
+				</div>
+				<div class="com_select_item ml30" :class="{'active':isBrowser}" @click="isSelectBrowser"><span class="iconfont">&#xe63c;</span>按浏览器分类</div>
+				<div class="com_select_item ml30" :class="{'active':isSystem}" @click="isSelectSystem"><span class="iconfont">&#xe63c;</span>按操作系统分类</div>
+			</div>
+		</div>
+		<!-- table列表 -->
 		<table class="table" v-if="isLoadend&&listdata.length">
 			<tr class="light_color">
 				<th>URL</th>
 				<th>调用次数</th>
+				<th v-if="isCity">城市</th>
+				<th v-if="isBrowser">浏览器</th>
+				<th v-if="isSystem">操作系统</th>
 				<th>页面加载时间</th>
 				<th>白屏时间</th>
 				<th>DOM构建时间</th>
@@ -38,8 +61,11 @@
 				<th>页面准备时间</th>
 			</tr>
 			<tr v-for="item in listdata">
-				<td><a href="">{{item._id}}</a></td>
-				<td class="tc">{{item.count}}</td>
+				<td><a href="">{{item._id.url}}</a></td>
+				<td class="tc" >{{item.count}}</td>
+				<td class="tc" v-if="isCity">{{item._id.city}}</td>
+				<td class="tc" v-if="isBrowser">{{item._id.browser}}</td>
+				<td class="tc" v-if="isSystem">{{item._id.system}}</td>
 				<td class="red tc">{{item.load_time|toFixed(true)}}</td>
 				<td class="red tc">{{item.white_time|toFixed}}</td>
 				<td class="tc">{{item.dom_time|toFixed(true)}}</td>
@@ -75,22 +101,27 @@
 				isLoadend: false,
 				appId: 'D3D9B9AA45B56F6E424F57EFB36B063B',
 				type: util.getQueryString('type') || 1, //访问速度类型 1：正常  2：慢
+				url:'',
+				city:'',
+				isCity: false,
+				isBrowser:false,
+				isSystem:false,
 			}
 		},
 		filters: {
 			toFixed: window.Filter.toFixed
 		},
 		mounted() {
-			console.log(this.type)
+			let times = util.getSearchTime()
+			this.beginTime = times.beginTime
+			this.endTime = times.endTime
 			this.getinit();
+
+			this.searchForTime();
 		},
 		methods: {
 			getinit() {
 				this.isLoadend = false;
-				let times = util.getSearchTime()
-				this.beginTime = times.beginTime
-				this.endTime = times.endTime
-
 				util.ajax({
 					type:'get',
 					url: config.baseApi + 'api/v1/pages/getAveragePageList',
@@ -101,6 +132,11 @@
 						pageSize: this.pageSize,
 						beginTime: this.beginTime,
 						endTime: this.endTime,
+						url: this.url,
+						city: this.city,
+						isCity: this.isCity,
+						isBrowser: this.isBrowser,
+						isSystem: this.isSystem,
 					},
 					success: data => {
 						this.isLoadend = true;
@@ -118,6 +154,39 @@
 						});
 					}
 				})
+			},
+			isSelectCity(){
+				this.isCity = !this.isCity;
+				if(!this.isCity) this.city = '';
+				this.getinit();
+			},
+			isSelectBrowser(){
+				this.isBrowser = !this.isBrowser;
+				this.getinit();
+			},
+			isSelectSystem(){
+				this.isSystem = !this.isSystem;
+				this.getinit();
+			},
+			searchForUrl(){
+				this.getinit();
+			},
+			searchForCity(){ 
+				this.isCity = this.city?true:false;
+				this.getinit();
+			},
+			searchForTime(){
+				zaneDate({
+					elem: '#zane-calendar-1',
+					type: 'doubleday',
+					format: 'yyyy/MM/dd HH:mm:ss',
+					showtime: true,
+					done: (fulltime, begintime, endtime) => {
+						this.beginTime = begintime;
+						this.endTime = endtime;
+						this.getinit();
+					},
+				});
 			},
 			gotodetail(item) {
 				if (this.slow && this.slow == 'slow') {

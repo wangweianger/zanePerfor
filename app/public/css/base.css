@@ -33,8 +33,12 @@ iframe { display: none; }
 .mb30{margin-bottom:30px;}
 .mb50{margin-bottom:50px;}
 .mb100{margin-bottom:100px;}
+.ml10{margin-left:10px;}
+.ml20{margin-left:20px;}
+.ml30{margin-left:30px;}
 .ml50{margin-left:50px;}
 .ml100{margin-left:100px;}
+.mr10{margin-right:10px;}
 .mr20{margin-right:20px;}
 
 .pb100{padding-bottom:100px;}
@@ -49,14 +53,17 @@ iframe { display: none; }
 .fl{float:left;}
 .fr{float:right;}
 
+.w-100{width:100px!important;;}
+.w-200{width:200px!important;}
+
 /****阿里icon*****/
 @font-face {
   font-family: 'iconfont';  /* project id 865153 */
-  src: url('//at.alicdn.com/t/font_865153_m4eplpqf3os.eot');
-  src: url('//at.alicdn.com/t/font_865153_m4eplpqf3os.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_865153_m4eplpqf3os.woff') format('woff'),
-  url('//at.alicdn.com/t/font_865153_m4eplpqf3os.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_865153_m4eplpqf3os.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_865153_qh42g0yuwl.eot');
+  src: url('//at.alicdn.com/t/font_865153_qh42g0yuwl.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_865153_qh42g0yuwl.woff') format('woff'),
+  url('//at.alicdn.com/t/font_865153_qh42g0yuwl.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_865153_qh42g0yuwl.svg#iconfont') format('svg');
 }
 .iconfont {
     font-family:"iconfont";
@@ -98,6 +105,10 @@ table.table tr:nth-child(odd){
     padding-left:10px;
     background:#f9f9f9;
     font-size:14px;
+}
+.inp::placeholder{
+    color:#bbb;
+    font-size:13px;
 }
 .btn{
     font-size:14px;
@@ -327,4 +338,52 @@ table.table tr:nth-child(odd){
 .component_search .select .select-time .select_time_active:hover {
     background: #458ef9;
     color: #fff; 
+}
+/* *********公共搜索样式*********** */
+.com_search{
+    background:#fff;
+    padding:20px 20px 10px;
+}
+.com_search .item{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.com_search .item>div{
+    margin-bottom:10px;
+}
+.com_search .name{
+    font-size:14px;
+    color:#666;
+}
+.com_search .inp{
+    font-size:12px;
+}
+.com_search .btn{
+    padding:6px 10px;
+}
+.com_select_item{
+    font-size:14px;
+    color:#999;
+    background:#f4f4f4;
+    border-radius:3px;
+    overflow:hidden;
+    height:35px;
+    padding:0 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    cursor:pointer;
+    border:solid 1px #ddd;
+}
+.com_select_item .iconfont{
+    font-size:16px;
+    margin-right:6px;
+}
+.com_select_item.active{
+    background:#8776f7;
+    color:#fff;
+    border:solid 1px #8776f7;
 }
