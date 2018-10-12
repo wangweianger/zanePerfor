@@ -18,7 +18,6 @@
 		width: 33.33333%;
 		float: left;
 		border-right: solid 1px #eee;
-		border-bottom: solid 1px #eee;
 		overflow: hidden;
 		padding: 20px; 
 	}
@@ -61,11 +60,13 @@
 <div class="com_content_body main pb100" id="pages" v-cloak>
 	<div class="com_top_title">
 		<h1 class="com_h1 fl">单页面性能</h1>
-		<commonsearch :done="getinit"></commonsearch>
+		<commonsearch :done="getDataForTime"></commonsearch>
 	</div>
 	<div class="com_slide_tab_x mt30 mb30">
-		<div class="item" :class="{'active':lable==1}" @click="checkoutLabel(1)">概况</div>
-		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">PV|UV|IP</div>
+		<div class="item" :class="{'active':lable==1}" @click="checkoutLabel(1)">性能详情</div>
+		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">ajax调用</div>
+		<div class="item" :class="{'active':lable==3}" @click="checkoutLabel(3)">页面慢加载追踪</div>
+		<div class="item" :class="{'active':lable==4}" @click="checkoutLabel(4)">资源慢加载追踪</div>
 	</div>
 	<!-- 页面平均耗时说明 -->
 	<div class="com_block block-time" v-show="lable==1">
@@ -131,34 +132,28 @@
 			<div id="echartBorwsers-address" class="echartBorwsers"></div>
 		</div>
 	</div>
-	<div>
+	<div class="mt20" v-show="lable==1">
 		<!-- 公共搜索条件 -->
 		<div class="com_search">
 			<div class="item">
 				<div>
-					<input class="inp" v-model="url" placeholder="选填、输入完整域名地址" type="text">
-					<button class="btn btn-default" @click="searchForUrl">搜索</button>
-				</div>
-				<div class="ml30">
 					<input id="zane-calendar-1" class="inp w-200" type="text" placeholder="选择日期查询">
 				</div>
-				<div class="com_select_item ml30" :class="{'active':isCity}" @click="isSelectCity"><span class="iconfont">&#xe63c;</span>按城市分类</div>
 				<div class="ml10">
 					<input class="inp w-200" v-model="city" placeholder="选填、输入城市名字查询" type="text">
-					<button class="btn btn-default" @click="searchForCity">搜索</button>
+					<input class="inp w-200 ml20" v-model="browser" placeholder="选填、输入浏览器名称查询" type="text">
+					<input class="inp w-200 ml20" v-model="system" placeholder="选填、输入系统名称查询" type="text">
+					<button class="btn btn-default" @click="getinit">搜索</button>
 				</div>
-				<div class="com_select_item ml30" :class="{'active':isBrowser}" @click="isSelectBrowser"><span class="iconfont">&#xe63c;</span>按浏览器分类</div>
-				<div class="com_select_item ml30" :class="{'active':isSystem}" @click="isSelectSystem"><span class="iconfont">&#xe63c;</span>按操作系统分类</div>
 			</div>
 		</div>
 		<!-- table列表 -->
 		<table class="table" v-if="isLoadend&&listdata.length">
 			<tr class="light_color">
 				<th>URL</th>
-				<th>调用次数</th>
-				<th v-if="isCity">城市</th>
-				<th v-if="isBrowser">浏览器</th>
-				<th v-if="isSystem">操作系统</th>
+				<th v-if="city">城市</th>
+				<th v-if="browser">浏览器</th>
+				<th v-if="system">操作系统</th>
 				<th>页面加载时间</th>
 				<th>白屏时间</th>
 				<th>DOM构建时间</th>
@@ -169,13 +164,13 @@
 				<th>unload时间</th>
 				<th>request请求耗时</th>
 				<th>页面准备时间</th>
+				<th>操作</th>
 			</tr>
 			<tr v-for="item in listdata">
-				<td><a href="">{{item._id.url}}</a></td>
-				<td class="tc" >{{item.count}}</td>
-				<td class="tc" v-if="isCity">{{item._id.city||'未知'}}</td>
-				<td class="tc" v-if="isBrowser">{{item._id.browser}}</td>
-				<td class="tc" v-if="isSystem">{{item._id.system}}</td>
+				<td><a href="">{{item.url}}</a></td>
+				<td class="tc" v-if="city">{{item._id.city||'未知'}}</td>
+				<td class="tc" v-if="browser">{{item._id.browser}}</td>
+				<td class="tc" v-if="system">{{item._id.system}}</td>
 				<td class="red tc">{{item.load_time|toFixed(true)}}</td>
 				<td class="red tc">{{item.white_time|toFixed}}</td>
 				<td class="tc">{{item.dom_time|toFixed(true)}}</td>
@@ -186,15 +181,112 @@
 				<td class="tc">{{item.unload_time|toFixed}}</td>
 				<td class="tc">{{item.request_time|toFixed}}</td>
 				<td class="tc">{{item.ready_time|toFixed}}</td>
+				<td class="tc"><a href="">详情</a></td>
 			</tr>
 		</table>
 	</div>
-	<!--  分页 -->
-	<div class="tc common_page_style mt10" v-show="isLoadend&&listdata.length">
-		<div id="copot-page" class="copot-page"></div>
+	<div v-show="lable==1">
+		<!--  分页 -->
+		<div class="tc common_page_style mt10" v-show="isLoadend&&listdata.length">
+			<div id="copot-page-pages" class="copot-page"></div>
+		</div>
+		<!-- 暂无数据 -->
+		<div class="tc" v-if="!listdata.length">暂无数据!</div>
 	</div>
-	<!-- 暂无数据 -->
-	<div class="tc" v-if="!listdata.length">暂无数据!</div>
+	<!-- ajax性能资源 -->
+	<div v-show="lable==2">
+		<!-- table列表 -->
+		<table class="table" v-if="isLoadend&&listAjax.length">
+			<tr class="light_color">
+				<th>URL</th>
+				<th>Ajax性能类型</th>
+				<th>请求方式</th>
+				<th>响应时间</th>
+				<th>响应资源大小</th>
+				<th>请求URL</th>
+				<th>请求参数</th>
+			</tr>
+			<tr v-for="item in listAjax">
+				<td>{{item.url}}</td>
+				<td class="tc red">{{item.speed_type==1?'正常':'慢'}}</td>
+				<td class="tc">{{item.method}}</td>
+				<td class="red tc">{{item.duration|toFixed}}</td>
+				<td class="red tc">{{item.decoded_body_size|toSize}}</td>
+				<td>{{item.call_url}}</td>
+				<td class="tc">{{item.query_datas}}</td>
+			</tr>
+		</table>
+	</div>
+	<div v-show="lable==2">
+		<!--  分页 -->
+		<div class="tc common_page_style mt10" v-show="isLoadend&&listAjax.length">
+			<div id="copot-page-ajax" class="copot-page"></div>
+		</div>
+		<!-- 暂无数据 -->
+		<div class="tc" v-if="!listAjax.length">暂无数据!</div>
+	</div>
+	<!-- 页面慢加载追踪 -->
+	<div v-show="lable==3">
+		<table class="table" v-if="isLoadend&&listslowpages.length">
+			<tr class="light_color">
+				<th>URL</th>
+				<th>页面加载时间</th>
+				<th>性能类型</th>
+				<th>白屏时间</th>
+				<th>DOM构建时间</th>
+				<th>解析dom耗时</th>
+				<th>页面准备时间</th>
+				<th>创建时间</th>
+			</tr>
+			<tr v-for="item in listslowpages">
+				<td><a href='' :title="item.url">{{item.url|limitTo(40)}}</a></td>
+				<td class="tc red">{{item.load_time|toFixed(true)}}</td>
+				<th class="tc red">{{item.speed_type==1?'正常':'慢'}}</th>
+				<td class="tc">{{item.white_time|toFixed}}</td>
+				<td class="tc">{{item.dom_time|toFixed}}</td>
+				<td class="tc">{{item.analysisDom_time|toFixed}}</td>
+				<td class="tc">{{item.ready_time|toFixed}}</td>
+				<td class="tc">{{item.create_time|date('/',true)}}</td>
+			</tr>
+		</table>
+	</div>
+	<div v-show="lable==3">
+		<!--  分页 -->
+		<div class="tc common_page_style mt10" v-show="isLoadend&&listslowpages.length">
+			<div id="copot-page-slowpages" class="copot-page"></div>
+		</div>
+		<!-- 暂无数据 -->
+		<div class="tc" v-if="!listslowpages.length">暂无数据!</div>
+	</div>
+	<!-- 页面慢资源加载 -->
+	<div v-show="lable==4">
+		<table class="table" v-if="isLoadend&&listresources.length">
+			<tr class="light_color">
+				<th>URL</th>
+				<th>资源加载耗时</th>
+				<th>性能类型</th>
+				<th>资源返回大小</th>
+				<th>请求url</th>
+				<th>创建时间</th>
+			</tr>
+			<tr v-for="item in listresources">
+				<td><span><a href="javascript:" @click="gotoSourcesDetail(item)">{{item.resource_datas.name}}</a></span></td>
+				<td class="tc red">{{item.resource_datas.duration|toFixed(true)}}</td>
+				<th class="tc red">{{item.speed_type==1?'正常':'慢'}}</th>
+				<td class="tc">{{item.resource_datas.decodedBodySize|toSize}}</td>
+				<td class="tc">{{item.url|limitTo(50)}}</td>
+				<td class="tc">{{item.create_time|date('/',true)}}</td>
+			</tr>
+		</table>
+	</div>
+	<div v-show="lable==4">
+		<!--  分页 -->
+		<div class="tc common_page_style mt10" v-show="isLoadend&&listresources.length">
+			<div id="copot-page-slowpages" class="copot-page"></div>
+		</div>
+		<!-- 暂无数据 -->
+		<div class="tc" v-if="!listresources.length">暂无数据!</div>
+	</div>
 </div>
 
 <script>
@@ -205,7 +297,11 @@
 				lable:1,
 				pagesItemData: {},
 				listdata: [],
+				listAjax:[],
+				listslowpages:[],
+				listresources:[],
 				pageNo: 1,
+				type:1,
 				pageSize: config.pageSize,
 				totalNum: 0,
 				beginTime: '',
@@ -214,43 +310,77 @@
 				appId: 'D3D9B9AA45B56F6E424F57EFB36B063B',
 				url:'',
 				city:'',
-				isCity: false,
-				isBrowser:false,
-				isSystem:false,
+				browser:'',
+				system:'',
 			}
 		},
 		filters: {
-			toFixed: window.Filter.toFixed
+			toFixed: window.Filter.toFixed,
+			toSize: window.Filter.toSize,
+			date: window.Filter.date,
+			limitTo: window.Filter.limitTo,
 		},
 		mounted() {
 			this.pagesItemData = util.getStorage('session', 'pagesItemData') ? JSON.parse(util.getStorage('session', 'pagesItemData')) : {}
 			this.url = this.pagesItemData._id.url
-
-			let times = util.getSearchTime()
-			this.beginTime = times.beginTime
-			this.endTime = times.endTime
 			
-			this.getDataGroupBy(1);
-			this.getDataGroupBy(2);
-			this.getDataGroupBy(3);
-
-			return;
-			this.getinit();
-			this.searchForTime();
+			this.checkoutLabel(1);
 		},
 		methods: {
 			checkoutLabel(lable) {
 				this.lable = lable;
+				this.isLoadEnd = false
+				this.pageNo = 1
+				this.type = 1;
+				let api = ''
+				let pageName = ''
+
 				if (lable == 1) {
-					this.getinit();
+					if(!this.listdata.length){
+						pageName = '#copot-page-pages'
+						api = 'api/v1/pages/getOnePageList'
+						this.getDataForTime(api, pageName);
+					} 
+					api = 'api/v1/pages/getOnePageList'
 				} else if (lable == 2) {
-				};
+					if(!this.listAjax.length){
+						api = 'api/v1/ajax/getPageAjaxs',
+						pageName = '#copot-page-slowpages'
+						this.getinit(api, pageName);
+					}
+				} else if(lable == 3){
+					if (!this.listslowpages.length) {
+						api = 'api/v1/pages/getPagesForType',
+						pageName = '#copot-page-ajax'
+						this.type = 2;
+						this.getinit(api, pageName);
+					}
+				}else if(lable == 4){
+					if (!this.listresources.length) {
+						api = 'api/v1/resource/getResourceForType',
+						pageName = '#copot-page-slowresources'
+						this.type = 2;
+						this.getinit(api, pageName);
+					}
+				}
 			},
-			getinit() {
+			// 页面性能详情
+			getDataForTime(api, pageName){
+				let times = util.getSearchTime()
+				this.beginTime = times.beginTime
+				this.endTime = times.endTime
+
+				this.getinit(api, pageName);
+				this.searchForTime();
+				this.getDataGroupBy(1);
+				this.getDataGroupBy(2);
+				this.getDataGroupBy(3);
+			},
+			getinit(api, pageName) {
 				this.isLoadend = false;
 				util.ajax({
 					type:'get',
-					url: config.baseApi + 'api/v1/pages/getAveragePageList',
+					url: config.baseApi + api,
 					data: {
 						type:this.type,
 						appId:this.appId,
@@ -259,58 +389,50 @@
 						beginTime: this.beginTime,
 						endTime: this.endTime,
 						url: this.url,
+						type:this.type,
 						city: this.city,
-						isCity: this.isCity,
-						isBrowser: this.isBrowser,
-						isSystem: this.isSystem,
+						browser: this.browser,
+						system: this.system,
 					},
 					success: data => {
 						this.isLoadend = true;
 						if (!data.data.datalist && !data.data.datalist.length) return;
-						this.listdata = data.data.datalist;
+						switch (this.lable) {
+							case 1:
+								this.listdata = data.data.datalist
+								break;
+							case 2:
+								this.listAjax = data.data.datalist
+								break;
+							case 3:
+								this.listslowpages = data.data.datalist
+								break;
+							case 4:
+								this.listresources = data.data.datalist
+								break;
+						}
 						new Page({
-							parent: $("#copot-page"),
+							parent: $(pageName),
 							nowPage: this.pageNo,
 							pageSize: this.pageSize,
 							totalCount: data.data.totalNum,
 							callback: (nowPage, totalPage) => {
 								this.pageNo = nowPage;
-								this.getinit();
+								this.getinit(api, pageName);
 							}
 						});
 					}
 				})
 			},
-			isSelectCity(){
-				this.isCity = !this.isCity;
-				if(!this.isCity) this.city = '';
-				this.getinit();
-			},
-			isSelectBrowser(){
-				this.isBrowser = !this.isBrowser;
-				this.getinit();
-			},
-			isSelectSystem(){
-				this.isSystem = !this.isSystem;
-				this.getinit();
-			},
-			searchForUrl(){
-				this.getinit();
-			},
-			searchForCity(){ 
-				this.isCity = this.city?true:false;
-				this.getinit();
-			},
 			searchForTime(){
 				zaneDate({
 					elem: '#zane-calendar-1',
 					type: 'doubleday',
-					format: 'yyyy/MM/dd HH:mm:ss',
-					showtime: true,
+					format: 'yyyy/MM/dd',
 					done: (fulltime, begintime, endtime) => {
-						this.beginTime = begintime;
-						this.endTime = endtime;
-						this.getinit();
+						this.beginTime = begintime + ' 00:00:00';
+						this.endTime = endtime + ' 23:59:59';
+						this.getinit('api/v1/pages/getOnePageList', '#copot-page-pages');
 					},
 				});
 			},

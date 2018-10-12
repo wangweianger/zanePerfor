@@ -3,7 +3,7 @@
 
 const Service = require('egg').Service;
 
-class PvuvivService extends Service {
+class PagesService extends Service {
 
     // 获得页面性能数据平均值
     async getAveragePageList(ctx) {
@@ -88,6 +88,88 @@ class PvuvivService extends Service {
             pageNo: pageNo,
         };
     }
+
+    // 单个页面性能数据列表
+    async getOnePageList(ctx) {
+        const query = ctx.request.query;
+        const appId = query.appId;
+        let type = query.type || 1;
+        let pageNo = query.pageNo || 1;
+        let pageSize = query.pageSize || this.app.config.pageSize;
+        const beginTime = query.beginTime;
+        const endTime = query.endTime;
+        const url = query.url;
+        const city = query.city;
+        const system = query.system;
+        const browser = query.browser;
+
+        pageNo = pageNo * 1;
+        pageSize = pageSize * 1;
+        type = type * 1;
+
+        // 查询参数拼接
+        const queryjson = { $match: { url: url, app_id: appId, speed_type: type }, }
+        if (city) queryjson.$match.city = city;
+        if (system) queryjson.$match.system = system;
+        if (browser) queryjson.$match.system = browser;
+
+        if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
+
+        console.log(queryjson)
+
+        const lookup = {
+            $lookup: {
+                from: "webenvironments",
+                localField: "mark_page",
+                foreignField: "mark_page",
+                as: "fromItems"
+            }
+        }
+        // 请求总条数
+        const count = await this.ctx.model.Web.WebPages.aggregate([
+            lookup,
+            queryjson,
+        ]).exec();
+        const datas = await this.ctx.model.Web.WebPages.aggregate([
+            lookup,
+            { $replaceRoot: { newRoot: { $mergeObjects: [{ $arrayElemAt: ["$fromItems", 0] }, "$$ROOT"] } } },
+            { $project: { fromItems: 0 } },
+            queryjson,
+            { $skip: (pageNo - 1) * pageSize },
+            { $limit: pageSize },
+            { $sort: { create_time: -1 } },
+        ]).exec();
+
+        return {
+            datalist: datas,
+            totalNum: count.length,
+            pageNo: pageNo,
+        };
+    }
+
+    // 单页页面性能数据列表（简单版本）
+    async getPagesForType(appId, url, speedType, pageNo, pageSize) {
+        pageNo = pageNo * 1;
+        pageSize = pageSize * 1;
+        speedType = speedType * 1;
+
+        // 请求总条数
+        const count = await this.ctx.model.Web.WebPages.aggregate([
+            { $match: { app_id: appId, url: url, speed_type: speedType }, },
+        ]).exec();
+        const datas = await this.ctx.model.Web.WebPages.aggregate([
+            { $match: { app_id: appId, url: url, speed_type: speedType }, },
+            { $skip: (pageNo - 1) * pageSize },
+            { $limit: pageSize },
+            { $sort: { create_time: -1 } },
+        ]).exec();
+
+        return {
+            datalist: datas,
+            totalNum: count.length,
+            pageNo: pageNo,
+        };
+    }
 }
 
-module.exports = PvuvivService;
+module.exports = PagesService;

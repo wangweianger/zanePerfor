@@ -18,7 +18,7 @@
 <div class="com_content_body main pb100" id="pages" v-cloak>
 	<div class="com_top_title">
 		<h1 class="com_h1 fl">{{type==1?'页面性能':'慢资源追踪'}}</h1>
-		<commonsearch :done="getinit"></commonsearch>
+		<commonsearch :done="getDataForTime"></commonsearch>
 	</div>
 	<div class="com_topic mb20 mt20"><span class="iconfont">&#xe63a;</span>统计某一页面的平均访问性能指标。</div>
 	<div>
@@ -112,14 +112,16 @@
 			toFixed: window.Filter.toFixed
 		},
 		mounted() {
-			let times = util.getSearchTime()
-			this.beginTime = times.beginTime
-			this.endTime = times.endTime
-			this.getinit();
-
+			this.getDataForTime();
 			this.searchForTime();
 		},
 		methods: {
+			getDataForTime(){
+				let times = util.getSearchTime()
+				this.beginTime = times.beginTime
+				this.endTime = times.endTime
+				this.getinit();
+			},
 			getinit() {
 				this.isLoadend = false;
 				util.ajax({
@@ -179,11 +181,10 @@
 				zaneDate({
 					elem: '#zane-calendar-1',
 					type: 'doubleday',
-					format: 'yyyy/MM/dd HH:mm:ss',
-					showtime: true,
+					format: 'yyyy/MM/dd',
 					done: (fulltime, begintime, endtime) => {
-						this.beginTime = begintime;
-						this.endTime = endtime;
+						this.beginTime = begintime + ' 00:00:00';
+						this.endTime = endtime + ' 23:59:59';
 						this.getinit();
 					},
 				});

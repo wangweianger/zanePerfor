@@ -2,7 +2,7 @@
 
 const Controller = require('egg').Controller;
 
-class PagesController extends Controller {
+class EnfironmentController extends Controller {
 
     // 获得用户系统、地址位置、浏览器分类
     async getDataGroupBy() {
@@ -25,4 +25,4 @@ class PagesController extends Controller {
     }
 }
 
-module.exports = PagesController;
+module.exports = EnfironmentController;

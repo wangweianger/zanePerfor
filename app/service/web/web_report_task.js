@@ -120,12 +120,14 @@ class DataTimedTaskService extends Service {
         let speedType = 1;
         const duration = parseInt(item.duration || 0);
 
-        if (item.type === 'link') {
+        if (item.type === 'link' || item.type === 'css') {
             slowTime = (system.slow_css_time || 2) * 1000;
         } else if (item.type === 'script') {
             slowTime = (system.slow_js_time || 2) * 1000;
         } else if (item.type === 'img') {
             slowTime = (system.slow_img_time || 2) * 1000;
+        } else {
+            slowTime = 2 * 1000;
         }
 
         speedType = duration >= slowTime ? 2 : 1;
@@ -137,7 +139,7 @@ class DataTimedTaskService extends Service {
         resours.create_time = data.create_time;
         resours.url = data.url;
         resours.speed_type = speedType;
-        resours.resource_datas = JSON.stringify(item);
+        resours.resource_datas = item;
         resours.mark_page = data.mark_page;
         resours.mark_user = data.mark_user;
 

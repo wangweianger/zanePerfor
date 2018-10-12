@@ -3,6 +3,7 @@
 module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
+    const Mixed = Schema.Types.Mixed;
     const conn = app.mongooseDB.get('db3');
 
     const WebResourceSchema = new Schema({
@@ -10,7 +11,7 @@ module.exports = app => {
         create_time: { type: Date, default: Date.now }, // 用户访问时间
         url: { type: String }, // 访问页面的url
         speed_type: { type: Number }, // 访问速度类型 1：正常  2：慢
-        resource_datas: { type: String }, // 页面所有加载资源json字符串
+        resource_datas: { type: Mixed }, // 页面所有加载资源json对象
         mark_page: { type: String }, // 所有资源页面统一标识 html img css js 用户系统信息等
         mark_user: { type: String }, // 统一某一时间段用户标识
     });

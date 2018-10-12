@@ -209,8 +209,8 @@ table.table tr:nth-child(odd){
     flex-direction: row;
     height:40px;
     align-items: center;
-    font-size:16px;
-    color:#9a9a9a;
+    font-size: 14px;
+    color: #333;
     position: relative;
 }
 .com_slide_tab_x:after{
@@ -239,6 +239,9 @@ table.table tr:nth-child(odd){
     height:2px;
     background:#8776f7;
     display: none;
+}
+.com_slide_tab_x .active{
+    color:#8776f7;
 }
 .com_slide_tab_x .active:after{
     display:block;

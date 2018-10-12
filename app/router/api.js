@@ -3,7 +3,7 @@
 module.exports = app => {
     const apiV1Router = app.router.namespace('/api/v1/');
     const { controller } = app;
-    const { report, system, pvuvip, pages, environment } = controller.api;
+    const { report, system, pvuvip, pages, environment, ajax, resource } = controller.api;
 
     // ----------------浏览器端script脚本获取---------------
     apiV1Router.get('report/webscript', report.getWebScript);
@@ -32,10 +32,21 @@ module.exports = app => {
     // ----------------页面性能分析---------------
     // 平均列表
     apiV1Router.get('pages/getAveragePageList', pages.getAveragePageList);
+    // 单个页面性能列表
+    apiV1Router.get('pages/getOnePageList', pages.getOnePageList);
+    // 单个页面性能列表（简单版本）
+    apiV1Router.get('pages/getPagesForType', pages.getPagesForType);
 
     // ----------------用户系统位置ip等信息---------------
     // 获得用户系统、地址位置、浏览器分类
     apiV1Router.get('environment/getDataGroupBy', environment.getDataGroupBy);
+
+    // -------------------ajax-----------------------------
+    apiV1Router.get('ajax/getPageAjaxs', ajax.getPageAjaxs);
+
+    // -------------------resource资源-----------------------------
+    apiV1Router.get('resource/getResourceForType', resource.getResourceForType);
+
 
     // const apiV1Router = app.router.namespace('/api/v1');
     // const { controller, middleware } = app;
