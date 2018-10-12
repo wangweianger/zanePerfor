@@ -61,9 +61,9 @@
 				<th>页面准备时间</th>
 			</tr>
 			<tr v-for="item in listdata">
-				<td><a href="">{{item._id.url}}</a></td>
+				<td><a href="javascript:" @click="goToList(item)">{{item._id.url}}</a></td>
 				<td class="tc" >{{item.count}}</td>
-				<td class="tc" v-if="isCity">{{item._id.city}}</td>
+				<td class="tc" v-if="isCity">{{item._id.city||'未知'}}</td>
 				<td class="tc" v-if="isBrowser">{{item._id.browser}}</td>
 				<td class="tc" v-if="isSystem">{{item._id.system}}</td>
 				<td class="red tc">{{item.load_time|toFixed(true)}}</td>
@@ -188,13 +188,13 @@
 					},
 				});
 			},
-			gotodetail(item) {
-				if (this.slow && this.slow == 'slow') {
+			goToList(item) {
+				if (this.type && this.slow == 2) {
 					util.setStorage('session', 'slowpagesItemData', JSON.stringify(item))
 					location.href = "/slowpages/detail?type=zane"
 				} else {
 					util.setStorage('session', 'pagesItemData', JSON.stringify(item))
-					location.href = "/pages/detail?type=zane"
+					location.href = "/web/pageslist"
 				}
 			}
 		}

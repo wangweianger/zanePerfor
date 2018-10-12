@@ -8,10 +8,12 @@ module.exports = app => {
     router.get('/', home.systemlist);
 
     // ------------------------------浏览器-------------------------------
-    // web浏览器端首页
+    // 首页pvuvip数据统计
     router.get('/web/home', home.webhome);
 
-    // web浏览器访问页面
-    router.get('/web/pages', home.webpages);
+    // 访问页面平均性能
+    router.get('/web/pagesavg', home.webpagesavg);
 
+    // 单页面访问页面列表性能
+    router.get('/web/pageslist', home.webpageslist);
 };

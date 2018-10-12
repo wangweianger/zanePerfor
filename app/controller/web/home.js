@@ -24,11 +24,21 @@ class HomeController extends Controller {
     }
 
     // 访问页面性能数据
-    async webpages() {
+    async webpagesavg() {
         const { ctx } = this;
-        await ctx.render('web/pages', {
+        await ctx.render('web/pagesavg', {
             data: {
-                title: '页面性能数据',
+                title: '页面平均性能指标',
+            },
+        });
+    }
+
+    // 单页面访问页面列表性能
+    async webpageslist() {
+        const { ctx } = this;
+        await ctx.render('web/pageslist', {
+            data: {
+                title: '页面性能数据列表',
             },
         });
     }

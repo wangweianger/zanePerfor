@@ -32,7 +32,7 @@ module.exports = () => {
     config.BAIDUAK = '36UI4dIyIfCVKQWW7hoeSIuM';
 
     // 分页条数
-    config.pageSize = 20;
+    config.pageSize = 50;
 
     // ejs模板
     config.view = {
