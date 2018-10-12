@@ -183,8 +183,8 @@
 					type: 'doubleday',
 					format: 'yyyy/MM/dd',
 					done: (fulltime, begintime, endtime) => {
-						this.beginTime = begintime + ' 00:00:00';
-						this.endTime = endtime + ' 23:59:59';
+						this.beginTime = begintime ? begintime + ' 00:00:00' : '';
+						this.endTime = endtime ? endtime + ' 23:59:59' : '';
 						this.getinit();
 					},
 				});

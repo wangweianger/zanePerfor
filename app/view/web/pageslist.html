@@ -143,7 +143,7 @@
 					<input class="inp w-200" v-model="city" placeholder="选填、输入城市名字查询" type="text">
 					<input class="inp w-200 ml20" v-model="browser" placeholder="选填、输入浏览器名称查询" type="text">
 					<input class="inp w-200 ml20" v-model="system" placeholder="选填、输入系统名称查询" type="text">
-					<button class="btn btn-default" @click="getinit">搜索</button>
+					<button class="btn btn-default" @click="checkoutLabel(1,true)">搜索</button>
 				</div>
 			</div>
 		</div>
@@ -327,7 +327,7 @@
 			this.checkoutLabel(1);
 		},
 		methods: {
-			checkoutLabel(lable) {
+			checkoutLabel(lable,type) {
 				this.lable = lable;
 				this.isLoadEnd = false
 				this.pageNo = 1
@@ -336,7 +336,7 @@
 				let pageName = ''
 
 				if (lable == 1) {
-					if(!this.listdata.length){
+					if(!this.listdata.length || type){
 						pageName = '#copot-page-pages'
 						api = 'api/v1/pages/getOnePageList'
 						this.getDataForTime(api, pageName);
@@ -430,8 +430,8 @@
 					type: 'doubleday',
 					format: 'yyyy/MM/dd',
 					done: (fulltime, begintime, endtime) => {
-						this.beginTime = begintime + ' 00:00:00';
-						this.endTime = endtime + ' 23:59:59';
+						this.beginTime = begintime ? begintime + ' 00:00:00' : '';
+						this.endTime = endtime ? endtime + ' 23:59:59' : '';
 						this.getinit('api/v1/pages/getOnePageList', '#copot-page-pages');
 					},
 				});
