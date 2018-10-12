@@ -167,7 +167,7 @@
 				<th>操作</th>
 			</tr>
 			<tr v-for="item in listdata">
-				<td><a href="">{{item.url}}</a></td>
+				<td><a :href="'/web/pagesdetails?id='+item._id">{{item.url}}</a></td>
 				<td class="tc" v-if="city">{{item._id.city||'未知'}}</td>
 				<td class="tc" v-if="browser">{{item._id.browser}}</td>
 				<td class="tc" v-if="system">{{item._id.system}}</td>
@@ -181,7 +181,7 @@
 				<td class="tc">{{item.unload_time|toFixed}}</td>
 				<td class="tc">{{item.request_time|toFixed}}</td>
 				<td class="tc">{{item.ready_time|toFixed}}</td>
-				<td class="tc"><a href="">详情</a></td>
+				<td class="tc"><a :href="'/web/pagesdetails?id='+item._id">详情</a></td>
 			</tr>
 		</table>
 	</div>

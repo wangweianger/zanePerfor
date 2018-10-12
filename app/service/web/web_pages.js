@@ -170,6 +170,11 @@ class PagesService extends Service {
             pageNo: pageNo,
         };
     }
+
+    // 单个页面详情
+    async getPageDetails(appId, id) {
+        return await this.ctx.model.Web.WebPages.findOne({ app_id: appId, _id: id }).exec();
+    }
 }
 
 module.exports = PagesService;

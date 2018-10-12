@@ -54,6 +54,23 @@ class PagesController extends Controller {
             data: result,
         });
     }
+
+    // 单个页面详情
+    async getPageDetails() {
+        const { ctx } = this;
+        const query = ctx.request.query;
+        const appId = query.appId;
+        const id = query.id;
+
+        if (!appId) throw new Error('单个页面详情：appId不能为空');
+        if (!id) throw new Error('单个页面详情：id不能为空');
+
+        const result = await ctx.service.web.webPages.getPageDetails(appId, id);
+
+        ctx.body = this.app.result({
+            data: result,
+        });
+    }
 }
 
 module.exports = PagesController;

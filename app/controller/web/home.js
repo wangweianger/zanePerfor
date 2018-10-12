@@ -42,6 +42,15 @@ class HomeController extends Controller {
             },
         });
     }
+
+    async webpagedetails() {
+        const { ctx } = this;
+        await ctx.render('web/pagedetails', {
+            data: {
+                title: '页面性能详情数据',
+            },
+        });
+    }
 }
 
 module.exports = HomeController;

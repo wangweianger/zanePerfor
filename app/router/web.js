@@ -16,4 +16,7 @@ module.exports = app => {
 
     // 单页面访问页面列表性能
     router.get('/web/pageslist', home.webpageslist);
+
+    // 单个页面详情
+    router.get('/web/pagesdetails', home.webpagedetails);
 };

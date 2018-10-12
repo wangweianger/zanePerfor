@@ -23,6 +23,23 @@ class EnfironmentController extends Controller {
             data: result,
         });
     }
+
+    // 根据mark_page获得用户系统信息
+    async getEnvironmentForPage() {
+        const { ctx } = this;
+        const query = ctx.request.query;
+        const appId = query.appId;
+        const markPage = query.markPage;
+
+        if (!appId) throw new Error('根据mark_page获得用户系统信息：appId不能为空');
+        if (!markPage) throw new Error('根据mark_page获得用户系统信息：markPage不能为空');
+
+        const result = await ctx.service.web.webEnvironment.getEnvironmentForPage(appId, markPage);
+
+        ctx.body = this.app.result({
+            data: result,
+        });
+    }
 }
 
 module.exports = EnfironmentController;

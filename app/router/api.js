@@ -36,10 +36,14 @@ module.exports = app => {
     apiV1Router.get('pages/getOnePageList', pages.getOnePageList);
     // 单个页面性能列表（简单版本）
     apiV1Router.get('pages/getPagesForType', pages.getPagesForType);
+    // 单个页面详情
+    apiV1Router.get('pages/getPageDetails', pages.getPageDetails);
 
     // ----------------用户系统位置ip等信息---------------
     // 获得用户系统、地址位置、浏览器分类
     apiV1Router.get('environment/getDataGroupBy', environment.getDataGroupBy);
+    // 根据mark_page获得用户系统信息
+    apiV1Router.get('environment/getEnvironmentForPage', environment.getEnvironmentForPage);
 
     // -------------------ajax-----------------------------
     apiV1Router.get('ajax/getPageAjaxs', ajax.getPageAjaxs);
