@@ -50,6 +50,10 @@ module.exports = app => {
     apiV1Router.get('ajax/getPageAjaxs', ajax.getPageAjaxs);
     // 获得ajax平均性能列表
     apiV1Router.get('ajax/getAverageAjaxList', ajax.getAverageAjaxList);
+    // 获得单个api的平均性能数据
+    apiV1Router.get('ajax/getOneAjaxAvg', ajax.getOneAjaxAvg);
+    // 获得单个api的性能列表数据
+    apiV1Router.get('ajax/getOneAjaxList', ajax.getOneAjaxList);
 
     // -------------------resource资源-----------------------------
     apiV1Router.get('resource/getResourceForType', resource.getResourceForType);

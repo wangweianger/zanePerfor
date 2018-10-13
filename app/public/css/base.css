@@ -46,14 +46,14 @@ iframe { display: none; }
 .lightcolor{color:#999;}
 .maincolor{color:#A79AFE;}
 .tipscolor{color:#e15f63;font-size:14px;}
-.red{color:red;}
+.red{color:red!important;}
 .tc{text-align:center;}
 .bold{font-weight:bold;}
 
 .fl{float:left;}
 .fr{float:right;}
 
-.w-100{width:100px!important;;}
+.w-100{width:100px!important;}
 .w-200{width:200px!important;}
 .w-300{width:300px!important;}
 

@@ -25,4 +25,7 @@ module.exports = app => {
 
     // ajax平均性能列表
     router.get('/web/ajaxavg', home.webajaxavg);
+
+    // ajax详情列表
+    router.get('/web/ajaxdetail', home.webajaxdetailg);
 };

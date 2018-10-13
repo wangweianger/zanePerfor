@@ -52,6 +52,7 @@ class HomeController extends Controller {
         });
     }
 
+    // 慢页面列表
     async webslowpageslist() {
         const { ctx } = this;
         await ctx.render('web/slowpageslist', {
@@ -67,6 +68,16 @@ class HomeController extends Controller {
         await ctx.render('web/ajaxavg', {
             data: {
                 title: 'ajax平均性能指标',
+            },
+        });
+    }
+
+    // ajax详情
+    async webajaxdetailg() {
+        const { ctx } = this;
+        await ctx.render('web/ajaxdetail', {
+            data: {
+                title: 'ajax详情',
             },
         });
     }

@@ -106,6 +106,46 @@ class AjaxsService extends Service {
             pageNo: pageNo,
         };
     }
+
+    // 获得单个api的平均性能数据
+    async getOneAjaxAvg(appId, url) {
+        const datas = await this.ctx.model.Web.WebAjaxs.aggregate([
+            { $match: { app_id: appId, url: url }, },
+            {
+                $group: {
+                    _id: null,
+                    count: { $sum: 1 },
+                    duration: { $avg: "$duration" },
+                    body_size: { $avg: "$decoded_body_size" },
+                }
+            },
+        ]).exec();
+
+        return datas && datas.length ? datas[0] : {};
+    }
+
+    // 获得单个api的性能列表数据
+    async getOneAjaxList(appId, url, pageNo, pageSize) {
+        pageNo = pageNo * 1;
+        pageSize = pageSize * 1;
+
+        // 请求总条数
+        const count = await this.ctx.model.Web.WebAjaxs.aggregate([
+            { $match: { app_id: appId, url: url }, },
+        ]).exec();
+        const datas = await this.ctx.model.Web.WebAjaxs.aggregate([
+            { $match: { app_id: appId, url: url }, },
+            { $skip: (pageNo - 1) * pageSize },
+            { $limit: pageSize },
+            { $sort: { create_time: -1 } },
+        ]).exec();
+
+        return {
+            datalist: datas,
+            totalNum: count.length,
+            pageNo: pageNo,
+        };
+    }
 }
 
 module.exports = AjaxsService;

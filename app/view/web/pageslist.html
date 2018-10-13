@@ -243,7 +243,7 @@
 			<tr v-for="item in listslowpages">
 				<td><a href='' :title="item.url">{{item.url|limitTo(40)}}</a></td>
 				<td class="tc red">{{item.load_time|toFixed(true)}}</td>
-				<th class="tc red">{{item.speed_type==1?'正常':'慢'}}</th>
+				<td class="tc red">{{item.speed_type==1?'正常':'慢'}}</td>
 				<td class="tc">{{item.white_time|toFixed}}</td>
 				<td class="tc">{{item.dom_time|toFixed}}</td>
 				<td class="tc">{{item.analysisDom_time|toFixed}}</td>

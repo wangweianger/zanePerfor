@@ -190,13 +190,7 @@
 				});
 			},
 			goToList(item) {
-				if (this.type && this.type == 2) {
-					util.setStorage('session', 'slowpagesItemData', JSON.stringify(item))
-					location.href = "/web/slowpageslist"
-				} else {
-					util.setStorage('session', 'pagesItemData', JSON.stringify(item))
-					location.href = "/web/pageslist"
-				}
+				location.href = "/web/ajaxdetail?url="+ encodeURIComponent(item._id.url);
 			}
 		}
 	})
