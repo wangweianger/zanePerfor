@@ -56,7 +56,14 @@ module.exports = app => {
     apiV1Router.get('ajax/getOneAjaxList', ajax.getOneAjaxList);
 
     // -------------------resource资源-----------------------------
+    // 根据资源类型获得数据
     apiV1Router.get('resource/getResourceForType', resource.getResourceForType);
+    // 获得resource平均性能列表
+    apiV1Router.get('resource/getAverageResourceList', resource.getAverageResourceList);
+    // 获得单个resource的平均性能数据
+    apiV1Router.get('resource/getOneResourceAvg', resource.getOneResourceAvg);
+    // 获得单个resource的性能列表数据
+    apiV1Router.get('resource/getOneResourceList', resource.getOneResourceList);
 
 
     // const apiV1Router = app.router.namespace('/api/v1');

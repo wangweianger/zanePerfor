@@ -129,12 +129,25 @@ class AjaxsService extends Service {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
 
+        const lookup = {
+            $lookup: {
+                from: "webenvironments",
+                localField: "mark_page",
+                foreignField: "mark_page",
+                as: "fromItems"
+            }
+        }
+
         // 请求总条数
         const count = await this.ctx.model.Web.WebAjaxs.aggregate([
             { $match: { app_id: appId, url: url }, },
+            lookup,
         ]).exec();
         const datas = await this.ctx.model.Web.WebAjaxs.aggregate([
             { $match: { app_id: appId, url: url }, },
+            lookup,
+            { $replaceRoot: { newRoot: { $mergeObjects: [{ $arrayElemAt: ["$fromItems", 0] }, "$$ROOT"] } } },
+            { $project: { fromItems: 0 } },
             { $skip: (pageNo - 1) * pageSize },
             { $limit: pageSize },
             { $sort: { create_time: -1 } },

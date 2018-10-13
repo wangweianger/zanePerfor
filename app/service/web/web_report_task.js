@@ -139,7 +139,12 @@ class DataTimedTaskService extends Service {
         resours.create_time = data.create_time;
         resours.url = data.url;
         resours.speed_type = speedType;
-        resours.resource_datas = item;
+        resours.name = item.name;
+        resours.method = item.method;
+        resours.type = item.type;
+        resours.duration = item.duration;
+        resours.decoded_body_size = item.decodedBodySize;
+        resours.next_hop_protocol = item.nextHopProtocol;
         resours.mark_page = data.mark_page;
         resours.mark_user = data.mark_user;
 

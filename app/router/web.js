@@ -28,4 +28,10 @@ module.exports = app => {
 
     // ajax详情列表
     router.get('/web/ajaxdetail', home.webajaxdetailg);
+
+    // 慢资源列表
+    router.get('/web/resourceavg', home.webresourceavg);
+
+    // 慢资源详情
+    router.get('/web/resourcedetail', home.webresourcedetail);
 };

@@ -59,12 +59,12 @@
 		padding: 20px;
 		margin: 20px 0; 
 	}
-	.charts h1 {
-		font-size: 18px; 
-	}
 	.charts .com_h2{
 		font-weight:400;
 		font-size: 20px; 
+	}
+	.charts h1 {
+		font-size: 18px; 
 	}
 	.charts-pages {
 		width: 100%;
@@ -73,13 +73,13 @@
 </style>
 <div class="com_content_body main pb100" id="pages" v-cloak>
 	<div class="com_top_title">
-		<h1 class="com_h1 fl">AJAX性能详情</h1>
+		<h1 class="com_h1 fl">慢资源性能详情</h1>
 		<commonsearch></commonsearch>
 	</div>
 	<!-- 页面平均耗时说明 -->
 	<div class="block-time" mt20>
 		<li class="li1">
-			<h1>AJAX响应平均耗时</h1>
+			<h1>慢资源响应平均耗时</h1>
 			<h2 class="red">{{detail.duration|toFixed}}</h2>
 		</li>
 		<li class="li2">
@@ -91,12 +91,8 @@
 			<h2>{{detail.body_size|toSize}}</h2>
 		</li>
 	</div>
-	<!-- charts -->
 	<div class="charts">
-		<div id="charts-pages" class="charts-pages"></div>
-	</div>
-	<div class="charts">
-		<h1 class="com_h2 mb20">AJAX性能列表</h1>
+		<h1 class="com_h2 mb20">慢资源性能列表</h1>
 		<!-- table列表 -->
 		<table class="table" v-if="isLoadend&&listdata.length">
 			<tr class="light_color">
@@ -104,11 +100,12 @@
 				<th>请求方式</th>
 				<th>请求耗时</th>
 				<th>返回资源大小</th>
+				<th>资源类型</th>
 				<th>来源城市</th>
 				<th>浏览器</th>
 				<th>操作系统</th>
-				<th>请求参数</th>
 				<th>调用页面</th>
+				<th>HTTP协议</th>
 				<th>请求时间</th>
 			</tr>
 			<tr v-for="item in listdata">
@@ -116,11 +113,12 @@
 				<td class="tc">{{item.method}}</td>
 				<td class="red tc">{{item.duration|toFixed}}</td>
 				<td class="tc">{{item.decoded_body_size|toSize}}</td>
+				<td class="tc">{{item.type}}</td>
 				<td class="tc">{{item.city||'未知'}}</td>
 				<td class="tc">{{item.browser}}</td>
 				<td class="tc">{{item.system}}</td>
-				<td class="tc">{{item.query_datas}}</td>
-				<td class="tc">{{item.call_url}}</td>
+				<td class="tc">{{item.url}}</td>
+				<td class="tc">{{item.next_hop_protocol}}</td>
 				<td class="tc">{{item.create_time|date('/',true)}}</td>
 			</tr>
 		</table>
@@ -156,14 +154,14 @@
 			date: window.Filter.date,
 		},
 		mounted() {
-			this.getOneAjaxAvg();
-			this.getOneAjaxList();
+			this.getOneResourceAvg();
+			this.getOneResourceList();
 		},
 		methods: {
-			getOneAjaxAvg(){
+			getOneResourceAvg(){
 				util.ajax({
 					type: 'get',
-					url: config.baseApi + 'api/v1/ajax/getOneAjaxAvg',
+					url: config.baseApi + 'api/v1/resource/getOneResourceAvg',
 					data: {
 						appId: this.appId,
 						url: this.url,
@@ -173,11 +171,11 @@
 					}
 				})
 			},
-			getOneAjaxList() {
+			getOneResourceList() {
 				this.isLoadend = false;
 				util.ajax({
 					type:'get',
-					url: config.baseApi + 'api/v1/ajax/getOneAjaxList',
+					url: config.baseApi + 'api/v1/resource/getOneResourceList',
 					data: {
 						appId:this.appId,
 						pageNo: this.pageNo,
@@ -198,86 +196,9 @@
 								this.getOneAjaxList();
 							}
 						});
-						this.charts();
 					}
 				})
 			},
-			charts() {
-				let datas = this.listdata;
-				let xAxisData = []
-				let seriesData = []
-
-				datas.forEach(item => {
-					xAxisData.push(new Date(item.create_time).format('hh:mm:ss'))
-					seriesData.push({
-						value: item.duration,
-						name: new Date(item.create_time).format('yyyy/MM/dd hh:mm:ss'),
-					})
-				})
-
-				var myChart = echarts.init(document.getElementById('charts-pages'));
-				var option = {
-					title: {
-						text: 'AJAX性能分析表(单位ms)'
-					},
-					grid: {
-						top: 50,
-						bottom: 50,
-						left: 40,
-						right: 10,
-						borderWidth: 0,
-					},
-					tooltip: {
-						formatter: "{a} : {c}"
-					},
-					color: ['#8776f7'],
-					xAxis: {
-						data: xAxisData,
-						splitLine: {
-							show: false,
-						},
-						axisTick: {
-							show: true,
-							lineStyle: {
-								color: '#eee',
-							}
-						},
-						axisLabel: {
-							show: true,
-							textStyle: {
-								color: '#B7B7B7',
-								fontSize: 10,
-							},
-						},
-					},
-					yAxis: {
-						type: 'value',
-						axisLabel: {
-							show: true,
-							textStyle: {
-								color: '#B7B7B7',
-							}
-						},
-						splitLine: {
-							show: true,
-							lineStyle: {
-								type: 'dashed',
-								color: '#eee',
-								width: 1,
-							}
-						},
-						axisLine: {
-							show: false,
-						},
-					},
-					series: [{
-						name: 'AJAX性能',
-						type: 'bar',
-						data: seriesData,
-					}]
-				};
-				myChart.setOption(option);
-			}
 		}
 	})
 </script>

@@ -81,6 +81,26 @@ class HomeController extends Controller {
             },
         });
     }
+
+    // 慢资源列表
+    async webresourceavg() {
+        const { ctx } = this;
+        await ctx.render('web/resourceavg', {
+            data: {
+                title: '慢资源平均性能指标',
+            },
+        });
+    }
+
+    // 慢资源详情
+    async webresourcedetail() {
+        const { ctx } = this;
+        await ctx.render('web/resourcedetail', {
+            data: {
+                title: '慢资源详情',
+            },
+        });
+    }
 }
 
 module.exports = HomeController;

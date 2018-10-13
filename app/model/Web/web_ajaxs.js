@@ -11,8 +11,8 @@ module.exports = app => {
         url: { type: String }, // 访问的ajaxUrl
         speed_type: { type: Number }, // 访问速度类型 1：正常  2：慢
         method: { type: String }, // 资源请求方式
-        duration: { type: Number }, // AJAX响应时间 单位：ms
-        decoded_body_size: { type: Number }, // 返回字段大小  单位：B
+        duration: { type: Number, default: 0 }, // AJAX响应时间 单位：ms
+        decoded_body_size: { type: Number, default: 0 }, // 返回字段大小  单位：B
         call_url: { type: String }, // 调用页面的URL
         mark_page: { type: String }, // 所有资源页面统一标识 html img css js 用户系统信息等
         mark_user: { type: String }, // 统一某一时间段用户标识

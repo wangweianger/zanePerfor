@@ -17,20 +17,16 @@
 </style>
 <div class="com_content_body main pb100" id="pages" v-cloak>
 	<div class="com_top_title">
-		<h1 class="com_h1 fl">AJAX性能</h1>
+		<h1 class="com_h1 fl">慢资源性能</h1>
 		<commonsearch :done="getDataForTime"></commonsearch>
 	</div>
-	<div class="com_topic mb20 mt20"><span class="iconfont">&#xe63a;</span>统计某一个接口的平均访问性能指标。</div>
-	<div class="com_slide_tab_x mt30 mb30">
-		<div class="item" :class="{'active':type==1}" @click="checkoutLabel(1)">响应速度正常</div>
-		<div class="item" :class="{'active':type==2}" @click="checkoutLabel(2)">响应速度缓慢</div>
-	</div>
+	<div class="com_topic mb20 mt20"><span class="iconfont">&#xe63a;</span>统计某一个资源的平均访问性能指标。</div>
 	<div>
 		<!-- 公共搜索条件 -->
 		<div class="com_search">
 			<div class="item">
 				<div>
-					<input class="inp" v-model="url" placeholder="选填、输入API名称" type="text">
+					<input class="inp" v-model="url" placeholder="选填、输入资源名称" type="text">
 					<button class="btn btn-default" @click="searchForUrl">搜索</button>
 				</div>
 				<div class="ml30">
@@ -92,7 +88,7 @@
 				endTime: '',
 				isLoadend: false,
 				appId: 'D3D9B9AA45B56F6E424F57EFB36B063B',
-				type: 1, //访问速度类型 1：正常  2：慢
+				type: 2, //访问速度类型 1：正常  2：慢
 				url:'',
 				city:'',
 				isCity: false,
@@ -126,7 +122,7 @@
 				this.isLoadend = false;
 				util.ajax({
 					type:'get',
-					url: config.baseApi + 'api/v1/ajax/getAverageAjaxList',
+					url: config.baseApi + 'api/v1/resource/getAverageResourceList',
 					data: {
 						type:this.type,
 						appId:this.appId,
@@ -190,7 +186,7 @@
 				});
 			},
 			goToList(item) {
-				location.href = "/web/ajaxdetail?url="+ encodeURIComponent(item._id.url);
+				location.href = "/web/resourcedetail?url="+ encodeURIComponent(item._id.url);
 			}
 		}
 	})
