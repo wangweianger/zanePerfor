@@ -51,6 +51,25 @@ class HomeController extends Controller {
             },
         });
     }
+
+    async webslowpageslist() {
+        const { ctx } = this;
+        await ctx.render('web/slowpageslist', {
+            data: {
+                title: '页面性能数据列表',
+            },
+        });
+    }
+
+    // ajax请求平均性能数据
+    async webajaxavg() {
+        const { ctx } = this;
+        await ctx.render('web/ajaxavg', {
+            data: {
+                title: 'ajax平均性能指标',
+            },
+        });
+    }
 }
 
 module.exports = HomeController;

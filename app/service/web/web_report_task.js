@@ -66,7 +66,7 @@ class DataTimedTaskService extends Service {
         pages.redirect_time = performance.rdit;
         pages.unload_time = performance.uodt;
         pages.request_time = performance.reqt;
-        pages.analysisDom_time = performance.domt;
+        pages.analysisDom_time = performance.andt;
         pages.ready_time = performance.radt;
         pages.screenwidth = item.screenwidth;
         pages.screenheight = item.screenheight;

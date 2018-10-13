@@ -46,7 +46,10 @@ module.exports = app => {
     apiV1Router.get('environment/getEnvironmentForPage', environment.getEnvironmentForPage);
 
     // -------------------ajax-----------------------------
+    // 根据url获得ajax信息
     apiV1Router.get('ajax/getPageAjaxs', ajax.getPageAjaxs);
+    // 获得ajax平均性能列表
+    apiV1Router.get('ajax/getAverageAjaxList', ajax.getAverageAjaxList);
 
     // -------------------resource资源-----------------------------
     apiV1Router.get('resource/getResourceForType', resource.getResourceForType);

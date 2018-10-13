@@ -22,6 +22,21 @@ class AjaxsController extends Controller {
             data: result,
         });
     }
+
+    // 平均AJAX性能列表
+    async getAverageAjaxList() {
+        const { ctx } = this;
+        const query = ctx.request.query;
+        const appId = query.appId;
+
+        if (!appId) throw new Error('平均AJAX性能列表：appId不能为空');
+
+        const result = await ctx.service.web.webAjaxs.getAverageAjaxList(ctx);
+
+        ctx.body = this.app.result({
+            data: result,
+        });
+    }
 }
 
 module.exports = AjaxsController;

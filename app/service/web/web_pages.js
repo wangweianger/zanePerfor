@@ -26,7 +26,7 @@ class PagesService extends Service {
 
         // 查询参数拼接
         const queryjson = { $match: { app_id: appId, speed_type: type }, }
-        if (url) queryjson.$match.url = url;
+        if (url) queryjson.$match.url = { $regex: new RegExp(url, 'i') };
         if (city) queryjson.$match.city = city;
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 

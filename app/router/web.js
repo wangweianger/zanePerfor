@@ -19,4 +19,10 @@ module.exports = app => {
 
     // 单个页面详情
     router.get('/web/pagesdetails', home.webpagedetails);
+
+    // 单页面慢性能列表
+    router.get('/web/slowpageslist', home.webslowpageslist);
+
+    // ajax平均性能列表
+    router.get('/web/ajaxavg', home.webajaxavg);
 };

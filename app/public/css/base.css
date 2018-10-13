@@ -55,6 +55,7 @@ iframe { display: none; }
 
 .w-100{width:100px!important;;}
 .w-200{width:200px!important;}
+.w-300{width:300px!important;}
 
 /****阿里icon*****/
 @font-face {
@@ -83,21 +84,16 @@ table.table tr th{
     height:40px;
     font-weight:300;
     padding:8px;
+    background: #f4f4f4;
 }
 table.table tr td{
     font-size:13px;
     border:solid 1px #eee;
     padding:8px;
 }
-table.table tr th:nth-child(odd){
+/* table.table tr:nth-child(odd){
     background: #f7f9fa; 
-}
-table.table tr th:nth-child(even){
-    background: #f4f4f4; 
-}
-table.table tr:nth-child(odd){
-    background: #f7f9fa; 
-}
+} */
 .inp{
     height:35px;
     border:solid 1px #eee;

@@ -57,6 +57,74 @@
 	.block-time .top-width {
 		width: 100% !important; 
 	}
+	.sources-list {
+		background: #fff;
+		margin: 15px;
+		border-radius: 3px;
+		padding: 20px; 
+	}
+	.sources-list .h1 {
+		font-size: 22px;
+		padding-bottom: 10px;
+		margin-bottom: 10px; 
+		font-weight:300;
+	}
+	.sources-list li {
+		height: 35px;
+		width: 100%;
+		background: #f4f4f4;
+		line-height: 35px;
+		padding-left: 10px;
+		position: relative;
+		margin-bottom: 10px; 
+	}
+	.sources-list li:nth-child(odd) {
+		background: #f9f9f9; 
+	}
+	.sources-list li:nth-child(even) {
+		background: #eee; 
+	}
+	.sources-list li .bili {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 300px;
+		height: 35px;
+		background: #ffeb3b; 
+	}
+	.sources-list li .bili.color1 {
+		background: #3aa3f7; 
+	}
+	.sources-list li .bili.color2 {
+		background: #25cc4e; 
+	}
+	.sources-list li .bili.color3 {
+		background: #dacd5c; 
+	}
+	.sources-list li .bili.color4 {
+		background: #cddc39; 
+	}
+	.sources-list li .s1 {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 35px;
+		z-index: 10; 
+	}
+	.sources-list li .s1 span {
+		display: inline-block;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis; 
+	}
+	.sources-list li .s1 span.name {
+		width: 30%;
+		padding-left: 10px; 
+	}
+	.sources-list li .s1 span.type {
+		width: 150px; 
+	}
 </style>
 <div class="com_content_body main pb100" id="pages" v-cloak>
 	<div class="com_top_title">
@@ -140,6 +208,20 @@
 			</ul>
 		</div>
 	</div>
+	<!-- 资源请求列表 -->
+	<div class="sources-list">
+		<h1 class="h1">页面资源请求详情信息 <span class="fr">资源总耗时：{{totalTime|toFixed(true)}}</span></h1>
+		<li v-for="item in sourceslist">
+			<span class="bili" :class="[{'color1':item.type==='css','color2':item.type==='img','color3':item.type==='xmlhttprequest','color4':item.type==='script'}]"
+			 :style="{'width':item.proportion+'%'}"></span>
+			<div class="s1">
+				<span class="name" :title="item.name">{{item.name}}</span>
+				<span class="type" :title="item.type">{{item.type}}</span>
+				<span class="type red">{{item.duration|toFixed}}</span>
+				<span class="type">{{item.decodedBodySize|toSize}}</span>
+			</div>
+		</li>
+	</div>
 </div>
 
 <script>
@@ -152,6 +234,8 @@
 				isLoadend: false,
 				id: util.getQueryString('id')||'',
 				appId: 'D3D9B9AA45B56F6E424F57EFB36B063B',
+				sourceslist:[],
+				totalTime:0,
 			}
 		},
 		filters: {
@@ -176,6 +260,18 @@
 					success: data => {
 						this.isLoadend = true;
 						this.datas = data.data;
+						let sourceslist = data.data.resource_list;
+						if(sourceslist.length){
+							sourceslist.forEach(item=>{
+								this.totalTime+=parseFloat(item.duration);
+							})
+							sourceslist.forEach(item=>{
+								let duration = parseFloat(item.duration);
+								item.proportion = (duration/this.totalTime)*100 + 0.1;
+							})
+							this.sourceslist = sourceslist;
+						}
+						
 
 						this.getPageEnvironment(data.data.mark_page)
 					}
