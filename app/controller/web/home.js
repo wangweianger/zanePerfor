@@ -101,6 +101,16 @@ class HomeController extends Controller {
             },
         });
     }
+
+    // 错误分类列表
+    async weberroravg() {
+        const { ctx } = this;
+        await ctx.render('web/erroravg', {
+            data: {
+                title: '错误分类列表',
+            },
+        });
+    }
 }
 
 module.exports = HomeController;

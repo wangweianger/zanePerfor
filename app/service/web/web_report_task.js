@@ -175,6 +175,8 @@ class DataTimedTaskService extends Service {
             errors.querydata = querydata;
             errors.method = item.method;
             errors.fullurl = item.data.resourceUrl;
+            errors.mark_page = data.mark_page;
+            errors.mark_user = data.mark_user;
 
             errors.save();
         });

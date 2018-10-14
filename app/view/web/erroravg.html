@@ -1,0 +1,197 @@
+<% include ./side.html %>
+<style scoped>
+	.com_top_title:after{
+		content:'';
+		display:block;
+		clear:both;
+	}
+	table.table{
+		background:#fff;
+	}
+	table.table .light_color th{
+		font-weight:400;
+	}
+	table.table tr td{
+		font-size:12px;
+	}
+</style>
+<div class="com_content_body main pb100" id="pages" v-cloak>
+	<div class="com_top_title">
+		<h1 class="com_h1 fl">脚本错误</h1>
+		<commonsearch :done="getDataForTime"></commonsearch>
+	</div>
+	<div class="com_topic mb20 mt20"><span class="iconfont">&#xe63a;</span>统计某一个接口的平均访问性能指标。</div>
+	<div class="com_slide_tab_x mt30 mb30">
+		<div class="item" :class="{'active':type==''}" @click="checkoutLabel()">全部</div>
+		<div class="item" :class="{'active':type=='ajax'}" @click="checkoutLabel('ajax')">AJAX错误</div>
+		<div class="item" :class="{'active':type=='resource'}" @click="checkoutLabel('resource')">RESOURCE资源错误</div>
+		<div class="item" :class="{'active':type=='js'}" @click="checkoutLabel('js')">JS错误</div>
+	</div>
+	<div>
+		<!-- 公共搜索条件 -->
+		<div class="com_search">
+			<div class="item">
+				<div>
+					<input class="inp" v-model="url" placeholder="选填、输入资源名称" type="text">
+					<button class="btn btn-default" @click="searchForUrl">搜索</button>
+				</div>
+				<div class="ml30">
+					<input id="zane-calendar-1" class="inp w-200" type="text" placeholder="选择日期查询">
+				</div>
+				<div class="com_select_item ml30" :class="{'active':isCity}" @click="isSelectCity"><span class="iconfont">&#xe63c;</span>按城市分类</div>
+				<div class="ml10">
+					<input class="inp w-200" v-model="city" placeholder="选填、输入城市名字查询" type="text">
+					<button class="btn btn-default" @click="searchForCity">搜索</button>
+				</div>
+				<div class="com_select_item ml30" :class="{'active':isBrowser}" @click="isSelectBrowser"><span class="iconfont">&#xe63c;</span>按浏览器分类</div>
+				<div class="com_select_item ml30" :class="{'active':isSystem}" @click="isSelectSystem"><span class="iconfont">&#xe63c;</span>按操作系统分类</div>
+			</div>
+		</div>
+		<!-- table列表 -->
+		<table class="table" v-if="isLoadend&&listdata.length">
+			<tr class="light_color">
+				<th class="w-300">错误资源</th>
+				<th>错误数量</th>
+				<th>错误类型</th>
+				<th v-if="isCity">城市</th>
+				<th v-if="isBrowser">浏览器</th>
+				<th v-if="isSystem">操作系统</th>
+				<th>错误信息</th>
+				<th>操作</th>
+			</tr>
+			<tr v-for="item in listdata">
+				<td><a href="javascript:" @click="goToList(item)">{{item._id.resource_url}}</a></td>
+				<td class="tc">{{item._id.count}}</td>
+				<td class="tc" >{{item.category}}</td>
+				<td class="tc" v-if="isCity">{{item._id.city||'未知'}}</td>
+				<td class="tc" v-if="isBrowser">{{item._id.browser}}</td>
+				<td class="tc" v-if="isSystem">{{item._id.system}}</td>
+				<td class="red tc">{{item.name}}</td>
+				<td class="tc"><a href="javascript:" @click="goToList(item)">详情</a></td>
+			</tr>
+		</table>
+	</div>
+	<!--  分页 -->
+	<div class="tc common_page_style mt10" v-show="isLoadend&&listdata.length">
+		<div id="copot-page" class="copot-page"></div>
+	</div>
+	<!-- 暂无数据 -->
+	<div class="tc" v-if="!listdata.length">暂无数据!</div>
+</div>
+
+<script>
+	new Vue({
+		el: '#pages',
+		data: function () {
+			return {
+				listdata: [],
+				pageNo: 1,
+				pageSize: config.pageSize,
+				totalNum: 0,
+				beginTime: '',
+				endTime: '',
+				isLoadend: false,
+				appId: 'D3D9B9AA45B56F6E424F57EFB36B063B',
+				type: '', 
+				url:'',
+				city:'',
+				isCity: false,
+				isBrowser:false,
+				isSystem:false,
+			}
+		},
+		filters: {
+			toFixed: window.Filter.toFixed,
+			toSize: window.Filter.toSize,
+		},
+		mounted() {
+			this.getDataForTime();
+			this.searchForTime();
+		},
+		methods: {
+			checkoutLabel(type) {
+				this.type = type;
+				this.pageNo = 1;
+				this.totalNum = 0;
+
+				this.getinit();
+			},
+			getDataForTime(){
+				let times = util.getSearchTime()
+				this.beginTime = times.beginTime
+				this.endTime = times.endTime
+				this.getinit();
+			},
+			getinit() {
+				this.isLoadend = false;
+				util.ajax({
+					type:'get',
+					url: config.baseApi + 'api/v1/error/getAverageErrorList',
+					data: {
+						type:this.type,
+						appId:this.appId,
+						pageNo: this.pageNo,
+						pageSize: this.pageSize,
+						beginTime: this.beginTime,
+						endTime: this.endTime,
+						url: this.url,
+						city: this.city,
+						isCity: this.isCity,
+						isBrowser: this.isBrowser,
+						isSystem: this.isSystem,
+					},
+					success: data => {
+						this.isLoadend = true;
+						if (!data.data.datalist && !data.data.datalist.length) return;
+						this.listdata = data.data.datalist;
+						new Page({
+							parent: $("#copot-page"),
+							nowPage: this.pageNo,
+							pageSize: this.pageSize,
+							totalCount: data.data.totalNum,
+							callback: (nowPage, totalPage) => {
+								this.pageNo = nowPage;
+								this.getinit();
+							}
+						});
+					}
+				})
+			},
+			isSelectCity(){
+				this.isCity = !this.isCity;
+				if(!this.isCity) this.city = '';
+				this.getinit();
+			},
+			isSelectBrowser(){
+				this.isBrowser = !this.isBrowser;
+				this.getinit();
+			},
+			isSelectSystem(){
+				this.isSystem = !this.isSystem;
+				this.getinit();
+			},
+			searchForUrl(){
+				this.getinit();
+			},
+			searchForCity(){ 
+				this.isCity = this.city?true:false;
+				this.getinit();
+			},
+			searchForTime(){
+				zaneDate({
+					elem: '#zane-calendar-1',
+					type: 'doubleday',
+					format: 'yyyy/MM/dd',
+					done: (fulltime, begintime, endtime) => {
+						this.beginTime = begintime ? begintime + ' 00:00:00' : '';
+						this.endTime = endtime ? endtime + ' 23:59:59' : '';
+						this.getinit();
+					},
+				});
+			},
+			goToList(item) {
+				location.href = "/web/errordetail?url="+ encodeURIComponent(item._id.url);
+			}
+		}
+	})
+</script>

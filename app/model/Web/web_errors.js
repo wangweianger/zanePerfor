@@ -21,6 +21,8 @@ module.exports = app => {
         querydata: { type: String }, // http请求参数
         method: { type: String }, // 资源请求方式
         fullurl: { type: String }, // 完整url
+        mark_page: { type: String }, // 所有资源页面统一标识 html img css js 用户系统信息等
+        mark_user: { type: String }, // 统一某一时间段用户标识
     });
 
     WebErrorsSchema.index({ app_id: -1, create_time: 1, mark_page: -1, mark_user: -1, url: -1 });

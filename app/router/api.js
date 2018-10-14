@@ -3,7 +3,7 @@
 module.exports = app => {
     const apiV1Router = app.router.namespace('/api/v1/');
     const { controller } = app;
-    const { report, system, pvuvip, pages, environment, ajax, resource } = controller.api;
+    const { report, system, pvuvip, pages, environment, ajax, resource, error } = controller.api;
 
     // ----------------浏览器端script脚本获取---------------
     apiV1Router.get('report/webscript', report.getWebScript);
@@ -65,6 +65,9 @@ module.exports = app => {
     // 获得单个resource的性能列表数据
     apiV1Router.get('resource/getOneResourceList', resource.getOneResourceList);
 
+    // -------------------resource资源-----------------------------
+    // 获得错误分类信息
+    apiV1Router.get('error/getAverageErrorList', error.getAverageErrorList);
 
     // const apiV1Router = app.router.namespace('/api/v1');
     // const { controller, middleware } = app;

@@ -34,4 +34,7 @@ module.exports = app => {
 
     // 慢资源详情
     router.get('/web/resourcedetail', home.webresourcedetail);
+
+    // 分类错误资源列表
+    router.get('/web/erroravg', home.weberroravg);
 };
