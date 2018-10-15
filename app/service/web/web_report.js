@@ -11,7 +11,6 @@ class WebReportService extends Service {
 
         // 获得cookie参数
         const markuser = ctx.cookies.get('markuser') || '';
-        const markpage = ctx.cookies.get('markpage') || '';
 
         // 参数校验
         if (!query.appId) throw new Error('web端上报数据操作：app_id不能为空');
@@ -21,7 +20,7 @@ class WebReportService extends Service {
         report.create_time = query.time;
         report.user_agent = ctx.headers['user-agent'];
         report.ip = ip;
-        report.mark_page = markpage;
+        report.mark_page = query.markPage;
         report.mark_user = markuser;
         report.url = ctx.headers.referer;
         report.pre_url = query.preUrl;

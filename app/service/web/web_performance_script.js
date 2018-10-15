@@ -26,14 +26,6 @@ class WebPerformanceScriptService extends Service {
             }).paySign;
             ctx.cookies.set('markuser', usercookie);
         }
-        // 每次页面标识
-        const pagecookie = this.app.signwx({
-            mark: 'markpage',
-            timestamp: new Date().getTime(),
-            random: this.app.randomString(),
-        }).paySign;
-        ctx.cookies.set('markpage', pagecookie);
-
         return {};
     }
 
@@ -69,7 +61,16 @@ class WebPerformanceScriptService extends Service {
             ERRORLIST.push(err)
         }
         Performance.addData = fn =>{ fn&&fn(ADDDATA) }
-
+        function randomString(len) {
+            len = len || 19;
+            var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz123456789';
+            var maxPos = $chars.length;
+            var pwd = '';
+            for (let i = 0; i < len; i++) {
+                pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+            }
+            return pwd + new Date().getTime();
+        }
         // web msgs report function
         function Performance(option,fn){try{  
             let opt = {
@@ -216,6 +217,7 @@ class WebPerformanceScriptService extends Service {
                         screenwidth:w,
                         screenheight:h,
                         appId:'${appId}',
+                        markPage:randomString(),
                     }
                     fn&&fn(result)
                     if(!fn && window.fetch){
