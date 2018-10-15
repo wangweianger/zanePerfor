@@ -115,8 +115,6 @@ class PagesService extends Service {
 
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        console.log(queryjson)
-
         const lookup = {
             $lookup: {
                 from: "webenvironments",

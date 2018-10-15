@@ -429,9 +429,9 @@ class WebPerformanceScriptService extends Service {
                     defaults.msg    = e.target.localName+' is load error';
                     defaults.method = 'GET'
                     defaults.data   = {
-                    target: e.target.localName,
-                    type: e.type,
-                    resourceUrl:e.target.currentSrc,
+                        target: e.target.localName,
+                        type: e.type,
+                        resourceUrl:e.target.href || e.target.currentSrc,
                     };
                     if(e.target!=window) conf.errorList.push(defaults)
                 },true);

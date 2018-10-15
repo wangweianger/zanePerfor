@@ -6,25 +6,26 @@ const Service = require('egg').Service;
 class AjaxsService extends Service {
 
     // 获得页面性能数据平均值
-    async getPageAjaxs(appId, url, pageNo, pageSize) {
-        pageNo = pageNo * 1;
-        pageSize = pageSize * 1;
-
-        // 请求总条数
-        const count = await this.ctx.model.Web.WebAjaxs.aggregate([
-            { $match: { app_id: appId, call_url: url }, },
-        ]).exec();
+    async getPageAjaxsAvg(appId, url) {
         const datas = await this.ctx.model.Web.WebAjaxs.aggregate([
             { $match: { app_id: appId, call_url: url }, },
-            { $skip: (pageNo-1) * pageSize  },
-            { $limit: pageSize },
-            { $sort: { create_time: -1 } },
+            {
+                $group: {
+                    _id: {
+                        url: "$url",
+                        method: "$method",
+                    },
+                    count: { $sum: 1 },
+                    body_size: { $avg: "$decoded_body_size" }, 
+                    duration: { $avg: "$duration" }, 
+                }
+            },
         ]).exec();
 
         return {
             datalist: datas,
-            totalNum: count.length,
-            pageNo: pageNo,
+            totalNum: 0,
+            pageNo: 1,
         };
     }
 

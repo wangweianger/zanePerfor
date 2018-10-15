@@ -59,9 +59,7 @@
 	}
 	.sources-list {
 		background: #fff;
-		margin: 15px;
-		border-radius: 3px;
-		padding: 20px; 
+		min-height:500px;
 	}
 	.sources-list .h1 {
 		font-size: 22px;
@@ -209,7 +207,15 @@
 		</div>
 	</div>
 	<!-- 资源请求列表 -->
-	<div class="sources-list">
+	<div class="com_but_block mt30">
+		<button @click="isResourceShow='ALL'" class="btn" :class="{'btn-main':isResourceShow=='ALL'?true:false}">ALL</button>
+		<button @click="isResourceShow='XHR'" class="btn" :class="{'btn-main':isResourceShow=='XHR'?true:false}">XHR</button>
+		<button @click="isResourceShow='JS'" class="btn" :class="{'btn-main':isResourceShow=='JS'?true:false}">JS</button>
+		<button @click="isResourceShow='CSS'" class="btn" :class="{'btn-main':isResourceShow=='CSS'?true:false}">CSS</button>
+		<button @click="isResourceShow='IMG'" class="btn" :class="{'btn-main':isResourceShow=='IMG'?true:false}">IMG</button>
+		<button @click="isResourceShow='OTHER'" class="btn" :class="{'btn-main':isResourceShow=='OTHER'?true:false}">OTHER</button>
+	</div>
+	<div class="com_block sources-list">
 		<h1 class="h1">页面资源请求详情信息 <span class="fr">资源总耗时：{{totalTime|toFixed(true)}}</span></h1>
 		<li v-for="item in sourceslist">
 			<span class="bili" :class="[{'color1':item.type==='css','color2':item.type==='img','color3':item.type==='xmlhttprequest','color4':item.type==='script'}]"
@@ -235,7 +241,15 @@
 				id: util.getQueryString('id')||'',
 				appId: 'D3D9B9AA45B56F6E424F57EFB36B063B',
 				sourceslist:[],
+				copysourceslist:[],
 				totalTime:0,
+				isResourceShow:'ALL'
+			}
+		},
+		watch:{
+			'isResourceShow':function(oldVal, newVal) {
+				if(oldVal === newVal) return;
+				this.getNewResource();
 			}
 		},
 		filters: {
@@ -243,6 +257,36 @@
 			toSize: window.Filter.toSize,
 			date: window.Filter.date,
 			limitTo: window.Filter.limitTo,
+		},
+		computed: {
+			filterRedsourceslist: function () {
+				var self = this
+				return self.sourceslist.filter(function (resource) {
+					let result = true;
+					console.log(resource.type)
+					switch(this.isResourceShow){
+						case 'ALL':
+							result = true;
+							break;
+						case 'XHR':
+							result = resource.type == 'xmlhttprequest' || resource.type == 'fetchrequest' ? true : false;
+							break;
+						case 'JS':
+							result = resource.type == 'script'? true : false;
+							break;
+						case 'CSS':
+							result = resource.type == 'link' || resource.type == 'css' ? true : false;
+							break;
+						case 'IMG':
+							result = resource.type == 'img' ? true : false;
+							break;
+						case 'OTHER':
+							result = resource.type == 'other' ? true : false;
+							break;						
+					}
+					return result;
+				})
+			}
 		},
 		mounted() {
 			this.getinit();
@@ -269,7 +313,7 @@
 								let duration = parseFloat(item.duration);
 								item.proportion = (duration/this.totalTime)*100 + 0.1;
 							})
-							this.sourceslist = sourceslist;
+							this.sourceslist = this.copysourceslist = sourceslist;
 						}
 						
 
@@ -288,6 +332,33 @@
 					success: data => {
 						this.environment = data.data;
 					}
+				})
+			},
+			getNewResource(){
+				const _this = this;
+				this.sourceslist = this.copysourceslist.filter(function (resource) {
+					let result = true;
+					switch (_this.isResourceShow) {
+						case 'ALL':
+							result = true;
+							break;
+						case 'XHR':
+							result = (resource.type == 'xmlhttprequest' || resource.type == 'fetchrequest') ? true : false;
+							break;
+						case 'JS':
+							result = (resource.type == 'script') ? true : false;
+							break;
+						case 'CSS':
+							result = (resource.type == 'link' || resource.type == 'css') ? true : false;
+							break;
+						case 'IMG':
+							result = (resource.type == 'img') ? true : false;
+							break;
+						case 'OTHER':
+							result = (resource.type == 'other') ? true : false;
+							break;
+					}
+					return result;
 				})
 			},
 		}

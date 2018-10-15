@@ -111,6 +111,25 @@ class HomeController extends Controller {
             },
         });
     }
+
+    // 错误详情列表
+    async weberrordetail() {
+        const { ctx } = this;
+        await ctx.render('web/errordetail', {
+            data: {
+                title: '错误详情列表',
+            },
+        });
+    }
+    // 错误页面详情信息
+    async weberroritemdetail() {
+        const { ctx } = this;
+        await ctx.render('web/erroritemdetail', {
+            data: {
+                title: '错误页面详情信息',
+            },
+        });
+    }
 }
 
 module.exports = HomeController;

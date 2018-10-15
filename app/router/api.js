@@ -47,7 +47,7 @@ module.exports = app => {
 
     // -------------------ajax-----------------------------
     // 根据url获得ajax信息
-    apiV1Router.get('ajax/getPageAjaxs', ajax.getPageAjaxs);
+    apiV1Router.get('ajax/getPageAjaxsAvg', ajax.getPageAjaxsAvg);
     // 获得ajax平均性能列表
     apiV1Router.get('ajax/getAverageAjaxList', ajax.getAverageAjaxList);
     // 获得单个api的平均性能数据
@@ -68,6 +68,10 @@ module.exports = app => {
     // -------------------resource资源-----------------------------
     // 获得错误分类信息
     apiV1Router.get('error/getAverageErrorList', error.getAverageErrorList);
+    // 获得单个错误详情列表
+    apiV1Router.get('error/getOneErrorList', error.getOneErrorList);
+    // 单个错误详情
+    apiV1Router.get('error/getErrorDetail', error.getErrorDetail);
 
     // const apiV1Router = app.router.namespace('/api/v1');
     // const { controller, middleware } = app;

@@ -37,4 +37,10 @@ module.exports = app => {
 
     // 分类错误资源列表
     router.get('/web/erroravg', home.weberroravg);
+
+    // 错误详情列表
+    router.get('/web/errordetail', home.weberrordetail);
+
+    // 错误item详情信息
+    router.get('/web/erroritemdetail', home.weberroritemdetail);
 };

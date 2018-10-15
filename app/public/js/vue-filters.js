@@ -81,7 +81,7 @@ let Filter = {
                 break;    
         }
         return result;
-    }
+    },
 }
 
 window.Filter = {};

@@ -200,32 +200,22 @@
 		<!-- table列表 -->
 		<table class="table" v-if="isLoadend&&listAjax.length">
 			<tr class="light_color">
-				<th>URL</th>
-				<th>Ajax性能类型</th>
+				<th>AJAX地址</th>
+				<th>调用次数</th>
+				<th>平均耗时</th>
+				<th>平均BODY大小</th>
 				<th>请求方式</th>
-				<th>响应时间</th>
-				<th>响应资源大小</th>
-				<th>请求URL</th>
-				<th>请求参数</th>
+				<th>调用页面</th>
 			</tr>
 			<tr v-for="item in listAjax">
-				<td>{{item.url}}</td>
-				<td class="tc red">{{item.speed_type==1?'正常':'慢'}}</td>
-				<td class="tc">{{item.method}}</td>
-				<td class="red tc">{{item.duration|toFixed}}</td>
-				<td class="red tc">{{item.decoded_body_size|toSize}}</td>
-				<td>{{item.call_url}}</td>
-				<td class="tc">{{item.query_datas}}</td>
+				<td><a :href="'/web/ajaxdetail?url='+item.url">{{item._id.url}}</a></td>
+				<td class="tc">{{item.count}}</td>
+				<td class="tc red">{{item.duration|toFixed}}</td>
+				<td class="tc red">{{item.body_size|toSize}}</td>
+				<td class="red tc">{{item._id.method}}</td>
+				<td>{{url}}</td>
 			</tr>
 		</table>
-	</div>
-	<div v-show="lable==2">
-		<!--  分页 -->
-		<div class="tc common_page_style mt10" v-show="isLoadend&&listAjax.length">
-			<div id="copot-page-ajax" class="copot-page"></div>
-		</div>
-		<!-- 暂无数据 -->
-		<div class="tc" v-if="!listAjax.length">暂无数据!</div>
 	</div>
 	<!-- 页面慢加载追踪 -->
 	<div v-show="lable==3">
@@ -241,7 +231,7 @@
 				<th>页面请求时间</th>
 			</tr>
 			<tr v-for="item in listslowpages">
-				<td><a href='' :title="item.url">{{item.url|limitTo(40)}}</a></td>
+				<td><a :href="'/web/pagesdetails?id='+item._id+'&slowpages'" :title="item.url">{{item.url|limitTo(40)}}</a></td>
 				<td class="tc red">{{item.load_time|toFixed(true)}}</td>
 				<td class="tc red">{{item.speed_type==1?'正常':'慢'}}</td>
 				<td class="tc">{{item.white_time|toFixed}}</td>
@@ -272,10 +262,10 @@
 				<th>创建时间</th>
 			</tr>
 			<tr v-for="item in listresources">
-				<td><span><a href="javascript:" @click="gotoSourcesDetail(item)">{{item.resource_datas.name}}</a></span></td>
-				<td class="tc red">{{item.resource_datas.duration|toFixed(true)}}</td>
+				<td><span><a :href="'/web/resourcedetail?url='+item.name">{{item.name}}</a></span></td>
+				<td class="tc red">{{item.duration|toFixed(true)}}</td>
 				<td class="tc red">{{item.speed_type==1?'正常':'慢'}}</td>
-				<td class="tc">{{item.resource_datas.decodedBodySize|toSize}}</td>
+				<td class="tc">{{item.decodedBodySize|toSize}}</td>
 				<td class="tc">{{item.url|limitTo(50)}}</td>
 				<td class="tc">{{item.create_time|date('/',true)}}</td>
 			</tr>
@@ -346,7 +336,7 @@
 					api = 'api/v1/pages/getOnePageList'
 				} else if (lable == 2) {
 					if(!this.listAjax.length){
-						api = 'api/v1/ajax/getPageAjaxs',
+						api = 'api/v1/ajax/getPageAjaxsAvg',
 						pageName = '#copot-page-slowpages'
 						this.getinit(api, pageName);
 					}
