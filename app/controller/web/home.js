@@ -130,6 +130,15 @@ class HomeController extends Controller {
             },
         });
     }
+    // web设置界面
+    async websetting() {
+        const { ctx } = this;
+        await ctx.render('web/setting', {
+            data: {
+                title: '系统设置',
+            },
+        });
+    }
 }
 
 module.exports = HomeController;

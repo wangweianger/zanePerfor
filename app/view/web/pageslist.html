@@ -216,6 +216,8 @@
 				<td>{{url}}</td>
 			</tr>
 		</table>
+		<!-- 暂无数据 -->
+		<div class="tc" v-if="isLoadend&&!listAjax.length">暂无数据!</div>
 	</div>
 	<!-- 页面慢加载追踪 -->
 	<div v-show="lable==3">

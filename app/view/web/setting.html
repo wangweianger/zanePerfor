@@ -1,0 +1,66 @@
+<% include ./side.html %>
+<style scoped>
+	.survey{
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+	.survey .com{
+		font-size:50px;
+		width:300px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+	.survey .pv{
+		font-size:80px;
+		font-weight:bold;
+		color:#8776f7;
+	}
+	.survey .com span{
+		font-size:16px;
+		margin-right:20px;
+	}
+	.search_1 .inp{
+		background:#fff;
+	}
+</style>
+<div class="com_content_body main pb100" id="vue_id" v-cloak>
+	<h1 class="com_h1">系统设置</h1>
+	<div class="com_slide_tab_x mt30 mb30">
+		<div class="item" :class="{'active':lable==1}" @click="checkoutLabel(1)">部署说明</div>
+		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">阈值设置</div>
+		<div class="item" :class="{'active':lable==3}" @click="checkoutLabel(3)">统计设置</div>
+	</div>
+	<div v-show="lable==1">
+		
+	</div>
+	<div v-show="lable==2">
+		
+	</div>
+</div>
+
+<script>
+let myChartPV, myChartUV, myChartIP;
+new Vue({
+	el: '#vue_id',
+	data: function () {
+		return {
+			lable:1, //1:概况 2：pv|uv|ip
+			appId:'D3D9B9AA45B56F6E424F57EFB36B063B',
+		}
+	},
+	mounted() {
+		this.getPvUvIpSurvey();
+	},
+	methods: {
+		checkoutLabel(lable){
+			this.lable = lable;
+			this.beginTime = '';
+			this.endTime = '';
+		},
+	},
+})
+
+
+</script>

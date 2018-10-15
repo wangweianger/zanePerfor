@@ -43,4 +43,7 @@ module.exports = app => {
 
     // 错误item详情信息
     router.get('/web/erroritemdetail', home.weberroritemdetail);
+
+    // web设置
+    router.get('/web/setting', home.websetting);
 };
