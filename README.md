@@ -46,7 +46,7 @@
 Performance({
     domain:'http://report.com/api/v1/report/web',
     add:{
-        appId:'D3D9B9AA45B56F6E424F57EFB36B063B&USESDK',
+        appId:'D3D9B9AA45B56F6E424F57EFB36B063B',
     }
 })
 ```
@@ -60,7 +60,7 @@ $ npm run dev
 $ open http://localhost:7001/
 ```
 # 服务架构探索
-* 针对于不同的项目，不同的并发量，后期关于项目服务架构我会写一篇独立的文章（待写）。
+* 针对于不同的项目，不同的并发量，后期关于项目服务架构我会写一篇独立的文章（待写...）。
 * MongoDB主从复制架构 https://blog.seosiwei.com/detail/39
 
 # mongodb可视化工具推荐 Robomongo
@@ -69,3 +69,9 @@ $ open http://localhost:7001/
 # DEMO图片
 ![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/01.png "")
 ![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/02.png "")
+![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/03.png "")
+![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/04.png "")
+![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/05.png "")
+![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/06.png "")
+![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/07.png "")
+![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/08.png "")
