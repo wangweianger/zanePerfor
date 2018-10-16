@@ -1,4 +1,4 @@
-# 前端性能监控系统
+## 前端性能监控系统
 
 >  * 集成框架选型及其相关配置（已完成）
 >  * 主重数据库相关配置开发（已完成）
@@ -18,7 +18,7 @@
 >  * 集群配置 （待考虑）
 >  * 性能测试（排期中）
 
-# 服务架构说明
+## 服务架构说明
 ### 一：技术选型说明
 * egg.js,ejs,mongoose,redis,vue.js,jquery.js
 
@@ -53,23 +53,23 @@ Performance({
 ### web网页sdk 页面性能、资源、错误、ajax，fetch请求上报sdk performance-report：
 https://github.com/wangweianger/web-performance-report
 
-# 旧版完整前端性能监控系统
+## 旧版完整前端性能监控系统
 https://github.com/wangweianger/web-performance-monitoring-system
 
-# 开发
+## 开发
 ```bash
 $ npm i
 $ npm run dev
 $ open http://localhost:7001/
 ```
-# 服务架构探索
+## 服务架构探索
 * 针对于不同的项目，不同的并发量，后期关于项目服务架构我会写一篇独立的文章（待写...）。
 * MongoDB主从复制架构 https://blog.seosiwei.com/detail/39
 
-# mongodb可视化工具推荐 Robomongo
+## mongodb可视化工具推荐 Robomongo
 链接地址：https://robomongo.org/download
 
-# DEMO图片
+## DEMO图片
 ![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/01.png "")
 ![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/02.png "")
 ![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/03.png "")
