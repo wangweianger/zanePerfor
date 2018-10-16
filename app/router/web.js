@@ -10,6 +10,9 @@ module.exports = app => {
     // 新增系统选择系统类型
     router.get('/selectype', home.selectype);
 
+    // 用户登录
+    router.get('/login', home.login);
+
     // ------------------------------ 浏览器 -------------------------------
     // 首页pvuvip数据统计
     router.get('/web/home', web.webhome);

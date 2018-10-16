@@ -92,7 +92,7 @@ new Vue({
 			beginTime:'',
 			endTime:'',
 			timer:null,
-			appId:'D3D9B9AA45B56F6E424F57EFB36B063B',
+			appId: util.getStorage('local', 'appId'),
 			datalist:[],
 			surveydata:{ today:{}, yesterday:{}},
 			surveyone:{},

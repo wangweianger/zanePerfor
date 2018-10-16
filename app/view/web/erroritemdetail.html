@@ -134,7 +134,7 @@
 		data: function () {
 			return {
 				datas: {},
-				appId:'D3D9B9AA45B56F6E424F57EFB36B063B',
+				appId: util.getStorage('local', 'appId'),
 				markPage: util.getQueryString('markPage') || '',
 				category: util.getQueryString('category') || '',
 			}

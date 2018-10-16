@@ -23,6 +23,16 @@ class HomeController extends Controller {
             },
         });
     }
+
+    // 用户登录
+    async login() {
+        const { ctx } = this;
+        await ctx.render('login', {
+            data: {
+                title: '登录系统',
+            },
+        });
+    }
 }
 
 module.exports = HomeController;

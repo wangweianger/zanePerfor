@@ -193,7 +193,7 @@ new Vue({
 	data: function () {
 		return {
 			lable:1, //1:概况 2：pv|uv|ip
-			appId:'D3D9B9AA45B56F6E424F57EFB36B063B',
+			appId: util.getStorage('local', 'appId'),
 			systemInfo:{},
 			type: util.getQueryString('type') || 1, //1:web浏览器  2：微信
 			query:{

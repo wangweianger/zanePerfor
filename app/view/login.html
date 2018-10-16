@@ -1,0 +1,172 @@
+<!-- 样式 -->
+<style>
+    html {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: #BAA1FF linear-gradient(to right, #BAA1FF, #7988FA) !important; 
+    }
+    .com_header{
+        display:none!important;
+    }
+    .main {
+        width: 450px;
+        height: 450px;
+        background: #fff; 
+    }
+    .main .top {
+        width: 100%;
+        height: 120px;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center; 
+    }
+    .main .top .img1 {
+        width: 220px;
+        height: 60px; 
+    }
+    .main .center {
+        overflow: hidden;
+        margin-top: 10px; 
+    }
+    .main .center .block {
+        height: 48px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        margin-left: 80px; 
+    }
+    .main .center .block img {
+        width: 30px;
+        height: 30px;
+        margin-right: 15px; 
+    }
+    .main .center .block input {
+        height: 48px;
+        width: 250px;
+        padding-left: 10px;
+        background: #FBFBFB;
+        border: none; 
+    }
+    .main .center .block a {
+        color: #F97000; 
+    }
+    .main .center .block .iconfont {
+        color: #7988FA;
+        font-size: 23px;
+        margin-right: 10px; 
+    }
+    .main .center .submit {
+        display: flex;
+        height: 45px;
+        justify-content: center; 
+    }
+    .main .center .button {
+        width: 250px;
+        height: 45px;
+        background: #BAA1FF linear-gradient(to right, #BAA1FF, #7988FA) !important;
+        color: #fff;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer; 
+    }
+</style>
+<div class="login" id="login">
+    <div class="main">
+        <div class="top">
+            <img class="img1" src="/public/img/logo_1.png">
+        </div>
+        <div class="center center-ewm">
+            <div>
+                <div class="block">
+                    <span class="iconfont">&#xe668;</span>
+                    <input type="text" v-model.trim="username" placeholder="请输入账号">
+                </div>
+                <div class="block">
+                    <span class="iconfont">&#xe64b;</span>
+                    <input type="password" v-model.trim="password" placeholder="请输入密码">
+                </div>
+                <div class="block" v-show="type===2">
+                    <span class="iconfont">&#xe64b;</span>
+                    <input type="password" v-model.trim="typassword" placeholder="确认密码">
+                </div>
+                <div class="block">
+                    <a href="JavaScript:" @click="type=2" v-show="type===1">立即注册</a>
+                    <a href="JavaScript:" @click="type=1" v-show="type===2">去登陆</a>
+                </div>
+                <div class="submit">
+                    <button class="button" v-show="type===1" @click="login">立即登录</button>
+                    <button class="button" v-show="type===2" @click="register">立即注册</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    new Vue({
+        el: '#login',
+        data: function () {
+            return {
+                type: 1,   //1:登录  2：注册
+                username: '',
+                password: '',
+                typassword: ''
+            }
+        },
+        mounted() {
+
+        },
+        methods: {
+            login() {
+                if (!this.username) {
+                    popup.alert({ type: 'msg', title: '用户名有误!' }); return false;
+                }
+                if (!this.password) {
+                    popup.alert({ type: 'msg', title: '用户密码有误!' }); return false;
+                }
+                util.ajax({
+                    url: config.baseApi + 'api/v1/user/login',
+                    data: {
+                        userName: this.username,
+                        passWord: this.password
+                    },
+                    success: function (data) {
+                        popup.miss({ title: "登录成功！" });
+                        util.setStorage('local', 'userMsg', JSON.stringify(data.data))
+                        setTimeout(() => { location.href = '/' }, 500)
+                    }
+                })
+            },
+            register() {
+                if (!this.username) {
+                    popup.alert({ type: 'msg', title: '用户名有误!' }); return false;
+                }
+                if (!this.password) {
+                    popup.alert({ type: 'msg', title: '用户密码有误!' }); return false;
+                }
+                if (this.password !== this.typassword) {
+                    popup.alert({ type: 'msg', title: '两次密码输入不一致!' }); return false;
+                }
+
+                util.ajax({
+                    url: config.baseApi + 'api/v1/user/register',
+                    data: {
+                        userName: this.username,
+                        passWord: this.password
+                    },
+                    success(data) {
+                        popup.miss({ title: "注册成功！" });
+                        util.setStorage('local', 'userMsg', JSON.stringify(data.data))
+                        setTimeout(() => { location.href = '/' }, 500)
+                    }
+                })
+            }
+        }
+    })
+</script>

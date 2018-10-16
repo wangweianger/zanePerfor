@@ -11,72 +11,80 @@
 			<button class="btn btn-main" @click="addsystem">+添加应用</button>
 		</div>
 	</div>
-	<div class="com_block com_between mt50" v-for="item in datalist" v-show="datalist.length">
-		<div class="left">
-			<img class="icon" src="https://cdn.seosiwei.com/TBaCKyXadN6xBnM4YGND6fxTBwQj68Ya.png?imageslim">
-			<div class="h1 mt10">{{item.type|systemType}}</div>
-			<button class="btn mt30 btn-default">设置</button>
-			<a href="/web/home"><button class="btn mt10 btn-main">进入</button></a>
-		</div>
-		<div class="right">
-			<div class="item">
-				<span class="l"><span class="icon"></span>应用名称：</span>
-				<span class="r lightcolor">{{item.system_name}}</span>
+	<div v-if="isLoadend && datalist.length">
+		<div class="com_block com_between mt50" v-for="item in datalist" >
+			<div class="left">
+				<img class="icon" src="https://cdn.seosiwei.com/TBaCKyXadN6xBnM4YGND6fxTBwQj68Ya.png?imageslim">
+				<div class="h1 mt10">{{item.type|systemType}}</div>
+				<button class="btn mt30 btn-default" @click="selectSystem(1,item)">设置</button>
+				<button class="btn mt10 btn-main" @click="selectSystem(2,item)">进入</button>
 			</div>
-			<div class="item">
-				<span class="l"><span class="icon"></span>应用链接：</span>
-				<span class="r lightcolor">{{item.system_domain}}</span>
+			<div class="right">
+				<div class="item">
+					<span class="l"><span class="icon"></span>应用名称：</span>
+					<span class="r lightcolor">{{item.system_name}}</span>
+				</div>
+				<div class="item">
+					<span class="l"><span class="icon"></span>应用链接：</span>
+					<span class="r lightcolor">{{item.system_domain}}</span>
+				</div>
+				<div class="item">
+					<span class="l"><span class="icon"></span>appId：</span>
+					<span class="r lightcolor">{{item.app_id}}</span>
+				</div>
+				<div class="item">
+					<span class="l"><span class="icon"></span>是否开启项目统计：</span>
+					<span class="r lightcolor">{{item.is_use==0?'是':'否'}}</span>
+				</div>
+				<table class="table mt20">
+					<tr class="light_color">
+						<th class="tc">页面加载阀值</th>
+						<th class="tc">JS资源阀值</th>
+						<th class="tc">CSS资源阀值</th>
+						<th class="tc">IMG资源阀值</th>
+						<th class="tc">AJAX加载阀值</th>
+						<th class="tc">是否统计页面性能</th>
+						<th class="tc">是否统计AJAX性能</th>
+						<th class="tc">是否统计页面资源性能</th>
+						<th class="tc">是否统计用户系统信息</th>
+						<th class="tc">是否统计错误信息</th>
+					</tr>
+					<tr>
+						<td class="tc">{{item.slow_page_time}}s</td>
+						<td class="tc">{{item.slow_js_time}}s</td>
+						<td class="tc">{{item.slow_css_time}}s</td>
+						<td class="tc">{{item.slow_img_time}}s</td>
+						<td class="tc">{{item.slow_ajax_time}}s</td>
+						<td class="tc">{{item.is_statisi_pages==0?'是':'否'}}</td>
+						<td class="tc">{{item.is_statisi_ajax==0?'是':'否'}}</td>
+						<td class="tc">{{item.is_statisi_resource==0?'是':'否'}}</td>
+						<td class="tc">{{item.is_statisi_system==0?'是':'否'}}</td>
+						<td class="tc">{{item.is_statisi_error==0?'是':'否'}}</td>
+					</tr>
+				</table>
 			</div>
-			<div class="item">
-				<span class="l"><span class="icon"></span>appId：</span>
-				<span class="r lightcolor">{{item.app_id}}</span>
-			</div>
-			<div class="item">
-				<span class="l"><span class="icon"></span>是否开启项目统计：</span>
-				<span class="r lightcolor">{{item.is_use==0?'是':'否'}}</span>
-			</div>
-			<table class="table mt20">
-				<tr class="light_color">
-					<th class="tc">页面加载阀值</th>
-					<th class="tc">JS资源阀值</th>
-					<th class="tc">CSS资源阀值</th>
-					<th class="tc">IMG资源阀值</th>
-					<th class="tc">AJAX加载阀值</th>
-					<th class="tc">是否统计页面性能</th>
-					<th class="tc">是否统计AJAX性能</th>
-					<th class="tc">是否统计页面资源性能</th>
-					<th class="tc">是否统计用户系统信息</th>
-					<th class="tc">是否统计错误信息</th>
-				</tr>
-				<tr>
-					<td class="tc">{{item.slow_page_time}}s</td>
-					<td class="tc">{{item.slow_js_time}}s</td>
-					<td class="tc">{{item.slow_css_time}}s</td>
-					<td class="tc">{{item.slow_img_time}}s</td>
-					<td class="tc">{{item.slow_ajax_time}}s</td>
-					<td class="tc">{{item.is_statisi_pages==0?'是':'否'}}</td>
-					<td class="tc">{{item.is_statisi_ajax==0?'是':'否'}}</td>
-					<td class="tc">{{item.is_statisi_resource==0?'是':'否'}}</td>
-					<td class="tc">{{item.is_statisi_system==0?'是':'否'}}</td>
-					<td class="tc">{{item.is_statisi_error==0?'是':'否'}}</td>
-				</tr>
-			</table>
 		</div>
 	</div>
+	<div class="empty mt30 tc">暂无数据！</div>
 </div>
 <script>
 	new Vue({
 		el: '#home_body',
 		data: function () {
 			return {
-				userId:'zane',
+				userId:'',
 				datalist:[],
+				userMsg:{},
+				isLoadend:false,
 			}
 		},
 		filters: {
 			systemType: window.Filter.systemType,
 		},
 		mounted() {
+			const userMsg = util.getStorage('local', 'userMsg');
+			this.userMsg = userMsg ? JSON.parse(userMsg) : {};
+			this.userId = this.userMsg._id;
 			this.getMsgForUserId();
 		},
 		methods: {
@@ -88,14 +96,24 @@
 					type:'get',
 					url: config.baseApi + 'api/v1/system/getMsgForUserId?userId=' + this.userId,
 					success:  (data) => {
-						if(data.data && data.data.length)
+						this.isLoadend = true;
+						if(data.data && data.data.length){
 							this.datalist = data.data;
+						}
 					}
 				})
 			},
 			addsystem() {
 				location.href = `/selectype`
 			},
+			selectSystem(type,item){
+				if(type===1){
+					location.href = '/web/setting';	
+				}else if(type === 2){
+					location.href = '/web/home';	
+				}
+				util.setStorage('local','appId',item.app_id)
+			}
 		},
 	})
 </script>

@@ -1,12 +1,12 @@
-<div class="com_header">
+<div class="com_header" id="com_header">
 	<a href="/"><div class="logo">
 		<img src="/public/img/logo.png" alt="logo">
 		<div class="title">前端性能监控系统</div>
 	</div></a>
 	<div class="right">
-		<div class="item">汪微</div>
+		<div class="item">{{userMsg.user_name}}</div>
 		<a href="/"><div class="item">我的应用</div></a>
-		<div class="item">退出登录</div>
+		<div class="item" @click="logout">退出登录</div>
 	</div>
 </div>
 <style scoped>
@@ -73,4 +73,35 @@
 	}
 </style>
 <script>
+	new Vue({
+		el: '#com_header',
+		data: function () {
+			return {
+				userMsg: {
+					user_name:'游小白'
+				},
+			}
+		},
+		mounted() {
+			const userMsg = util.getStorage('local','userMsg');
+			this.userMsg = userMsg ? JSON.parse(userMsg) : {};	
+		},
+		methods: {
+			addsystem() {
+				location.href = `/selectype`
+			},
+			logout(){
+				popup.confirm({title:'确定退出登录吗？',yes(){
+					util.ajax({
+						type:'get',
+						url:`${config.baseApi}api/v1/user/logout`,
+						success:data=>{
+							util.setStorage('local','userMsg','');
+							location.href = `/login`
+						}
+					})
+				}})
+			}
+		},
+	})
 </script>

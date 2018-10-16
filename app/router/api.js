@@ -3,13 +3,21 @@
 module.exports = app => {
     const apiV1Router = app.router.namespace('/api/v1/');
     const { controller } = app;
-    const { report, system, pvuvip, pages, environment, ajax, resource, error } = controller.api;
+    const { report, system, pvuvip, pages, environment, ajax, resource, error, user } = controller.api;
 
     // ----------------浏览器端script脚本获取---------------
     apiV1Router.get('report/webscript', report.getWebScript);
 
     // 浏览器用户数据上报
     apiV1Router.post('report/web', report.webReport);
+
+    // -----------------用户相关------------------
+    // 用户登录
+    apiV1Router.post('user/login', user.login);
+    // 用户注册
+    apiV1Router.post('user/register', user.register);
+    // 退出登录
+    apiV1Router.get('user/logout', user.logout);
 
     // ----------------系统配置相关---------------
     // 新增系统

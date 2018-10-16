@@ -179,13 +179,12 @@
 </div>
 x<script src="//cdn.bootcss.com/switchery/0.8.2/switchery.min.js"></script>
 <script>
-let myChartPV, myChartUV, myChartIP;
 new Vue({
 	el: '#vue_id',
 	data: function () {
 		return {
 			lable:1, //1:概况 2：pv|uv|ip
-			appId:'D3D9B9AA45B56F6E424F57EFB36B063B',
+			appId: util.getStorage('local', 'appId'),
 			systemInfo:{},
 			script:'',
 		}

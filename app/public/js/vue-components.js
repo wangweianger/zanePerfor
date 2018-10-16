@@ -3,7 +3,7 @@
 let Component = {
     commonsearch:{
         template: `<div class="component_search mr20">
-            <a href="/addSystem"><button class="btn btn-main">+添加应用</button></a>
+            <a href="/selectype"><button class="btn btn-main">+添加应用</button></a>
             <div class="select">
                 <span class="times"><span class="iconfont">&#xe60b;</span>{{timeText}}<span class="iconfont">&#xe63b;</span></span>
                 <div class="select-time">
