@@ -53,6 +53,9 @@ Performance({
 ### web网页sdk 页面性能、资源、错误、ajax，fetch请求上报sdk performance-report：
 https://github.com/wangweianger/web-performance-report
 
+# 旧版完整前端性能监控系统
+https://github.com/wangweianger/web-performance-monitoring-system
+
 # 开发
 ```bash
 $ npm i
