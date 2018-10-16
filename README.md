@@ -35,11 +35,11 @@
 # 浏览器端使用说明
 ### 一：直接使用应用脚本上报数据
 * 申请应用之后直接使用应用脚本，放置到自己web应用的头部。
-* 例如：<script src="http://127.0.0.1:7001/api/v1/report/webscript?appId=D3D9B9AA45B56F6E424F57EFB36B063B&USESDK=FALSE"></script>
+* 例如：<script src="http://report.com/api/v1/report/webscript?appId=D3D9B9AA45B56F6E424F57EFB36B063B&USESDK=FALSE"></script>
 
 ### 二：使用SDK方式上报数据
 * 1、申请应用之后需要引入标识用户身份的脚本,USESDK设置为TURE
-* 例如：<script src="http://127.0.0.1:7001/api/v1/report/webscript?USESDK=TRUE"></script>
+* 例如：<script src="http://report.com/api/v1/report/webscript?USESDK=TRUE"></script>
 * 2、使用web SDK进行数据上报，使用方式请参考 performance-report SDK详情
 * 例如
 ```
@@ -53,20 +53,19 @@ Performance({
 ### web网页sdk 页面性能、资源、错误、ajax，fetch请求上报sdk performance-report：
 https://github.com/wangweianger/web-performance-report
 
-
-### 开发
+# 开发
 ```bash
 $ npm i
 $ npm run dev
 $ open http://localhost:7001/
 ```
+# 服务架构探索
+* 针对于不同的项目，不同的并发量，后期关于项目服务架构我会写一篇独立的文章（待写）。
+* MongoDB主从复制架构 https://blog.seosiwei.com/detail/39
 
-### MongoDB主从复制架构
-链接地址：https://blog.seosiwei.com/detail/39
-
-### mongodb可视化工具推荐 Robomongo
+# mongodb可视化工具推荐 Robomongo
 链接地址：https://robomongo.org/download
 
-### DEMO图片
+# DEMO图片
 ![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/01.png "")
 ![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/02.png "")
