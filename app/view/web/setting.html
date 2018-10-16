@@ -208,7 +208,7 @@ new Vue({
 				success: data => {
 					this.systemInfo = data.data || {};
 					if(!this.systemInfo.app_id) return;
-					this.script = `<script src="${location.origin}/api/v1/report/webscript?appId=${this.systemInfo.app_id}=FALSE"><\/script>`;
+					this.script = `<script src="${location.origin}/api/v1/report/webscript?appId=${this.systemInfo.app_id}&USESDK=FALSE"><\/script>`;
 					this.settingIsUse();
 					this.pagexingneng();
 				}

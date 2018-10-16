@@ -32,15 +32,34 @@
 * web_pvuvip定时任务：负责web端的pvuvip统计 （统计每一分钟的数据进行存储）
 * ip_task定时任务：负责更新用户的地址信息，根据ip获得城市相关信息，并建立自己的ip地址库
 
+# 浏览器端使用说明
+### 一：直接使用应用脚本上报数据
+* 申请应用之后直接使用应用脚本，放置到自己web应用的头部。
+* 例如：<script src="http://127.0.0.1:7001/api/v1/report/webscript?appId=D3D9B9AA45B56F6E424F57EFB36B063B&USESDK=FALSE"></script>
+
+### 二：使用SDK方式上报数据
+* 1、申请应用之后需要引入标识用户身份的脚本,USESDK设置为TURE
+* 例如：<script src="http://127.0.0.1:7001/api/v1/report/webscript?USESDK=TRUE"></script>
+* 2、使用web SDK进行数据上报，使用方式请参考 performance-report SDK详情
+* 例如
+```
+Performance({
+    domain:'http://report.com/api/v1/report/web',
+    add:{
+        appId:'D3D9B9AA45B56F6E424F57EFB36B063B&USESDK',
+    }
+})
+```
+### web网页sdk 页面性能、资源、错误、ajax，fetch请求上报sdk performance-report：
+https://github.com/wangweianger/web-performance-report
+
+
 ### 开发
 ```bash
 $ npm i
 $ npm run dev
 $ open http://localhost:7001/
 ```
-
-### web网页sdk 页面性能、资源、错误、ajax，fetch请求上报sdk performance-report：
-https://github.com/wangweianger/web-performance-report
 
 ### MongoDB主从复制架构
 链接地址：https://blog.seosiwei.com/detail/39
