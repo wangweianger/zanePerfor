@@ -2,48 +2,56 @@
 
 module.exports = app => {
     const { router, controller } = app;
-    const { home } = controller.web;
+    const { home, web } = controller.web;
 
     // 应用列表
     router.get('/', home.systemlist);
 
-    // ------------------------------浏览器-------------------------------
+    // 新增系统选择系统类型
+    router.get('/selectype', home.selectype);
+
+    // ------------------------------ 浏览器 -------------------------------
     // 首页pvuvip数据统计
-    router.get('/web/home', home.webhome);
+    router.get('/web/home', web.webhome);
 
     // 访问页面平均性能
-    router.get('/web/pagesavg', home.webpagesavg);
+    router.get('/web/pagesavg', web.webpagesavg);
 
     // 单页面访问页面列表性能
-    router.get('/web/pageslist', home.webpageslist);
+    router.get('/web/pageslist', web.webpageslist);
 
     // 单个页面详情
-    router.get('/web/pagesdetails', home.webpagedetails);
+    router.get('/web/pagesdetails', web.webpagedetails);
 
     // 单页面慢性能列表
-    router.get('/web/slowpageslist', home.webslowpageslist);
+    router.get('/web/slowpageslist', web.webslowpageslist);
 
     // ajax平均性能列表
-    router.get('/web/ajaxavg', home.webajaxavg);
+    router.get('/web/ajaxavg', web.webajaxavg);
 
     // ajax详情列表
-    router.get('/web/ajaxdetail', home.webajaxdetailg);
+    router.get('/web/ajaxdetail', web.webajaxdetailg);
 
     // 慢资源列表
-    router.get('/web/resourceavg', home.webresourceavg);
+    router.get('/web/resourceavg', web.webresourceavg);
 
     // 慢资源详情
-    router.get('/web/resourcedetail', home.webresourcedetail);
+    router.get('/web/resourcedetail', web.webresourcedetail);
 
     // 分类错误资源列表
-    router.get('/web/erroravg', home.weberroravg);
+    router.get('/web/erroravg', web.weberroravg);
 
     // 错误详情列表
-    router.get('/web/errordetail', home.weberrordetail);
+    router.get('/web/errordetail', web.weberrordetail);
 
     // 错误item详情信息
-    router.get('/web/erroritemdetail', home.weberroritemdetail);
+    router.get('/web/erroritemdetail', web.weberroritemdetail);
 
     // web设置
-    router.get('/web/setting', home.websetting);
+    router.get('/web/setting', web.websetting);
+
+    // web端新增系统
+    router.get('/web/addsystem', web.webaddsystem);
+
+    // ------------------------------ 微信小程序 -------------------------------
 };

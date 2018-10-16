@@ -8,10 +8,10 @@
 	<div class="com_title">
 		<div class="h1">应用列表</div>
 		<div class="right">
-			<button class="btn btn-main">+添加应用</button>
+			<button class="btn btn-main" @click="addsystem">+添加应用</button>
 		</div>
 	</div>
-	<div class="com_block com_between mt50" v-for="item in datalist">
+	<div class="com_block com_between mt50" v-for="item in datalist" v-show="datalist.length">
 		<div class="left">
 			<img class="icon" src="https://cdn.seosiwei.com/TBaCKyXadN6xBnM4YGND6fxTBwQj68Ya.png?imageslim">
 			<div class="h1 mt10">{{item.type|systemType}}</div>
@@ -93,6 +93,9 @@
 					}
 				})
 			},
-		}
+			addsystem() {
+				location.href = `/selectype`
+			},
+		},
 	})
 </script>

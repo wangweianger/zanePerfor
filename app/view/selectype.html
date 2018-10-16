@@ -1,0 +1,102 @@
+<style scoped>
+	.setting-body {
+		background: #fff;
+		padding: 20px; 
+	}
+	.setting-body .block {
+		overflow: hidden; 
+	}
+	.com_list{
+		display: flex;
+		flex-direction: row;
+	}
+	.com_list .items{
+		width:300px;
+		height:300px;
+		border:solid 1px #ddd;
+		margin:0 20px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+	.com_list .items .iconfont{
+		font-size:80px;
+	}
+	.com_list .items .cor1{
+		color:#8776f7;
+	}
+	.com_list .items .cor2{
+		color:#30ac4f;
+	}
+	.com_list .items .cor3{
+		color:#6b65b9;
+	}
+	.com_list .items .title{
+		margin-top:10px;
+		font-size:16px;
+	}
+	.com_list .items .desc{
+		padding:10px 20px;
+		font-size:12px;
+		color:#999;
+		line-height:22px;
+		text-align:center;
+	}
+	.com_list .items .btn{
+		display:none;
+	}
+	.com_list .items:hover .btn{
+		display:block;
+	}
+	.com_list .items:hover .iconfont,.com_list .items:hover .title,.com_list .items:hover .desc{
+		display:none;
+	}
+	.com_list .items .btn{
+		padding:8px 30px;
+	}
+</style>
+<div class="com_content_body main pb100" id="vue_id" v-cloak>
+	<h1 class="com_h1">选择应用类型</h1>
+	<div class="com_slide_tab_x mt30 mb30">
+		<div class="item active" @click="checkoutLabel(1)">系统类型</div>
+	</div>
+	<div class="setting-body">
+		<div class="block">
+			<h1 class="h1 h1_1">选择系统类</h1>
+			<div class="com_list mt30">
+				<div class="items">
+					<span class="iconfont cor1">&#xe61a;</span>
+					<div class="title">WEB浏览器</div>
+					<div class="desc">统计项目的实时PV/UV/IP，每个页面、AJAX、各种资源的性能数据，上报错误信息，让您更全面的掌控自己的应用。</div>
+					<button class="btn btn-main" @click="selectType(1)">确定选择</button>
+				</div>
+				<div class="items">
+					<span class="iconfont cor2">&#xe654;</span>
+					<div class="title">微信小程序</div>
+					<div class="desc">统计项目的实时PV/UV/IP，AJAX、各种资源的性能数据，上报错误信息，让您更全面的掌控自己的应用。</div>
+					<button class="btn btn-main" @click="selectType(2)">确定选择</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+new Vue({
+	el: '#vue_id',
+	data: function () {
+		return {
+			type:1, //1：WEB端  2：微信小程序
+		}
+	},
+	mounted() {
+	},
+	methods: {
+		selectType(type){
+			location.href=`/web/addsystem?type=${type}`;
+		},
+	},
+})
+
+
+</script>

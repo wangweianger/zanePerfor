@@ -1,11 +1,11 @@
 <div class="com_header">
-	<div class="logo">
+	<a href="/"><div class="logo">
 		<img src="/public/img/logo.png" alt="logo">
 		<div class="title">前端性能监控系统</div>
-	</div>
+	</div></a>
 	<div class="right">
 		<div class="item">汪微</div>
-		<div class="item">我的应用</div>
+		<a href="/"><div class="item">我的应用</div></a>
 		<div class="item">退出登录</div>
 	</div>
 </div>
@@ -32,6 +32,9 @@
 		align-items: center;
 		font-size: 28px;
 	}
+	.com_header .logo .title{
+		color:#333;
+	}
 	.com_header .logo img {
 		height: 35px;
 		margin-right: 10px;
@@ -48,6 +51,7 @@
 		padding:0 15px;
 		cursor:pointer;
 		position: relative;
+		color:#333;
 	}
 	.com_header .right .item:after{
 		content:'';

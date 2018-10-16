@@ -13,11 +13,13 @@ module.exports = app => {
 
     // ----------------系统配置相关---------------
     // 新增系统
-    apiV1Router.get('system/add', system.addNewSystem);
+    apiV1Router.post('system/add', system.addNewSystem);
     // 修改系统
     apiV1Router.post('system/update', system.updateSystem);
     // 根据用户ID获得系统信息
     apiV1Router.get('system/getMsgForUserId', system.getSysForUserId);
+    // 根据系统ID获得单个系统信息
+    apiV1Router.get('system/getSystemForId', system.getSystemForId);
 
     // ----------------pv uv ip---------------
     // 获得实时统计概况
