@@ -32,7 +32,7 @@
 * web_pvuvip定时任务：负责web端的pvuvip统计 （统计每一分钟的数据进行存储）
 * ip_task定时任务：负责更新用户的地址信息，根据ip获得城市相关信息，并建立自己的ip地址库
 
-# 浏览器端使用说明
+## 浏览器端使用说明
 ### 一：直接使用应用脚本上报数据
 * 申请应用之后直接使用应用脚本，放置到自己web应用的头部。
 * 例如：<script src="http://report.com/api/v1/report/webscript?appId=D3D9B9AA45B56F6E424F57EFB36B063B&USESDK=FALSE"></script>
