@@ -125,6 +125,11 @@ class AjaxsService extends Service {
             pageNo: pageNo,
         };
     }
+
+    // 获得单个ajax详情信息
+    async getOneAjaxDetail(appId, markPage) {
+       return await this.ctx.model.Web.WebAjaxs.findOne({ app_id: appId, mark_page: markPage}) || {};
+    }
 }
 
 module.exports = AjaxsService;

@@ -114,6 +114,7 @@ class DataTimedTaskService extends Service {
         ajaxs.create_time = data.create_time;
         ajaxs.speed_type = speedType;
         ajaxs.url = newName;
+        ajaxs.full_url = item.name;
         ajaxs.method = item.method;
         ajaxs.duration = item.duration;
         ajaxs.decoded_body_size = item.decodedBodySize;
@@ -145,12 +146,16 @@ class DataTimedTaskService extends Service {
         // 因为相关性能远远 这里只存储慢资源
         if (duration < slowTime) return;
 
+        const newurl = url.parse(item.name);
+        const newName = newurl.protocol + '//' + newurl.host + newurl.pathname;
+
         const resours = this.ctx.model.Web.WebResource();
         resours.app_id = data.app_id;
         resours.create_time = data.create_time;
         resours.url = data.url;
+        resours.full_url = item.name;
         resours.speed_type = speedType;
-        resours.name = item.name;
+        resours.name = newName;
         resours.method = item.method;
         resours.type = item.type;
         resours.duration = item.duration;

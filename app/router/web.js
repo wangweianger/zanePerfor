@@ -39,13 +39,19 @@ module.exports = app => {
     router.get('/web/ajaxavg', web.webajaxavg);
 
     // ajax详情列表
-    router.get('/web/ajaxdetail', web.webajaxdetailg);
+    router.get('/web/ajaxdetail', web.webajaxdetail);
+
+    // ajax item详情信息
+    router.get('/web/ajaxitemdetail', web.webajaxitemdetail);
 
     // 慢资源列表
-    router.get('/web/resourceavg', web.webresourceavg);
+    router.get('/web/resourcesavg', web.webresourceavg);
 
     // 慢资源详情
-    router.get('/web/resourcedetail', web.webresourcedetail);
+    router.get('/web/resourcesdetail', web.webresourcedetail);
+
+    // 单个资源详情信息
+    router.get('/web/resourcesitemdetail', web.webresourcesitemdetail);
 
     // 分类错误资源列表
     router.get('/web/erroravg', web.weberroravg);

@@ -131,6 +131,11 @@ class ResourceService extends Service {
             pageNo: pageNo,
         };
     }
+
+    // 获得单个Resource详情信息
+    async getOneResourceDetail(appId, markPage) {
+        return await this.ctx.model.Web.WebResource.findOne({ app_id: appId, mark_page: markPage }) || {};
+    }
 }
 
 module.exports = ResourceService;

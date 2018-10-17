@@ -1,61 +1,78 @@
 <% include ./side.html %>
 <style scoped>
-	.com_top_title:after{
-		content:'';
-		display:block;
-		clear:both;
+	.com_top_title:after {
+		content: '';
+		display: block;
+		clear: both;
 	}
-	table.table{
-		background:#fff;
+
+	table.table {
+		background: #fff;
 	}
-	table.table .light_color th{
-		font-weight:400;
+
+	table.table .light_color th {
+		font-weight: 400;
 	}
-	table.table tr td{
-		font-size:12px;
+
+	table.table tr td {
+		font-size: 12px;
 	}
+
 	.common-block-style {
 		background: #fff;
 	}
+
 	.common-block-style .h1 {
 		font-size: 18px;
 		margin-bottom: 25px;
 		padding-bottom: 10px;
-		border-bottom: solid 1px #eee; 
+		border-bottom: solid 1px #eee;
 	}
+
 	.common-block-style .block {
 		margin-bottom: 15px;
 		font-size: 16px;
-		overflow: hidden; 
+		overflow: hidden;
 	}
+
 	.common-block-style .block span {
 		display: block;
-		float: left; 
+		float: left;
 	}
+
 	.common-block-style .block .t1 {
-		width: 120px; 
+		width: 120px;
 	}
+
 	.common-block-style .block .t2 {
-		max-width: 1200px; 
+		max-width: 1200px;
 	}
 </style>
 <div class="com_content_body main pb100" id="pages" v-cloak>
 	<div class="com_top_title">
-		<h1 class="com_h1 fl">错误详细信息</h1>
+		<h1 class="com_h1 fl">慢资源详细信息</h1>
 		<commonsearch></commonsearch>
 	</div>
 	<div class="com_block common-block-style mt20">
 		<div class="block">
-			<span class="t1">错误url:</span>
-			<span class="t2">{{datas.resource_url}}</span>
+			<span class="t1">资源地址:</span>
+			<span class="t2">{{datas.name}}</span>
 		</div>
 		<div class="block">
-			<span class="t1">错误信息:</span>
-			<span class="t2 red">{{datas.msg}}</span>
+			<span class="t1">资源耗时:</span>
+			<span class="t2 red">{{datas.duration|toFixed}}</span>
 		</div>
 		<div class="block">
-			<span class="t1">资源类型:</span>
-			<span class="t2">{{datas.category}}</span>
+			<span class="t1">请求方式:</span>
+			<span class="t2">{{datas.method}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">速度类型:</span>
+			<span class="t2 red">{{datas.speed_type == 1?'正常':'慢'}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">body大小:</span>
+			<span class="t2">{{datas.decoded_body_size|toSize}}</span>
 		</div>
 		<div class="block">
 			<span class="t1">生成时间:</span>
@@ -89,41 +106,9 @@
 			<span class="t1">IP地址:</span>
 			<span class="t2">{{environment.ip}}</span>
 		</div>
-		<div class="block" v-if="category=='resource'">
-			<span class="t1">错误资源:</span>
-			<span class="t2">{{datas.target}}</span>
-		</div>
-		<div class="block" v-if="category=='resource'">
-			<span class="t1">错误类型:</span>
-			<span class="t2">{{datas.type}}</span>
-		</div>
-		<div class="block" v-if="category=='ajax'">
-			<span class="t1">状态码:</span>
-			<span class="t2">{{datas.status}}</span>
-		</div>
-		<div class="block" v-if="category=='ajax'">
-			<span class="t1">类型详情:</span>
-			<span class="t2">{{datas.text}}</span>
-		</div>
-		<div class="block" v-if="category=='js'">
-			<span class="t1">错误列:</span>
-			<span class="t2">{{datas.line}}</span>
-		</div>
-		<div class="block" v-if="category=='js'">
-			<span class="t1">错误行:</span>
-			<span class="t2">{{datas.col}}</span>
-		</div>
 		<div class="block">
 			<span class="t1">完整URL:</span>
-			<span class="t2">{{datas.fullurl}}</span>
-		</div>
-		<div class="block">
-			<span class="t1">请求方式:</span>
-			<span class="t2">{{datas.method}}</span>
-		</div>
-		<div class="block">
-			<span class="t1">请求参数:</span>
-			<span class="t2">{{datas.querydata}}</span>
+			<span class="t2">{{datas.full_url}}</span>
 		</div>
 	</div>
 </div>
@@ -134,10 +119,9 @@
 		data: function () {
 			return {
 				datas: {},
-				environment:{},
+				environment: {},
 				appId: util.getStorage('local', 'appId'),
 				markPage: util.getQueryString('markPage') || '',
-				category: util.getQueryString('category') || '',
 			}
 		},
 		filters: {
@@ -146,18 +130,18 @@
 			date: window.Filter.date,
 		},
 		mounted() {
-			this.getErrorDetail();
+			this.getOneResourceDetail();
 			this.getPageEnvironment();
 		},
 		methods: {
-			getErrorDetail() {
+			getOneResourceDetail() {
 				this.isLoadend = false;
 				util.ajax({
-					type:'get',
-					url: config.baseApi + 'api/v1/error/getErrorDetail',
+					type: 'get',
+					url: config.baseApi + 'api/v1/resource/getOneResourceDetail',
 					data: {
-						appId:this.appId,
-						markPage:this.markPage,
+						appId: this.appId,
+						markPage: this.markPage,
 					},
 					success: data => {
 						this.isLoadend = true;

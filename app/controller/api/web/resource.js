@@ -79,6 +79,23 @@ class ResourceController extends Controller {
             data: result,
         });
     }
+
+    // 获得单个Resource详情信息
+    async getOneResourceDetail() {
+        const { ctx } = this;
+        const query = ctx.request.query;
+        const appId = query.appId;
+        const markPage = query.markPage;
+
+        if (!appId) throw new Error('获得单个Resource详情信息：appId不能为空');
+        if (!markPage) throw new Error('获得单个Resource详情信息：markPage不能为空');
+
+        const result = await ctx.service.web.webResource.getOneResourceDetail(appId, markPage);
+
+        ctx.body = this.app.result({
+            data: result,
+        });
+    }
 }
 
 module.exports = ResourceController;

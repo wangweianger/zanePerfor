@@ -74,7 +74,7 @@ class WebController extends Controller {
     }
 
     // ajax详情
-    async webajaxdetailg() {
+    async webajaxdetail() {
         const { ctx } = this;
         await ctx.render('web/ajaxdetail', {
             data: {
@@ -83,10 +83,19 @@ class WebController extends Controller {
         });
     }
 
+    async webajaxitemdetail() {
+        const { ctx } = this;
+        await ctx.render('web/ajaxitemdetail', {
+            data: {
+                title: '单个ajax详情信息',
+            },
+        });
+    }
+
     // 慢资源列表
     async webresourceavg() {
         const { ctx } = this;
-        await ctx.render('web/resourceavg', {
+        await ctx.render('web/resourcesavg', {
             data: {
                 title: '慢资源平均性能指标',
             },
@@ -96,9 +105,18 @@ class WebController extends Controller {
     // 慢资源详情
     async webresourcedetail() {
         const { ctx } = this;
-        await ctx.render('web/resourcedetail', {
+        await ctx.render('web/resourcesdetail', {
             data: {
                 title: '慢资源详情',
+            },
+        });
+    }
+
+    async webresourcesitemdetail() {
+        const { ctx } = this;
+        await ctx.render('web/resourcesitemdetail', {
+            data: {
+                title: '单个慢资源详情信息',
             },
         });
     }

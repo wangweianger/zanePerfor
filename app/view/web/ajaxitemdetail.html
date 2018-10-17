@@ -41,21 +41,33 @@
 </style>
 <div class="com_content_body main pb100" id="pages" v-cloak>
 	<div class="com_top_title">
-		<h1 class="com_h1 fl">错误详细信息</h1>
+		<h1 class="com_h1 fl">AJAX API详细信息</h1>
 		<commonsearch></commonsearch>
 	</div>
 	<div class="com_block common-block-style mt20">
 		<div class="block">
-			<span class="t1">错误url:</span>
-			<span class="t2">{{datas.resource_url}}</span>
+			<span class="t1">AJAX地址:</span>
+			<span class="t2">{{datas.url}}</span>
 		</div>
 		<div class="block">
-			<span class="t1">错误信息:</span>
-			<span class="t2 red">{{datas.msg}}</span>
+			<span class="t1">请求耗时:</span>
+			<span class="t2 red">{{datas.duration|toFixed}}</span>
 		</div>
 		<div class="block">
-			<span class="t1">资源类型:</span>
-			<span class="t2">{{datas.category}}</span>
+			<span class="t1">请求方式:</span>
+			<span class="t2">{{datas.method}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">请求参数:</span>
+			<span class="t2">{{datas.querydata}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">速度类型:</span>
+			<span class="t2 red">{{datas.speed_type == 1?'正常':'慢'}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">body大小:</span>
+			<span class="t2">{{datas.decoded_body_size|toSize}}</span>
 		</div>
 		<div class="block">
 			<span class="t1">生成时间:</span>
@@ -63,7 +75,7 @@
 		</div>
 		<div class="block">
 			<span class="t1">所属URL:</span>
-			<span class="t2">{{datas.url}}</span>
+			<span class="t2">{{datas.call_url}}</span>
 		</div>
 		<div class="block">
 			<span class="t1">来源城市:</span>
@@ -89,41 +101,9 @@
 			<span class="t1">IP地址:</span>
 			<span class="t2">{{environment.ip}}</span>
 		</div>
-		<div class="block" v-if="category=='resource'">
-			<span class="t1">错误资源:</span>
-			<span class="t2">{{datas.target}}</span>
-		</div>
-		<div class="block" v-if="category=='resource'">
-			<span class="t1">错误类型:</span>
-			<span class="t2">{{datas.type}}</span>
-		</div>
-		<div class="block" v-if="category=='ajax'">
-			<span class="t1">状态码:</span>
-			<span class="t2">{{datas.status}}</span>
-		</div>
-		<div class="block" v-if="category=='ajax'">
-			<span class="t1">类型详情:</span>
-			<span class="t2">{{datas.text}}</span>
-		</div>
-		<div class="block" v-if="category=='js'">
-			<span class="t1">错误列:</span>
-			<span class="t2">{{datas.line}}</span>
-		</div>
-		<div class="block" v-if="category=='js'">
-			<span class="t1">错误行:</span>
-			<span class="t2">{{datas.col}}</span>
-		</div>
 		<div class="block">
 			<span class="t1">完整URL:</span>
-			<span class="t2">{{datas.fullurl}}</span>
-		</div>
-		<div class="block">
-			<span class="t1">请求方式:</span>
-			<span class="t2">{{datas.method}}</span>
-		</div>
-		<div class="block">
-			<span class="t1">请求参数:</span>
-			<span class="t2">{{datas.querydata}}</span>
+			<span class="t2">{{datas.full_url}}</span>
 		</div>
 	</div>
 </div>
@@ -134,10 +114,9 @@
 		data: function () {
 			return {
 				datas: {},
-				environment:{},
+				environment: {},
 				appId: util.getStorage('local', 'appId'),
 				markPage: util.getQueryString('markPage') || '',
-				category: util.getQueryString('category') || '',
 			}
 		},
 		filters: {
@@ -146,15 +125,15 @@
 			date: window.Filter.date,
 		},
 		mounted() {
-			this.getErrorDetail();
+			this.getOneAjaxDetail();
 			this.getPageEnvironment();
 		},
 		methods: {
-			getErrorDetail() {
+			getOneAjaxDetail() {
 				this.isLoadend = false;
 				util.ajax({
 					type:'get',
-					url: config.baseApi + 'api/v1/error/getErrorDetail',
+					url: config.baseApi + 'api/v1/ajax/getOneAjaxDetail',
 					data: {
 						appId:this.appId,
 						markPage:this.markPage,

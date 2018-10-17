@@ -90,6 +90,8 @@ module.exports = app => {
     apiV1Router.get('ajax/getOneAjaxAvg', ajax.getOneAjaxAvg);
     // 获得单个api的性能列表数据
     apiV1Router.get('ajax/getOneAjaxList', ajax.getOneAjaxList);
+    // 获得单个ajax详情
+    apiV1Router.get('ajax/getOneAjaxDetail', ajax.getOneAjaxDetail);
 
     // -------------------resource资源-----------------------------
     // 根据资源类型获得数据
@@ -100,6 +102,8 @@ module.exports = app => {
     apiV1Router.get('resource/getOneResourceAvg', resource.getOneResourceAvg);
     // 获得单个resource的性能列表数据
     apiV1Router.get('resource/getOneResourceList', resource.getOneResourceList);
+    // 获得单个resource的性能详细信息
+    apiV1Router.get('resource/getOneResourceDetail', resource.getOneResourceDetail);
 
     // -------------------resource资源-----------------------------
     // 获得错误分类信息

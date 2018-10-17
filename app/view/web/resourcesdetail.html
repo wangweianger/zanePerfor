@@ -104,9 +104,10 @@
 				<th>调用页面</th>
 				<th>HTTP协议</th>
 				<th>请求时间</th>
+				<th>操作</th>
 			</tr>
 			<tr v-for="item in listdata">
-				<td class="tc w-300">{{item.url}}</td>
+				<td class="tc w-300"><a :href="'/web/resourcesitemdetail?markpage='+item.mark_page">{{item.url}}</a></td>
 				<td class="tc">{{item.method}}</td>
 				<td class="red tc">{{item.duration|toFixed}}</td>
 				<td class="tc">{{item.decoded_body_size|toSize}}</td>
@@ -114,6 +115,7 @@
 				<td class="tc">{{item.url}}</td>
 				<td class="tc">{{item.next_hop_protocol}}</td>
 				<td class="tc">{{item.create_time|date('/',true)}}</td>
+				<td class="tc w-100"><a :href="'/web/resourcesitemdetail?markpage='+item.mark_page">详情</a></td>
 			</tr>
 		</table>
 	</div>

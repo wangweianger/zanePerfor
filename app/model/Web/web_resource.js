@@ -10,6 +10,7 @@ module.exports = app => {
         app_id: { type: String }, // 所属系统
         create_time: { type: Date, default: Date.now }, // 用户访问时间
         url: { type: String }, // 访问页面的url
+        full_url: { type: String }, // 完整的资源名称
         speed_type: { type: Number }, // 访问速度类型 1：正常  2：慢
         resource_datas: { type: Mixed }, // 页面所有加载资源json对象
         name: { type: String }, // 资源名称
