@@ -23,7 +23,11 @@ module.exports = () => {
     config.web_task_time = '0 */1 * * * *';
 
     // 执行pvuvip定时任务的时间间隔 每分钟定时执行一次
-    config.pvuvip_task_time = '0 */1 * * * *';
+    config.pvuvip_task_minute_time = '0 */1 * * * *';
+
+    // 执行pvuvip定时任务的时间间隔 每天定时执行一次
+    // config.pvuvip_task_day_time = '*/10 * * * * *';
+    config.pvuvip_task_day_time = '0 0 0 */1 * *';
 
     // 执行ip地理位置转换的定时任务 每分钟定时执行一次
     config.ip_task_time = '0 */1 * * * *';

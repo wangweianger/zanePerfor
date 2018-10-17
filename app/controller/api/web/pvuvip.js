@@ -95,6 +95,7 @@ class PvUvIpController extends Controller {
             data: result,
         });
     }
+    // 获得时间列表
     async getTimeList(beginTime, endTime, datalist) {
         const result = [];
         const options = {
@@ -102,7 +103,7 @@ class PvUvIpController extends Controller {
             endDate: new Date(endTime),
             iterator: true,
         };
-        const interval = parser.parseExpression(this.app.config.pvuvip_task_time, options);
+        const interval = parser.parseExpression(this.app.config.pvuvip_task_minute_time, options);
         while (true) { // eslint-disable-line
             try {
                 const obj = interval.next();

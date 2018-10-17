@@ -6,7 +6,7 @@ class PvuvivService extends Service {
 
     // 保存用户上报的数据
     async getPvUvIpData(appId, beginTime, endTime) {
-        const querydata = { app_id: appId, create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
+        const querydata = { app_id: appId, type: 1, create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
         const datas = await this.ctx.model.Web.WebPvuvip.find(querydata);
         return datas;
     }

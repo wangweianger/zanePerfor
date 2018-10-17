@@ -11,6 +11,7 @@ module.exports = app => {
         pv: { type: Number }, // PV统计
         uv: { type: Number }, // uv统计
         ip: { type: Number }, // ip统计
+        type: { type: Number, default: 1 }, // 1:每分钟数据  2：每小时数据
         create_time: { type: Date, default: Date.now },
         uv_set: { type: Mixed },
         ip_set: { type: Mixed },

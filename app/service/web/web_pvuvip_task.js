@@ -4,20 +4,31 @@ const Service = require('egg').Service;
 class WebReportService extends Service {
 
     // 获得web端 pvuvip
-    async getWebPvUvIpByTime() {
-        const interval = parser.parseExpression(this.app.config.web_task_time);
+    async getWebPvUvIpByDay() {
+        const interval = parser.parseExpression(this.app.config.pvuvip_task_day_time);
+        interval.prev();
+        const endTime = new Date(interval.prev().toString());
+        const beginTime = new Date(interval.prev().toString());
+
+        const query = { create_time: { $gte: beginTime, $lt: endTime } };
+        const datas = await this.ctx.model.Web.WebEnvironment.find(query)
+            .exec();
+        this.groupData(datas, endTime, 2);
+    }
+    // 定时执行每分钟的数据
+    async getWebPvUvIpByMinute() {
+        const interval = parser.parseExpression(this.app.config.pvuvip_task_minute_time);
         interval.prev();
         const endTime = new Date(interval.prev().toString());
         const beginTime = new Date(endTime.getTime() - 60000);
 
-        const query = { create_time: { $gt: beginTime, $lt: endTime } };
-        // const query = { create_time: { $lt: endTime } };
+        const query = { create_time: { $gte: beginTime, $lt: endTime } };
         const datas = await this.ctx.model.Web.WebEnvironment.find(query)
             .exec();
-        this.groupData(datas, endTime);
+        this.groupData(datas, endTime, 1);
     }
     // 对数据进行分组
-    groupData(datas, endTime) {
+    groupData(datas, endTime, type) {
         if (!datas && !datas.length) return;
         const obj = {};
         datas.forEach(item => {
@@ -29,12 +40,12 @@ class WebReportService extends Service {
         });
         // 遍历组
         for (const key in obj) {
-            this.savePvUvIpData(obj[key], key, endTime);
+            this.savePvUvIpData(obj[key], key, endTime, type);
         }
     }
 
     // 获得pvuvip数据
-    async savePvUvIpData(data, appId, endTime) {
+    async savePvUvIpData(data, appId, endTime, type) {
         const length = data.length;
         const uvSet = new Set();
         const ipSet = new Set();
@@ -56,6 +67,8 @@ class WebReportService extends Service {
         pvuvip.create_time = endTime;
         pvuvip.uv_set = uvSet;
         pvuvip.ip_set = ipSet;
+        pvuvip.type = type;
+
         await pvuvip.save();
     }
 
