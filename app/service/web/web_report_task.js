@@ -29,9 +29,17 @@ class DataTimedTaskService extends Service {
     async saveDataToDb3(data) {
         if (!data && !data.length) return;
         const length = data.length - 1;
+        const cacheJson = {};
         // 遍历数据
         data.forEach(async (item, index) => {
-            const system = await this.service.web.webSystem.getSystemForAppId(item.app_id);
+            let system = {};
+            // 做一次appId缓存
+            if (cacheJson[item.app_id]) {
+                system = cacheJson[item.app_id];
+            } else {
+                system = await this.service.web.webSystem.getSystemForAppId(item.app_id);
+                cacheJson[item.app_id] = system;
+            }
             if (system.is_use !== 0) return;
             if (system.is_statisi_pages === 0) this.savePages(item, system.slow_page_time);
             if (system.is_statisi_resource === 0 || system.is_statisi_ajax === 0) this.forEachResources(item, system);
@@ -46,12 +54,16 @@ class DataTimedTaskService extends Service {
         const pages = this.ctx.model.Web.WebPages();
         const performance = item.performance;
 
+        const newurl = url.parse(item.url);
+        const newName = newurl.protocol + '//' + newurl.host + newurl.pathname;
+
         slowPageTime = slowPageTime * 1000;
         const speedType = performance.lodt >= slowPageTime ? 2 : 1;
 
         pages.app_id = item.app_id;
         pages.create_time = item.create_time;
-        pages.url = item.url;
+        pages.url = newName;
+        pages.full_url = item.url;
         pages.pre_url = item.pre_url;
         pages.speed_type = speedType;
         pages.mark_page = item.mark_page;
@@ -60,7 +72,6 @@ class DataTimedTaskService extends Service {
         pages.dns_time = performance.dnst;
         pages.tcp_time = performance.tcpt;
         pages.dom_time = performance.domt;
-        // pages.resource_time = performance.domt;
         pages.resource_list = item.resource_list;
         pages.white_time = performance.wit;
         pages.redirect_time = performance.rdit;

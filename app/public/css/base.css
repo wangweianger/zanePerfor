@@ -295,7 +295,7 @@ table.table tr td{
     font-size:14px;
 }
 .component_search .select .select-time {
-    width: 660px;
+    width: 620px;
     display: none;
     position: absolute;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);

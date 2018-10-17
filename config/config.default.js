@@ -14,7 +14,7 @@ module.exports = () => {
     config.description = '性能监控系统';
 
     // debug 为 true 时，用于本地调试
-    config.host = 'http://performance.seosiwei.com';
+    config.host = 'https://performance.niwoning.com';
 
     // 务必修改config.debug = true;
     config.session_secret = 'node_club_secret';
@@ -46,6 +46,7 @@ module.exports = () => {
     };
 
     // redis配置
+    // test
     config.redis = {
         client: {
             port: 6379, // Redis port
@@ -54,6 +55,15 @@ module.exports = () => {
             db: 0,
         },
     };
+    // product
+    // config.redis = {
+    //     client: {
+    //         port: 6379, // Redis port
+    //         host: '10.1.128.123', // Redis host
+    //         password: 'yy7943RMB',
+    //         db: 0,
+    //     },
+    // };
 
     // mongoose配置
     config.mongoose = {
@@ -63,15 +73,17 @@ module.exports = () => {
                 // url: 'mongodb://127.0.0.1:27017,127.0.0.1:27018/performance?replicaSet=performance',
                 url: 'mongodb://127.0.0.1:27017/performance',
                 options: {
+                    useNewUrlParser: true,
                     mongos: true,
-                    server: { poolSize: 20 },
+                    server: { poolSize: 2000 },
                 },
             },
             // 定时任务执行完之后存储到数据库3
             db3: {
                 url: 'mongodb://127.0.0.1:27019/performance',
                 options: {
-                    server: { poolSize: 20 },
+                    useNewUrlParser: true,
+                    server: { poolSize: 2000 },
                 },
             },
         },
@@ -83,7 +95,7 @@ module.exports = () => {
     };
 
     config.security = {
-        domainWhiteList: [ 'http://127.0.0.1:18090', 'http://127.0.0.1:8000' ],
+        domainWhiteList: [ 'https://performance.niwoning.com', 'http://127.0.0.1:18090' ],
         csrf: {
             enable: false,
             ignore: '/api/v1/report/**',
@@ -91,9 +103,8 @@ module.exports = () => {
     };
 
     config.cors = {
-        // origin: '*',
-        credentials: true,
-        allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
+        origin: '*',
+        allowMethods: 'GET,PUT,POST,DELETE',
     };
 
     config.onerror = {

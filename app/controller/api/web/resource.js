@@ -45,11 +45,13 @@ class ResourceController extends Controller {
         const query = ctx.request.query;
         const appId = query.appId;
         const url = query.url;
+        const beginTime = query.beginTime;
+        const endTime = query.endTime;
 
         if (!appId) throw new Error('单个Resource平均性能数据：appId不能为空');
         if (!url) throw new Error('单个Resource平均性能数据：api地址不能为空');
 
-        const result = await ctx.service.web.webResource.getOneResourceAvg(appId, url);
+        const result = await ctx.service.web.webResource.getOneResourceAvg(appId, url, beginTime, endTime);
 
         ctx.body = this.app.result({
             data: result,
@@ -64,12 +66,14 @@ class ResourceController extends Controller {
         const url = query.url;
         const pageNo = query.pageNo || 1;
         const pageSize = query.pageSize || this.app.config.pageSize;
+        const beginTime = query.beginTime;
+        const endTime = query.endTime;
 
         if (!appId) throw new Error('单个Resource性能列表数据：appId不能为空');
         if (!url) throw new Error('单个Resource性能列表数据：api地址不能为空');
 
 
-        const result = await ctx.service.web.webResource.getOneResourceList(appId, url, pageNo, pageSize);
+        const result = await ctx.service.web.webResource.getOneResourceList(appId, url, pageNo, pageSize, beginTime, endTime);
 
         ctx.body = this.app.result({
             data: result,

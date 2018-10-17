@@ -101,9 +101,6 @@
 				<th>请求耗时</th>
 				<th>返回资源大小</th>
 				<th>资源类型</th>
-				<th>来源城市</th>
-				<th>浏览器</th>
-				<th>操作系统</th>
 				<th>调用页面</th>
 				<th>HTTP协议</th>
 				<th>请求时间</th>
@@ -114,9 +111,6 @@
 				<td class="red tc">{{item.duration|toFixed}}</td>
 				<td class="tc">{{item.decoded_body_size|toSize}}</td>
 				<td class="tc">{{item.type}}</td>
-				<td class="tc">{{item.city||'未知'}}</td>
-				<td class="tc">{{item.browser}}</td>
-				<td class="tc">{{item.system}}</td>
 				<td class="tc">{{item.url}}</td>
 				<td class="tc">{{item.next_hop_protocol}}</td>
 				<td class="tc">{{item.create_time|date('/',true)}}</td>
@@ -146,6 +140,8 @@
 				isLoadend: false,
 				appId: util.getStorage('local', 'appId'),
 				url: util.getQueryString('url') || '',
+				beginTime: '',
+				endTime: '',
 			}
 		},
 		filters: {
@@ -154,10 +150,16 @@
 			date: window.Filter.date,
 		},
 		mounted() {
-			this.getOneResourceAvg();
-			this.getOneResourceList();
+			this.getDataForTime();
 		},
 		methods: {
+			getDataForTime() {
+				let times = util.getSearchTime()
+				this.beginTime = times.beginTime
+				this.endTime = times.endTime
+				this.getOneResourceAvg();
+				this.getOneResourceList();
+			},
 			getOneResourceAvg(){
 				util.ajax({
 					type: 'get',
@@ -165,6 +167,8 @@
 					data: {
 						appId: this.appId,
 						url: this.url,
+						beginTime: this.beginTime,
+						endTime: this.endTime,
 					},
 					success: data => {
 						this.detail = data.data;
@@ -181,6 +185,8 @@
 						pageNo: this.pageNo,
 						pageSize: this.pageSize,
 						url: this.url,
+						beginTime:this.beginTime,
+						endTime:this.endTime,
 					},
 					success: data => {
 						this.isLoadend = true;

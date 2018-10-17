@@ -117,13 +117,8 @@
 		<div class="com_search">
 			<div class="item">
 				<div>
+					<span class="name">选择日期查询：</span>
 					<input id="zane-calendar-1" class="inp w-200" type="text" placeholder="选择日期查询">
-				</div>
-				<div class="ml10">
-					<input class="inp w-200" v-model="city" placeholder="选填、输入城市名字查询" type="text">
-					<input class="inp w-200 ml20" v-model="browser" placeholder="选填、输入浏览器名称查询" type="text">
-					<input class="inp w-200 ml20" v-model="system" placeholder="选填、输入系统名称查询" type="text">
-					<button class="btn btn-default" @click="checkoutLabel(1,true)">搜索</button>
 				</div>
 			</div>
 		</div>
@@ -131,9 +126,6 @@
 		<table class="table" v-if="isLoadend&&listdata.length">
 			<tr class="light_color">
 				<th>URL</th>
-				<th v-if="city">城市</th>
-				<th v-if="browser">浏览器</th>
-				<th v-if="system">操作系统</th>
 				<th>页面加载时间</th>
 				<th>白屏时间</th>
 				<th>DOM构建时间</th>
@@ -148,9 +140,6 @@
 			</tr>
 			<tr v-for="item in listdata">
 				<td><a :href="'/web/pagesdetails?id='+item._id+'&slowpages'">{{item.url}}</a></td>
-				<td class="tc" v-if="city">{{item._id.city||'未知'}}</td>
-				<td class="tc" v-if="browser">{{item._id.browser}}</td>
-				<td class="tc" v-if="system">{{item._id.system}}</td>
 				<td class="red tc">{{item.load_time|toFixed(true)}}</td>
 				<td class="red tc">{{item.white_time|toFixed}}</td>
 				<td class="tc">{{item.dom_time|toFixed(true)}}</td>
@@ -191,9 +180,6 @@
 				isLoadend: false,
 				appId: util.getStorage('local', 'appId'),
 				url:'',
-				city:'',
-				browser:'',
-				system:'',
 			}
 		},
 		filters: {
@@ -236,9 +222,6 @@
 						endTime: this.endTime,
 						url: this.url,
 						type:this.type,
-						city: this.city,
-						browser: this.browser,
-						system: this.system,
 					},
 					success: data => {
 						this.isLoadend = true;

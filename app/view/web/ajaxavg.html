@@ -30,19 +30,21 @@
 		<div class="com_search">
 			<div class="item">
 				<div>
+					<span class="name">输入API名称：</span>
 					<input class="inp" v-model="url" placeholder="选填、输入API名称" type="text">
 					<button class="btn btn-default" @click="searchForUrl">搜索</button>
 				</div>
 				<div class="ml30">
+					<span class="name">选择日期查询：</span>
 					<input id="zane-calendar-1" class="inp w-200" type="text" placeholder="选择日期查询">
 				</div>
-				<div class="com_select_item ml30" :class="{'active':isCity}" @click="isSelectCity"><span class="iconfont">&#xe63c;</span>按城市分类</div>
+				<!-- <div class="com_select_item ml30" :class="{'active':isCity}" @click="isSelectCity"><span class="iconfont">&#xe63c;</span>按城市分类</div>
 				<div class="ml10">
 					<input class="inp w-200" v-model="city" placeholder="选填、输入城市名字查询" type="text">
 					<button class="btn btn-default" @click="searchForCity">搜索</button>
 				</div>
 				<div class="com_select_item ml30" :class="{'active':isBrowser}" @click="isSelectBrowser"><span class="iconfont">&#xe63c;</span>按浏览器分类</div>
-				<div class="com_select_item ml30" :class="{'active':isSystem}" @click="isSelectSystem"><span class="iconfont">&#xe63c;</span>按操作系统分类</div>
+				<div class="com_select_item ml30" :class="{'active':isSystem}" @click="isSelectSystem"><span class="iconfont">&#xe63c;</span>按操作系统分类</div> -->
 			</div>
 		</div>
 		<!-- table列表 -->
@@ -50,9 +52,6 @@
 			<tr class="light_color">
 				<th class="w-300">API地址</th>
 				<th>调用次数</th>
-				<th v-if="isCity">城市</th>
-				<th v-if="isBrowser">浏览器</th>
-				<th v-if="isSystem">操作系统</th>
 				<th>请求方式</th>
 				<th>响应时间</th>
 				<th>body数据大小</th>
@@ -61,9 +60,6 @@
 			<tr v-for="item in listdata">
 				<td><a href="javascript:" @click="goToList(item)">{{item._id.url}}</a></td>
 				<td class="tc" >{{item.count}}</td>
-				<td class="tc" v-if="isCity">{{item._id.city||'未知'}}</td>
-				<td class="tc" v-if="isBrowser">{{item._id.browser}}</td>
-				<td class="tc" v-if="isSystem">{{item._id.system}}</td>
 				<td class="tc">{{item._id.method}}</td>
 				<td class="red tc">{{item.duration|toFixed}}</td>
 				<td class="tc">{{item.body_size|toSize}}</td>
@@ -94,10 +90,6 @@
 				appId: util.getStorage('local', 'appId'),
 				type: 1, //访问速度类型 1：正常  2：慢
 				url:'',
-				city:'',
-				isCity: false,
-				isBrowser:false,
-				isSystem:false,
 			}
 		},
 		filters: {
@@ -135,10 +127,6 @@
 						beginTime: this.beginTime,
 						endTime: this.endTime,
 						url: this.url,
-						city: this.city,
-						isCity: this.isCity,
-						isBrowser: this.isBrowser,
-						isSystem: this.isSystem,
 					},
 					success: data => {
 						this.isLoadend = true;
@@ -157,24 +145,7 @@
 					}
 				})
 			},
-			isSelectCity(){
-				this.isCity = !this.isCity;
-				if(!this.isCity) this.city = '';
-				this.getinit();
-			},
-			isSelectBrowser(){
-				this.isBrowser = !this.isBrowser;
-				this.getinit();
-			},
-			isSelectSystem(){
-				this.isSystem = !this.isSystem;
-				this.getinit();
-			},
 			searchForUrl(){
-				this.getinit();
-			},
-			searchForCity(){ 
-				this.isCity = this.city?true:false;
 				this.getinit();
 			},
 			searchForTime(){

@@ -39,10 +39,6 @@ class ResourceService extends Service {
         const beginTime = query.beginTime;
         const endTime = query.endTime;
         const url = query.url;
-        const city = query.city;
-        const isCity = query.isCity;
-        const isBrowser = query.isBrowser;
-        const isSystem = query.isSystem;
 
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
@@ -51,30 +47,15 @@ class ResourceService extends Service {
         // 查询参数拼接
         const queryjson = { $match: { app_id: appId, speed_type: type }, }
         if (url) queryjson.$match.name = { $regex: new RegExp(url, 'i') };
-        if (city) queryjson.$match.city = city;
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        const lookup = {
-            $lookup: {
-                from: "webenvironments",
-                localField: "mark_page",
-                foreignField: "mark_page",
-                as: "fromItems"
-            }
-        }
         const group_id = {
             url: "$name",
             method: "$method",
-            city: `${isCity == 'true' ? "$city" : ""}`,
-            browser: `${isBrowser == 'true' ? "$browser" : ""}`,
-            system: `${isSystem == 'true' ? "$system" : ""}`,
         };
 
         // 请求总条数
         const count = await this.ctx.model.Web.WebResource.aggregate([
-            lookup,
-            { $replaceRoot: { newRoot: { $mergeObjects: [{ $arrayElemAt: ["$fromItems", 0] }, "$$ROOT"] } } },
-            { $project: { fromItems: 0 } },
             queryjson,
             {
                 $group: {
@@ -84,9 +65,6 @@ class ResourceService extends Service {
             },
         ]).exec();
         const datas = await this.ctx.model.Web.WebResource.aggregate([
-            lookup,
-            { $replaceRoot: { newRoot: { $mergeObjects: [{ $arrayElemAt: ["$fromItems", 0] }, "$$ROOT"] } } },
-            { $project: { fromItems: 0 } },
             queryjson,
             {
                 $group: {
@@ -109,9 +87,12 @@ class ResourceService extends Service {
     }
 
     // 获得单个resourc的平均性能数据
-    async getOneResourceAvg(appId, url) {
+    async getOneResourceAvg(appId, url, beginTime, endTime) {
+        const query = { $match: { app_id: appId, name: url }, };
+        if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
+
         const datas = await this.ctx.model.Web.WebResource.aggregate([
-            { $match: { app_id: appId, name: url }, },
+            query,
             {
                 $group: {
                     _id: null,
@@ -126,29 +107,19 @@ class ResourceService extends Service {
     }
 
     // 获得单个resourc的性能列表数据
-    async getOneResourceList(appId, url, pageNo, pageSize) {
+    async getOneResourceList(appId, url, pageNo, pageSize, beginTime, endTime) {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
 
-        const lookup = {
-            $lookup: {
-                from: "webenvironments",
-                localField: "mark_page",
-                foreignField: "mark_page",
-                as: "fromItems"
-            }
-        }
+        const query = { $match: { app_id: appId, name: url }, };
+        if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
         // 请求总条数
         const count = await this.ctx.model.Web.WebResource.aggregate([
-            { $match: { app_id: appId, name: url }, },
-            lookup,
+            query,
         ]).exec();
         const datas = await this.ctx.model.Web.WebResource.aggregate([
-            { $match: { app_id: appId, name: url }, },
-            lookup,
-            { $replaceRoot: { newRoot: { $mergeObjects: [{ $arrayElemAt: ["$fromItems", 0] }, "$$ROOT"] } } },
-            { $project: { fromItems: 0 } },
+            query,
             { $skip: (pageNo - 1) * pageSize },
             { $limit: pageSize },
             { $sort: { create_time: -1 } },

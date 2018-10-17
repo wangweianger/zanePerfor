@@ -9,28 +9,33 @@ class WebPerformanceScriptService extends Service {
         const appId = query.appId;
         const USESDK = query.USESDK || 'FALSE';
         // await this.setSYSTEMredis(appId);
-        await this.setUserCookie(ctx);
-        return USESDK === 'FALSE' ? await this.reduceScriptText(appId) : '';
+        const markuser = await this.setUserCookie(ctx);
+
+        return USESDK === 'FALSE' ?
+            await this.reduceScriptText(appId, markuser) :
+            `window.performance_markuser = "${markuser}";`;
     }
 
     // 设置用户cookie信息
     async setUserCookie(ctx) {
-        const markuser = ctx.cookies.get('markuser') || '';
+        let markuser = ctx.cookies.get('markuser') || '';
 
-        if (!markuser) {
+        if (!markuser || await this.whetherExpire(markuser)) {
             // 第一次访问
-            const usercookie = this.app.signwx({
-                mark: 'markuser',
-                timestamp: new Date().getTime(),
-                random: this.app.randomString(),
-            }).paySign;
-            ctx.cookies.set('markuser', usercookie);
+            markuser = this.app.randomString(19) + new Date().getTime();
+            ctx.cookies.set('markuser', markuser);
         }
-        return {};
+        return markuser;
+    }
+    // 检测cookie是否过期 默认超过30分钟视为过期
+    async whetherExpire(markuser) {
+        if (!markuser) return;
+        markuser = markuser.substr(19) * 1;
+        return new Date().getTime() - markuser > 1800000;
     }
 
     // 生成性能上报脚本
-    async reduceScriptText(appId) {
+    async reduceScriptText(appId, markuser) {
         if (!appId) throw new Error('获得网页上报脚本：系统标识appId不能为空');
         // 获得系统缓存信息
         const system = await this.service.web.webSystem.getSystemForAppId(appId);
@@ -218,12 +223,13 @@ class WebPerformanceScriptService extends Service {
                         screenheight:h,
                         appId:'${appId}',
                         markPage:randomString(),
+                        markUser:'${markuser}'
                     }
                     fn&&fn(result)
                     if(!fn && window.fetch){
                         fetch(opt.domain,{ 
                             method: 'POST',
-                            credentials: 'include',
+                            // credentials: 'include',
                             headers: {'Content-Type': 'application/json'},
                             type:'report-data',
                             body:JSON.stringify(result)

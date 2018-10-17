@@ -8,10 +8,7 @@ class WebReportService extends Service {
     saveWebReportData(ctx) {
         const query = ctx.request.body;
         const ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
-
-        // 获得cookie参数
-        const markuser = ctx.cookies.get('markuser') || '';
-
+        
         // 参数校验
         if (!query.appId) throw new Error('web端上报数据操作：app_id不能为空');
 
@@ -21,7 +18,7 @@ class WebReportService extends Service {
         report.user_agent = ctx.headers['user-agent'];
         report.ip = ip;
         report.mark_page = query.markPage;
-        report.mark_user = markuser;
+        report.mark_user = query.markUser;
         report.url = ctx.headers.referer;
         report.pre_url = query.preUrl;
         report.performance = query.performance;

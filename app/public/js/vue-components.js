@@ -7,14 +7,13 @@ let Component = {
             <div class="select">
                 <span class="times"><span class="iconfont">&#xe60b;</span>{{timeText}}<span class="iconfont">&#xe63b;</span></span>
                 <div class="select-time">
-                    <li data-time="0" data-text="全部">全部</li>
-                    <li data-time="0.5" data-text="最近30分钟">30分钟</li>
-                    <li data-time="1" data-text="最近1小时">1小时</li>
-                    <li data-time="6" data-text="最近6小时">6小时</li>
-                    <li data-time="12" data-text="最近12小时">12小时</li>
-                    <li data-time="24" data-text="最近1天">1天</li>
-                    <li data-time="72" data-text="最近3天">3天</li>
-                    <li data-time="168" data-text="最近7天">7天</li>
+                    <li data-time="60000" data-text="最近1分钟">1分钟</li>
+                    <li data-time="300000" data-text="最近5分钟">5分钟</li>
+                    <li data-time="600000" data-text="最近10分钟">10分钟</li>
+                    <li data-time="1800000" data-text="最近30分钟">30分钟</li>
+                    <li data-time="3600000" data-text="最近1小时">1小时</li>
+                    <li data-time="43200000" data-text="最近12小时">12小时</li>
+                    <li data-time="86400000" data-text="最近1天">1天</li>
                     <button @click="timeSure" class="btn">确定</button>
                 </div>
             </div>
@@ -33,12 +32,11 @@ let Component = {
         mounted(){
             let _this=this;
             // 添加active样式
-            let selecttimes = util.getStorage('local','userselectTime')||0
+            let selecttimes = util.getStorage('local', 'userselectTime') || 60000
             let objs = $('.select-time li')
             for(let i=0,len=objs.length;i<len;i++){
                 let times = $(objs[i]).attr('data-time')
                 let text = $(objs[i]).attr('data-text')
-                times = times*60*60*1000
                 if(times == selecttimes){
                     _this.timeText = text
                     $(objs[i]).addClass('active')
@@ -61,7 +59,6 @@ let Component = {
                 let time = $(this).attr('data-time')
                 let text = $(this).attr('data-text')
                 _this.timeText = text
-                time = time*60*60*1000
                 util.setStorage('local','userselectTime',time)
             })
         },

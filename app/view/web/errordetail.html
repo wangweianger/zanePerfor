@@ -34,9 +34,6 @@
 				<th v-if="category=='ajax'">类型详情</th>
 				<th v-if="category=='js'">错误行</th>
 				<th v-if="category=='js'">错误列</th>
-				<th>来源城市</th>
-				<th>浏览器</th>
-				<th>操作系统</th>
 				<th>请求方式</th>
 				<th>错误时间</th>
 				<th>操作呢</th>
@@ -52,9 +49,6 @@
 				<td class="tc" v-if="item.category=='ajax'">{{item.text}}</td>
 				<td class="tc" v-if="item.category=='js'">{{item.line}}</td>
 				<td class="tc" v-if="item.category=='js'">{{item.col}}</td>
-				<td class="tc">{{item.city||'未知'}}</td>
-				<td class="tc">{{item.browser}}</td>
-				<td class="tc">{{item.system}}</td>
 				<td class="tc">{{item.method}}</td>
 				<td class="tc">{{item.create_time|date('/',true)}}</td>
 				<td class="tc"><a href="javascript:" @click="gotodetail(item)">详情</a></td>

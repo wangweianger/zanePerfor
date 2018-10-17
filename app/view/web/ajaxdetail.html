@@ -104,9 +104,6 @@
 				<th>请求方式</th>
 				<th>请求耗时</th>
 				<th>返回资源大小</th>
-				<th>来源城市</th>
-				<th>浏览器</th>
-				<th>操作系统</th>
 				<th>请求参数</th>
 				<th>调用页面</th>
 				<th>请求时间</th>
@@ -116,9 +113,6 @@
 				<td class="tc">{{item.method}}</td>
 				<td class="red tc">{{item.duration|toFixed}}</td>
 				<td class="tc">{{item.decoded_body_size|toSize}}</td>
-				<td class="tc">{{item.city||'未知'}}</td>
-				<td class="tc">{{item.browser}}</td>
-				<td class="tc">{{item.system}}</td>
 				<td class="tc">{{item.query_datas}}</td>
 				<td class="tc">{{item.call_url}}</td>
 				<td class="tc">{{item.create_time|date('/',true)}}</td>

@@ -537,7 +537,7 @@ class utilfn {
             beginTime: '',
             endTime: ''
         }
-        let selecttimes = util.getStorage('local', 'userselectTime') || 0
+        let selecttimes = util.getStorage('local', 'userselectTime') || 60000
         selecttimes = selecttimes * 1
         if (selecttimes) {
             let endTime = new Date().getTime()

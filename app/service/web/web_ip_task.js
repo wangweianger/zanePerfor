@@ -15,7 +15,7 @@ class IpTaskService extends Service {
             query.create_time = { $gt: beginTime };
         }
         const datas = await this.ctx.model.Web.WebEnvironment.find(query)
-            .limit(50)
+            .limit(60)
             .sort({ create_time: -1 })
             .exec();
         if (datas && datas.length) this.handleDatas(datas);
@@ -34,7 +34,7 @@ class IpTaskService extends Service {
                 clearInterval(timer);
             }
             i++;
-        }, 1000);
+        }, 800);
         // 遍历数据
         // data.forEach(async (item, index) => {
         //     const ip = item.ip;
