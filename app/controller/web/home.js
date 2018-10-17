@@ -33,6 +33,26 @@ class HomeController extends Controller {
             },
         });
     }
+
+    // 系统列表
+    async systems() {
+        const { ctx } = this;
+        await ctx.render('systems', {
+            data: {
+                title: '系统列表',
+            },
+        });
+    }
+
+    // 用户管理
+    async users() {
+        const { ctx } = this;
+        await ctx.render('users', {
+            data: {
+                title: '用户列表',
+            },
+        });
+    }
 }
 
 module.exports = HomeController;

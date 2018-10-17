@@ -60,7 +60,8 @@ module.exports = () => {
         clients: {
             // 主库:负责存储数据 从库：复责读取数据
             db1: {
-                url: 'mongodb://127.0.0.1:27017,127.0.0.1:27018/performance?replicaSet=performance',
+                // url: 'mongodb://127.0.0.1:27017,127.0.0.1:27018/performance?replicaSet=performance',
+                url: 'mongodb://127.0.0.1:27017/performance',
                 options: {
                     mongos: true,
                     server: { poolSize: 20 },

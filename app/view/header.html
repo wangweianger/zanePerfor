@@ -5,6 +5,12 @@
 	</div></a>
 	<div class="right">
 		<div class="item">{{userMsg.user_name}}</div>
+		<a href="/systems" v-if="userMsg.level==0?true:false">
+			<div class="item">系统管理</div>
+		</a>
+		<a href="/users" v-if="userMsg.level==0?true:false">
+			<div class="item">用户管理</div>
+		</a>
 		<a href="/"><div class="item">我的应用</div></a>
 		<div class="item" @click="logout">退出登录</div>
 	</div>
@@ -78,7 +84,8 @@
 		data: function () {
 			return {
 				userMsg: {
-					user_name:'游小白'
+					user_name:'游小白',
+					level:1,
 				},
 			}
 		},

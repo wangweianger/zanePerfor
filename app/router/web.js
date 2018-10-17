@@ -13,6 +13,12 @@ module.exports = app => {
     // 用户登录
     router.get('/login', home.login);
 
+    // 系统列表
+    router.get('/systems', home.systems);
+
+    // 用户管理
+    router.get('/users', home.users);
+
     // ------------------------------ 浏览器 -------------------------------
     // 首页pvuvip数据统计
     router.get('/web/home', web.webhome);

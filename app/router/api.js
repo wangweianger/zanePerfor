@@ -3,7 +3,19 @@
 module.exports = app => {
     const apiV1Router = app.router.namespace('/api/v1/');
     const { controller } = app;
-    const { report, system, pvuvip, pages, environment, ajax, resource, error, user } = controller.api;
+    const {
+        user,
+    } = controller.api;
+    const {
+        report,
+        system,
+        pvuvip,
+        pages,
+        environment,
+        ajax,
+        resource,
+        error,
+    } = controller.api.web;
 
     // ----------------浏览器端script脚本获取---------------
     apiV1Router.get('report/webscript', report.getWebScript);
@@ -18,6 +30,12 @@ module.exports = app => {
     apiV1Router.post('user/register', user.register);
     // 退出登录
     apiV1Router.get('user/logout', user.logout);
+    // 获得用户列表
+    apiV1Router.post('user/getUserList', user.getUserList);
+    // 冻结解冻用户
+    apiV1Router.post('user/setIsUse', user.setIsUse);
+    // 删除用户
+    apiV1Router.post('user/delete', user.delete);
 
     // ----------------系统配置相关---------------
     // 新增系统
@@ -25,9 +43,17 @@ module.exports = app => {
     // 修改系统
     apiV1Router.post('system/update', system.updateSystem);
     // 根据用户ID获得系统信息
-    apiV1Router.get('system/getMsgForUserId', system.getSysForUserId);
+    apiV1Router.get('system/getSysForUserId', system.getSysForUserId);
     // 根据系统ID获得单个系统信息
     apiV1Router.get('system/getSystemForId', system.getSystemForId);
+    // 获得系统列表
+    apiV1Router.get('system/web/list', system.getWebSystemList);
+    // 删除系统中某个用户
+    apiV1Router.post('system/deleteUser', system.deleteWebSystemUser);
+    // 新增系统中某个用户
+    apiV1Router.post('system/addUser', system.addWebSystemUser);
+    // 删除某个系统
+    apiV1Router.post('system/deleteSystem', system.deleteSystem);
 
     // ----------------pv uv ip---------------
     // 获得实时统计概况

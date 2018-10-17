@@ -11,6 +11,7 @@ class UserService extends Service {
         const userInfo = await this.getUserInfoForUserName(userName);
         if (!userInfo.token) throw new Error('用户名不存在！');
         if (userInfo.pass_word !== passWord) throw new Error('用户密码不正确！');
+        if (userInfo.is_use !== 0) throw new Error('用户被冻结不能登录，请联系管理员！');
         // 设置登录cookie
         this.ctx.cookies.set('usertoken', userInfo.token);
         return userInfo
@@ -34,6 +35,7 @@ class UserService extends Service {
         user.pass_word = passWord;
         user.token = token;
         user.create_time =  new Date();
+        user.level = userName === 'admin' ? 0 : 1;
 
         // 设置登录cookie
         this.ctx.cookies.set('usertoken', token);
@@ -44,8 +46,42 @@ class UserService extends Service {
     // 根据用户名称查询用户信息
     async getUserInfoForUserName(userName){
         return await this.ctx.model.User.findOne({ user_name: userName }) || {};
-        
     }
+
+    // 查询用户列表信息（分页）
+    async getUserList(pageNo, pageSize, userName){
+        pageNo = pageNo * 1;
+        pageSize = pageSize * 1;
+
+        const query = {};
+        if (userName) query.user_name = userName;
+        console.log(query)
+        // 请求总条数
+        const count = await this.ctx.model.User.count(query).exec();
+        // 请求分页数据
+        const list = await this.ctx.model.User.find(query).skip((pageNo - 1) * pageSize).limit(pageSize).exec();
+
+        return {
+            datalist: list,
+            totalNum: count,
+            pageNo: pageNo,
+        };
+    }
+
+    // 冻结解冻用户
+    async setIsUse(token, isUse) {
+        isUse = isUse * 1;
+        return await this.ctx.model.User.update(
+            { token: token },
+            { is_use: isUse },
+            { multi: true }).exec();
+    }
+
+    // 冻结解冻用户
+    async delete(token) {
+        return await this.ctx.model.User.findOneAndRemove({ token: token }).exec();
+    }
+
 }
 
 module.exports = UserService;

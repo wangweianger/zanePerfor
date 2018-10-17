@@ -97,9 +97,40 @@ class WebSystemService extends Service {
     }
     // 根据用户id获取系统列表
     async getSysForUserId(ctx) {
-        const userId = ctx.request.query.userId;
-        if (!userId) return [];
-        return await ctx.model.Web.WebSystem.where('user_id').elemMatch({ $eq: userId }) || [];
+        const token = ctx.request.query.token;
+        if (!token) return [];
+        return await ctx.model.Web.WebSystem.where('user_id').elemMatch({ $eq: token }) || [];
+    }
+    // 获得系统列表信息
+    async getWebSystemList() {
+        return await this.ctx.model.Web.WebSystem.aggregate([
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user_id',
+                    foreignField: 'token',
+                    as: 'userlist',
+                },
+            },
+        ]).exec();
+    }
+    // 删除系统中某个用户
+    async deleteWebSystemUser(appId, userToken) {
+        return await this.ctx.model.Web.WebSystem.update(
+            { app_id: appId },
+            { $pull: { user_id: userToken } },
+            { multi: true }).exec();
+    }
+    // 系统中新增某个用户
+    async addWebSystemUser(appId, userToken) {
+        return await this.ctx.model.Web.WebSystem.update(
+            { app_id: appId },
+            { $addToSet: { user_id: userToken } },
+            { multi: true }).exec();
+    }
+    // 删除某个系统
+    async deleteSystem(appId) {
+        return await this.ctx.model.Web.WebSystem.findOneAndRemove({ app_id: appId }).exec();
     }
 }
 

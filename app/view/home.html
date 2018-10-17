@@ -3,6 +3,10 @@
 		width: 80%;
 		margin: 100px auto 100px;
 	}
+	.com_between:hover{
+		background:#f9f8ff;
+		cursor: pointer;
+	}
 </style>
 <div class="com_content home_body" id="home_body" v-cloak>
 	<div class="com_title">
@@ -12,11 +16,11 @@
 		</div>
 	</div>
 	<div v-if="isLoadend && datalist.length">
-		<div class="com_block com_between mt50" v-for="item in datalist" >
+		<div class="com_block com_between mt50" v-for="item in datalist" @click="selectSystem(2,item)">
 			<div class="left">
 				<img class="icon" src="https://cdn.seosiwei.com/TBaCKyXadN6xBnM4YGND6fxTBwQj68Ya.png?imageslim">
 				<div class="h1 mt10">{{item.type|systemType}}</div>
-				<button class="btn mt30 btn-default" @click="selectSystem(1,item)">设置</button>
+				<button class="btn mt30 btn-default" @click.stop="selectSystem(1,item)">设置</button>
 				<button class="btn mt10 btn-main" @click="selectSystem(2,item)">进入</button>
 			</div>
 			<div class="right">
@@ -65,14 +69,14 @@
 			</div>
 		</div>
 	</div>
-	<div class="empty mt30 tc">暂无数据！</div>
+	<div v-if="isLoadend && !datalist.length" class="empty mt30 tc">暂无数据！</div>
 </div>
 <script>
 	new Vue({
 		el: '#home_body',
 		data: function () {
 			return {
-				userId:'',
+				token:'',
 				datalist:[],
 				userMsg:{},
 				isLoadend:false,
@@ -84,17 +88,17 @@
 		mounted() {
 			const userMsg = util.getStorage('local', 'userMsg');
 			this.userMsg = userMsg ? JSON.parse(userMsg) : {};
-			this.userId = this.userMsg._id;
+			this.token = this.userMsg.token;
 			this.getMsgForUserId();
 		},
 		methods: {
 			getMsgForUserId() {
-				if (!this.userId) {
+				if (!this.token) {
 					popup.alert({ type: 'msg', title: '用户id不能为空!' }); return false;
 				}
 				util.ajax({
 					type:'get',
-					url: config.baseApi + 'api/v1/system/getMsgForUserId?userId=' + this.userId,
+					url: config.baseApi + 'api/v1/system/getSysForUserId?token=' + this.token,
 					success:  (data) => {
 						this.isLoadend = true;
 						if(data.data && data.data.length){

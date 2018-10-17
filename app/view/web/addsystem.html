@@ -183,7 +183,7 @@
 		</div>
 	</div>
 	<div>
-		<button class="button left-botton" @click="updateSystem">保存</button>
+		<button class="button left-botton" @click="addSystem" v-if="!isAdd">保存</button>
 	</div>
 </div>
 x<script src="//cdn.bootcss.com/switchery/0.8.2/switchery.min.js"></script>
@@ -194,7 +194,6 @@ new Vue({
 		return {
 			lable:1, //1:概况 2：pv|uv|ip
 			appId: util.getStorage('local', 'appId'),
-			systemInfo:{},
 			type: util.getQueryString('type') || 1, //1:web浏览器  2：微信
 			query:{
 				is_use:0,
@@ -212,6 +211,7 @@ new Vue({
 				is_statisi_error:0,
 				user_id:'',
 			},
+			isAdd:false,
 			script:'',
 		}
 	},
@@ -234,15 +234,19 @@ new Vue({
 
 			elem.onchange = function () {
 				_this.query.is_use = elem.checked ? 0 : 1;
+				if(this.isAdd) this.updateSystem();
 			};
 		},
-		updateSystem() {
-			if (!this.systemInfo.system_name) { popup.alert({ title: '请正确填写应用名称!' }); return false; }
-			if (!this.systemInfo.system_domain) { popup.alert({ title: '请正确填写应用域名!' }); return false; }
+		addSystem() {
+			if (!this.query.system_name) { popup.alert({ title: '请正确填写应用名称!' }); return false; }
+			if (!this.query.system_domain) { popup.alert({ title: '请正确填写应用域名!' }); return false; }
 			util.ajax({
-				url: config.baseApi + 'api/v1/system/update',
-				data: this.systemInfo,
+				url: config.baseApi + 'api/v1/system/add',
+				data: this.query,
 				success: data => {
+					this.query = data.data;
+					this.isAdd = true;
+					this.script = `<script src="${location.origin}/api/v1/report/webscript?appId=${this.query.app_id}&USESDK=FALSE"><\/script>`;
 					popup.miss({ title: "操作成功！" });
 				}
 			})
@@ -275,15 +279,13 @@ new Vue({
 							this.query.is_statisi_error = value;
 							break;
 					}
-					this.updateSystem();
+					if (this.isAdd) this.updateSystem();
 				}
 			});
 		},
 		updateSystem(){
-			if (!this.query.system_name) { popup.alert({ title: '请正确填写应用名称!' }); return false; }
-			if (!this.query.system_domain) { popup.alert({ title: '请正确填写应用域名!' }); return false; }
 			util.ajax({
-				url: config.baseApi + 'api/v1/system/add',
+				url: config.baseApi + 'api/v1/system/update',
 				data: this.query,
 				success: data => {
 					popup.miss({ title: '操作成功!' })
