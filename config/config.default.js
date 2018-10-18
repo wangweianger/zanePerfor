@@ -79,7 +79,8 @@ module.exports = () => {
                 options: {
                     useNewUrlParser: true,
                     mongos: true,
-                    server: { poolSize: 2000 },
+                    auto_reconnect: true,
+                    server: { poolSize: 200 },
                 },
             },
             // 定时任务执行完之后存储到数据库3
@@ -87,7 +88,7 @@ module.exports = () => {
                 url: 'mongodb://127.0.0.1:27019/performance',
                 options: {
                     useNewUrlParser: true,
-                    server: { poolSize: 2000 },
+                    server: { poolSize: 200 },
                 },
             },
         },

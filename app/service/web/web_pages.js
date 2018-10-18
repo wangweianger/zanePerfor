@@ -29,40 +29,36 @@ class PagesService extends Service {
             url: "$url", 
         };
 
-        // 请求总条数
-        const count = await this.ctx.model.Web.WebPages.aggregate([
-            queryjson,
-            {
-                $group: { 
-                    _id: group_id,
-                    count: { $sum: 1 },
-                }
-            },
-        ]).exec();
-        const datas = await this.ctx.model.Web.WebPages.aggregate([
-            queryjson,
-            { $group: { 
-                _id: group_id,
-                count: { $sum: 1 }, 
-                load_time: { $avg: "$load_time" }, 
-                dns_time: { $avg: "$dns_time" }, 
-                tcp_time: { $avg: "$tcp_time" }, 
-                dom_time: { $avg: "$dom_time" }, 
-                white_time: { $avg: "$white_time" }, 
-                redirect_time: { $avg: "$redirect_time" }, 
-                unload_time: { $avg: "$unload_time" }, 
-                request_time: { $avg: "$request_time" }, 
-                analysisDom_time: { $avg: "$analysisDom_time" }, 
-                ready_time: { $avg: "$ready_time" }, 
-            } },
-            { $skip: (pageNo-1) * pageSize  },
-            { $limit: pageSize },
-            { $sort: { count: -1 } },
-        ]).exec();
+        const count = Promise.resolve(this.ctx.model.Web.WebPages.distinct('url', queryjson.$match));
+        const datas = Promise.resolve(
+            this.ctx.model.Web.WebPages.aggregate([
+                queryjson,
+                {
+                    $group: {
+                        _id: group_id,
+                        count: { $sum: 1 },
+                        load_time: { $avg: "$load_time" },
+                        dns_time: { $avg: "$dns_time" },
+                        tcp_time: { $avg: "$tcp_time" },
+                        dom_time: { $avg: "$dom_time" },
+                        white_time: { $avg: "$white_time" },
+                        redirect_time: { $avg: "$redirect_time" },
+                        unload_time: { $avg: "$unload_time" },
+                        request_time: { $avg: "$request_time" },
+                        analysisDom_time: { $avg: "$analysisDom_time" },
+                        ready_time: { $avg: "$ready_time" },
+                    }
+                },
+                { $skip: (pageNo - 1) * pageSize },
+                { $limit: pageSize },
+                { $sort: { count: -1 } },
+            ])
+        );
+        const all = await Promise.all([count, datas]);
 
         return {
-            datalist: datas,
-            totalNum: count.length,
+            datalist: all[1],
+            totalNum: all[0].length,
             pageNo: pageNo,
         };
     }
@@ -87,20 +83,20 @@ class PagesService extends Service {
 
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        // 请求总条数
-        const count = await this.ctx.model.Web.WebPages.aggregate([
-            queryjson,
-        ]).exec();
-        const datas = await this.ctx.model.Web.WebPages.aggregate([
-            queryjson,
-            { $skip: (pageNo - 1) * pageSize },
-            { $limit: pageSize },
-            { $sort: { create_time: -1 } },
-        ]).exec();
+        const count = Promise.resolve(this.ctx.model.Web.WebPages.count(queryjson.$match));
+        const datas = Promise.resolve(
+            this.ctx.model.Web.WebPages.aggregate([
+                queryjson,
+                { $skip: (pageNo - 1) * pageSize },
+                { $limit: pageSize },
+                { $sort: { create_time: -1 } },
+            ])
+        );
+        const all = await Promise.all([count, datas]);
 
         return {
-            datalist: datas,
-            totalNum: count.length,
+            datalist: all[1],
+            totalNum: all[0],
             pageNo: pageNo,
         };
     }
@@ -110,21 +106,22 @@ class PagesService extends Service {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
         speedType = speedType * 1;
+        const query = { $match: { app_id: appId, url: url, speed_type: speedType }, };
 
-        // 请求总条数
-        const count = await this.ctx.model.Web.WebPages.aggregate([
-            { $match: { app_id: appId, url: url, speed_type: speedType }, },
-        ]).exec();
-        const datas = await this.ctx.model.Web.WebPages.aggregate([
-            { $match: { app_id: appId, url: url, speed_type: speedType }, },
-            { $skip: (pageNo - 1) * pageSize },
-            { $limit: pageSize },
-            { $sort: { create_time: -1 } },
-        ]).exec();
+        const count = Promise.resolve(this.ctx.model.Web.WebPages.count(query.$match));
+        const datas = Promise.resolve(
+            this.ctx.model.Web.WebPages.aggregate([
+                query,
+                { $skip: (pageNo - 1) * pageSize },
+                { $limit: pageSize },
+                { $sort: { create_time: -1 } },
+            ])
+        );
+        const all = await Promise.all([count, datas]);
 
         return {
-            datalist: datas,
-            totalNum: count.length,
+            datalist: all[1],
+            totalNum: all[0],
             pageNo: pageNo,
         };
     }

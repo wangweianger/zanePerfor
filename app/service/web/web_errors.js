@@ -35,32 +35,36 @@ class ErroesService extends Service {
             msg: "$msg",
         };
 
-        // 请求总条数
-        const count = await this.ctx.model.Web.WebErrors.aggregate([
-            queryjson,
-            {
-                $group: {
-                    _id: group_id,
-                    count: { $sum: 1 },
-                }
-            },
-        ]).exec();
-        const datas = await this.ctx.model.Web.WebErrors.aggregate([
-            queryjson,
-            {
-                $group: {
-                    _id: group_id,
-                    count: { $sum: 1 },
-                }
-            },
-            { $skip: (pageNo - 1) * pageSize },
-            { $limit: pageSize },
-            { $sort: { count: -1 } },
-        ]).exec();
-
+        const count = Promise.resolve(
+            this.ctx.model.Web.WebErrors.aggregate([
+                queryjson,
+                {
+                    $group: {
+                        _id: group_id,
+                        count: { $sum: 1 },
+                    }
+                },
+            ])
+        );
+        const datas = Promise.resolve(
+            this.ctx.model.Web.WebErrors.aggregate([
+                queryjson,
+                {
+                    $group: {
+                        _id: group_id,
+                        count: { $sum: 1 },
+                    }
+                },
+                { $skip: (pageNo - 1) * pageSize },
+                { $limit: pageSize },
+                { $sort: { count: -1 } },
+            ])
+        );
+        const all = await Promise.all([count, datas]);
+        
         return {
-            datalist: datas,
-            totalNum: count.length,
+            datalist: all[1],
+            totalNum: all[0].length,
             pageNo: pageNo,
         };
     }
@@ -72,22 +76,20 @@ class ErroesService extends Service {
 
         const query = { app_id: appId, resource_url: url, category: category }
 
-        // 请求总条数
-        const count = await this.ctx.model.Web.WebErrors.aggregate([
-            { $match: query, },
-        ]).exec();
-        // 列表信息
-        const datas = await this.ctx.model.Web.WebErrors.aggregate([
-            { $match: query, },
-            { $skip: (pageNo - 1) * pageSize },
-            { $limit: pageSize },
-            { $sort: { count: -1 } },
-        ]).exec();
-
+        const count = Promise.resolve(this.ctx.model.Web.WebErrors.count(query.$match));
+        const datas = Promise.resolve(
+            this.ctx.model.Web.WebErrors.aggregate([
+                { $match: query, },
+                { $skip: (pageNo - 1) * pageSize },
+                { $limit: pageSize },
+                { $sort: { count: -1 } },
+            ])
+        );
+        const all = await Promise.all([count, datas]);
 
         return {
-            datalist: datas,
-            totalNum: count.length,
+            datalist: all[1],
+            totalNum: all[0],
             pageNo: pageNo,
         };
     }

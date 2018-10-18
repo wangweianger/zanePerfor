@@ -55,15 +55,14 @@ class UserService extends Service {
 
         const query = {};
         if (userName) query.user_name = userName;
-        console.log(query)
-        // 请求总条数
-        const count = await this.ctx.model.User.count(query).exec();
-        // 请求分页数据
-        const list = await this.ctx.model.User.find(query).skip((pageNo - 1) * pageSize).limit(pageSize).exec();
+        
+        const count = Promise.resolve(this.ctx.model.User.count(query).exec());
+        const datas = Promise.resolve(this.ctx.model.User.find(query).skip((pageNo - 1) * pageSize).limit(pageSize));
+        const all = await Promise.all([count, datas]);
 
         return {
-            datalist: list,
-            totalNum: count,
+            datalist: all[1],
+            totalNum: all[0],
             pageNo: pageNo,
         };
     }

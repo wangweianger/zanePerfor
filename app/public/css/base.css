@@ -60,6 +60,18 @@ iframe { display: none; }
 .w-300{width:300px!important;}
 .w-500{width:500px!important;}
 
+/* 等待加载样式 */
+#loading{
+    display:none;
+    background: url(/public/img/loading.gif) rgba(12,12,12,.2) no-repeat center center;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    z-index:1010;
+}
+
 /****阿里icon*****/
 @font-face {
   font-family: 'iconfont';  /* project id 865153 */

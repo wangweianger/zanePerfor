@@ -9,11 +9,10 @@ class WebReportService extends Service {
         interval.prev();
         const endTime = new Date(interval.prev().toString());
         const beginTime = new Date(interval.prev().toString());
-
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
-        const datas = await this.ctx.model.Web.WebEnvironment.find(query)
-            .exec();
-        this.groupData(datas, endTime, 2);
+
+        const datas = await this.ctx.model.Web.WebEnvironment.distinct('app_id', query);
+        this.groupData(datas, endTime, 2, query);
     }
     // 定时执行每分钟的数据
     async getWebPvUvIpByMinute() {
@@ -21,52 +20,34 @@ class WebReportService extends Service {
         interval.prev();
         const endTime = new Date(interval.prev().toString());
         const beginTime = new Date(endTime.getTime() - 60000);
-
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
-        const datas = await this.ctx.model.Web.WebEnvironment.find(query)
-            .exec();
-        this.groupData(datas, endTime, 1);
+
+        const datas = await this.ctx.model.Web.WebEnvironment.distinct('app_id', query);
+        this.groupData(datas, endTime, 1, query);
     }
     // 对数据进行分组
-    groupData(datas, endTime, type) {
+    groupData(datas, endTime, type, query) {
         if (!datas && !datas.length) return;
-        const obj = {};
         datas.forEach(item => {
-            if (!obj[item.app_id]) {
-                obj[item.app_id] = [ item ];
-            } else {
-                obj[item.app_id].push(item);
-            }
+            this.savePvUvIpData(item, endTime, type, query);
         });
-        // 遍历组
-        for (const key in obj) {
-            this.savePvUvIpData(obj[key], key, endTime, type);
-        }
     }
 
     // 获得pvuvip数据
-    async savePvUvIpData(data, appId, endTime, type) {
-        const length = data.length;
-        const uvSet = new Set();
-        const ipSet = new Set();
+    async savePvUvIpData(appId, endTime, type, query) {
+        query.app_id = appId;
 
-        data.forEach(item => {
-            if (item.mark_user) uvSet.add(item.mark_user);
-            if (item.ip) ipSet.add(item.ip);
-        });
-
-        const pv = length;
-        const uv = uvSet.size;
-        const ip = ipSet.size;
+        const pv = Promise.resolve(this.ctx.model.Web.WebEnvironment.count(query));
+        const uv = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('mark_user', query));
+        const ip = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('ip', query));
+        const data = await Promise.all([ pv, uv, ip ]);
 
         const pvuvip = this.ctx.model.Web.WebPvuvip();
         pvuvip.app_id = appId;
-        pvuvip.pv = pv;
-        pvuvip.uv = uv;
-        pvuvip.ip = ip;
+        pvuvip.pv = data[0];
+        pvuvip.uv = data[1].length;
+        pvuvip.ip = data[2].length;
         pvuvip.create_time = endTime;
-        pvuvip.uv_set = uvSet;
-        pvuvip.ip_set = ipSet;
         pvuvip.type = type;
 
         await pvuvip.save();
