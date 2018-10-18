@@ -16,5 +16,6 @@ module.exports = app => {
     });
 
     UserSchema.index({ user_name: -1, token: -1 });
+
     return conn.model('User', UserSchema);
 };

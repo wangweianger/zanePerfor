@@ -29,7 +29,7 @@ module.exports = app => {
         screenheight: { type: Number }, // 屏幕高度
     });
 
-    WebPagesSchema.index({ app_id: -1, create_time: 1, mark_page: -1, mark_user: -1, url: -1 });
+    WebPagesSchema.index({ app_id: -1, speed_type: -1, create_time: 1, url: -1 });
 
     return conn.model('WebPages', WebPagesSchema);
 };

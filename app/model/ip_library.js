@@ -14,7 +14,7 @@ module.exports = app => {
         longitude: { type: Number }, // 经度
     });
 
-    ipLibrarySchema.index({ ip: -1, city: -1 });
+    ipLibrarySchema.index({ ip: -1 });
 
     return conn.model('IpLibrary', ipLibrarySchema);
 };

@@ -25,7 +25,7 @@ module.exports = app => {
         is_statisi_error: { type: Number, default: 0 }, // 是否上报页面错误信息  0：是   1：否
     });
 
-    WebResourceSchema.index({ app_id: -1, create_time: 1, mark_page: -1, mark_user: -1, url: -1 });
+    WebResourceSchema.index({ app_id: -1, create_time: 1, system_domain: -1, user_id: -1 });
 
     return conn.model('WebSystem', WebResourceSchema);
 };

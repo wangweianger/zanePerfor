@@ -8,7 +8,7 @@ class WebReportService extends Service {
     saveWebReportData(ctx) {
         const query = ctx.request.body;
         const ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
-        
+
         // 参数校验
         if (!query.appId) throw new Error('web端上报数据操作：app_id不能为空');
 

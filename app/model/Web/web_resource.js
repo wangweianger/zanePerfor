@@ -23,7 +23,7 @@ module.exports = app => {
         mark_user: { type: String }, // 统一某一时间段用户标识
     });
 
-    WebResourceSchema.index({ app_id: -1, create_time: 1, mark_page: -1, mark_user: -1, url: -1 });
+    WebResourceSchema.index({ app_id: -1, url: -1, speed_type: -1, create_time: -1, name: -1 });
 
     return conn.model('WebResource', WebResourceSchema);
 };
