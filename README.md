@@ -38,7 +38,7 @@
 * 申请应用之后直接使用应用脚本，放置到自己web应用的头部。
 * 例如：<script src="http://report.com/api/v1/report/webscript?appId=D3D9B9AA45B56F6E424F57EFB36B063B&USESDK=FALSE"></script>
 
-### 二：使用SDK方式上报数据
+### 二：使用SDK方式上报数据(推荐)
 * 使用web SDK进行数据上报，使用方式请参考 performance-report SDK详情
 * 例如
 ```
