@@ -5,6 +5,7 @@ module.exports = app => {
     const { controller } = app;
     const {
         user,
+        remove,
     } = controller.api;
     const {
         report,
@@ -112,6 +113,12 @@ module.exports = app => {
     apiV1Router.get('error/getOneErrorList', error.getOneErrorList);
     // 单个错误详情
     apiV1Router.get('error/getErrorDetail', error.getErrorDetail);
+
+    // -------------------清空数据-----------------------------
+    // 清空db1 1日之前无用数据
+    apiV1Router.post('remove/deleteDb1WebData', remove.deleteDb1WebData);
+    // 清空db2 number日之前所有性能数据
+    apiV1Router.post('remove/deleteDb2WebData', remove.deleteDb2WebData);
 
     // const apiV1Router = app.router.namespace('/api/v1');
     // const { controller, middleware } = app;

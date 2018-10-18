@@ -82,6 +82,13 @@
 		color:#999;
 		line-height:30px;
 	}
+	.btns .btn-main{
+		border-radius:20px;
+	}
+	.margin_left{
+		max-width:1200px;
+		margin-left:80px;
+	}
 </style>
 <div class="com_content_body main pb100" id="vue_id" v-cloak>
 	<h1 class="com_h1">系统设置</h1>
@@ -89,6 +96,8 @@
 		<div class="item" :class="{'active':lable==1}" @click="checkoutLabel(1)">部署说明</div>
 		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">阈值设置</div>
 		<div class="item" :class="{'active':lable==3}" @click="checkoutLabel(3)">统计设置</div>
+		<div class="item" :class="{'active':lable==4}" @click="checkoutLabel(4)">性能优化</div>
+
 	</div>
 	<div class="setting-body">
 		<div class="block" v-show="lable==1">
@@ -172,6 +181,23 @@
 					<div class="content">
 						<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-5" checked />
 					</div>
+				</div>
+			</div>
+		</div>
+		<div class="block" v-show="lable==4">
+			<h1 class="h1">手动删除数据库数据</h1>
+			<div class="margin_left mt30">
+				<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span>上报端数据(db1)会定时同步到应用端(db2),同步时间一般会在5分钟以内，可以清空之前的无用数据,同时后台也有定时任务定期删除。</div>
+				<h1 class="h1">清空上报端1日之前数据</h1>
+				<div class="btns mt30 ml30">
+					<button class="btn btn-main" @click="removeWebDB1Data">清空1日之前数据</button>
+				</div>
+				<div class="com_topic mb20 mt30"><span class="iconfont">&#xe63a;</span>考虑到查询性能和数据的更新频率，应用端(db2)数据可以酌情的删除一些数据。</div>
+				<h1 class="h1">清空应用端一段时间的数据</h1>
+				<div class="btns mt30 ml30">
+					<div><button class="btn btn-main" @click="removeWebDB2Data(10)">清空10日之前数据</button></div>
+					<div><button class="btn btn-main mt20" @click="removeWebDB2Data(20)">清空20日之前数据</button></div>
+					<div><button class="btn btn-main mt20" @click="removeWebDB2Data(30)">清空30日之前数据</button></div>
 				</div>
 			</div>
 		</div>
@@ -295,6 +321,31 @@ new Vue({
 				data: this.systemInfo,
 				success: data => {
 					popup.miss({ title: '操作成功!' })
+				}
+			})
+		},
+		removeWebDB1Data(){
+			popup.confirm({title:'确定清空1日之前所有数据吗？',yes:()=>{
+				util.ajax({
+					url:`${config.baseApi}api/v1/remove/deleteDb1WebData`,
+					success:data=>{
+						popup.alert({title:'操作成功!'})
+					}
+				})
+			}})
+		},
+		removeWebDB2Data(number){
+			popup.confirm({
+				title: `确定清空${number}日之前所有数据吗？`, yes: () => {
+					util.ajax({
+						url: `${config.baseApi}api/v1/remove/deleteDb2WebData`,
+						data:{
+							number: number
+						},
+						success: data => {
+							popup.alert({ title: '操作成功!' })
+						}
+					})
 				}
 			})
 		}

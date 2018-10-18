@@ -9,7 +9,7 @@ module.exports = app => {
         },
         // 定时处理上报的数据
         async task(ctx) {
-            await ctx.service.web.webDeleteReportTask.webDeleteReportTaskDatas();
+            await ctx.service.remove.deleteDb1WebData();
         },
     };
 };
