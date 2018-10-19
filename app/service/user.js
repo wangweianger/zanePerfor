@@ -76,9 +76,14 @@ class UserService extends Service {
             { multi: true }).exec();
     }
 
-    // 冻结解冻用户
+    // 删除用户
     async delete(token) {
         return await this.ctx.model.User.findOneAndRemove({ token: token }).exec();
+    }
+
+    // 根据token查询用户信息
+    async finUserForToken(token) {
+        return await this.ctx.model.User.findOne({ token: token }).exec();
     }
 
 }
