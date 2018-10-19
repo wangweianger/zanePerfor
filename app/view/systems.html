@@ -146,9 +146,6 @@
 		},
 		methods: {
 			getMsgForUserId() {
-				if (!this.userId) {
-					popup.alert({ type: 'msg', title: '用户id不能为空!' }); return false;
-				}
 				util.ajax({
 					type:'get',
 					url: config.baseApi + 'api/v1/system/web/list',
