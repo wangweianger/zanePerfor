@@ -4,7 +4,6 @@
 module.exports = () => {
     return async function(ctx, next) {
         const usertoken = ctx.cookies.get('usertoken') || '';
-        console.log(usertoken)
         if (!usertoken) {
             ctx.body = {
                 code: 1004,
