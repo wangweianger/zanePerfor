@@ -17,7 +17,7 @@ module.exports = app => {
         resource,
         error,
     } = controller.api.web;
-    
+
     // 校验用户是否登录中间件
     const tokenRequired = middleware.tokenRequired();
 
