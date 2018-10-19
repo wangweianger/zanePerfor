@@ -41,6 +41,7 @@
 					<input id="zane-calendar-1" class="inp w-200" type="text" placeholder="选择日期查询">
 				</div>
 			</div>
+			<div class="tipscolor mt10" v-if="errText">{{errText}}</div>
 		</div>
 		<!-- table列表 -->
 		<table class="table" v-if="isLoadend&&listdata.length">
@@ -83,6 +84,7 @@
 				appId: util.getStorage('local', 'appId'),
 				type: '', 
 				url:'',
+				errText:'',
 			}
 		},
 		filters: {
@@ -149,6 +151,18 @@
 					done: (fulltime, begintime, endtime) => {
 						this.beginTime = begintime ? begintime + ' 00:00:00' : '';
 						this.endTime = endtime ? endtime + ' 23:59:59' : '';
+						this.errText = '';
+						let beginstrap = new Date(`${this.beginTime}`).getTime();
+						let endstrap = new Date(`${this.endTime}`).getTime();
+						let between = endstrap - beginstrap;
+						if (between < 0) {
+							this.errText = "结束时间不能小于开始时间。";
+							return false;
+						}
+						if (between > 259200000) {
+							this.errText = "时间粒度选择只支持3天以内的时间段查询。";
+							return false;
+						}
 						this.getinit();
 					},
 				});
