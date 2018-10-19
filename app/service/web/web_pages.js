@@ -42,8 +42,6 @@ class PagesService extends Service {
                         tcp_time: { $avg: "$tcp_time" },
                         dom_time: { $avg: "$dom_time" },
                         white_time: { $avg: "$white_time" },
-                        redirect_time: { $avg: "$redirect_time" },
-                        unload_time: { $avg: "$unload_time" },
                         request_time: { $avg: "$request_time" },
                         analysisDom_time: { $avg: "$analysisDom_time" },
                         ready_time: { $avg: "$ready_time" },
