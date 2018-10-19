@@ -177,14 +177,14 @@ class WebPerformanceScriptService extends Service {
                     conf.resourceList = resourceList;
                 };
                 // ajax重写
-                var _Ajax = function _Ajax(funs) {
-                    window._ahrealxhr = window._ahrealxhr || XMLHttpRequest;
-                    XMLHttpRequest = function XMLHttpRequest() {
-                        this.xhr = new window._ahrealxhr();
+                function _Ajax (proxy) {
+                    window._ahrealxhr = window._ahrealxhr || XMLHttpRequest
+                    XMLHttpRequest = function () {
+                        this.xhr = new window._ahrealxhr;
                         for (var attr in this.xhr) {
                             var type = "";
                             try {
-                                type = _typeof(this.xhr[attr]);
+                                type = typeof this.xhr[attr]
                             } catch (e) {}
                             if (type === "function") {
                                 this[attr] = hookfun(attr);
@@ -192,43 +192,51 @@ class WebPerformanceScriptService extends Service {
                                 Object.defineProperty(this, attr, {
                                     get: getFactory(attr),
                                     set: setFactory(attr)
-                                });
+                                })
                             }
                         }
-                    };
+                    }
+
                     function getFactory(attr) {
                         return function () {
-                            return this.hasOwnProperty(attr + "_") ? this[attr + "_"] : this.xhr[attr];
-                        };
+                            var v= this.hasOwnProperty(attr + "_")?this[attr + "_"]:this.xhr[attr];
+                            var attrGetterHook=(proxy[attr]||{})["getter"]
+                            return attrGetterHook&&attrGetterHook(v,this)||v
+                        }
                     }
+
                     function setFactory(attr) {
-                        return function (f) {
+                        return function (v) {
                             var xhr = this.xhr;
                             var that = this;
-                            if (attr.indexOf("on") != 0) {
-                                this[attr + "_"] = f;
-                                return;
-                            }
-                            if (funs[attr]) {
+                            var hook=proxy[attr];
+                            if (typeof hook==="function") {
                                 xhr[attr] = function () {
-                                    funs[attr](that) || f.apply(xhr, arguments);
-                                };
+                                    proxy[attr](that) || v.apply(xhr, arguments);
+                                }
                             } else {
-                                xhr[attr] = f;
+                                var attrSetterHook=(hook||{})["setter"];
+                                v=attrSetterHook&&attrSetterHook(v,that)||v
+                                try {
+                                    xhr[attr] = v;
+                                }catch(e) {
+                                    this[attr + "_"] = v;
+                                }
                             }
-                        };
+                        }
                     }
+
                     function hookfun(fun) {
                         return function () {
-                            var args = [].slice.call(arguments);
-                            if (funs[fun] && funs[fun].call(this, args, this.xhr)) {
+                            var args = [].slice.call(arguments)
+                            if (proxy[fun] && proxy[fun].call(this, args, this.xhr)) {
                                 return;
                             }
                             return this.xhr[fun].apply(this.xhr, args);
-                        };
+                        }
                     }
                     return window._ahrealxhr;
-                };
+                }
                 // 拦截fetch请求
                 var _fetch = function _fetch() {
                     if (!window.fetch) return;
