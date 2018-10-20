@@ -60,7 +60,7 @@
 <div class="com_content_body main pb100" id="pages" v-cloak>
 	<div class="com_top_title">
 		<h1 class="com_h1 fl">单页面性能</h1>
-		<commonsearch :done="getDataForTime"></commonsearch>
+		<commonsearch :done="getSearchData"></commonsearch>
 	</div>
 	<div class="com_slide_tab_x mt30 mb30">
 		<div class="item" :class="{'active':lable==1}" @click="checkoutLabel(1)">性能详情</div>
@@ -99,14 +99,6 @@
 			<li>
 				<h1>平均TCP连接耗时(ms)</h1>
 				<h2>{{pagesItemData.tcp_time|toFixed}}</h2>
-			</li>
-			<li>
-				<h1>平均页面重定向耗时(ms)</h1>
-				<h2>{{pagesItemData.redirect_time|toFixed}}</h2>
-			</li>
-			<li>
-				<h1>平均unload耗时(ms)</h1>
-				<h2>{{pagesItemData.unload_time|toFixed}}</h2>
 			</li>
 			<li>
 				<h1>平均request请求耗时(ms)</h1>
@@ -307,6 +299,19 @@
 			this.checkoutLabel(1);
 		},
 		methods: {
+			getSearchData(){
+				this.lable = 1;
+				this.isLoadEnd = false
+				this.pageNo = 1
+				let times = util.getSearchTime()
+				this.beginTime = times.beginTime
+				this.endTime = times.endTime
+
+				this.getinit('api/v1/pages/getOnePageList', '#copot-page-pages');
+				this.getDataGroupBy(1);
+				this.getDataGroupBy(2);
+				this.getDataGroupBy(3);
+			},
 			checkoutLabel(lable,type) {
 				this.lable = lable;
 				this.isLoadEnd = false

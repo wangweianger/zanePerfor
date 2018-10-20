@@ -33,7 +33,7 @@ module.exports = () => {
     config.ip_task_time = '0 */1 * * * *';
 
     // db3同步db1上报数据线程数
-    config.report_thread = 5;
+    config.report_thread = 10;
 
     // 更新用户上报IP对应的城市信息线程数
     config.ip_thread = 10;
@@ -65,7 +65,6 @@ module.exports = () => {
             db: 0,
         },
     };
-    
 
     // mongoose配置
     config.mongoose = {

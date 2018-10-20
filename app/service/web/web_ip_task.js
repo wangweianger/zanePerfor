@@ -21,7 +21,7 @@ class IpTaskService extends Service {
         // 开启多线程执行
         if (datas && datas.length) {
             for (let i = 0; i < this.app.config.ip_thread; i++) {
-                const newSpit = datas.splice(i, 60);
+                const newSpit = datas.splice(0, 60);
                 if (datas.length) {
                     this.handleDatas(newSpit);
                 } else {
@@ -36,13 +36,17 @@ class IpTaskService extends Service {
         const length = data.length - 1;
         let i = 0;
         const timer = setInterval(() => {
-            const ip = data[i].ip;
-            this.getIpData(ip, data[i]._id);
-            if (i === length && type) {
-                this.app.redis.set('ip_task_begin_time', data[i].create_time);
-                clearInterval(timer);
+            try {
+                const ip = data[i].ip;
+                this.getIpData(ip, data[i]._id);
+                if (i === length && type) {
+                    this.app.redis.set('ip_task_begin_time', data[i].create_time);
+                    clearInterval(timer);
+                }
+                i++;
+            } catch (e) {
+                console.log(e);
             }
-            i++;
         }, 900);
     }
 

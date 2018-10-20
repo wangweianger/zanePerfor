@@ -22,11 +22,25 @@ class DataTimedTaskService extends Service {
         const datas = await this.ctx.model.Web.WebReport.find(query)
             .sort({ create_time: 1 })
             .exec();
-        this.saveDataToDb3(datas);
+
+        // 开启多线程执行
+        if (datas && datas.length) {
+            const length = datas.length;
+            const number = Math.ceil(length / this.app.config.report_thread);
+
+            for (let i = 0; i < this.app.config.report_thread; i++) {
+                const newSpit = datas.splice(0, number);
+                if (datas.length) {
+                    this.saveDataToDb3(newSpit);
+                } else {
+                    this.saveDataToDb3(newSpit, true);
+                }
+            }
+        }
     }
 
     // 存储数据
-    async saveDataToDb3(data) {
+    async saveDataToDb3(data, type) {
         if (!data && !data.length) return;
         const length = data.length - 1;
         const cacheJson = {};
@@ -45,7 +59,7 @@ class DataTimedTaskService extends Service {
             if (system.is_statisi_resource === 0 || system.is_statisi_ajax === 0) this.forEachResources(item, system);
             if (system.is_statisi_error === 0) this.saveErrors(item);
             if (system.is_statisi_system === 0) this.saveEnvironment(item);
-            if (index === length) this.app.redis.set('web_task_begin_time', item.create_time);
+            if (index === length && type) this.app.redis.set('web_task_begin_time', item.create_time);
         });
     }
 
@@ -53,36 +67,37 @@ class DataTimedTaskService extends Service {
     savePages(item, slowPageTime = 5) {
         const pages = this.ctx.model.Web.WebPages();
         const performance = item.performance;
+        if (item.performance && item.performance.lodt > 0) {
+            const newurl = url.parse(item.url);
+            const newName = newurl.protocol + '//' + newurl.host + newurl.pathname;
 
-        const newurl = url.parse(item.url);
-        const newName = newurl.protocol + '//' + newurl.host + newurl.pathname;
+            slowPageTime = slowPageTime * 1000;
+            const speedType = performance.lodt >= slowPageTime ? 2 : 1;
 
-        slowPageTime = slowPageTime * 1000;
-        const speedType = performance.lodt >= slowPageTime ? 2 : 1;
+            pages.app_id = item.app_id;
+            pages.create_time = item.create_time;
+            pages.url = newName;
+            pages.full_url = item.url;
+            pages.pre_url = item.pre_url;
+            pages.speed_type = speedType;
+            pages.mark_page = item.mark_page;
+            pages.mark_user = item.mark_user;
+            pages.load_time = performance.lodt;
+            pages.dns_time = performance.dnst;
+            pages.tcp_time = performance.tcpt;
+            pages.dom_time = performance.domt;
+            pages.resource_list = item.resource_list;
+            pages.white_time = performance.wit;
+            pages.redirect_time = performance.rdit;
+            pages.unload_time = performance.uodt;
+            pages.request_time = performance.reqt;
+            pages.analysisDom_time = performance.andt;
+            pages.ready_time = performance.radt;
+            pages.screenwidth = item.screenwidth;
+            pages.screenheight = item.screenheight;
 
-        pages.app_id = item.app_id;
-        pages.create_time = item.create_time;
-        pages.url = newName;
-        pages.full_url = item.url;
-        pages.pre_url = item.pre_url;
-        pages.speed_type = speedType;
-        pages.mark_page = item.mark_page;
-        pages.mark_user = item.mark_user;
-        pages.load_time = performance.lodt;
-        pages.dns_time = performance.dnst;
-        pages.tcp_time = performance.tcpt;
-        pages.dom_time = performance.domt;
-        pages.resource_list = item.resource_list;
-        pages.white_time = performance.wit;
-        pages.redirect_time = performance.rdit;
-        pages.unload_time = performance.uodt;
-        pages.request_time = performance.reqt;
-        pages.analysisDom_time = performance.andt;
-        pages.ready_time = performance.radt;
-        pages.screenwidth = item.screenwidth;
-        pages.screenheight = item.screenheight;
-
-        pages.save();
+            pages.save();
+        }
     }
 
     // 根据资源类型存储不同数据
