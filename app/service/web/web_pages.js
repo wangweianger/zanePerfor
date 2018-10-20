@@ -113,8 +113,8 @@ class PagesService extends Service {
                     }
                 },
                 { $skip: (pageNo - 1) * pageSize },
-                { $limit: pageSize },
                 { $sort: { count: -1 } },
+                { $limit: pageSize },
             ])
         );
         const all = await Promise.all([count, datas]);
@@ -151,8 +151,8 @@ class PagesService extends Service {
             this.ctx.model.Web.WebPages.aggregate([
                 queryjson,
                 { $skip: (pageNo - 1) * pageSize },
-                { $limit: pageSize },
                 { $sort: { create_time: -1 } },
+                { $limit: pageSize },
             ])
         );
         const all = await Promise.all([count, datas]);
@@ -176,8 +176,8 @@ class PagesService extends Service {
             this.ctx.model.Web.WebPages.aggregate([
                 query,
                 { $skip: (pageNo - 1) * pageSize },
-                { $limit: pageSize },
                 { $sort: { create_time: -1 } },
+                { $limit: pageSize },
             ])
         );
         const all = await Promise.all([count, datas]);

@@ -26,8 +26,8 @@ class EnvironmentService extends Service {
                     count: { $sum: 1 },
                 },
             },
-            { $limit: 10 },
             { $sort: { count: -1 } },
+            { $limit: 10 },
         ]).exec();
 
         return datas;

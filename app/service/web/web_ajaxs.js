@@ -125,8 +125,8 @@ class AjaxsService extends Service {
                     }
                 },
                 { $skip: (pageNo - 1) * pageSize },
-                { $limit: pageSize },
                 { $sort: { count: -1 } },
+                { $limit: pageSize },
             ])
         );
         const all = await Promise.all([count, datas]);
@@ -165,8 +165,8 @@ class AjaxsService extends Service {
             this.ctx.model.Web.WebAjaxs.aggregate([
                 query,
                 { $skip: (pageNo - 1) * pageSize },
-                { $limit: pageSize },
                 { $sort: { create_time: -1 } },
+                { $limit: pageSize },
             ])
         );
         const all = await Promise.all([count, datas]);
