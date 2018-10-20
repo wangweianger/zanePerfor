@@ -1,7 +1,6 @@
 'use strict';
 
 const Service = require('egg').Service;
-let timer = null;
 
 class IpTaskService extends Service {
 
@@ -15,33 +14,36 @@ class IpTaskService extends Service {
             query.create_time = { $gt: beginTime };
         }
         const datas = await this.ctx.model.Web.WebEnvironment.find(query)
-            .limit(60)
-            .sort({ create_time: -1 })
+            .limit(this.app.config.ip_thread * 60)
+            .sort({ create_time: 1 })
             .exec();
-        if (datas && datas.length) this.handleDatas(datas);
+
+        // 开启多线程执行
+        if (datas && datas.length) {
+            for (let i = 0; i < this.app.config.ip_thread; i++) {
+                const newSpit = datas.splice(i, 60);
+                if (datas.length) {
+                    this.handleDatas(newSpit);
+                } else {
+                    this.handleDatas(newSpit, true);
+                }
+            }
+        }
     }
 
     // 遍历数据 查询ip地址信息
-    async handleDatas(data) {
-        clearInterval(timer);
+    async handleDatas(data, type) {
         const length = data.length - 1;
         let i = 0;
-        timer = setInterval(() => {
+        const timer = setInterval(() => {
             const ip = data[i].ip;
             this.getIpData(ip, data[i]._id);
-            if (i === length) {
+            if (i === length && type) {
                 this.app.redis.set('ip_task_begin_time', data[i].create_time);
                 clearInterval(timer);
             }
             i++;
-        }, 800);
-        // 遍历数据
-        // data.forEach(async (item, index) => {
-        //     const ip = item.ip;
-        //     if (ip === '127.0.0.1' || !ip) return;
-        //     await this.getIpData(ip, item._id);
-        //     if (index === length) this.app.redis.set('ip_task_begin_time', item.create_time);
-        // });
+        }, 900);
     }
 
     // 根据ip获得地址信息 先查找数据库 再使用百度地图查询

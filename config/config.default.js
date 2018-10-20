@@ -32,6 +32,12 @@ module.exports = () => {
     // 执行ip地理位置转换的定时任务 每分钟定时执行一次
     config.ip_task_time = '0 */1 * * * *';
 
+    // db3同步db1上报数据线程数
+    config.report_thread = 5;
+
+    // 更新用户上报IP对应的城市信息线程数
+    config.ip_thread = 10;
+
     // 百度地图api key
     config.BAIDUAK = '36UI4dIyIfCVKQWW7hoeSIuM';
 
@@ -59,15 +65,7 @@ module.exports = () => {
             db: 0,
         },
     };
-    // product
-    // config.redis = {
-    //     client: {
-    //         port: 6379, // Redis port
-    //         host: '10.1.128.123', // Redis host
-    //         password: 'yy7943RMB',
-    //         db: 0,
-    //     },
-    // };
+    
 
     // mongoose配置
     config.mongoose = {

@@ -32,7 +32,7 @@
 		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">PV|UV|IP</div>
 	</div>
 	<div v-show="lable==1">
-		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span>实时概况处理同步有1分钟以内的延迟。</div>
+		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span>实时概况处理同步有1分钟以内的延迟,1分钟更新一次。</div>
 		<div class="com_block mt20">
 			<h1 class="com_h2 mb20">查询某日概况</h1>
 			<div class='search mb20'>
@@ -62,7 +62,7 @@
 		</div>
 	</div>
 	<div v-show="lable==2">
-		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span> 实时数据处理同步有2分钟以内的延迟，实时统计每分钟执行一次。</div>
+		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span> 实时数据处理同步有2分钟以内的延迟，实时统计每分钟自动更新一次。</div>
 		<div class='search search_1 mb20'>
 			<input id="zane-calendar-2" class="inp" type="text" placeholder="时间粒度选择30分钟以内">
 			<div class="tipscolor mt10" v-if="errText">{{errText}}</div>
