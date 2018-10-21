@@ -175,7 +175,7 @@
 				});
 			},
 			goToList(item) {
-				location.href = "/web/ajaxdetail?url="+ encodeURIComponent(item._id.url);
+				location.href = "/web/ajaxdetail?url="+ encodeURIComponent(item._id.url)+'&type='+this.type;
 			}
 		}
 	})

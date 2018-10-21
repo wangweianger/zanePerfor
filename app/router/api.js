@@ -74,8 +74,6 @@ module.exports = app => {
     apiV1Router.get('pages/getAveragePageList', tokenRequired, pages.getAveragePageList);
     // 单个页面性能列表
     apiV1Router.get('pages/getOnePageList', tokenRequired, pages.getOnePageList);
-    // 单个页面性能列表（简单版本）
-    apiV1Router.get('pages/getPagesForType', tokenRequired, pages.getPagesForType);
     // 单个页面详情
     apiV1Router.get('pages/getPageDetails', tokenRequired, pages.getPageDetails);
 

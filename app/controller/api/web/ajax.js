@@ -41,11 +41,14 @@ class AjaxsController extends Controller {
         const query = ctx.request.query;
         const appId = query.appId;
         const url = query.url;
+        const beginTime = query.beginTime;
+        const endTime = query.endTime;
+        const type = query.type;
 
         if (!appId) throw new Error('单个AJAX平均性能数据：appId不能为空');
         if (!url) throw new Error('单个AJAX平均性能数据：api地址不能为空');
 
-        const result = await ctx.service.web.webAjaxs.getOneAjaxAvg(appId, url);
+        const result = await ctx.service.web.webAjaxs.getOneAjaxAvg(appId, url, beginTime, endTime, type);
 
         ctx.body = this.app.result({
             data: result,
@@ -59,12 +62,14 @@ class AjaxsController extends Controller {
         const url = query.url;
         const pageNo = query.pageNo || 1;
         const pageSize = query.pageSize || this.app.config.pageSize;
+        const beginTime = query.beginTime;
+        const endTime = query.endTime;
+        const type = query.type;
 
         if (!appId) throw new Error('单个AJAX平均性能数据：appId不能为空');
         if (!url) throw new Error('单个AJAX平均性能数据：api地址不能为空');
 
-
-        const result = await ctx.service.web.webAjaxs.getOneAjaxList(appId, url, pageNo, pageSize);
+        const result = await ctx.service.web.webAjaxs.getOneAjaxList(appId, url, pageNo, pageSize, beginTime, endTime, type);
 
         ctx.body = this.app.result({
             data: result,

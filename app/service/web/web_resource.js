@@ -17,9 +17,9 @@ class ResourceService extends Service {
         const datas = Promise.resolve(
             this.ctx.model.Web.WebResource.aggregate([
                 query,
+                { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
                 { $limit: pageSize },
-                { $sort: { create_time: -1 } },
             ])
         );
         const all = await Promise.all([count, datas]);
@@ -124,9 +124,9 @@ class ResourceService extends Service {
         const datas = Promise.resolve(
             this.ctx.model.Web.WebResource.aggregate([
                 query,
+                { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
                 { $limit: pageSize },
-                { $sort: { create_time: -1 } },
             ])
         );
         const all = await Promise.all([count, datas]);

@@ -227,7 +227,7 @@
 	</div>
 	<div v-show="lable==3">
 		<!--  分页 -->
-		<div class="tc common_page_style mt10" v-show="isLoadend&&listslowpages.length">
+		<div class="tc common_page_style mt10" v-show="listslowpages.length">
 			<div id="copot-page-slowpages" class="copot-page"></div>
 		</div>
 		<!-- 暂无数据 -->
@@ -256,8 +256,8 @@
 	</div>
 	<div v-show="lable==4">
 		<!--  分页 -->
-		<div class="tc common_page_style mt10" v-show="isLoadend&&listresources.length">
-			<div id="copot-page-slowpages" class="copot-page"></div>
+		<div class="tc common_page_style mt10" v-show="listresources.length">
+			<div id="copot-page-slowresources" class="copot-page"></div>
 		</div>
 		<!-- 暂无数据 -->
 		<div class="tc" v-if="!listresources.length">暂无数据!</div>
@@ -330,13 +330,13 @@
 				} else if (lable == 2) {
 					if(!this.listAjax.length){
 						api = 'api/v1/ajax/getPageAjaxsAvg',
-						pageName = '#copot-page-slowpages'
+						pageName = '#copot-page-ajax'
 						this.getinit(api, pageName);
 					}
 				} else if(lable == 3){
 					if (!this.listslowpages.length) {
-						api = 'api/v1/pages/getPagesForType',
-						pageName = '#copot-page-ajax'
+						api = 'api/v1/pages/getOnePageList',
+						pageName = '#copot-page-slowpages'
 						this.type = 2;
 						this.getinit(api, pageName);
 					}

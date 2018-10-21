@@ -138,9 +138,13 @@ class AjaxsService extends Service {
     }
 
     // 获得单个api的平均性能数据
-    async getOneAjaxAvg(appId, url) {
+    async getOneAjaxAvg(appId, url, beginTime, endTime, type) {
+        type = type * 1;
+        const query = { $match: { app_id: appId, url: url, speed_type: type}, };
+        if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
+
         const datas = await this.ctx.model.Web.WebAjaxs.aggregate([
-            { $match: { app_id: appId, url: url }, },
+            query,
             {
                 $group: {
                     _id: null,
@@ -155,18 +159,20 @@ class AjaxsService extends Service {
     }
 
     // 获得单个api的性能列表数据
-    async getOneAjaxList(appId, url, pageNo, pageSize) {
+    async getOneAjaxList(appId, url, pageNo, pageSize, beginTime, endTime, type) {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
-        const query = { $match: { app_id: appId, url: url }, };
+        type = type * 1;
 
+        const query = { $match: { app_id: appId, url: url, speed_type: type }, };
+        if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
         const count = Promise.resolve(this.ctx.model.Web.WebAjaxs.count(query.$match));
         const datas = Promise.resolve(
             this.ctx.model.Web.WebAjaxs.aggregate([
                 query,
+                { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
                 { $limit: pageSize },
-                { $sort: { create_time: -1 } },
             ])
         );
         const all = await Promise.all([count, datas]);

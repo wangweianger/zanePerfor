@@ -15,10 +15,6 @@ class ErroesService extends Service {
         const beginTime = query.beginTime;
         const endTime = query.endTime;
         const url = query.url;
-        const city = query.city;
-        const isCity = query.isCity;
-        const isBrowser = query.isBrowser;
-        const isSystem = query.isSystem;
 
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
@@ -70,19 +66,20 @@ class ErroesService extends Service {
     }
 
     // 获得单个Error列表
-    async getOneErrorList(appId, url, category, pageNo, pageSize) {
+    async getOneErrorList(appId, url, category, pageNo, pageSize, beginTime, endTime) {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
 
         const query = { app_id: appId, resource_url: url, category: category }
+        if (beginTime && endTime) query.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        const count = Promise.resolve(this.ctx.model.Web.WebErrors.count(query.$match));
+        const count = Promise.resolve(this.ctx.model.Web.WebErrors.count(query));
         const datas = Promise.resolve(
             this.ctx.model.Web.WebErrors.aggregate([
                 { $match: query, },
+                { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
                 { $limit: pageSize },
-                { $sort: { count: -1 } },
             ])
         );
         const all = await Promise.all([count, datas]);

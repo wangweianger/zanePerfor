@@ -150,34 +150,9 @@ class PagesService extends Service {
         const datas = Promise.resolve(
             this.ctx.model.Web.WebPages.aggregate([
                 queryjson,
+                { $sort: { create_time: -1 } },
                 { $skip: ((pageNo - 1) * pageSize) },
                 { $limit: pageSize },
-                { $sort: { create_time: -1 } },
-            ])
-        );
-        const all = await Promise.all([count, datas]);
-
-        return {
-            datalist: all[1],
-            totalNum: all[0],
-            pageNo: pageNo,
-        };
-    }
-
-    // 单页页面性能数据列表（简单版本）
-    async getPagesForType(appId, url, speedType, pageNo, pageSize) {
-        pageNo = pageNo * 1;
-        pageSize = pageSize * 1;
-        speedType = speedType * 1;
-        const query = { $match: { app_id: appId, url: url, speed_type: speedType }, };
-
-        const count = Promise.resolve(this.ctx.model.Web.WebPages.count(query.$match));
-        const datas = Promise.resolve(
-            this.ctx.model.Web.WebPages.aggregate([
-                query,
-                { $skip: (pageNo - 1) * pageSize },
-                { $limit: pageSize },
-                { $sort: { create_time: -1 } },
             ])
         );
         const all = await Promise.all([count, datas]);

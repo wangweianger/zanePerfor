@@ -65,15 +65,6 @@ module.exports = () => {
             db: 0,
         },
     };
-    // product
-    // config.redis = {
-    //     client: {
-    //         port: 6379, // Redis port
-    //         host: '10.1.128.123', // Redis host
-    //         password: 'yy7943RMB',
-    //         db: 0,
-    //     },
-    // };
 
     // mongoose配置
     config.mongoose = {

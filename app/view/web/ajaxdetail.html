@@ -142,6 +142,7 @@
 				pageSize: config.pageSize,
 				totalNum: 0,
 				isLoadend: false,
+				type: util.getQueryString('type')||1,
 				appId: util.getStorage('local', 'appId'),
 				url: util.getQueryString('url') || '',
 			}
@@ -152,10 +153,16 @@
 			date: window.Filter.date,
 		},
 		mounted() {
-			this.getOneAjaxAvg();
-			this.getOneAjaxList();
+			this.getDataForTime();
 		},
 		methods: {
+			getDataForTime() {
+				let times = util.getSearchTime()
+				this.beginTime = times.beginTime
+				this.endTime = times.endTime
+				this.getOneAjaxAvg();
+				this.getOneAjaxList();
+			},
 			getOneAjaxAvg(){
 				util.ajax({
 					type: 'get',
@@ -163,6 +170,9 @@
 					data: {
 						appId: this.appId,
 						url: this.url,
+						beginTime: this.beginTime,
+						endTime: this.endTime,
+						type:this.type
 					},
 					success: data => {
 						this.detail = data.data;
@@ -179,6 +189,9 @@
 						pageNo: this.pageNo,
 						pageSize: this.pageSize,
 						url: this.url,
+						beginTime: this.beginTime,
+						endTime: this.endTime,
+						type: this.type
 					},
 					success: data => {
 						this.isLoadend = true;

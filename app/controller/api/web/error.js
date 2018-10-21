@@ -28,11 +28,13 @@ class ResourceController extends Controller {
         const category = query.category || 'resource';
         const pageNo = query.pageNo || 1;
         const pageSize = query.pageSize || this.app.config.pageSize;
+        const beginTime = query.beginTime;
+        const endTime = query.endTime;
 
         if (!appId) throw new Error('获得单个ERROR资源列表信息：appId不能为空');
         if (!url) throw new Error('获得单个ERROR资源列表信息：url地址不能为空');
 
-        const result = await ctx.service.web.webErrors.getOneErrorList(appId, url, category, pageNo, pageSize);
+        const result = await ctx.service.web.webErrors.getOneErrorList(appId, url, category, pageNo, pageSize, beginTime, endTime);
 
         ctx.body = this.app.result({
             data: result,

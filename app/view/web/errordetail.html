@@ -78,6 +78,8 @@
 				appId: util.getStorage('local', 'appId'),
 				url: util.getQueryString('url') || '',
 				category: util.getQueryString('category') || 'resource',
+				beginTime: '',
+				endTime: '',
 			}
 		},
 		filters: {
@@ -86,9 +88,15 @@
 			date: window.Filter.date,
 		},
 		mounted() {
-			this.getOneErrorList();
+			this.getDataForTime();
 		},
 		methods: {
+			getDataForTime() {
+				let times = util.getSearchTime()
+				this.beginTime = times.beginTime
+				this.endTime = times.endTime
+				this.getOneErrorList();
+			},
 			getOneErrorList() {
 				this.isLoadend = false;
 				util.ajax({
@@ -100,6 +108,8 @@
 						pageSize: this.pageSize,
 						url: this.url,
 						category:this.category,
+						beginTime: this.beginTime,
+						endTime: this.endTime,
 					},
 					success: data => {
 						this.isLoadend = true;
