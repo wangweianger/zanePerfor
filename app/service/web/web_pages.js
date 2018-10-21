@@ -150,9 +150,9 @@ class PagesService extends Service {
         const datas = Promise.resolve(
             this.ctx.model.Web.WebPages.aggregate([
                 queryjson,
-                { $skip: (pageNo - 1) * pageSize },
-                { $sort: { create_time: -1 } },
+                { $skip: ((pageNo - 1) * pageSize) },
                 { $limit: pageSize },
+                { $sort: { create_time: -1 } },
             ])
         );
         const all = await Promise.all([count, datas]);
@@ -176,8 +176,8 @@ class PagesService extends Service {
             this.ctx.model.Web.WebPages.aggregate([
                 query,
                 { $skip: (pageNo - 1) * pageSize },
-                { $sort: { create_time: -1 } },
                 { $limit: pageSize },
+                { $sort: { create_time: -1 } },
             ])
         );
         const all = await Promise.all([count, datas]);

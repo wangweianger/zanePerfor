@@ -81,8 +81,8 @@ class ErroesService extends Service {
             this.ctx.model.Web.WebErrors.aggregate([
                 { $match: query, },
                 { $skip: (pageNo - 1) * pageSize },
-                { $sort: { count: -1 } },
                 { $limit: pageSize },
+                { $sort: { count: -1 } },
             ])
         );
         const all = await Promise.all([count, datas]);

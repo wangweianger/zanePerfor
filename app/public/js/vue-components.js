@@ -12,6 +12,7 @@ let Component = {
                     <li data-time="600000" data-text="最近10分钟">10分钟</li>
                     <li data-time="1800000" data-text="最近30分钟">30分钟</li>
                     <li data-time="3600000" data-text="最近1小时">1小时</li>
+                    <li data-time="21600000" data-text="最近6小时">6小时</li>
                     <li data-time="43200000" data-text="最近12小时">12小时</li>
                     <li data-time="86400000" data-text="最近1天">1天</li>
                     <button @click="timeSure" class="btn">确定</button>

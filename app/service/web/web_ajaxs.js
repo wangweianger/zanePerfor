@@ -165,8 +165,8 @@ class AjaxsService extends Service {
             this.ctx.model.Web.WebAjaxs.aggregate([
                 query,
                 { $skip: (pageNo - 1) * pageSize },
-                { $sort: { create_time: -1 } },
                 { $limit: pageSize },
+                { $sort: { create_time: -1 } },
             ])
         );
         const all = await Promise.all([count, datas]);

@@ -33,10 +33,11 @@ class IpTaskService extends Service {
 
     // 遍历数据 查询ip地址信息
     async handleDatas(data, type) {
+        if (!data && !data.length) return;
         const length = data.length - 1;
         let i = 0;
         const timer = setInterval(() => {
-            try {
+            if (data[i] && data[i].ip) {
                 const ip = data[i].ip;
                 this.getIpData(ip, data[i]._id);
                 if (i === length && type) {
@@ -44,8 +45,6 @@ class IpTaskService extends Service {
                     clearInterval(timer);
                 }
                 i++;
-            } catch (e) {
-                console.log(e);
             }
         }, 900);
     }
