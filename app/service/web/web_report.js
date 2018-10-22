@@ -5,7 +5,7 @@ const Service = require('egg').Service;
 class WebReportService extends Service {
 
     // 保存用户上报的数据
-    saveWebReportData(ctx) {
+    async saveWebReportData(ctx) {
         const query = ctx.request.body;
         const ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
 
@@ -27,7 +27,6 @@ class WebReportService extends Service {
         report.screenwidth = query.screenwidth;
         report.screenheight = query.screenheight;
         report.save();
-
         return {};
     }
 }

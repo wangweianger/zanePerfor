@@ -39,6 +39,7 @@ module.exports = () => {
 
     // mongodb重启shell,如果mongodb进程kill了，请求不了数据库时重启（可选填）
     config.mongodb_restart_sh = [ '/usr/local/etc/start.sh' ];
+    // config.mongodb_restart_sh = [ '/data/mongodb/start.sh' ];
 
     // 百度地图api key
     config.BAIDUAK = '36UI4dIyIfCVKQWW7hoeSIuM';
@@ -67,6 +68,7 @@ module.exports = () => {
             db: 0,
         },
     };
+    
 
     // mongoose配置
     config.mongoose = {

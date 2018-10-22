@@ -20,20 +20,33 @@ class DataTimedTaskService extends Service {
         }
 
         // 查询db3是否正常,不正常则重启
-        let dbsdata = null;
+        let db3data = false;
         const timer = setTimeout(() => {
-            if (dbsdata) {
-                dbsdata = null; clearTimeout(timer);
+            if (db3data) {
+                db3data = false; clearTimeout(timer);
             } else {
                 this.app.restartMongodbs(); clearTimeout(timer);
             }
         }, 20);
-        dbsdata = await this.ctx.model.Web.WebSystem.count({}).exec();
+        await this.ctx.model.Web.WebSystem.count({}).exec();
+        db3data = true;
 
-        // 请求db1数据库进行同步数据
+        /*
+        * 请求db1数据库进行同步数据
+        *  查询db1是否正常,不正常则重启
+        */
+        let db1data = false;
+        const timerdb1 = setTimeout(() => {
+            if (db1data) {
+                db1data = false; clearTimeout(timerdb1);
+            } else {
+                this.app.restartMongodbs(); clearTimeout(timerdb1);
+            }
+        }, 20);
         const datas = await this.ctx.model.Web.WebReport.find(query)
             .sort({ create_time: 1 })
             .exec();
+        db1data = true;
 
         // 开启多线程执行
         if (datas && datas.length) {
