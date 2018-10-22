@@ -26,7 +26,6 @@ module.exports = () => {
     config.pvuvip_task_minute_time = '0 */1 * * * *';
 
     // 执行pvuvip定时任务的时间间隔 每天定时执行一次
-    // config.pvuvip_task_day_time = '*/10 * * * * *';
     config.pvuvip_task_day_time = '0 0 0 */1 * *';
 
     // 执行ip地理位置转换的定时任务 每分钟定时执行一次
@@ -37,6 +36,9 @@ module.exports = () => {
 
     // 更新用户上报IP对应的城市信息线程数
     config.ip_thread = 10;
+
+    // mongodb重启shell,如果mongodb进程kill了，请求不了数据库时重启（可选填）
+    config.mongodb_restart_sh = [ '/usr/local/etc/start.sh' ];
 
     // 百度地图api key
     config.BAIDUAK = '36UI4dIyIfCVKQWW7hoeSIuM';
@@ -82,7 +84,8 @@ module.exports = () => {
             },
             // 定时任务执行完之后存储到数据库3
             db3: {
-                url: 'mongodb://127.0.0.1:27019/performance',
+                url: 'mongodb://127.0.0.1:27018,127.0.0.1:27019,127.0.0.1:27020/performance?replicaSet=performance',
+                // url: 'mongodb://127.0.0.1:27019/performance',
                 options: {
                     useNewUrlParser: true,
                     server: { poolSize: 200 },

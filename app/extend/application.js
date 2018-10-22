@@ -1,5 +1,6 @@
 'use strict';
 
+const { exec } = require('child_process');
 const md5 = require('md5');
 
 module.exports = {
@@ -74,6 +75,17 @@ module.exports = {
             if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)));
         }
         return fmt;
+    },
+    // 重启mongodb服务器
+    restartMongodbs() {
+        console.log(this.config.mongodb_restart_sh)
+        if (!this.config.mongodb_restart_sh && !this.config.mongodb_restart_sh.length) return;
+        this.config.mongodb_restart_sh.forEach(item => {
+            exec(`sh ${item}`, error => {
+                if (error) { console.log('重启mongodb数据库失败!'); return; }
+                console.log('重启mongodb数据库成功!');
+            });
+        });
     },
 };
 
