@@ -21,6 +21,6 @@ module.exports = app => {
         screenwidth: { type: Number }, // 屏幕宽度
         screenheight: { type: Number }, // 屏幕高度
     });
-    WebReportSchema.index({ app_id: -1, create_time: 1, ip: -1, url: -1 });
+    WebReportSchema.index({ create_time: 1 });
     return conn.model('WebReport', WebReportSchema);
 };

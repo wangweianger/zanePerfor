@@ -19,8 +19,14 @@ module.exports = () => {
     // 务必修改config.debug = true;
     config.session_secret = 'node_club_secret';
 
-    // web网页端执行定时任务时间
-    config.web_task_time = '0 */1 * * * *';
+    // web浏览器端定时任务是否执行
+    config.is_web_task_run = true;
+
+    // web浏览器端定时任务是否执行
+    config.is_wx_task_run = true;
+
+    // db1与db3数据库同步每分钟执行一次
+    config.report_task_time = '0 */1 * * * *';
 
     // 执行pvuvip定时任务的时间间隔 每分钟定时执行一次
     config.pvuvip_task_minute_time = '0 */1 * * * *';
@@ -68,6 +74,15 @@ module.exports = () => {
             db: 0,
         },
     };
+    // product
+    // config.redis = {
+    //     client: {
+    //         port: 6379, // Redis port
+    //         host: '10.1.128.123', // Redis host
+    //         password: 'yy7943RMB',
+    //         db: 0,
+    //     },
+    // };
 
     // mongoose配置
     config.mongoose = {

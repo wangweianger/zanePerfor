@@ -1,15 +1,15 @@
 'use strict';
 
-// 处理数据定时任务
+// 执行pvuvip定时任务的时间间隔
 module.exports = app => {
     return {
         schedule: {
             cron: app.config.pvuvip_task_day_time,
             type: 'all',
         },
-        // 定时处理上报的数据
+        // 定时处pv，uv,ip统计信息 每天执行一次
         async task(ctx) {
-            await ctx.service.remove.deleteDb1WebData();
+            if (app.config.is_web_task_run) await ctx.service.web.webPvuvipTask.getWebPvUvIpByDay();
         },
     };
 };

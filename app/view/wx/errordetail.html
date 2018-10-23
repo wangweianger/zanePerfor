@@ -1,0 +1,136 @@
+<% include ./side.html %>
+<style scoped>
+	.com_top_title:after{
+		content:'';
+		display:block;
+		clear:both;
+	}
+	table.table{
+		background:#fff;
+	}
+	table.table .light_color th{
+		font-weight:400;
+	}
+	table.table tr td{
+		font-size:12px;
+	}
+</style>
+<div class="com_content_body main pb100" id="pages" v-cloak>
+	<div class="com_top_title">
+		<h1 class="com_h1 fl">错误详情列表</h1>
+		<commonsearch></commonsearch>
+	</div>
+	<div class="charts mt20">
+		<!-- table列表 -->
+		<table class="table" v-if="isLoadend&&listdata.length">
+			<tr class="light_color">
+				<th class="w-300">错误资源</th>
+				<th>错误信息</th>
+				<th>错误类型</th>
+				<th>所属URL</th>
+				<th v-if="category=='resource'">错误资源</th>
+				<th v-if="category=='resource'">错误类型</th>
+				<th v-if="category=='ajax'">状态码</th>
+				<th v-if="category=='ajax'">类型详情</th>
+				<th v-if="category=='js'">错误行</th>
+				<th v-if="category=='js'">错误列</th>
+				<th>请求方式</th>
+				<th>错误时间</th>
+				<th>操作呢</th>
+			</tr>
+			<tr v-for="item in listdata">
+				<td class="tc w-300"><a href="javascript:" @click="gotodetail(item)">{{item.resource_url}}</a></td>
+				<td class="tc red">{{item.msg}}</td>
+				<td class="tc">{{item.category}}</td>
+				<td class="tc">{{item.url}}</td>
+				<td class="tc" v-if="item.category=='resource'">{{item.target}}</td>
+				<td class="tc" v-if="item.category=='resource'">{{item.type}}</td>
+				<td class="tc" v-if="item.category=='ajax'">{{item.status}}</td>
+				<td class="tc" v-if="item.category=='ajax'">{{item.text}}</td>
+				<td class="tc" v-if="item.category=='js'">{{item.line}}</td>
+				<td class="tc" v-if="item.category=='js'">{{item.col}}</td>
+				<td class="tc">{{item.method}}</td>
+				<td class="tc">{{item.create_time|date('/',true)}}</td>
+				<td class="tc"><a href="javascript:" @click="gotodetail(item)">详情</a></td>
+			</tr>
+		</table>
+	</div>
+	<div>
+		<!--  分页 -->
+		<div class="tc common_page_style mt10" v-show="isLoadend&&listdata.length">
+			<div id="copot-page" class="copot-page"></div>
+		</div>
+		<!-- 暂无数据 -->
+		<div class="tc" v-if="!listdata.length">暂无数据!</div>
+	</div>
+</div>
+
+<script>
+	new Vue({
+		el: '#pages',
+		data: function () {
+			return {
+				listdata: [],
+				pageNo: 1,
+				pageSize: config.pageSize,
+				totalNum: 0,
+				isLoadend: false,
+				appId: util.getStorage('local', 'appId'),
+				url: util.getQueryString('url') || '',
+				category: util.getQueryString('category') || 'resource',
+				beginTime: '',
+				endTime: '',
+			}
+		},
+		filters: {
+			toFixed: window.Filter.toFixed,
+			toSize: window.Filter.toSize,
+			date: window.Filter.date,
+		},
+		mounted() {
+			this.getDataForTime();
+		},
+		methods: {
+			getDataForTime() {
+				let times = util.getSearchTime()
+				this.beginTime = times.beginTime
+				this.endTime = times.endTime
+				this.getOneErrorList();
+			},
+			getOneErrorList() {
+				this.isLoadend = false;
+				util.ajax({
+					type:'get',
+					url: config.baseApi + 'api/v1/error/getOneErrorList',
+					data: {
+						appId:this.appId,
+						pageNo: this.pageNo,
+						pageSize: this.pageSize,
+						url: this.url,
+						category:this.category,
+						beginTime: this.beginTime,
+						endTime: this.endTime,
+					},
+					success: data => {
+						this.isLoadend = true;
+						if (!data.data.datalist && !data.data.datalist.length) return;
+						this.listdata = data.data.datalist;
+						new Page({
+							parent: $("#copot-page"),
+							nowPage: this.pageNo,
+							pageSize: this.pageSize,
+							totalCount: data.data.totalNum,
+							callback: (nowPage, totalPage) => {
+								this.pageNo = nowPage;
+								this.getOneErrorList();
+							}
+						});
+					}
+				})
+			},
+			gotodetail(item) {
+				location.href = "/web/erroritemdetail?markPage=" + item.mark_page + '&category=' + item.category;
+			}
+		}
+	})
+</script>

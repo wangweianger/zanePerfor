@@ -1,0 +1,162 @@
+<% include ./side.html %>
+<style scoped>
+	.com_top_title:after{
+		content:'';
+		display:block;
+		clear:both;
+	}
+	table.table{
+		background:#fff;
+	}
+	table.table .light_color th{
+		font-weight:400;
+	}
+	table.table tr td{
+		font-size:12px;
+	}
+	.common-block-style {
+		background: #fff;
+	}
+	.common-block-style .h1 {
+		font-size: 18px;
+		margin-bottom: 25px;
+		padding-bottom: 10px;
+		border-bottom: solid 1px #eee; 
+	}
+	.common-block-style .block {
+		margin-bottom: 15px;
+		font-size: 16px;
+		overflow: hidden; 
+	}
+	.common-block-style .block span {
+		display: block;
+		float: left; 
+	}
+	.common-block-style .block .t1 {
+		width: 120px; 
+	}
+	.common-block-style .block .t2 {
+		max-width: 1200px; 
+	}
+</style>
+<div class="com_content_body main pb100" id="pages" v-cloak>
+	<div class="com_top_title">
+		<h1 class="com_h1 fl">AJAX API详细信息</h1>
+		<commonsearch></commonsearch>
+	</div>
+	<div class="com_block common-block-style mt20">
+		<div class="block">
+			<span class="t1">AJAX地址:</span>
+			<span class="t2">{{datas.url}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">请求耗时:</span>
+			<span class="t2 red">{{datas.duration|toFixed}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">请求方式:</span>
+			<span class="t2">{{datas.method}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">请求参数:</span>
+			<span class="t2">{{datas.querydata}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">速度类型:</span>
+			<span class="t2 red">{{datas.speed_type == 1?'正常':'慢'}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">body大小:</span>
+			<span class="t2">{{datas.decoded_body_size|toSize}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">生成时间:</span>
+			<span class="t2">{{datas.create_time|date('/',true)}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">所属URL:</span>
+			<span class="t2">{{datas.call_url}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">来源城市:</span>
+			<span class="t2">{{environment.city||'未知'}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">浏览器:</span>
+			<span class="t2">{{environment.browser}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">浏览器版本:</span>
+			<span class="t2">{{environment.borwser_version}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">操作系统:</span>
+			<span class="t2">{{environment.system}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">操作系统版本:</span>
+			<span class="t2">{{environment.system_version}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">IP地址:</span>
+			<span class="t2">{{environment.ip}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">完整URL:</span>
+			<span class="t2">{{datas.full_url}}</span>
+		</div>
+	</div>
+</div>
+
+<script>
+	new Vue({
+		el: '#pages',
+		data: function () {
+			return {
+				datas: {},
+				environment: {},
+				appId: util.getStorage('local', 'appId'),
+				markPage: util.getQueryString('markPage') || '',
+			}
+		},
+		filters: {
+			toFixed: window.Filter.toFixed,
+			toSize: window.Filter.toSize,
+			date: window.Filter.date,
+		},
+		mounted() {
+			this.getOneAjaxDetail();
+			this.getPageEnvironment();
+		},
+		methods: {
+			getOneAjaxDetail() {
+				this.isLoadend = false;
+				util.ajax({
+					type:'get',
+					url: config.baseApi + 'api/v1/ajax/getOneAjaxDetail',
+					data: {
+						appId:this.appId,
+						markPage:this.markPage,
+					},
+					success: data => {
+						this.isLoadend = true;
+						this.datas = data.data;
+					}
+				})
+			},
+			getPageEnvironment() {
+				util.ajax({
+					type: 'get',
+					url: config.baseApi + 'api/v1/environment/getEnvironmentForPage',
+					data: {
+						appId: this.appId,
+						markPage: this.markPage,
+					},
+					success: data => {
+						this.environment = data.data;
+					}
+				})
+			},
+		}
+	})
+</script>

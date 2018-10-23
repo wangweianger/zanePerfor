@@ -1,0 +1,292 @@
+<% include ./side.html %>
+<style scoped>
+	.com_top_title:after{
+		content:'';
+		display:block;
+		clear:both;
+	}
+	table.table{
+		background:#fff;
+	}
+	table.table .light_color th{
+		font-weight:400;
+	}
+	table.table tr td{
+		font-size:12px;
+	}
+	.block-time {
+		margin: 20px 0;
+		background: #fff;
+		border-radius: 3px;
+		padding: 30px 20px;
+		display: flex;
+		justify-content: center; 
+		align-items: center;
+	}
+	.block-time li {
+		display: flex;
+		flex-direction: column;
+		align-items: center; 
+	}
+	.block-time li.li1 {
+		margin-right: 100px;
+		width: 250px; 
+	}
+	.block-time li.li1 h1 {
+		width: 250px;
+		text-align: center; 
+	}
+	.block-time li.li2 {
+		margin-right: 50px;
+		width: 120px; 
+	}
+	.block-time li.li3 {
+		width: 100px; 
+	}
+	.block-time h1 {
+		font-size: 20px;
+		color: #999;
+		margin-bottom: 8px;
+		padding-bottom: 8px;
+		border-bottom: solid 1px #eee; 
+	}
+	.block-time h2 {
+		font-size: 22px;
+		color: #333; 
+	}
+	.charts {
+		background: #fff;
+		padding: 20px;
+		margin: 20px 0; 
+	}
+	.charts h1 {
+		font-size: 18px; 
+	}
+	.charts .com_h2{
+		font-weight:400;
+		font-size: 20px; 
+	}
+	.charts-pages {
+		width: 100%;
+		height: 250px; 
+	}
+</style>
+<div class="com_content_body main pb100" id="pages" v-cloak>
+	<div class="com_top_title">
+		<h1 class="com_h1 fl">AJAX性能详情</h1>
+		<commonsearch></commonsearch>
+	</div>
+	<!-- 页面平均耗时说明 -->
+	<div class="block-time" mt20>
+		<li class="li1">
+			<h1>AJAX响应平均耗时</h1>
+			<h2 class="red">{{detail.duration|toFixed}}</h2>
+		</li>
+		<li class="li2">
+			<h1>调用量</h1>
+			<h2>{{detail.count}}次</h2>
+		</li>
+		<li class="li3">
+			<h1>bodySize</h1>
+			<h2>{{detail.body_size|toSize}}</h2>
+		</li>
+	</div>
+	<!-- charts -->
+	<div class="charts">
+		<div id="charts-pages" class="charts-pages"></div>
+	</div>
+	<div class="charts">
+		<h1 class="com_h2 mb20">AJAX性能列表</h1>
+		<!-- table列表 -->
+		<table class="table" v-if="isLoadend&&listdata.length">
+			<tr class="light_color">
+				<th class="w-300">API地址</th>
+				<th>请求方式</th>
+				<th>请求耗时</th>
+				<th>返回资源大小</th>
+				<th>请求参数</th>
+				<th>调用页面</th>
+				<th>请求时间</th>
+				<th>操作</th>
+			</tr>
+			<tr v-for="item in listdata">
+				<td class="tc w-300"><a :href="'/web/ajaxitemdetail?markpage='+item.mark_page">{{item.url}}</a></td>
+				<td class="tc">{{item.method}}</td>
+				<td class="red tc">{{item.duration|toFixed}}</td>
+				<td class="tc">{{item.decoded_body_size|toSize}}</td>
+				<td class="tc">{{item.query_datas}}</td>
+				<td class="tc">{{item.call_url}}</td>
+				<td class="tc">{{item.create_time|date('/',true)}}</td>
+				<td class="tc w-100"><a :href="'/web/ajaxitemdetail?markpage='+item.mark_page">详情</a></td>
+			</tr>
+		</table>
+	</div>
+	<div>
+		<!--  分页 -->
+		<div class="tc common_page_style mt10" v-show="isLoadend&&listdata.length">
+			<div id="copot-page" class="copot-page"></div>
+		</div>
+		<!-- 暂无数据 -->
+		<div class="tc" v-if="!listdata.length">暂无数据!</div>
+	</div>
+</div>
+
+<script>
+	new Vue({
+		el: '#pages',
+		data: function () {
+			return {
+				detail:{},
+				listdata: [],
+				pageNo: 1,
+				pageSize: config.pageSize,
+				totalNum: 0,
+				isLoadend: false,
+				type: util.getQueryString('type')||1,
+				appId: util.getStorage('local', 'appId'),
+				url: util.getQueryString('url') || '',
+			}
+		},
+		filters: {
+			toFixed: window.Filter.toFixed,
+			toSize: window.Filter.toSize,
+			date: window.Filter.date,
+		},
+		mounted() {
+			this.getDataForTime();
+		},
+		methods: {
+			getDataForTime() {
+				let times = util.getSearchTime()
+				this.beginTime = times.beginTime
+				this.endTime = times.endTime
+				this.getOneAjaxAvg();
+				this.getOneAjaxList();
+			},
+			getOneAjaxAvg(){
+				util.ajax({
+					type: 'get',
+					url: config.baseApi + 'api/v1/ajax/getOneAjaxAvg',
+					data: {
+						appId: this.appId,
+						url: this.url,
+						beginTime: this.beginTime,
+						endTime: this.endTime,
+						type:this.type
+					},
+					success: data => {
+						this.detail = data.data;
+					}
+				})
+			},
+			getOneAjaxList() {
+				this.isLoadend = false;
+				util.ajax({
+					type:'get',
+					url: config.baseApi + 'api/v1/ajax/getOneAjaxList',
+					data: {
+						appId:this.appId,
+						pageNo: this.pageNo,
+						pageSize: this.pageSize,
+						url: this.url,
+						beginTime: this.beginTime,
+						endTime: this.endTime,
+						type: this.type
+					},
+					success: data => {
+						this.isLoadend = true;
+						if (!data.data.datalist && !data.data.datalist.length) return;
+						this.listdata = data.data.datalist;
+						new Page({
+							parent: $("#copot-page"),
+							nowPage: this.pageNo,
+							pageSize: this.pageSize,
+							totalCount: data.data.totalNum,
+							callback: (nowPage, totalPage) => {
+								this.pageNo = nowPage;
+								this.getOneAjaxList();
+							}
+						});
+						this.charts();
+					}
+				})
+			},
+			charts() {
+				let datas = this.listdata;
+				let xAxisData = []
+				let seriesData = []
+
+				datas.forEach(item => {
+					xAxisData.push(new Date(item.create_time).format('hh:mm:ss'))
+					seriesData.push({
+						value: item.duration,
+						name: new Date(item.create_time).format('yyyy/MM/dd hh:mm:ss'),
+					})
+				})
+
+				var myChart = echarts.init(document.getElementById('charts-pages'));
+				var option = {
+					title: {
+						text: 'AJAX性能分析表(单位ms)'
+					},
+					grid: {
+						top: 50,
+						bottom: 50,
+						left: 40,
+						right: 10,
+						borderWidth: 0,
+					},
+					tooltip: {
+						formatter: "{a} : {c}"
+					},
+					color: ['#8776f7'],
+					xAxis: {
+						data: xAxisData,
+						splitLine: {
+							show: false,
+						},
+						axisTick: {
+							show: true,
+							lineStyle: {
+								color: '#eee',
+							}
+						},
+						axisLabel: {
+							show: true,
+							textStyle: {
+								color: '#B7B7B7',
+								fontSize: 10,
+							},
+						},
+					},
+					yAxis: {
+						type: 'value',
+						axisLabel: {
+							show: true,
+							textStyle: {
+								color: '#B7B7B7',
+							}
+						},
+						splitLine: {
+							show: true,
+							lineStyle: {
+								type: 'dashed',
+								color: '#eee',
+								width: 1,
+							}
+						},
+						axisLine: {
+							show: false,
+						},
+					},
+					series: [{
+						name: 'AJAX性能',
+						type: 'bar',
+						data: seriesData,
+					}]
+				};
+				myChart.setOption(option);
+			}
+		}
+	})
+</script>

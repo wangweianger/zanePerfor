@@ -7,9 +7,9 @@ module.exports = app => {
             cron: app.config.ip_task_time,
             type: 'all',
         },
-        // 定时处理上报的数据
+        // 定时处理ip城市地理位置信息
         async task(ctx) {
-            await ctx.service.web.webIpTask.saveGetIpDatas();
+            if (app.config.is_web_task_run) await ctx.service.web.webIpTask.saveWebGetIpDatas();
         },
     };
 };
