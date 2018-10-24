@@ -10,7 +10,7 @@
 >  * web端上报脚本开发（已完成）
 >  * 分城市统计性能逻辑开发（已完成）
 >  * 浏览器端后台cms界面开发（已完成）
->  * 微信小程序sdk开发 （开发中）
+>  * 微信小程序sdk开发 （已完成）
 >  * 微信小程序相关后端逻辑开发 （开发中）
 >  * 微信小程序后台cms界面开发（开发中）
 >  * 微信分城市统计性能逻辑开发（排期中）
@@ -59,8 +59,27 @@ Performance({
     }
 })
 ```
-### web网页sdk 页面性能、资源、错误、ajax，fetch请求上报sdk performance-report：
+### 浏览器端上报SDK performance-report：
 https://github.com/wangweianger/web-performance-report
+
+## 微信小程序端使用说明
+* 直接下载sdk，引入到小程序的app.js最顶部
+```
+微信小程序 app.js头部引入sdk
+
+const wxRepotSdk = require('./utils/wx-report-sdk.min');
+
+new wxRepotSdk({
+    domain:'http://test.com',
+    add:{
+        appId:'123456789'
+    }
+})
+
+```
+### 小程序端上报SDK wx-report-sdk：
+https://github.com/wangweianger/wx-report-sdk
+
 
 ## 旧版完整前端性能监控系统
 https://github.com/wangweianger/web-performance-monitoring-system
