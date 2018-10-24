@@ -44,7 +44,6 @@ class WxReportTaskService extends Service {
             .exec();
         db1data = true;
 
-        console.log(datas);
         // 开启多线程执行
         if (datas && datas.length) {
             const length = datas.length;
@@ -53,10 +52,8 @@ class WxReportTaskService extends Service {
             for (let i = 0; i < this.app.config.report_thread; i++) {
                 const newSpit = datas.splice(0, number);
                 if (datas.length) {
-                    console.log(datas);
                     this.saveDataToDb3(newSpit);
                 } else {
-                    console.log(datas);
                     this.saveDataToDb3(newSpit, true);
                 }
             }
@@ -93,10 +90,10 @@ class WxReportTaskService extends Service {
         pages.create_time = item.create_time;
         pages.path = item.pages.router;
         pages.options = item.pages.options;
-        pages.mark_page = item.pages.mark_page;
-        pages.mark_user = item.pages.mark_page;
-        pages.net = item.pages.net;
-        pages.ip = item.pages.ip;
+        pages.mark_page = item.mark_page;
+        pages.mark_user = item.mark_user;
+        pages.net = item.net;
+        pages.ip = item.ip;
         pages.brand = item.system.brand;
         pages.model = item.system.model;
         pages.screenWidth = item.system.screenWidth;

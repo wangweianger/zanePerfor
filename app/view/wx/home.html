@@ -151,7 +151,7 @@ new Vue({
 		getPvUvIpSurvey(){
 			util.ajax({
 				type:'get',
-				url: `${config.baseApi}api/v1/pvuvip/getPvUvIpSurvey`,
+				url: `${config.baseApi}api/v1/wx/pvuvip/getPvUvIpSurvey`,
 				data:{
 					appId:this.appId,
 					beginTime: this.beginTime,
@@ -166,7 +166,7 @@ new Vue({
 		getPvUvIpSurveyOne(beginTime, endTime){
 			util.ajax({
 				type: 'get',
-				url: `${config.baseApi}api/v1/pvuvip/getPvUvIpSurveyOne`,
+				url: `${config.baseApi}api/v1/wx/pvuvip/getPvUvIpSurveyOne`,
 				data: {
 					appId: this.appId,
 					beginTime: beginTime,
@@ -180,7 +180,7 @@ new Vue({
 		getPvUvIpList(isInter){
 			clearInterval(this.timer);
 			util.ajax({
-				url: `${config.baseApi}api/v1/pvuvip/getPvUvIpList`,
+				url: `${config.baseApi}api/v1/wx/pvuvip/getPvUvIpList`,
 				data:{
 					appId: this.appId,
 					beginTime:this.beginTime,
@@ -209,7 +209,7 @@ new Vue({
 		},
 		getPvUvIpOne(){
 			util.ajax({
-				url: `${config.baseApi}api/v1/pvuvip/getPvUvIpOne`,
+				url: `${config.baseApi}api/v1/wx/pvuvip/getPvUvIpOne`,
 				data: {
 					type: this.type,
 					appId: this.appId,

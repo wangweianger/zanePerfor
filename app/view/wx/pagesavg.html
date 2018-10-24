@@ -17,23 +17,30 @@
 </style>
 <div class="com_content_body main pb100" id="pages" v-cloak>
 	<div class="com_top_title">
-		<h1 class="com_h1 fl">{{type==1?'页面性能':'慢资源追踪'}}</h1>
+		<h1 class="com_h1 fl">页面路径</h1>
 		<commonsearch :done="getDataForTime"></commonsearch>
 	</div>
-	<div class="com_topic mb20 mt20"><span class="iconfont">&#xe63a;</span>统计某一页面的平均访问性能指标。</div>
+	<div class="com_topic mb20 mt20"><span class="iconfont">&#xe63a;</span>统计某一路径的访问次数，可分城市、系统查询。</div>
 	<div>
 		<!-- 公共搜索条件 -->
 		<div class="com_search">
 			<div class="item">
 				<div>
-					<span class="name">输入页面地址：</span>
-					<input class="inp" v-model="url" placeholder="选填、输入页面地址" type="text">
+					<input class="inp w-200" v-model="url" placeholder="选填、输入path路径" type="text">
 					<button class="btn btn-default" @click="searchForUrl">搜索</button>
 				</div>
 				<div class="ml30">
-					<span class="name">选择日期：</span>
 					<input id="zane-calendar-1" class="inp w-200" type="text" placeholder="选择日期查询">
 				</div>
+				<div class="com_select_item ml30" :class="{'active':isCity}" @click="isSelectCity"><span class="iconfont">&#xe63c;</span>按城市分类</div>
+				<div class="ml10">
+					<input class="inp w-100" v-model="city" placeholder="城市名字查询" type="text">
+					<button class="btn btn-default" @click="searchForCity">搜索</button>
+				</div>
+				<div class="com_select_item ml30" :class="{'active':isBrand}" @click="isSelectBrand"><span class="iconfont">&#xe63c;</span>手机品牌</div>
+				<div class="com_select_item ml30" :class="{'active':isModel}" @click="isSelectModel"><span class="iconfont">&#xe63c;</span>手机型号</div>
+				<div class="com_select_item ml30" :class="{'active':isNet}" @click="isSelectNet"><span class="iconfont">&#xe63c;</span>网络类型</div>
+				<div class="com_select_item ml30" :class="{'active':isSystem}" @click="isSelectSystem"><span class="iconfont">&#xe63c;</span>操作系统</div>
 			</div>
 			<div class="tipscolor mt10" v-if="errText">{{errText}}</div>
 		</div>
@@ -42,25 +49,21 @@
 			<tr class="light_color">
 				<th>URL</th>
 				<th>调用次数</th>
-				<th>页面加载时间</th>
-				<th>白屏时间</th>
-				<th>DOM构建时间</th>
-				<th>解析dom耗时</th>
-				<th>DNS解析时间</th>
-				<th>TCP连接时间</th>
-				<th>request请求耗时</th>
+				<th v-if="isCity">城市</th>
+				<th v-if="isBrand">手机品牌</th>
+				<th v-if="isModel">手机型号</th>
+				<th v-if="isNet">网络类型</th>
+				<th v-if="isSystem">手机系统</th>
 				<th>操作</th>
 			</tr>
 			<tr v-for="item in listdata">
 				<td><a href="javascript:" @click="goToList(item)">{{item._id.url}}</a></td>
 				<td class="tc" >{{item.count}}</td>
-				<td class="red tc">{{item.load_time|toFixed(true)}}</td>
-				<td class="red tc">{{item.white_time|toFixed}}</td>
-				<td class="red tc">{{item.dom_time|toFixed(true)}}</td>
-				<td class="tc">{{item.analysisDom_time|toFixed}}</td>
-				<td class="tc">{{item.dns_time|toFixed}}</td>
-				<td class="tc">{{item.tcp_time|toFixed}}</td>
-				<td class="tc">{{item.request_time|toFixed}}</td>
+				<td class="tc" v-if="isCity">{{item._id.city||'未知'}}</td>
+				<td class="tc" v-if="isBrand">{{item._id.brand}}</td>
+				<td class="tc" v-if="isModel">{{item._id.model}}</td>
+				<td class="tc" v-if="isNet">{{item._id.net}}</td>
+				<td class="tc" v-if="isSystem">{{item._id.system}}</td>
 				<td><a href="javascript:" @click="goToList(item)">详情</a></td>
 			</tr>
 		</table>
@@ -89,6 +92,12 @@
 				type: util.getQueryString('type') || 1, //访问速度类型 1：正常  2：慢
 				url:'',
 				errText:'',
+				city: '',
+				isCity: false,
+				isBrand: false,
+				isSystem: false,
+				isModel:false,
+				isNet:false,
 			}
 		},
 		filters: {
@@ -109,7 +118,7 @@
 				this.isLoadend = false;
 				util.ajax({
 					type:'get',
-					url: config.baseApi + 'api/v1/pages/getAveragePageList',
+					url: config.baseApi + 'api/v1/wx/pages/getAveragePageList',
 					data: {
 						type:this.type,
 						appId:this.appId,
@@ -118,6 +127,12 @@
 						beginTime: this.beginTime,
 						endTime: this.endTime,
 						url: this.url,
+						city: this.city,
+						isCity: this.isCity,
+						isBrand: this.isBrand,
+						isModel: this.isModel,
+						isSystem: this.isSystem,
+						isNet:this.isNet,
 					},
 					success: data => {
 						this.isLoadend = true;
@@ -136,7 +151,32 @@
 					}
 				})
 			},
-			searchForUrl(){
+			isSelectCity() {
+				this.isCity = !this.isCity;
+				if (!this.isCity) this.city = '';
+				this.getinit();
+			},
+			isSelectBrand() {
+				this.isBrand = !this.isBrand;
+				this.getinit();
+			},
+			isSelectModel(){
+				this.isModel = !this.isModel;
+				this.getinit();
+			},
+			isSelectNet(){
+				this.isNet = !this.isNet;
+				this.getinit();
+			},
+			isSelectSystem() {
+				this.isSystem = !this.isSystem;
+				this.getinit();
+			},
+			searchForUrl() {
+				this.getinit();
+			},
+			searchForCity() {
+				this.isCity = this.city ? true : false;
 				this.getinit();
 			},
 			searchForTime(){
@@ -164,13 +204,8 @@
 				});
 			},
 			goToList(item) {
-				if (this.type && this.type == 2) {
-					util.setStorage('session', 'slowpagesItemData', JSON.stringify(item))
-					location.href = "/web/slowpageslist"
-				} else {
-					util.setStorage('session', 'pagesItemData', JSON.stringify(item))
-					location.href = "/web/pageslist"
-				}
+				util.setStorage('session', 'pagesItemData', JSON.stringify(item))
+				location.href = "/wx/pageslist"
 			}
 		}
 	})

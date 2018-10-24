@@ -32,6 +32,35 @@ class WebController extends Controller {
         });
     }
 
+    // 访问页面性能数据
+    async wxpagesavg() {
+        const { ctx } = this;
+        await ctx.render('wx/pagesavg', {
+            data: {
+                title: '页面平均性能指标',
+            },
+        });
+    }
+
+    // 单页面访问页面列表性能
+    async wxpageslist() {
+        const { ctx } = this;
+        await ctx.render('wx/pageslist', {
+            data: {
+                title: '页面性能数据列表',
+            },
+        });
+    }
+
+    async wxpagedetails() {
+        const { ctx } = this;
+        await ctx.render('wx/pagedetails', {
+            data: {
+                title: '页面性能详情数据',
+            },
+        });
+    }
+
 }
 
 module.exports = WebController;

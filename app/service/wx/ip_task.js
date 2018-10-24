@@ -5,15 +5,15 @@ const Service = require('egg').Service;
 class IpTaskService extends Service {
 
     // 定时任务获得ip地理位置信息
-    async saveWebGetIpDatas() {
-        let beginTime = await this.app.redis.get('ip_task_begin_time');
+    async saveWxGetIpDatas() {
+        let beginTime = await this.app.redis.get('wx_ip_task_begin_time');
 
         const query = {};
         if (beginTime) {
             beginTime = new Date(new Date(beginTime).getTime() + 1000);
             query.create_time = { $gt: beginTime };
         }
-        const datas = await this.ctx.model.Web.WebEnvironment.find(query)
+        const datas = await this.ctx.model.Wx.WxPages.find(query)
             .limit(this.app.config.ip_thread * 60)
             .sort({ create_time: 1 })
             .exec();
@@ -41,7 +41,7 @@ class IpTaskService extends Service {
                 const ip = data[i].ip;
                 this.getIpData(ip, data[i]._id);
                 if (i === length && type) {
-                    this.app.redis.set('ip_task_begin_time', data[i].create_time);
+                    this.app.redis.set('wx_ip_task_begin_time', data[i].create_time);
                     clearInterval(timer);
                 }
                 i++;
@@ -59,7 +59,7 @@ class IpTaskService extends Service {
         let result = null;
         if (datas) {
             // 直接更新
-            result = await this.updateWebEnvironment(datas, _id);
+            result = await this.updateWxPages(datas, _id);
         } else {
             // 查询百度地图地址信息并更新
             result = await this.getIpDataForBaiduApi(ip, _id);
@@ -85,7 +85,7 @@ class IpTaskService extends Service {
             // 保存到地址库
             this.saveIpDatasToDb(json);
             // 更新用户地址信息
-            return await this.updateWebEnvironment(json, _id);
+            return await this.updateWxPages(json, _id);
         }
     }
 
@@ -100,12 +100,12 @@ class IpTaskService extends Service {
         return await iplibrary.save();
     }
     // 更新IP相关信息
-    async updateWebEnvironment(data, id) {
+    async updateWxPages(data, id) {
         const update = {
             province: data.province,
             city: data.city,
         };
-        const result = await this.ctx.model.Web.WebEnvironment.findByIdAndUpdate(id, update).exec();
+        const result = await this.ctx.model.Wx.WxPages.findByIdAndUpdate(id, update).exec();
         return result;
     }
 }

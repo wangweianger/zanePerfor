@@ -65,58 +65,18 @@
 	<div class="com_slide_tab_x mt30 mb30">
 		<div class="item" :class="{'active':lable==1}" @click="checkoutLabel(1)">性能详情</div>
 		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">ajax调用</div>
-		<div class="item" :class="{'active':lable==3}" @click="checkoutLabel(3)">页面慢加载追踪</div>
-		<div class="item" :class="{'active':lable==4}" @click="checkoutLabel(4)">资源慢加载追踪</div>
 	</div>
-	<!-- 页面平均耗时说明 -->
-	<div class="com_block block-time" v-show="lable==1">
-		<div class="item-full div1">
-			<h1 class="com_h1">页面平均耗时</h1>
-			<li>
-				<h1>平均加载耗时(s)</h1>
-				<h2 class="red">{{pagesItemData.load_time|toFixed(true)}}</h2>
-			</li>
-			<li>
-				<h1>平均白屏耗时(ms)</h1>
-				<h2 class="red">{{pagesItemData.white_time|toFixed}}</h2>
-			</li>
-			<li>
-				<h1>平均DOM构建耗时(s)</h1>
-				<h2 class="red">{{pagesItemData.dom_time|toFixed(true)}}</h2>
-			</li>
-			<li>
-				<h1>调用次数</h1>
-				<h2>{{pagesItemData.count||0}}</h2>
-			</li>
-			<li>
-				<h1>平均解析DOM耗时(s)</h1>
-				<h2>{{pagesItemData.analysisDom_time|toFixed(true)}}</h2>
-			</li>
-			<li>
-				<h1>平均DNS解析耗时(ms)</h1>
-				<h2>{{pagesItemData.dns_time|toFixed}}</h2>
-			</li>
-			<li>
-				<h1>平均TCP连接耗时(ms)</h1>
-				<h2>{{pagesItemData.tcp_time|toFixed}}</h2>
-			</li>
-			<li>
-				<h1>平均request请求耗时(ms)</h1>
-				<h2>{{pagesItemData.request_time|toFixed}}</h2>
-			</li>
-			<li>
-				<h1>平均页面准备耗时(ms)</h1>
-				<h2>{{pagesItemData.ready_time|toFixed}}</h2>
-			</li>
-		</div>
+	<div class="com_block mt20" v-show="lable==1">
+		<div><span class="text">PATH路径：</span> {{pagesItemData._id.url}}</div>
+		<div class="mt10"><span class="text">请求次数：</span> {{pagesItemData.count}}</div>
 	</div>
 	<div class="com_block block-time mt20" v-show="lable==1">
 		<div class="item div2">
-			<h1 class="h1">浏览器分类统计</h1>
+			<h1 class="h1">手机品牌分类统计</h1>
 			<div id="echartBorwsers-borwser" class="echartBorwsers"></div>
 		</div>
 		<div class="item div3">
-			<h1 class="h1">系统分类统计</h1>
+			<h1 class="h1">手机系统分类统计</h1>
 			<div id="echartBorwsers-system" class="echartBorwsers"></div>
 		</div>
 		<div class="item div3">
@@ -125,46 +85,35 @@
 		</div>
 	</div>
 	<div class="mt20" v-show="lable==1">
-		<!-- 公共搜索条件 -->
-		<div class="com_search">
-			<div class="item">
-				<div>
-					<span class="name">选择日期查询：</span>
-					<input id="zane-calendar-1" class="inp w-200" type="text" placeholder="选择日期查询">
-				</div>
-			</div>
-		</div>
 		<!-- table列表 -->
 		<table class="table" v-if="isLoadend&&listdata.length">
 			<tr class="light_color">
-				<th>URL</th>
-				<th>页面加载时间</th>
-				<th>白屏时间</th>
-				<th>DOM构建时间</th>
-				<th>解析dom耗时</th>
-				<th>DNS解析时间</th>
-				<th>TCP连接时间</th>
-				<th>页面重定向时间</th>
-				<th>unload时间</th>
-				<th>request请求耗时</th>
-				<th>页面准备时间</th>
-				<th>页面请求时间</th>
+				<th>path路径</th>
+				<th>手机品牌</th>
+				<th>手机类型</th>
+				<th>网络类型</th>
+				<th>访问城市</th>
+				<th>系统版本</th>
+				<th>微信版本</th>
+				<th>SDK版本</th>
+				<th>屏幕宽度</th>
+				<th>屏幕高度</th>
+				<th>请求时间</th>
 				<th>操作</th>
 			</tr>
 			<tr v-for="item in listdata">
-				<td><a :href="'/web/pagesdetails?id='+item._id">{{item.url}}</a></td>
-				<td class="red tc">{{item.load_time|toFixed(true)}}</td>
-				<td class="red tc">{{item.white_time|toFixed}}</td>
-				<td class="tc">{{item.dom_time|toFixed(true)}}</td>
-				<td class="tc">{{item.analysisDom_time|toFixed}}</td>
-				<td class="tc">{{item.dns_time|toFixed}}</td>
-				<td class="tc">{{item.tcp_time|toFixed}}</td>
-				<td class="tc">{{item.redirect_time|toFixed}}</td>
-				<td class="tc">{{item.unload_time|toFixed}}</td>
-				<td class="tc">{{item.request_time|toFixed}}</td>
-				<td class="tc">{{item.ready_time|toFixed}}</td>
+				<td><a :href="'/wx/pagesdetails?id='+item._id">{{item.path}}</a></td>
+				<td class="red tc">{{item.brand}}</td>
+				<td class="red tc">{{item.model}}</td>
+				<td class="tc">{{item.net}}</td>
+				<td class="tc">{{item.city||'未知'}}</td>
+				<td class="tc">{{item.system}}</td>
+				<td class="tc">{{item.version}}</td>
+				<td class="tc">{{item.SDKVersion}}</td>
+				<td class="tc">{{item.screenWidth}}</td>
+				<td class="tc">{{item.screenHeight}}</td>
 				<td class="tc">{{item.create_time|date('/',true)}}</td>
-				<td class="tc"><a :href="'/web/pagesdetails?id='+item._id">详情</a></td>
+				<td class="tc"><a :href="'/wx/pagesdetails?id='+item._id">详情</a></td>
 			</tr>
 		</table>
 	</div>
@@ -200,68 +149,6 @@
 		<!-- 暂无数据 -->
 		<div class="tc" v-if="isLoadend&&!listAjax.length">暂无数据!</div>
 	</div>
-	<!-- 页面慢加载追踪 -->
-	<div v-show="lable==3">
-		<table class="table" v-if="isLoadend&&listslowpages.length">
-			<tr class="light_color">
-				<th>URL</th>
-				<th>页面加载时间</th>
-				<th>性能类型</th>
-				<th>白屏时间</th>
-				<th>DOM构建时间</th>
-				<th>解析dom耗时</th>
-				<th>页面准备时间</th>
-				<th>页面请求时间</th>
-			</tr>
-			<tr v-for="item in listslowpages">
-				<td><a :href="'/web/pagesdetails?id='+item._id+'&slowpages'" :title="item.url">{{item.url|limitTo(40)}}</a></td>
-				<td class="tc red">{{item.load_time|toFixed(true)}}</td>
-				<td class="tc red">{{item.speed_type==1?'正常':'慢'}}</td>
-				<td class="tc">{{item.white_time|toFixed}}</td>
-				<td class="tc">{{item.dom_time|toFixed}}</td>
-				<td class="tc">{{item.analysisDom_time|toFixed}}</td>
-				<td class="tc">{{item.ready_time|toFixed}}</td>
-				<td class="tc">{{item.create_time|date('/',true)}}</td>
-			</tr>
-		</table>
-	</div>
-	<div v-show="lable==3">
-		<!--  分页 -->
-		<div class="tc common_page_style mt10" v-show="listslowpages.length">
-			<div id="copot-page-slowpages" class="copot-page"></div>
-		</div>
-		<!-- 暂无数据 -->
-		<div class="tc" v-if="!listslowpages.length">暂无数据!</div>
-	</div>
-	<!-- 页面慢资源加载 -->
-	<div v-show="lable==4">
-		<table class="table" v-if="isLoadend&&listresources.length">
-			<tr class="light_color">
-				<th>URL</th>
-				<th>资源加载耗时</th>
-				<th>性能类型</th>
-				<th>资源返回大小</th>
-				<th>请求url</th>
-				<th>创建时间</th>
-			</tr>
-			<tr v-for="item in listresources">
-				<td><span><a :href="'/web/resourcedetail?url='+item.name">{{item.name}}</a></span></td>
-				<td class="tc red">{{item.duration|toFixed(true)}}</td>
-				<td class="tc red">{{item.speed_type==1?'正常':'慢'}}</td>
-				<td class="tc">{{item.decodedBodySize|toSize}}</td>
-				<td class="tc">{{item.url|limitTo(50)}}</td>
-				<td class="tc">{{item.create_time|date('/',true)}}</td>
-			</tr>
-		</table>
-	</div>
-	<div v-show="lable==4">
-		<!--  分页 -->
-		<div class="tc common_page_style mt10" v-show="listresources.length">
-			<div id="copot-page-slowresources" class="copot-page"></div>
-		</div>
-		<!-- 暂无数据 -->
-		<div class="tc" v-if="!listresources.length">暂无数据!</div>
-	</div>
 </div>
 
 <script>
@@ -270,7 +157,7 @@
 		data: function () {
 			return {
 				lable:1,
-				pagesItemData: {},
+				pagesItemData: {_id:{}},
 				listdata: [],
 				listAjax:[],
 				listslowpages:[],
@@ -307,7 +194,7 @@
 				this.beginTime = times.beginTime
 				this.endTime = times.endTime
 
-				this.getinit('api/v1/pages/getOnePageList', '#copot-page-pages');
+				this.getinit('api/v1/wx/pages/getOnePageList', '#copot-page-pages');
 				this.getDataGroupBy(1);
 				this.getDataGroupBy(2);
 				this.getDataGroupBy(3);
@@ -323,28 +210,14 @@
 				if (lable == 1) {
 					if(!this.listdata.length || type){
 						pageName = '#copot-page-pages'
-						api = 'api/v1/pages/getOnePageList'
+						api = 'api/v1/wx/pages/getOnePageList'
 						this.getDataForTime(api, pageName);
 					} 
-					api = 'api/v1/pages/getOnePageList'
+					api = 'api/v1/wx/pages/getOnePageList'
 				} else if (lable == 2) {
 					if(!this.listAjax.length){
-						api = 'api/v1/ajax/getPageAjaxsAvg',
+						api = 'api/v1/wx/ajax/getPageAjaxsAvg',
 						pageName = '#copot-page-ajax'
-						this.getinit(api, pageName);
-					}
-				} else if(lable == 3){
-					if (!this.listslowpages.length) {
-						api = 'api/v1/pages/getOnePageList',
-						pageName = '#copot-page-slowpages'
-						this.type = 2;
-						this.getinit(api, pageName);
-					}
-				}else if(lable == 4){
-					if (!this.listresources.length) {
-						api = 'api/v1/resource/getResourceForType',
-						pageName = '#copot-page-slowresources'
-						this.type = 2;
 						this.getinit(api, pageName);
 					}
 				}
@@ -356,7 +229,6 @@
 				this.endTime = times.endTime
 
 				this.getinit(api, pageName);
-				this.searchForTime();
 				this.getDataGroupBy(1);
 				this.getDataGroupBy(2);
 				this.getDataGroupBy(3);
@@ -374,7 +246,6 @@
 						beginTime: this.beginTime,
 						endTime: this.endTime,
 						url: this.url,
-						type:this.type,
 					},
 					success: data => {
 						this.isLoadend = true;
@@ -385,12 +256,6 @@
 								break;
 							case 2:
 								this.listAjax = data.data.datalist
-								break;
-							case 3:
-								this.listslowpages = data.data.datalist
-								break;
-							case 4:
-								this.listresources = data.data.datalist
 								break;
 						}
 						new Page({
@@ -406,32 +271,11 @@
 					}
 				})
 			},
-			searchForTime(){
-				zaneDate({
-					elem: '#zane-calendar-1',
-					type: 'doubleday',
-					format: 'yyyy/MM/dd',
-					done: (fulltime, begintime, endtime) => {
-						this.beginTime = begintime ? begintime + ' 00:00:00' : '';
-						this.endTime = endtime ? endtime + ' 23:59:59' : '';
-						this.getinit('api/v1/pages/getOnePageList', '#copot-page-pages');
-					},
-				});
-			},
-			gotodetail(item) {
-				if (this.slow && this.slow == 'slow') {
-					util.setStorage('session', 'slowpagesItemData', JSON.stringify(item))
-					location.href = "/slowpages/detail?type=zane"
-				} else {
-					util.setStorage('session', 'pagesItemData', JSON.stringify(item))
-					location.href = "/pages/detail?type=zane"
-				}
-			},
 			// 访问页面分组
 			getDataGroupBy(type) {
 				util.ajax({
 					type: 'get',
-					url: config.baseApi + 'api/v1/environment/getDataGroupBy',
+					url: config.baseApi + 'api/v1/wx/pages/getDataGroupBy',
 					data: {
 						appId: this.appId,
 						url: this.url,
@@ -446,7 +290,7 @@
 								this.getData(data.data, 'echartBorwsers-address', 'city')
 								break;
 							case 2:
-								this.getData(data.data, 'echartBorwsers-borwser', 'browser', 'borwserVersion')
+								this.getData(data.data, 'echartBorwsers-borwser', 'brand', 'borwserVersion')
 								break;
 							case 3:
 								this.getData(data.data, 'echartBorwsers-system', 'system', 'systemVersion')
@@ -468,8 +312,8 @@
 					let name = '';
 					if(tyle == 'city'){
 						name = item._id.city || '其他';
-					}else if(tyle == 'browser'){
-						name = item._id.browser || '其他';
+					}else if(tyle == 'brand'){
+						name = item._id.brand || '其他';
 					}else if(tyle == 'system'){
 						name = item._id.system || '其他';
 					}

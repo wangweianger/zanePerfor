@@ -14,4 +14,13 @@ module.exports = app => {
 
     // 小程序设置页面
     router.get('/wx/setting', wx.wxsetting);
+
+    // 访问页面平均性能
+    router.get('/wx/pagesavg', wx.wxpagesavg);
+
+    // 单页面访问页面列表性能
+    router.get('/wx/pageslist', wx.wxpageslist);
+
+    // 单个页面详情
+    router.get('/wx/pagesdetails', wx.wxpagedetails);
 };

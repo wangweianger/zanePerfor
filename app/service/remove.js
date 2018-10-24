@@ -6,15 +6,20 @@ class RemoveService extends Service {
 
 
     // 定时删除原始上报数据 一天删一次
-    async deleteDb1WebData() {
+    async deleteDb1WebData(type = 1) {
         const interval = parser.parseExpression(this.app.config.pvuvip_task_day_time);
         interval.prev();
         interval.prev();
         const endTime = new Date(interval.prev().toString());
 
         const query = { create_time: { $lt: endTime } };
-
-        return await this.ctx.model.Web.WebReport.remove(query).exec();
+        let result = '';
+        if (type === 1) {
+            result = await this.ctx.model.Web.WebReport.remove(query).exec();
+        } else if (type === 2) {
+            result = await this.ctx.model.Wx.WxReport.remove(query).exec();
+        }
+        return result;
     }
 
     // 清空db2 number日之前所有性能数据
