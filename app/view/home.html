@@ -7,6 +7,9 @@
 		background:#f9f8ff;
 		cursor: pointer;
 	}
+	.com_between button.btn{
+		width:250px;
+	}
 </style>
 <div class="com_content home_body" id="home_body" v-cloak>
 	<div class="com_title">
@@ -20,15 +23,13 @@
 			<div class="left">
 				<img class="icon" src="https://cdn.seosiwei.com/TBaCKyXadN6xBnM4YGND6fxTBwQj68Ya.png?imageslim">
 				<div class="h1 mt10">{{item.type|systemType}}</div>
-				<button class="btn mt30 btn-default" @click.stop="selectSystem(1,item)">设置</button>
-				<button class="btn mt10 btn-main" @click="selectSystem(2,item)">进入</button>
 			</div>
 			<div class="right">
 				<div class="item">
 					<span class="l"><span class="icon"></span>应用名称：</span>
 					<span class="r lightcolor">{{item.system_name}}</span>
 				</div>
-				<div class="item">
+				<div class="item" v-if="item.type=='web'">
 					<span class="l"><span class="icon"></span>应用链接：</span>
 					<span class="r lightcolor">{{item.system_domain}}</span>
 				</div>
@@ -42,30 +43,34 @@
 				</div>
 				<table class="table mt20">
 					<tr class="light_color">
-						<th class="tc">页面加载阀值</th>
-						<th class="tc">JS资源阀值</th>
-						<th class="tc">CSS资源阀值</th>
-						<th class="tc">IMG资源阀值</th>
+						<th class="tc" v-if="item.type=='web'">页面加载阀值</th>
+						<th class="tc" v-if="item.type=='web'">JS资源阀值</th>
+						<th class="tc" v-if="item.type=='web'">CSS资源阀值</th>
+						<th class="tc" v-if="item.type=='web'">IMG资源阀值</th>
 						<th class="tc">AJAX加载阀值</th>
-						<th class="tc">是否统计页面性能</th>
+						<th class="tc" v-if="item.type=='web'">是否统计页面性能</th>
 						<th class="tc">是否统计AJAX性能</th>
-						<th class="tc">是否统计页面资源性能</th>
+						<th class="tc" v-if="item.type=='web'">是否统计页面资源性能</th>
 						<th class="tc">是否统计用户系统信息</th>
 						<th class="tc">是否统计错误信息</th>
 					</tr>
 					<tr>
-						<td class="tc">{{item.slow_page_time}}s</td>
-						<td class="tc">{{item.slow_js_time}}s</td>
-						<td class="tc">{{item.slow_css_time}}s</td>
-						<td class="tc">{{item.slow_img_time}}s</td>
+						<td class="tc" v-if="item.type=='web'">{{item.slow_page_time}}s</td>
+						<td class="tc" v-if="item.type=='web'">{{item.slow_js_time}}s</td>
+						<td class="tc" v-if="item.type=='web'">{{item.slow_css_time}}s</td>
+						<td class="tc" v-if="item.type=='web'">{{item.slow_img_time}}s</td>
 						<td class="tc">{{item.slow_ajax_time}}s</td>
-						<td class="tc">{{item.is_statisi_pages==0?'是':'否'}}</td>
+						<td class="tc" v-if="item.type=='web'">{{item.is_statisi_pages==0?'是':'否'}}</td>
 						<td class="tc">{{item.is_statisi_ajax==0?'是':'否'}}</td>
-						<td class="tc">{{item.is_statisi_resource==0?'是':'否'}}</td>
+						<td class="tc" v-if="item.type=='web'">{{item.is_statisi_resource==0?'是':'否'}}</td>
 						<td class="tc">{{item.is_statisi_system==0?'是':'否'}}</td>
 						<td class="tc">{{item.is_statisi_error==0?'是':'否'}}</td>
 					</tr>
 				</table>
+				<div>
+					<button class="btn mt30 mr20 btn-default" @click.stop="selectSystem(1,item)">设置</button>
+					<button class="btn mt10 btn-main" @click="selectSystem(2,item)">进入</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -108,11 +113,15 @@
 				location.href = `/selectype`
 			},
 			selectSystem(type,item){
-				if(type===1){
+				if(type===1 && item.type==='web'){
 					location.href = '/web/setting';	
-				}else if(type === 2){
+				}else if(type === 2 && item.type === 'web'){
 					location.href = '/web/home';	
-				}
+				}else if(type === 1 && item.type === 'wx'){
+					location.href = '/wx/setting';	
+				}else if (type === 2 && item.type === 'wx') {
+					location.href = '/wx/home';	
+				}	
 				util.setStorage('local','appId',item.app_id)
 			}
 		},

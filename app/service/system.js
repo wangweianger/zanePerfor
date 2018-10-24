@@ -7,8 +7,10 @@ class WebSystemService extends Service {
     // 保存用户上报的数据
     async saveSystemData(ctx) {
         const query = ctx.request.body;
+        const type = query.type;
         // 参数校验
-        if (!query.system_domain) throw new Error('新增系统信息操作：系统域名不能为空');
+        if (!query.system_domain && type === 'web') throw new Error('新增系统信息操作：系统域名不能为空');
+        if (!query.app_id && type === 'wx') throw new Error('新增系统信息操作：appId不能为空');
         if (!query.system_name) throw new Error('新增系统信息操作：系统名称不能为空');
 
         // 检验系统是否存在
@@ -16,13 +18,18 @@ class WebSystemService extends Service {
         if (search && search.system_domain) throw new Error('新增系统信息操作：系统已存在');
 
         // 存储数据
+        let token = '';
         const date = new Date();
-        const token = this.app.signwx({
-            systemName: query.systemName,
-            systemDomain: query.systemDomain,
-            timestamp: date,
-            random: this.app.randomString(),
-        }).paySign;
+        if (type === 'web') {
+            token = this.app.signwx({
+                systemName: query.systemName,
+                systemDomain: query.systemDomain,
+                timestamp: date,
+                random: this.app.randomString(),
+            }).paySign;
+        } else if (type === 'wx') {
+            token = query.app_id;
+        }
 
         const system = ctx.model.System();
         system.system_domain = query.system_domain;

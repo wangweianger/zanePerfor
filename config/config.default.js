@@ -4,7 +4,7 @@ module.exports = () => {
     const config = exports = {};
 
     // use for cookie sign key, should change to your own and keep security
-    config.keys = new Date().getTime() + '_123456789';
+    config.keys = '_123456789';
 
     // add your config here
     config.middleware = [];
@@ -74,7 +74,15 @@ module.exports = () => {
             db: 0,
         },
     };
-
+    // product
+    // config.redis = {
+    //     client: {
+    //         port: 6379, // Redis port
+    //         host: '10.1.128.123', // Redis host
+    //         password: 'yy7943RMB',
+    //         db: 0,
+    //     },
+    // };
 
     // mongoose配置
     config.mongoose = {

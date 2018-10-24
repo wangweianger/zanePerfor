@@ -24,15 +24,10 @@
 		color: #333;
 		font-size: 14px;
 		border: none;
-		height: 60px;
 		padding: 10px; 
 	}
 	.setting-body .block .code code {
-		padding: 4px 8px;
-		background: #000;
-		color: #fff;
 		font-size: 12px;
-		border-radius: 5px;
 		margin: 0 3px; 
 	}
 	.setting-body .block-center {
@@ -86,7 +81,7 @@
 	}
 </style>
 <div class="com_content_body main pb100" id="vue_id" v-cloak>
-	<h1 class="com_h1">新增系统</h1>
+	<h1 class="com_h1">新增微信应用</h1>
 	<div class="com_slide_tab_x mt30 mb30">
 		<div class="item" :class="{'active':lable==1}" @click="checkoutLabel(1)">应用部署</div>
 		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">统计设置</div>
@@ -97,37 +92,20 @@
 			<h1 class="h1">应用录入</h1>
 			<div class="block-center">
 				<div class="item mt20">
-					<span class="left">应用名称：</span>
-					<input type="text" v-model.trim="query.system_name" placeholder="必填、我的博客">
+					<span class="left">appId：</span>
+					<input type="text" v-model.trim="query.app_id" placeholder="必填、请填写正确的小程序appId">
 				</div>
 				<div class="item">
-					<span class="left">应用域名：</span>
-					<input type="text" v-model.trim="query.system_domain" placeholder="必填、输入域名">
+					<span class="left">应用名称：</span>
+					<input type="text" v-model.trim="query.system_name" placeholder="必填、输入域名">
 				</div>
 			</div>
 			<h1 class="h1">各项阀值设置</h1>
 			<div class="block-center">
 				<div class="item mt20">
-					<span class="left">页面慢加载阀值(s)：</span>
-					<input type="text" v-model.trim="query.slow_page_time" placeholder="选填、默认5s">
-				</div>
-				<div class="item">
 					<span class="left">AJAX慢加载阀值(s)：</span>
 					<input type="text" v-model.trim="query.slow_ajax_time" placeholder="选填、默认2s">
 				</div>
-				<div class="item">
-					<span class="left">JS慢加载阀值(s)：</span>
-					<input type="text" v-model.trim="query.slow_js_time" placeholder="选填、默认2s">
-				</div>
-				<div class="item">
-					<span class="left">CSS慢加载阀值(s)：</span>
-					<input type="text" v-model.trim="query.slow_css_time" placeholder="选填、默认1s">
-				</div>
-				<div class="item">
-					<span class="left">IMG慢加载阀值(s)：</span>
-					<input type="text" v-model.trim="query.slow_img_time" placeholder="选填、默认2s">
-				</div>
-
 			</div>
 			<h1 class="h1">1.启用数据接收</h1>
 			<div class="content">
@@ -138,47 +116,45 @@
 			<div class="light">以下皆为非必填项</div>
 			<div class="block-center">
 				<div class="onepart">
-					<h1 class="h1">是否统计页面性能指标:</h1>
-					<div class="content">
-						<span class="mr10">是否启用:</span>
-						<input type="checkbox" class="js-switch-item js-switch-1" checked />
-					</div>
-				</div>
-				<div class="onepart">
 					<h1 class="h1">是否统计AJAX性能指标:</h1>
 					<div class="content">
-						<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-2" checked />
-					</div>
-				</div>
-				<div class="onepart">
-					<h1 class="h1">是否统计资源性能指标:</h1>
-					<div class="content">
-						<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-3" checked />
+						<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-1" checked />
 					</div>
 				</div>
 				<div class="onepart">
 					<h1 class="h1">是否存储访问者系统信息:</h1>
 					<div class="content">
-						<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-4" checked />
+						<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-2" checked />
 					</div>
 				</div>
 				<div class="onepart">
 					<h1 class="h1">是否统计错误信息:</h1>
 					<div class="content">
-						<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-5" checked />
+						<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-3" checked />
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="block" v-show="lable==3">
-			<h1 class="h1">1.获取脚本代码</h1>
+			<h1 class="h1">1.获取SDK代码</h1>
 			<div class="content">
-				<div class="script-text"><code>{{script}}</code></div>
+				<a href="/public/js/wx-report-sdk.min.js.zip"><button class="btn btn-default">微信小程序SDK</button></a>
 			</div>
-			<h1 class="h1">2.部署脚本说明</h1>
+			<h1 class="h1">2.部署SDK说明</h1>
 			<div class="content code">
-				<p>复制生成的代码，将其粘贴在<code>&lt;head&gt;</code>中。</p>
-				<p class="notice">注意：需要将代码粘贴在<code>&lt;meta&gt;</code>后面，所有<code>&lt;script&gt;</code>前面。</p>
+				<p>在小程序的app.js头部引入一下代码</p>
+				<div class="script-text mb20">
+					<pre>const wxRepotSdk = require('./utils/wx-report-sdk.min');
+
+new wxRepotSdk({
+  domain:'http://test.com',
+  add:{
+    appId:'123456789'
+  }
+})</pre>
+
+				</div>
+				<a href="https://github.com/wangweianger/wx-report-sdk" target="_target">微信小程序SDK使用文档</a>
 			</div>
 		</div>
 	</div>
@@ -195,16 +171,12 @@ x
 			return {
 				lable: 1, //1:概况 2：pv|uv|ip
 				appId: util.getStorage('local', 'appId'),
-				type: util.getQueryString('type') || 1, //1:web浏览器  2：微信
 				query: {
 					is_use: 0,
 					system_name: '',
-					system_domain: '',
-					slow_page_time: '',
+					app_id: '',
+					type:'wx',
 					slow_ajax_time: '',
-					slow_js_time: '',
-					slow_css_time: '',
-					slow_img_time: '',
 					is_statisi_pages: 0,
 					is_statisi_ajax: 0,
 					is_statisi_resource: 0,
@@ -239,8 +211,9 @@ x
 				};
 			},
 			addSystem() {
+				if (!this.query.app_id) { popup.alert({ title: '请正确填写小程序appId!' }); return false; }
 				if (!this.query.system_name) { popup.alert({ title: '请正确填写应用名称!' }); return false; }
-				if (!this.query.system_domain) { popup.alert({ title: '请正确填写应用域名!' }); return false; }
+				
 				util.ajax({
 					url: config.baseApi + 'api/v1/system/add',
 					data: this.query,
@@ -259,24 +232,18 @@ x
 					html.checked = true;
 					var switchery = new Switchery(html, { color: '#2077ff' });
 					html.onchange = () => {
+						if (!this.query.app_id) { popup.alert({ title: '请正确填写小程序appId!' }); return false; }
 						if (!this.query.system_name) { popup.alert({ title: '请正确填写应用名称!' }); return false; }
-						if (!this.query.system_domain) { popup.alert({ title: '请正确填写应用域名!' }); return false; }
-
+						
 						let value = html.checked ? 0 : 1
 						switch (index) {
 							case 0:
-								this.query.is_statisi_pages = value;
-								break;
-							case 1:
 								this.query.is_statisi_ajax = value;
 								break;
-							case 2:
-								this.query.is_statisi_resource = value;
-								break;
-							case 3:
+							case 1:
 								this.query.is_statisi_system = value;
 								break;
-							case 4:
+							case 2:
 								this.query.is_statisi_error = value;
 								break;
 						}
