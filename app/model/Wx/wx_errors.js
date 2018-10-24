@@ -11,8 +11,8 @@ module.exports = app => {
         create_time: { type: Date, default: Date.now }, // 创建时间
         mark_page: { type: String }, // 所有资源页面统一标识
         mark_user: { type: String }, // 统一某一时间段用户标识
-        col: { type: String }, // 错误行
-        line: { type: String }, // 错误列
+        col: { type: Number }, // 错误行
+        line: { type: Number }, // 错误列
         name: { type: String }, // 错误资源名称
         msg: { type: String }, // 错误信息
         type: { type: String }, // 错误类型

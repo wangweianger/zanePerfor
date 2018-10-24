@@ -189,7 +189,7 @@
 				<th>调用页面</th>
 			</tr>
 			<tr v-for="item in listAjax">
-				<td><a :href="'/web/ajaxdetail?url='+item.url">{{item._id.url}}</a></td>
+				<td><a :href="'/web/ajaxdetail?url='+item._id.url">{{item._id.url}}</a></td>
 				<td class="tc">{{item.count}}</td>
 				<td class="tc red">{{item.duration|toFixed}}</td>
 				<td class="tc red">{{item.body_size|toSize}}</td>
@@ -245,7 +245,7 @@
 				<th>创建时间</th>
 			</tr>
 			<tr v-for="item in listresources">
-				<td><span><a :href="'/web/resourcedetail?url='+item.name">{{item.name}}</a></span></td>
+				<td><span><a :href="'/web/resourcesdetail?url='+item.name">{{item.name}}</a></span></td>
 				<td class="tc red">{{item.duration|toFixed(true)}}</td>
 				<td class="tc red">{{item.speed_type==1?'正常':'慢'}}</td>
 				<td class="tc">{{item.decodedBodySize|toSize}}</td>

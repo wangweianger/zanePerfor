@@ -2,22 +2,7 @@
 
 module.exports = app => {
     const { router, controller } = app;
-    const { home, web } = controller.web;
-
-    // 应用列表
-    router.get('/', home.systemlist);
-
-    // 新增系统选择系统类型
-    router.get('/selectype', home.selectype);
-
-    // 用户登录
-    router.get('/login', home.login);
-
-    // 系统列表
-    router.get('/systems', home.systems);
-
-    // 用户管理
-    router.get('/users', home.users);
+    const { web } = controller.web;
 
     // ------------------------------ 浏览器 -------------------------------
     // 首页pvuvip数据统计
@@ -68,5 +53,4 @@ module.exports = app => {
     // web端新增系统
     router.get('/web/addsystem', web.webaddsystem);
 
-    // ------------------------------ 微信小程序 -------------------------------
 };

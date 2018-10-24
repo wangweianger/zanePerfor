@@ -9,7 +9,7 @@ module.exports = app => {
         system_domain: { type: String }, // 系统 域名
         system_name: { type: String }, // 系统名称
         app_id: { type: String }, // 系统appId标识
-        type: { type: String }, // 浏览器：browser  微信小程序 ：wxminipro
+        type: { type: String, default: 'web' }, // 浏览器：wev  微信小程序 ：wx
         user_id: { type: Array }, // 应用所属用户ID
         create_time: { type: Date, default: Date.now }, // 用户访问时间
         is_use: { type: Number, default: 0 }, // 是否需要统计  0：是  1：否
@@ -27,5 +27,5 @@ module.exports = app => {
 
     WebResourceSchema.index({ app_id: -1, create_time: 1, system_domain: -1, user_id: -1 });
 
-    return conn.model('WebSystem', WebResourceSchema);
+    return conn.model('System', WebResourceSchema);
 };

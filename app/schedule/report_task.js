@@ -10,6 +10,7 @@ module.exports = app => {
         // 定时处理上报的数据 db1同步到db3数据
         async task(ctx) {
             if (app.config.is_web_task_run) await ctx.service.web.webReportTask.saveWebReportDatas();
+            if (app.config.is_wx_task_run) await ctx.service.wx.reportTask.saveWxReportDatas();
         },
     };
 };

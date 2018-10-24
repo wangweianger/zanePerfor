@@ -14,10 +14,11 @@ module.exports = app => {
         duration: { type: String }, // 请求耗时
         name: { type: String }, // api路径
         method: { type: String }, // 请求方式
-        bodySize: { type: String }, // 返回资源大小
+        body_size: { type: String }, // 返回资源大小
         options: { type: Mixed }, // 请求参数
+        speed_type: { type: Number }, // 访问速度类型 1：正常  2：慢
     });
 
     WxAjaxsSchema.index({ create_time: 1 });
-    return conn.model('WxErrors', WxAjaxsSchema);
+    return conn.model('WxAjaxs', WxAjaxsSchema);
 };

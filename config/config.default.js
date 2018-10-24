@@ -4,7 +4,7 @@ module.exports = () => {
     const config = exports = {};
 
     // use for cookie sign key, should change to your own and keep security
-    config.keys = '_1536915742607_3127';
+    config.keys = new Date().getTime() + '_123456789';
 
     // add your config here
     config.middleware = [];
@@ -14,10 +14,10 @@ module.exports = () => {
     config.description = '性能监控系统';
 
     // debug 为 true 时，用于本地调试
-    config.host = 'https://performance.niwoning.com';
+    config.host = '';
 
     // 务必修改config.debug = true;
-    config.session_secret = 'node_club_secret';
+    config.session_secret = 'node_performance_secret';
 
     // web浏览器端定时任务是否执行
     config.is_web_task_run = true;
@@ -44,8 +44,8 @@ module.exports = () => {
     config.ip_thread = 10;
 
     // mongodb重启shell,如果mongodb进程kill了，请求不了数据库时重启（可选填）
-    config.mongodb_restart_sh = [ '/usr/local/etc/start.sh' ];
-    // config.mongodb_restart_sh = [ '/data/mongodb/start.sh' ];
+    // config.mongodb_restart_sh = [ '/usr/local/etc/start.sh' ];
+    config.mongodb_restart_sh = [ '/data/mongodb/start.sh' ];
 
     // 百度地图api key
     config.BAIDUAK = '36UI4dIyIfCVKQWW7hoeSIuM';
@@ -92,27 +92,29 @@ module.exports = () => {
                 // url: 'mongodb://127.0.0.1:27017,127.0.0.1:27018/performance?replicaSet=performance',
                 url: 'mongodb://127.0.0.1:27017/performance',
                 options: {
-                    useNewUrlParser: true,
-                    mongos: true,
-                    auto_reconnect: true,
-                    server: { poolSize: 200 },
+                    server: {
+                        auto_reconnect: true,
+                        poolSize: 500,
+                    },
                 },
             },
             // 定时任务执行完之后存储到数据库3
             db3: {
-                url: 'mongodb://127.0.0.1:27018,127.0.0.1:27019,127.0.0.1:27020/performance?replicaSet=performance',
-                // url: 'mongodb://127.0.0.1:27019/performance',
+                // url: 'mongodb://127.0.0.1:27018,127.0.0.1:27019,127.0.0.1:27020/performance?replicaSet=performance',
+                url: 'mongodb://127.0.0.1:27019/performance',
                 options: {
-                    useNewUrlParser: true,
-                    server: { poolSize: 200 },
+                    server: {
+                        auto_reconnect: true,
+                        poolSize: 500,
+                    },
                 },
             },
         },
     };
 
     config.bodyParser = {
-        jsonLimit: '5mb',
-        formLimit: '5mb',
+        jsonLimit: '1mb',
+        formLimit: '1mb',
     };
 
     config.security = {

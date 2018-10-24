@@ -30,5 +30,5 @@ module.exports = app => {
     });
 
     WxPagesSchema.index({ create_time: 1 });
-    return conn.model('WxPaths', WxPagesSchema);
+    return conn.model('WxPages', WxPagesSchema);
 };

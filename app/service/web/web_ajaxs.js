@@ -6,9 +6,11 @@ const Service = require('egg').Service;
 class AjaxsService extends Service {
 
     // 获得页面性能数据平均值
-    async getPageAjaxsAvg(appId, url) {
+    async getPageAjaxsAvg(appId, url, beginTime, endTime) {
+        const query = { $match: { app_id: appId, call_url: url }, };
+        if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
         const datas = await this.ctx.model.Web.WebAjaxs.aggregate([
-            { $match: { app_id: appId, call_url: url }, },
+            query,
             {
                 $group: {
                     _id: {

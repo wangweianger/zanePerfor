@@ -28,7 +28,7 @@ class DataTimedTaskService extends Service {
                 this.app.restartMongodbs(); clearTimeout(timer);
             }
         }, 20);
-        await this.ctx.model.Web.WebSystem.count({}).exec();
+        await this.ctx.model.System.count({}).exec();
         db3data = true;
 
         /*
@@ -76,7 +76,7 @@ class DataTimedTaskService extends Service {
             if (cacheJson[item.app_id]) {
                 system = cacheJson[item.app_id];
             } else {
-                system = await this.service.web.webSystem.getSystemForAppId(item.app_id);
+                system = await this.service.system.getSystemForAppId(item.app_id);
                 cacheJson[item.app_id] = system;
             }
             if (system.is_use !== 0) return;

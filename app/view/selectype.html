@@ -93,7 +93,11 @@ new Vue({
 	},
 	methods: {
 		selectType(type){
-			location.href=`/web/addsystem?type=${type}`;
+			if(type === 1){
+				location.href = `/web/addsystem?type=${type}`;
+			}else if(type === 2){
+				location.href = `/wx/addsystem?type=${type}`;
+			}
 		},
 	},
 })

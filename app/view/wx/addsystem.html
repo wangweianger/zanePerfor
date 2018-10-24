@@ -127,7 +127,7 @@
 					<span class="left">IMG慢加载阀值(s)：</span>
 					<input type="text" v-model.trim="query.slow_img_time" placeholder="选填、默认2s">
 				</div>
-				
+
 			</div>
 			<h1 class="h1">1.启用数据接收</h1>
 			<div class="content">
@@ -186,114 +186,115 @@
 		<button class="button left-botton" @click="addSystem" v-if="!isAdd">保存</button>
 	</div>
 </div>
-x<script src="//cdn.bootcss.com/switchery/0.8.2/switchery.min.js"></script>
+x
+<script src="//cdn.bootcss.com/switchery/0.8.2/switchery.min.js"></script>
 <script>
-new Vue({
-	el: '#vue_id',
-	data: function () {
-		return {
-			lable:1, //1:概况 2：pv|uv|ip
-			appId: util.getStorage('local', 'appId'),
-			type: util.getQueryString('type') || 1, //1:web浏览器  2：微信
-			query:{
-				is_use:0,
-				system_name:'',
-				system_domain:'',
-				slow_page_time:'',
-				slow_ajax_time:'',
-				slow_js_time:'',
-				slow_css_time:'',
-				slow_img_time:'',
-				is_statisi_pages:0,
-				is_statisi_ajax:0,
-				is_statisi_resource:0,
-				is_statisi_system:0,
-				is_statisi_error:0,
-				user_id:'',
+	new Vue({
+		el: '#vue_id',
+		data: function () {
+			return {
+				lable: 1, //1:概况 2：pv|uv|ip
+				appId: util.getStorage('local', 'appId'),
+				type: util.getQueryString('type') || 1, //1:web浏览器  2：微信
+				query: {
+					is_use: 0,
+					system_name: '',
+					system_domain: '',
+					slow_page_time: '',
+					slow_ajax_time: '',
+					slow_js_time: '',
+					slow_css_time: '',
+					slow_img_time: '',
+					is_statisi_pages: 0,
+					is_statisi_ajax: 0,
+					is_statisi_resource: 0,
+					is_statisi_system: 0,
+					is_statisi_error: 0,
+					user_id: '',
+				},
+				isAdd: false,
+				script: '',
+			}
+		},
+		mounted() {
+			this.settingIsUse();
+			this.pagexingneng();
+		},
+		methods: {
+			checkoutLabel(lable) {
+				this.lable = lable;
+				this.beginTime = '';
+				this.endTime = '';
 			},
-			isAdd:false,
-			script:'',
-		}
-	},
-	mounted() {
-		this.settingIsUse();
-		this.pagexingneng();
-	},
-	methods: {
-		checkoutLabel(lable){
-			this.lable = lable;
-			this.beginTime = '';
-			this.endTime = '';
-		},
-		// 设置项目是否接收数据
-		settingIsUse() {
-			let elem = document.querySelector('.js-switch');
-			elem.checked = true;
-			const init = new Switchery(elem, { color: '#8776f7' });
-			const _this = this;
+			// 设置项目是否接收数据
+			settingIsUse() {
+				let elem = document.querySelector('.js-switch');
+				elem.checked = true;
+				const init = new Switchery(elem, { color: '#8776f7' });
+				const _this = this;
 
-			elem.onchange = function () {
-				_this.query.is_use = elem.checked ? 0 : 1;
-				if(this.isAdd) this.updateSystem();
-			};
-		},
-		addSystem() {
-			if (!this.query.system_name) { popup.alert({ title: '请正确填写应用名称!' }); return false; }
-			if (!this.query.system_domain) { popup.alert({ title: '请正确填写应用域名!' }); return false; }
-			util.ajax({
-				url: config.baseApi + 'api/v1/system/add',
-				data: this.query,
-				success: data => {
-					this.query = data.data;
-					this.isAdd = true;
-					this.script = `<script src="${location.origin}/api/v1/report/webscript?appId=${this.query.app_id}&USESDK=FALSE"><\/script>`;
-					popup.miss({ title: "操作成功！" });
-				}
-			})
-		},
-		// 页面性能指标
-		pagexingneng() {
-			var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch-item'));
-			elems.forEach((html, index) => {
-				html.checked = true;
-				var switchery = new Switchery(html, { color: '#2077ff' });
-				html.onchange = () => {
-					if (!this.query.system_name) { popup.alert({ title: '请正确填写应用名称!' }); return false; }
-					if (!this.query.system_domain) { popup.alert({ title: '请正确填写应用域名!' }); return false; }
-
-					let value = html.checked ? 0 : 1
-					switch (index) {
-						case 0:
-							this.query.is_statisi_pages = value;
-							break;
-						case 1:
-							this.query.is_statisi_ajax = value;
-							break;
-						case 2:
-							this.query.is_statisi_resource = value;
-							break;
-						case 3:
-							this.query.is_statisi_system = value;
-							break;
-						case 4:
-							this.query.is_statisi_error = value;
-							break;
-					}
+				elem.onchange = function () {
+					_this.query.is_use = elem.checked ? 0 : 1;
 					if (this.isAdd) this.updateSystem();
-				}
-			});
+				};
+			},
+			addSystem() {
+				if (!this.query.system_name) { popup.alert({ title: '请正确填写应用名称!' }); return false; }
+				if (!this.query.system_domain) { popup.alert({ title: '请正确填写应用域名!' }); return false; }
+				util.ajax({
+					url: config.baseApi + 'api/v1/system/add',
+					data: this.query,
+					success: data => {
+						this.query = data.data;
+						this.isAdd = true;
+						this.script = `<script src="${location.origin}/api/v1/report/webscript?appId=${this.query.app_id}&USESDK=FALSE"><\/script>`;
+						popup.miss({ title: "操作成功！" });
+					}
+				})
+			},
+			// 页面性能指标
+			pagexingneng() {
+				var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch-item'));
+				elems.forEach((html, index) => {
+					html.checked = true;
+					var switchery = new Switchery(html, { color: '#2077ff' });
+					html.onchange = () => {
+						if (!this.query.system_name) { popup.alert({ title: '请正确填写应用名称!' }); return false; }
+						if (!this.query.system_domain) { popup.alert({ title: '请正确填写应用域名!' }); return false; }
+
+						let value = html.checked ? 0 : 1
+						switch (index) {
+							case 0:
+								this.query.is_statisi_pages = value;
+								break;
+							case 1:
+								this.query.is_statisi_ajax = value;
+								break;
+							case 2:
+								this.query.is_statisi_resource = value;
+								break;
+							case 3:
+								this.query.is_statisi_system = value;
+								break;
+							case 4:
+								this.query.is_statisi_error = value;
+								break;
+						}
+						if (this.isAdd) this.updateSystem();
+					}
+				});
+			},
+			updateSystem() {
+				util.ajax({
+					url: config.baseApi + 'api/v1/system/update',
+					data: this.query,
+					success: data => {
+						popup.miss({ title: '操作成功!' })
+					}
+				})
+			},
 		},
-		updateSystem(){
-			util.ajax({
-				url: config.baseApi + 'api/v1/system/update',
-				data: this.query,
-				success: data => {
-					popup.miss({ title: '操作成功!' })
-				}
-			})
-		},
-	},
-})
+	})
 
 
 </script>

@@ -73,10 +73,10 @@ let Filter = {
     systemType(val) {
         let result = '';
         switch (val) {
-            case 'browser':
+            case 'web':
                 result = 'WEB浏览器';
                 break;
-            case 'wxminipro':
+            case 'wx':
                 result = '微信小程序';
                 break;    
         }

@@ -78,7 +78,6 @@ module.exports = {
     },
     // 重启mongodb服务器
     restartMongodbs() {
-        console.log(this.config.mongodb_restart_sh)
         if (!this.config.mongodb_restart_sh && !this.config.mongodb_restart_sh.length) return;
         this.config.mongodb_restart_sh.forEach(item => {
             exec(`sh ${item}`, error => {

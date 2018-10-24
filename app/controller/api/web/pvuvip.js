@@ -12,17 +12,19 @@ class PvUvIpController extends Controller {
         // 今日数据概况
         const endTime_today = new Date();
         const beginTime_today = this.app.format(endTime_today, 'yyyy/MM/dd') + ' 00:00:00';
-        const result_today = await ctx.service.web.webPvuvip.getPvUvIpSurvey(appId, beginTime_today, endTime_today);
 
         // 昨日数据概况
         const endTime_yesterday = beginTime_today;
         const beginTime_yesterday = new Date(new Date(endTime_yesterday).getTime() - 86400000);
-        const result_yesterday = await ctx.service.web.webPvuvip.getPvUvIpSurvey(appId, beginTime_yesterday, endTime_yesterday);
+
+        const today = Promise.resolve(ctx.service.web.webPvuvip.getPvUvIpSurvey(appId, beginTime_today, endTime_today));
+        const yesterday = Promise.resolve(ctx.service.web.webPvuvip.getPvUvIpSurvey(appId, beginTime_yesterday, endTime_yesterday));
+        const all = await Promise.all([ today, yesterday ]);
 
         ctx.body = this.app.result({
             data: {
-                today: result_today,
-                yesterday: result_yesterday,
+                today: all[0],
+                yesterday: all[1],
             },
         });
     }
