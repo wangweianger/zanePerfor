@@ -12,6 +12,10 @@ class WebReportService extends Service {
         // 参数校验
         if (!query.appId) throw new Error('web端上报数据操作：app_id不能为空');
 
+        const system = await this.service.system.getSystemForAppId(query.appId);
+        if (!system) return {};
+        if (system.is_use !== 0) return {};
+
         const report = ctx.model.Web.WebReport();
         report.app_id = query.appId;
         report.create_time = query.time;

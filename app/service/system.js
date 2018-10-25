@@ -139,7 +139,9 @@ class WebSystemService extends Service {
     }
     // 删除某个系统
     async deleteSystem(appId) {
-        return await this.ctx.model.System.findOneAndRemove({ app_id: appId }).exec();
+        const result = await this.ctx.model.System.findOneAndRemove({ app_id: appId }).exec();
+        this.app.redis.set(appId, '');
+        return result;
     }
 }
 
