@@ -2,7 +2,7 @@
 
 const Controller = require('egg').Controller;
 
-class WebController extends Controller {
+class WxController extends Controller {
 
     // 新增系统
     async wxaddsystem() {
@@ -61,6 +61,64 @@ class WebController extends Controller {
         });
     }
 
+    // ajax请求平均性能数据
+    async wxajaxavg() {
+        const { ctx } = this;
+        await ctx.render('wx/ajaxavg', {
+            data: {
+                title: 'ajax平均性能指标',
+            },
+        });
+    }
+
+    // ajax详情
+    async wxajaxdetail() {
+        const { ctx } = this;
+        await ctx.render('wx/ajaxdetail', {
+            data: {
+                title: 'ajax详情',
+            },
+        });
+    }
+
+    async wxajaxitemdetail() {
+        const { ctx } = this;
+        await ctx.render('wx/ajaxitemdetail', {
+            data: {
+                title: '单个ajax详情信息',
+            },
+        });
+    }
+
+    // 错误分类列表
+    async wxerroravg() {
+        const { ctx } = this;
+        await ctx.render('wx/erroravg', {
+            data: {
+                title: '错误分类列表',
+            },
+        });
+    }
+
+    // 错误详情列表
+    async wxerrordetail() {
+        const { ctx } = this;
+        await ctx.render('wx/errordetail', {
+            data: {
+                title: '错误详情列表',
+            },
+        });
+    }
+    // 错误页面详情信息
+    async wxerroritemdetail() {
+        const { ctx } = this;
+        await ctx.render('wx/erroritemdetail', {
+            data: {
+                title: '错误页面详情信息',
+            },
+        });
+    }
+
 }
 
-module.exports = WebController;
+module.exports = WxController;

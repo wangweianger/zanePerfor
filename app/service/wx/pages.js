@@ -156,8 +156,10 @@ class PagesService extends Service {
         };
     }
     // 单个页面详情
-    async getPageDetails(appId, id) {
-        return await this.ctx.model.Wx.WxPages.findOne({ app_id: appId, _id: id }).exec();
+    async getPageDetails(appId, field, type) {
+        const query = { app_id: appId };
+        type === 1 ? query._id = field : query.mark_page = field
+        return await this.ctx.model.Wx.WxPages.findOne(query).exec();
     }
     // 获得页面性能数据平均值
     async getDataGroupBy(type, url, appId, beginTime, endTime) {

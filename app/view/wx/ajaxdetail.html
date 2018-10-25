@@ -110,14 +110,14 @@
 				<th>操作</th>
 			</tr>
 			<tr v-for="item in listdata">
-				<td class="tc w-300"><a :href="'/web/ajaxitemdetail?markpage='+item.mark_page">{{item.url}}</a></td>
+				<td class="tc w-300"><a :href="'/wx/ajaxitemdetail?markpage='+item.mark_page">{{item.name}}</a></td>
 				<td class="tc">{{item.method}}</td>
 				<td class="red tc">{{item.duration|toFixed}}</td>
-				<td class="tc">{{item.decoded_body_size|toSize}}</td>
-				<td class="tc">{{item.query_datas}}</td>
-				<td class="tc">{{item.call_url}}</td>
+				<td class="tc">{{item.body_size|toSize}}</td>
+				<td class="tc">{{item.options}}</td>
+				<td class="tc">{{item.path}}</td>
 				<td class="tc">{{item.create_time|date('/',true)}}</td>
-				<td class="tc w-100"><a :href="'/web/ajaxitemdetail?markpage='+item.mark_page">详情</a></td>
+				<td class="tc w-100"><a :href="'/wx/ajaxitemdetail?markpage='+item.mark_page">详情</a></td>
 			</tr>
 		</table>
 	</div>
@@ -166,7 +166,7 @@
 			getOneAjaxAvg(){
 				util.ajax({
 					type: 'get',
-					url: config.baseApi + 'api/v1/ajax/getOneAjaxAvg',
+					url: config.baseApi + 'api/v1/wx/ajax/getOneAjaxAvg',
 					data: {
 						appId: this.appId,
 						url: this.url,
@@ -183,7 +183,7 @@
 				this.isLoadend = false;
 				util.ajax({
 					type:'get',
-					url: config.baseApi + 'api/v1/ajax/getOneAjaxList',
+					url: config.baseApi + 'api/v1/wx/ajax/getOneAjaxList',
 					data: {
 						appId:this.appId,
 						pageNo: this.pageNo,

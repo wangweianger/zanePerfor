@@ -138,7 +138,7 @@
 				<th>调用页面</th>
 			</tr>
 			<tr v-for="item in listAjax">
-				<td><a :href="'/web/ajaxdetail?url='+item.url">{{item._id.url}}</a></td>
+				<td class="w-500"><a :href="'/wx/ajaxdetail?url='+item._id.url">{{item._id.url}}</a></td>
 				<td class="tc">{{item.count}}</td>
 				<td class="tc red">{{item.duration|toFixed}}</td>
 				<td class="tc red">{{item.body_size|toSize}}</td>

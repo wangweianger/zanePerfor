@@ -36,25 +36,27 @@ module.exports = app => {
     apiV1Router.get('pages/getPageDetails', tokenRequired, pages.getPageDetails);
     // 获得用户系统、地址位置、浏览器分类
     apiV1Router.get('pages/getDataGroupBy', tokenRequired, pages.getDataGroupBy);
+    // 根据markpage获得页面详情信息
+    apiV1Router.get('pages/getPageForMarkpage', tokenRequired, pages.getPageForMarkpage);
 
     // // -------------------ajax-----------------------------
-    // // 根据url获得ajax信息
-    // apiV1Router.get('ajax/getPageAjaxsAvg', tokenRequired, ajax.getPageAjaxsAvg);
-    // // 获得ajax平均性能列表
-    // apiV1Router.get('ajax/getAverageAjaxList', tokenRequired, ajax.getAverageAjaxList);
-    // // 获得单个api的平均性能数据
-    // apiV1Router.get('ajax/getOneAjaxAvg', tokenRequired, ajax.getOneAjaxAvg);
-    // // 获得单个api的性能列表数据
-    // apiV1Router.get('ajax/getOneAjaxList', tokenRequired, ajax.getOneAjaxList);
-    // // 获得单个ajax详情
-    // apiV1Router.get('ajax/getOneAjaxDetail', tokenRequired, ajax.getOneAjaxDetail);
+    // 根据url获得ajax信息
+    apiV1Router.get('ajax/getPageAjaxsAvg', tokenRequired, ajax.getPageAjaxsAvg);
+    // 获得ajax平均性能列表
+    apiV1Router.get('ajax/getAverageAjaxList', tokenRequired, ajax.getAverageAjaxList);
+    // 获得单个api的平均性能数据
+    apiV1Router.get('ajax/getOneAjaxAvg', tokenRequired, ajax.getOneAjaxAvg);
+    // 获得单个api的性能列表数据
+    apiV1Router.get('ajax/getOneAjaxList', tokenRequired, ajax.getOneAjaxList);
+    // 获得单个ajax详情
+    apiV1Router.get('ajax/getOneAjaxDetail', tokenRequired, ajax.getOneAjaxDetail);
 
-    // // -------------------resource资源-----------------------------
-    // // 获得错误分类信息
-    // apiV1Router.get('error/getAverageErrorList', tokenRequired, error.getAverageErrorList);
-    // // 获得单个错误详情列表
-    // apiV1Router.get('error/getOneErrorList', tokenRequired, error.getOneErrorList);
-    // // 单个错误详情
-    // apiV1Router.get('error/getErrorDetail', tokenRequired, error.getErrorDetail);
+    // -------------------error资源-----------------------------
+    // 获得错误分类信息
+    apiV1Router.get('error/getAverageErrorList', tokenRequired, error.getAverageErrorList);
+    // 获得单个错误详情列表
+    apiV1Router.get('error/getOneErrorList', tokenRequired, error.getOneErrorList);
+    // 单个错误详情
+    apiV1Router.get('error/getErrorDetail', tokenRequired, error.getErrorDetail);
 
 };

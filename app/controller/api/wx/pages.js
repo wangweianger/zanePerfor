@@ -65,7 +65,7 @@ class PagesController extends Controller {
         if (!appId) throw new Error('单个页面详情：appId不能为空');
         if (!id) throw new Error('单个页面详情：id不能为空');
 
-        const result = await ctx.service.wx.pages.getPageDetails(appId, id);
+        const result = await ctx.service.wx.pages.getPageDetails(appId, id, 1);
 
         ctx.body = this.app.result({
             data: result,
@@ -91,6 +91,24 @@ class PagesController extends Controller {
             data: result,
         });
     }
+
+    // 单个页面详情（markpage）
+    async getPageForMarkpage() {
+        const { ctx } = this;
+        const query = ctx.request.query;
+        const appId = query.appId;
+        const markPage = query.markPage;
+
+        if (!appId) throw new Error('单个页面详情：appId不能为空');
+        if (!markPage) throw new Error('单个页面详情：markPage不能为空');
+
+        const result = await ctx.service.wx.pages.getPageDetails(appId, markPage, 2);
+
+        ctx.body = this.app.result({
+            data: result,
+        });
+    }
+
 }
 
 module.exports = PagesController;

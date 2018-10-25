@@ -11,12 +11,13 @@ module.exports = app => {
         create_time: { type: Date, default: Date.now }, // 创建时间
         mark_page: { type: String }, // 所有资源页面统一标识
         mark_user: { type: String }, // 统一某一时间段用户标识
-        duration: { type: String }, // 请求耗时
+        duration: { type: Number }, // 请求耗时
         name: { type: String }, // api路径
         method: { type: String }, // 请求方式
-        body_size: { type: String }, // 返回资源大小
+        body_size: { type: Number }, // 返回资源大小
         options: { type: Mixed }, // 请求参数
         speed_type: { type: Number }, // 访问速度类型 1：正常  2：慢
+        path: { type: String }, // 所属path路径
     });
 
     WxAjaxsSchema.index({ create_time: 1 });

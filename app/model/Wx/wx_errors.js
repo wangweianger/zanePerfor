@@ -19,6 +19,7 @@ module.exports = app => {
         method: { type: String }, // ajax请求方式
         status: { type: String }, // ajax请求返回状态
         options: { type: Mixed }, // ajax请求参数
+        path: { type: String }, // 所属path路径
     });
 
     WxErrorsSchema.index({ create_time: 1 });

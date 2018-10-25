@@ -19,18 +19,6 @@ class DataTimedTaskService extends Service {
             query.create_time.$gt = beginTime;
         }
 
-        // 查询db3是否正常,不正常则重启
-        let db3data = false;
-        const timer = setTimeout(() => {
-            if (db3data) {
-                db3data = false; clearTimeout(timer);
-            } else {
-                this.app.restartMongodbs(); clearTimeout(timer);
-            }
-        }, 20);
-        await this.ctx.model.System.count({}).exec();
-        db3data = true;
-
         /*
         * 请求db1数据库进行同步数据
         *  查询db1是否正常,不正常则重启
@@ -42,7 +30,7 @@ class DataTimedTaskService extends Service {
             } else {
                 this.app.restartMongodbs(); clearTimeout(timerdb1);
             }
-        }, 20);
+        }, 30);
         const datas = await this.ctx.model.Web.WebReport.find(query)
             .sort({ create_time: 1 })
             .exec();

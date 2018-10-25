@@ -101,6 +101,7 @@
 	</div>
 	<div class="setting-body">
 		<div class="block" v-show="lable==1">
+			<div class="h1 mb20"><span class="left">APPID：</span><strong>{{systemInfo.app_id}}</strong></div>
 			<h1 class="h1">1、启用数据接收</h1>
 			<div class="content">
 				<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch" checked />
@@ -299,7 +300,7 @@ new Vue({
 						html.checked = this.systemInfo.is_statisi_error == 0 ? true : false;
 						break;
 				}
-				var switchery = new Switchery(html, { color: '#2077ff' });
+				var switchery = new Switchery(html, { color: '#8776f7' });
 				html.onchange = () => {
 					let value = html.checked ? 0 : 1
 					switch (index) {
@@ -337,6 +338,9 @@ new Vue({
 			popup.confirm({title:'确定清空1日之前所有数据吗？',yes:()=>{
 				util.ajax({
 					url:`${config.baseApi}api/v1/remove/deleteDb1WebData`,
+					data: {
+						type: 'web'
+					},
 					success:data=>{
 						popup.alert({title:'操作成功!'})
 					}
@@ -349,7 +353,8 @@ new Vue({
 					util.ajax({
 						url: `${config.baseApi}api/v1/remove/deleteDb2WebData`,
 						data:{
-							number: number
+							number: number,
+							type: 'web'
 						},
 						success: data => {
 							popup.alert({ title: '操作成功!' })

@@ -47,7 +47,7 @@
 	<div class="com_block common-block-style mt20">
 		<div class="block">
 			<span class="t1">AJAX地址:</span>
-			<span class="t2">{{datas.url}}</span>
+			<span class="t2">{{datas.name}}</span>
 		</div>
 		<div class="block">
 			<span class="t1">请求耗时:</span>
@@ -59,7 +59,7 @@
 		</div>
 		<div class="block">
 			<span class="t1">请求参数:</span>
-			<span class="t2">{{datas.querydata}}</span>
+			<span class="t2">{{datas.options}}</span>
 		</div>
 		<div class="block">
 			<span class="t1">速度类型:</span>
@@ -67,43 +67,47 @@
 		</div>
 		<div class="block">
 			<span class="t1">body大小:</span>
-			<span class="t2">{{datas.decoded_body_size|toSize}}</span>
+			<span class="t2">{{datas.body_size|toSize}}</span>
 		</div>
 		<div class="block">
 			<span class="t1">生成时间:</span>
 			<span class="t2">{{datas.create_time|date('/',true)}}</span>
 		</div>
 		<div class="block">
-			<span class="t1">所属URL:</span>
-			<span class="t2">{{datas.call_url}}</span>
+			<span class="t1">所属PATH:</span>
+			<span class="t2">{{datas.path}}</span>
 		</div>
 		<div class="block">
 			<span class="t1">来源城市:</span>
-			<span class="t2">{{environment.city||'未知'}}</span>
+			<span class="t2">{{pages.city||'未知'}}</span>
 		</div>
 		<div class="block">
-			<span class="t1">浏览器:</span>
-			<span class="t2">{{environment.browser}}</span>
+			<span class="t1">手机品牌:</span>
+			<span class="t2">{{pages.brand}}</span>
 		</div>
 		<div class="block">
-			<span class="t1">浏览器版本:</span>
-			<span class="t2">{{environment.borwser_version}}</span>
+			<span class="t1">手机类型:</span>
+			<span class="t2">{{pages.model}}</span>
 		</div>
 		<div class="block">
-			<span class="t1">操作系统:</span>
-			<span class="t2">{{environment.system}}</span>
+			<span class="t1">IP:</span>
+			<span class="t2">{{pages.ip}}</span>
 		</div>
 		<div class="block">
-			<span class="t1">操作系统版本:</span>
-			<span class="t2">{{environment.system_version}}</span>
+			<span class="t1">手机系统:</span>
+			<span class="t2">{{pages.system}}</span>
 		</div>
 		<div class="block">
-			<span class="t1">IP地址:</span>
-			<span class="t2">{{environment.ip}}</span>
+			<span class="t1">微信版本:</span>
+			<span class="t2">{{pages.version}}</span>
 		</div>
 		<div class="block">
-			<span class="t1">完整URL:</span>
-			<span class="t2">{{datas.full_url}}</span>
+			<span class="t1">微信语言:</span>
+			<span class="t2">{{pages.language}}</span>
+		</div>
+		<div class="block">
+			<span class="t1">SDK版本:</span>
+			<span class="t2">{{pages.SDKVersion}}</span>
 		</div>
 	</div>
 </div>
@@ -114,7 +118,7 @@
 		data: function () {
 			return {
 				datas: {},
-				environment: {},
+				pages: {},
 				appId: util.getStorage('local', 'appId'),
 				markPage: util.getQueryString('markPage') || '',
 			}
@@ -126,14 +130,14 @@
 		},
 		mounted() {
 			this.getOneAjaxDetail();
-			this.getPageEnvironment();
+			this.getPageForMarkpage();
 		},
 		methods: {
 			getOneAjaxDetail() {
 				this.isLoadend = false;
 				util.ajax({
 					type:'get',
-					url: config.baseApi + 'api/v1/ajax/getOneAjaxDetail',
+					url: config.baseApi + 'api/v1/wx/ajax/getOneAjaxDetail',
 					data: {
 						appId:this.appId,
 						markPage:this.markPage,
@@ -144,16 +148,16 @@
 					}
 				})
 			},
-			getPageEnvironment() {
+			getPageForMarkpage() {
 				util.ajax({
 					type: 'get',
-					url: config.baseApi + 'api/v1/environment/getEnvironmentForPage',
+					url: config.baseApi + 'api/v1/wx/pages/getPageForMarkpage',
 					data: {
 						appId: this.appId,
 						markPage: this.markPage,
 					},
 					success: data => {
-						this.environment = data.data;
+						this.pages = data.data;
 					}
 				})
 			},

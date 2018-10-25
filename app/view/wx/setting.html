@@ -19,12 +19,11 @@
 		margin: 15px 0 20px 50px; 
 	}
 	.setting-body .block .content .script-text {
-		max-width: 1200px;
+		width: 800px;
 		background: #f4f4f4;
 		color: #333;
 		font-size: 14px;
 		border: none;
-		height: 40px;
 		padding: 10px; 
 	}
 	.setting-body .block .code code {
@@ -89,6 +88,9 @@
 		max-width:1200px;
 		margin-left:80px;
 	}
+	input.inp[disabled]{
+		background:#fff;
+	}
 </style>
 <div class="com_content_body main pb100" id="vue_id" v-cloak>
 	<h1 class="com_h1">系统设置</h1>
@@ -101,59 +103,46 @@
 	</div>
 	<div class="setting-body">
 		<div class="block" v-show="lable==1">
-			<h1 class="h1">1、启用数据接收</h1>
+			<div class="h1 mb20"><span class="left">APPID：</span><strong>{{systemInfo.app_id}}</strong></div>
+			<h1 class="h1">1.启用数据接收</h1>
 			<div class="content">
 				<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch" checked />
 			</div>
-			<h1 class="h1">2.1、使用SDK部署方式（强烈推荐）</h1>
+			<h1 class="h1">2.获取SDK代码</h1>
 			<div class="content">
-				<div class="item">2.1.1、下载需要的SDK</div>
-				<a href="/public/js/performance-report-default.min.js.zip"><button class="btn btn-default">通用SDK</button></a>
-				<a href="/public/js/performance-report-jquery.min.js.zip"><button class="btn btn-default ml10">Jquery专用SDK</button></a>
-				<a href="/public/js/performance-report-axios.min.js.zip"><button class="btn btn-default ml10">Axios专用SDK</button></a>
-				<div class="item mt20">2.1.2、详细使用文档请参考以下SDK链接</div>
-				<a href="https://github.com/wangweianger/performance-report" target="_target">浏览器端性能上报SDK使用文档</a>
+				<a href="/public/js/wx-report-sdk.min.js.zip"><button class="btn btn-default">微信小程序SDK</button></a>
 			</div>
-			<h1 class="h1">2.2使用脚本部署方式（不推荐）</h1>
-			<div class="content">
-				<div class="script-text"><code>{{script}}</code></div>
-			</div>
-			<h1 class="h1">3、部署脚本说明</h1>
+			<h1 class="h1">3.部署SDK说明</h1>
 			<div class="content code">
-				<p>复制生成的代码，将其粘贴在<code>&lt;head&gt;</code>中。</p>
-				<p class="notice">注意：需要将代码粘贴在<code>&lt;meta&gt;</code>后面，所有<code>&lt;script&gt;</code>前面。</p>
+				<p>在小程序的app.js头部引入一下代码</p>
+				<div class="script-text mb20">
+					<pre>const wxRepotSdk = require('./utils/wx-report-sdk.min');
+			
+new wxRepotSdk({
+  domain:'http://test.com',
+    add:{
+      appId:'123456789'
+  }
+})</pre>
+			
+				</div>
+				<a href="https://github.com/wangweianger/wx-report-sdk" target="_target">微信小程序SDK使用文档</a>
 			</div>
 		</div>
 		<div class="block" v-show="lable==2">
 			<h1 class="h1">各项阀值设置</h1>
 			<div class="block-center">
 				<div class="item mt20">
+					<span class="left">appId：</span>
+					<strong>{{systemInfo.app_id}}</strong>
+				</div>
+				<div class="item">
 					<span class="left">应用名称：</span>
-					<input type="text" v-model.trim="systemInfo.system_name" placeholder="我的博客">
-				</div>
-				<div class="item">
-					<span class="left">应用域名：</span>
-					<input type="text" v-model.trim="systemInfo.system_domain" placeholder="输入域名">
-				</div>
-				<div class="item">
-					<span class="left">页面慢加载阀值(s)：</span>
-					<input type="text" v-model.trim="systemInfo.slow_page_time" placeholder="默认8s">
+					<input type="text" v-model.trim="systemInfo.system_name" placeholder="必填、输入域名">
 				</div>
 				<div class="item">
 					<span class="left">AJAX慢加载阀值(s)：</span>
 					<input type="text" v-model.trim="systemInfo.slow_ajax_time" placeholder="默认8s">
-				</div>
-				<div class="item">
-					<span class="left">JS慢加载阀值(s)：</span>
-					<input type="text" v-model.trim="systemInfo.slow_js_time" placeholder="默认2s">
-				</div>
-				<div class="item">
-					<span class="left">CSS慢加载阀值(s)：</span>
-					<input type="text" v-model.trim="systemInfo.slow_css_time" placeholder="默认1s">
-				</div>
-				<div class="item">
-					<span class="left">IMG慢加载阀值(s)：</span>
-					<input type="text" v-model.trim="systemInfo.slow_img_time" placeholder="默认2s">
 				</div>
 				<button class="button left-botton" @click="updateSystem">保存</button>
 			</div>
@@ -161,22 +150,9 @@
 		<div class="block block-two" v-show="lable==3">
 			<div class="block-center">
 				<div class="onepart">
-					<h1 class="h1">是否统计页面性能指标:</h1>
-					<div class="content">
-						<span class="mr10">是否启用:</span>
-						<input type="checkbox" class="js-switch-item js-switch-1" checked />
-					</div>
-				</div>
-				<div class="onepart">
 					<h1 class="h1">是否统计AJAX性能指标:</h1>
 					<div class="content">
 						<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-2" checked />
-					</div>
-				</div>
-				<div class="onepart">
-					<h1 class="h1">是否统计资源性能指标:</h1>
-					<div class="content">
-						<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-3" checked />
 					</div>
 				</div>
 				<div class="onepart">
@@ -269,7 +245,6 @@ new Vue({
 		},
 		updateSystem() {
 			if (!this.systemInfo.system_name) { popup.alert({ title: '请正确填写应用名称!' }); return false; }
-			if (!this.systemInfo.system_domain) { popup.alert({ title: '请正确填写应用域名!' }); return false; }
 			util.ajax({
 				url: config.baseApi + 'api/v1/system/update',
 				data: this.systemInfo,
@@ -299,7 +274,7 @@ new Vue({
 						html.checked = this.systemInfo.is_statisi_error == 0 ? true : false;
 						break;
 				}
-				var switchery = new Switchery(html, { color: '#2077ff' });
+				var switchery = new Switchery(html, { color: '#8776f7' });
 				html.onchange = () => {
 					let value = html.checked ? 0 : 1
 					switch (index) {
@@ -337,6 +312,9 @@ new Vue({
 			popup.confirm({title:'确定清空1日之前所有数据吗？',yes:()=>{
 				util.ajax({
 					url:`${config.baseApi}api/v1/remove/deleteDb1WebData`,
+					data: {
+						type: 'wx'
+					},
 					success:data=>{
 						popup.alert({title:'操作成功!'})
 					}
@@ -349,7 +327,8 @@ new Vue({
 					util.ajax({
 						url: `${config.baseApi}api/v1/remove/deleteDb2WebData`,
 						data:{
-							number: number
+							number: number,
+							type: 'wx'
 						},
 						success: data => {
 							popup.alert({ title: '操作成功!' })

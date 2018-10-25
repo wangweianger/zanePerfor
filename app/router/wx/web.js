@@ -23,4 +23,22 @@ module.exports = app => {
 
     // 单个页面详情
     router.get('/wx/pagesdetails', wx.wxpagedetails);
+
+    // ajax平均性能列表
+    router.get('/wx/ajaxavg', wx.wxajaxavg);
+
+    // ajax详情列表
+    router.get('/wx/ajaxdetail', wx.wxajaxdetail);
+
+    // ajax item详情信息
+    router.get('/wx/ajaxitemdetail', wx.wxajaxitemdetail);
+
+    // 分类错误资源列表
+    router.get('/wx/erroravg', wx.wxerroravg);
+
+    // 错误详情列表
+    router.get('/wx/errordetail', wx.wxerrordetail);
+
+    // 错误item详情信息
+    router.get('/wx/erroritemdetail', wx.wxerroritemdetail);
 };

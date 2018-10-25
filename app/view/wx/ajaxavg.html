@@ -120,7 +120,7 @@
 				this.isLoadend = false;
 				util.ajax({
 					type:'get',
-					url: config.baseApi + 'api/v1/ajax/getAverageAjaxList',
+					url: config.baseApi + 'api/v1/wx/ajax/getAverageAjaxList',
 					data: {
 						type:this.type,
 						appId:this.appId,
@@ -175,7 +175,7 @@
 				});
 			},
 			goToList(item) {
-				location.href = "/web/ajaxdetail?url="+ encodeURIComponent(item._id.url)+'&type='+this.type;
+				location.href = "/wx/ajaxdetail?url="+ encodeURIComponent(item._id.url)+'&type='+this.type;
 			}
 		}
 	})

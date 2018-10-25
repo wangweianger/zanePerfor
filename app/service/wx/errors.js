@@ -3,37 +3,13 @@
 
 const Service = require('egg').Service;
 
-class AjaxsService extends Service {
+class ErroesService extends Service {
 
-    // 获得页面性能数据平均值
-    async getPageAjaxsAvg(appId, url) {
-        const datas = await this.ctx.model.Web.WebAjaxs.aggregate([
-            { $match: { app_id: appId, call_url: url }, },
-            {
-                $group: {
-                    _id: {
-                        url: "$url",
-                        method: "$method",
-                    },
-                    count: { $sum: 1 },
-                    body_size: { $avg: "$decoded_body_size" }, 
-                    duration: { $avg: "$duration" }, 
-                }
-            },
-        ]).exec();
-
-        return {
-            datalist: datas,
-            totalNum: 0,
-            pageNo: 1,
-        };
-    }
-
-    // 获得AJAX性能数据平均值
-    async getAverageAjaxList(ctx) {
+    // 获得ERROR类型列表
+    async getAverageErrorList(ctx) {
         const query = ctx.request.query;
         const appId = query.appId;
-        let type = query.type || 1;
+        let type = query.type;
         let pageNo = query.pageNo || 1;
         let pageSize = query.pageSize || this.app.config.pageSize;
         const beginTime = query.beginTime;
@@ -42,86 +18,37 @@ class AjaxsService extends Service {
 
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
-        type = type * 1;
 
         // 查询参数拼接
-        const queryjson = { $match: { app_id: appId, speed_type: type }, }
-        if (url) queryjson.$match.url = { $regex: new RegExp(url, 'i') };
+        const queryjson = { $match: { app_id: appId }, }
+        if (type) queryjson.$match.type = type;
+        if (url) queryjson.$match.name = { $regex: new RegExp(name, 'i') };
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
         const group_id = {
-            url: "$url",
-            method:"$method",
+            name: "$name",
+            type: "$type",
+            msg: "$msg",
         };
 
-        return url ? await this.oneThread(queryjson, pageNo, pageSize, group_id) 
-            : await this.moreThread(appId, type, beginTime,endTime,queryjson, pageNo, pageSize, group_id);
-    }
-
-    // 平均求值数多线程
-    async moreThread(appId, type, beginTime,endTime,queryjson, pageNo, pageSize, group_id){
-        const result = [];
-        let distinct = await this.ctx.model.Web.WebAjaxs.distinct('url', queryjson.$match) || [];
-        let copdistinct = distinct;
-
-        const betinIndex = (pageNo - 1) * pageSize;
-        if (distinct && distinct.length) {
-            distinct = distinct.slice(betinIndex, betinIndex + pageSize);
-        }
-        const resolvelist = [];
-        for (let i = 0, len = distinct.length; i < len; i++) {
-            queryjson.$match.url = distinct[i];
-            resolvelist.push(
-                Promise.resolve(
-                    this.ctx.model.Web.WebAjaxs.aggregate([
-                        { $match: { app_id: appId, url: distinct[i], speed_type: type, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
-                        {
-                            $group: {
-                                _id: group_id,
-                                count: { $sum: 1 },
-                                duration: { $avg: "$duration" },
-                                body_size: { $avg: "$decoded_body_size" },
-                            }
-                        },
-                    ])
-                )
-            )
-        }
-        const all = await Promise.all(resolvelist) || [];
-        all.forEach(item => {
-            result.push(item[0]);
-        })
-        result.sort(function (obj1, obj2) {
-            let val1 = obj1.count;
-            let val2 = obj2.count;
-            if (val1 < val2) {
-                return 1;
-            } else if (val1 > val2) {
-                return -1;
-            } else {
-                return 0;
-            }
-        } );
-
-        return {
-            datalist: result,
-            totalNum: copdistinct.length,
-            pageNo: pageNo,
-        };
-    }
-
-    // 单个api接口查询平均信息
-    async oneThread(queryjson, pageNo, pageSize, group_id) {
-        const count = Promise.resolve(this.ctx.model.Web.WebAjaxs.distinct('url', queryjson.$match));
-        const datas = Promise.resolve(
-            this.ctx.model.Web.WebAjaxs.aggregate([
+        const count = Promise.resolve(
+            this.ctx.model.Wx.WxErrors.aggregate([
                 queryjson,
                 {
                     $group: {
                         _id: group_id,
                         count: { $sum: 1 },
-                        duration: { $avg: "$duration" },
-                        body_size: { $avg: "$decoded_body_size" },
+                    }
+                },
+            ])
+        );
+        const datas = Promise.resolve(
+            this.ctx.model.Wx.WxErrors.aggregate([
+                queryjson,
+                {
+                    $group: {
+                        _id: group_id,
+                        count: { $sum: 1 },
                     }
                 },
                 { $skip: (pageNo - 1) * pageSize },
@@ -130,6 +57,7 @@ class AjaxsService extends Service {
             ])
         );
         const all = await Promise.all([count, datas]);
+
         return {
             datalist: all[1],
             totalNum: all[0].length,
@@ -137,39 +65,18 @@ class AjaxsService extends Service {
         };
     }
 
-    // 获得单个api的平均性能数据
-    async getOneAjaxAvg(appId, url, beginTime, endTime, type) {
-        type = type * 1;
-        const query = { $match: { app_id: appId, url: url, speed_type: type}, };
-        if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
-
-        const datas = await this.ctx.model.Web.WebAjaxs.aggregate([
-            query,
-            {
-                $group: {
-                    _id: null,
-                    count: { $sum: 1 },
-                    duration: { $avg: "$duration" },
-                    body_size: { $avg: "$decoded_body_size" },
-                }
-            },
-        ]).exec();
-
-        return datas && datas.length ? datas[0] : {};
-    }
-
-    // 获得单个api的性能列表数据
-    async getOneAjaxList(appId, url, pageNo, pageSize, beginTime, endTime, type) {
+    // 获得单个Error列表
+    async getOneErrorList(appId, url, category, pageNo, pageSize, beginTime, endTime) {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
-        type = type * 1;
 
-        const query = { $match: { app_id: appId, url: url, speed_type: type }, };
-        if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
-        const count = Promise.resolve(this.ctx.model.Web.WebAjaxs.count(query.$match));
+        const query = { app_id: appId, name: url, type: category }
+        if (beginTime && endTime) query.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
+
+        const count = Promise.resolve(this.ctx.model.Wx.WxErrors.count(query));
         const datas = Promise.resolve(
-            this.ctx.model.Web.WebAjaxs.aggregate([
-                query,
+            this.ctx.model.Wx.WxErrors.aggregate([
+                { $match: query, },
                 { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
                 { $limit: pageSize },
@@ -184,10 +91,11 @@ class AjaxsService extends Service {
         };
     }
 
-    // 获得单个ajax详情信息
-    async getOneAjaxDetail(appId, markPage) {
-       return await this.ctx.model.Web.WebAjaxs.findOne({ app_id: appId, mark_page: markPage}) || {};
+    // 单个error详情信息
+    async getErrorDetail(appId, id) {
+        return await this.ctx.model.Wx.WxErrors.findOne({ app_id: appId, _id: id }).exec() || {};
     }
+
 }
 
-module.exports = AjaxsService;
+module.exports = ErroesService;
