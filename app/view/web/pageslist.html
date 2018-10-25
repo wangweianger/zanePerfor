@@ -174,7 +174,7 @@
 			<div id="copot-page-pages" class="copot-page"></div>
 		</div>
 		<!-- 暂无数据 -->
-		<div class="tc" v-if="!listdata.length">暂无数据!</div>
+		<div class="tc mt20" v-if="!listdata.length">暂无数据!</div>
 	</div>
 	<!-- ajax性能资源 -->
 	<div v-show="lable==2">
@@ -198,7 +198,7 @@
 			</tr>
 		</table>
 		<!-- 暂无数据 -->
-		<div class="tc" v-if="isLoadend&&!listAjax.length">暂无数据!</div>
+		<div class="tc mt20" v-if="isLoadend&&!listAjax.length">暂无数据!</div>
 	</div>
 	<!-- 页面慢加载追踪 -->
 	<div v-show="lable==3">
@@ -231,7 +231,7 @@
 			<div id="copot-page-slowpages" class="copot-page"></div>
 		</div>
 		<!-- 暂无数据 -->
-		<div class="tc" v-if="!listslowpages.length">暂无数据!</div>
+		<div class="tc mt20" v-if="!listslowpages.length">暂无数据!</div>
 	</div>
 	<!-- 页面慢资源加载 -->
 	<div v-show="lable==4">
@@ -260,7 +260,7 @@
 			<div id="copot-page-slowresources" class="copot-page"></div>
 		</div>
 		<!-- 暂无数据 -->
-		<div class="tc" v-if="!listresources.length">暂无数据!</div>
+		<div class="tc mt20" v-if="!listresources.length">暂无数据!</div>
 	</div>
 </div>
 
