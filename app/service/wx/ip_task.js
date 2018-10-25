@@ -53,22 +53,31 @@ class IpTaskService extends Service {
     async getIpData(ip, _id) {
         let copyip = ip.split('.');
         copyip = `${copyip[0]}.${copyip[1]}.${copyip[2]}`;
-        const reg = new RegExp(copyip);
+        let datas = null;
+
         // 先查找
-        const datas = await this.ctx.model.IpLibrary.findOne({ ip: { $regex: reg } }).exec();
+        if (this.app.config.ip_redis_or_mongodb === 'redis') {
+            // 通过reids获得用户IP对应的地理位置信息
+            datas = await this.app.redis.get(copyip);
+            if (datas) datas = JSON.parse(datas);
+        } else if (this.app.config.ip_redis_or_mongodb === 'mongodb') {
+            // 通过mongodb获得用户IP对应的地理位置信息
+            datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).exec();
+        }
+
         let result = null;
         if (datas) {
             // 直接更新
-            result = await this.updateWxPages(datas, _id);
+            result = await this.updateWebEnvironment(datas, _id);
         } else {
             // 查询百度地图地址信息并更新
-            result = await this.getIpDataForBaiduApi(ip, _id);
+            result = await this.getIpDataForBaiduApi(ip, _id, copyip);
         }
         return result;
     }
 
     // g根据百度地图api获得地址信息
-    async getIpDataForBaiduApi(ip, _id) {
+    async getIpDataForBaiduApi(ip, _id, copyip) {
         if (!ip) return;
         const url = `https://api.map.baidu.com/location/ip?ip=${ip}&ak=${this.app.config.BAIDUAK}&coor=bd09ll`;
         const result = await this.app.curl(url, {
@@ -83,16 +92,19 @@ class IpTaskService extends Service {
                 longitude: result.data.content.point.x,
             };
             // 保存到地址库
-            this.saveIpDatasToDb(json);
+            this.saveIpDatasToDb(json, copyip);
+            // 更新redis
+            this.app.redis.set(copyip, JSON.stringify(json));
             // 更新用户地址信息
             return await this.updateWxPages(json, _id);
         }
     }
 
     // 存储ip地址库信息到DB
-    async saveIpDatasToDb(data) {
+    async saveIpDatasToDb(data, copyip) {
         const iplibrary = this.ctx.model.IpLibrary();
-        iplibrary.ip = data._ip;
+
+        iplibrary.ip = copyip;
         iplibrary.province = data.province;
         iplibrary.city = data.city;
         iplibrary.latitude = data.latitude;
