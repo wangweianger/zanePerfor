@@ -50,7 +50,7 @@ class WxReportService extends Service {
         pvuvip.create_time = endTime;
         pvuvip.type = type;
 
-        await pvuvip.save().exec();
+        await pvuvip.save();
     }
 
 }

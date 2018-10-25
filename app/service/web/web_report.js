@@ -30,7 +30,7 @@ class WebReportService extends Service {
         report.resource_list = query.resourceList;
         report.screenwidth = query.screenwidth;
         report.screenheight = query.screenheight;
-        report.save().exec();
+        report.save();
         return {};
     }
 }

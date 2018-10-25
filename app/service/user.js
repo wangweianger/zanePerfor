@@ -40,7 +40,7 @@ class UserService extends Service {
         // 设置登录cookie
         this.ctx.cookies.set('usertoken', token);
 
-        return await user.save().exec();
+        return await user.save();
     }
 
     // 根据用户名称查询用户信息

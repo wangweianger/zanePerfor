@@ -50,7 +50,7 @@ class WebSystemService extends Service {
         system.is_statisi_system = query.is_statisi_system;
         system.is_statisi_error = query.is_statisi_error;
 
-        const result = await system.save().exec();
+        const result = await system.save();
         ctx.body = this.app.result({
             data: result,
         });

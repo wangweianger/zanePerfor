@@ -109,7 +109,7 @@ class IpTaskService extends Service {
         iplibrary.city = data.city;
         iplibrary.latitude = data.latitude;
         iplibrary.longitude = data.longitude;
-        return await iplibrary.save().exec();
+        return await iplibrary.save();
     }
     // 更新IP相关信息
     async updateWebEnvironment(data, id) {

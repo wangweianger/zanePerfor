@@ -63,7 +63,7 @@ class WxReportTaskService extends Service {
             if (cacheJson[item.app_id]) {
                 system = cacheJson[item.app_id];
             } else {
-                system = await this.service.system.getSystemForAppId(item.app_id).exec();
+                system = await this.service.system.getSystemForAppId(item.app_id);
                 cacheJson[item.app_id] = system;
             }
             if (system.is_use !== 0) return;
@@ -94,7 +94,7 @@ class WxReportTaskService extends Service {
         pages.system = item.system.system;
         pages.platform = item.system.platform;
         pages.SDKVersion = item.system.SDKVersion;
-        pages.save().exec();
+        pages.save();
     }
 
     // 存储ajax信息
@@ -119,7 +119,7 @@ class WxReportTaskService extends Service {
             ajaxs.mark_user = data.mark_user;
             ajaxs.options = item.options;
             ajaxs.path = data.pages.router;
-            ajaxs.save().exec();
+            ajaxs.save();
         });
     }
 
@@ -141,7 +141,7 @@ class WxReportTaskService extends Service {
             errors.mark_page = data.mark_page;
             errors.mark_user = data.mark_user;
             errors.path = data.pages.router;
-            errors.save().exec();
+            errors.save();
         });
     }
 
