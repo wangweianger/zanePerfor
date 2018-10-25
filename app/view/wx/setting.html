@@ -114,12 +114,12 @@
 			</div>
 			<h1 class="h1">3.部署SDK说明</h1>
 			<div class="content code">
-				<p>在小程序的app.js头部引入一下代码</p>
+				<p>在小程序的app.js头部引入以下代码</p>
 				<div class="script-text mb20">
 					<pre>const wxRepotSdk = require('./utils/wx-report-sdk.min');
 			
 new wxRepotSdk({
-  domain:'http://test.com',
+  domain:'{{location.origin}}/api/v1/wx/report/wx',
     add:{
       appId:'123456789'
   }
