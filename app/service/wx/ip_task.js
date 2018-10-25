@@ -46,7 +46,7 @@ class IpTaskService extends Service {
                 }
                 i++;
             }
-        }, 900);
+        }, 1000);
     }
 
     // 根据ip获得地址信息 先查找数据库 再使用百度地图查询

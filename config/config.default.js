@@ -78,7 +78,6 @@ module.exports = () => {
         },
     };
 
-
     // mongoose配置
     config.mongoose = {
         clients: {
