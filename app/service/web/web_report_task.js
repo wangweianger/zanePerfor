@@ -3,9 +3,8 @@
 const url = require('url');
 const querystring = require('querystring');
 const UAParser = require('ua-parser-js');
-
 const Service = require('egg').Service;
-
+let timer = null;
 class DataTimedTaskService extends Service {
 
     // 把db2的数据经过加工之后同步到db3中 的定时任务
@@ -24,17 +23,20 @@ class DataTimedTaskService extends Service {
         *  查询db1是否正常,不正常则重启
         */
         let db1data = false;
-        const timerdb1 = setTimeout(() => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
             if (db1data) {
-                db1data = false; clearTimeout(timerdb1);
+                db1data = false; clearTimeout(timer);
             } else {
-                this.app.restartMongodbs(); clearTimeout(timerdb1);
+                this.app.restartMongodbs('db1'); clearTimeout(timer);
             }
-        }, 30);
+        }, 10000);
         const datas = await this.ctx.model.Web.WebReport.find(query)
             .sort({ create_time: 1 })
             .exec();
         db1data = true;
+        this.app.logger.info('-----------db1--查询web端db1数据库是否可用----------');
+        this.app.logger.info(datas.length);
 
         // 开启多线程执行
         if (datas && datas.length) {

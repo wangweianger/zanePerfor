@@ -1,5 +1,7 @@
 'use strict';
 
+let timer = null;
+
 // 处理数据定时任务
 module.exports = app => {
     return {
@@ -12,15 +14,19 @@ module.exports = app => {
             if (app.config.is_web_task_run || app.config.is_wx_task_run) {
                 // 查询db3是否正常,不正常则重启
                 let db3data = false;
-                const timer = setTimeout(() => {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
                     if (db3data) {
                         db3data = false; clearTimeout(timer);
                     } else {
-                        app.restartMongodbs(); clearTimeout(timer);
+                        app.restartMongodbs('db3'); clearTimeout(timer);
                     }
-                }, 30);
-                await ctx.model.System.count({}).exec();
+                }, 10000);
+                const result = await ctx.model.System.count({}).exec();
                 db3data = true;
+                app.logger.info('-----------db3--查询db3数据库是否可用----------');
+                app.logger.info(result);
+
             }
             if (app.config.is_web_task_run) ctx.service.web.webReportTask.saveWebReportDatas();
             if (app.config.is_wx_task_run) ctx.service.wx.reportTask.saveWxReportDatas();

@@ -67,6 +67,11 @@ module.exports = () => {
         layout: 'layout.html',
     };
 
+    // 定义日志路径
+    exports.logger = {
+        dir: '/data/performance/buildlogs',
+    };
+
     // redis配置
     // test
     config.redis = {
@@ -77,6 +82,7 @@ module.exports = () => {
             db: 0,
         },
     };
+
 
     // mongoose配置
     config.mongoose = {

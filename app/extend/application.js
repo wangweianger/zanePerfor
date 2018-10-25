@@ -77,12 +77,12 @@ module.exports = {
         return fmt;
     },
     // 重启mongodb服务器
-    restartMongodbs() {
+    restartMongodbs(type) {
         if (!this.config.mongodb_restart_sh && !this.config.mongodb_restart_sh.length) return;
         this.config.mongodb_restart_sh.forEach(item => {
             exec(`sh ${item}`, error => {
-                if (error) { console.log('重启mongodb数据库失败!'); return; }
-                console.log('重启mongodb数据库成功!');
+                if (error) { this.logger.info(`重启${type}数据库失败!`); return; }
+                this.logger.info(`重启${type}数据库成功!`);
             });
         });
     },
