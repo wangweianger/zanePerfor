@@ -40,7 +40,7 @@ class ErroesService extends Service {
                         count: { $sum: 1 },
                     }
                 },
-            ])
+            ]).exec()
         );
         const datas = Promise.resolve(
             this.ctx.model.Web.WebErrors.aggregate([
@@ -54,7 +54,7 @@ class ErroesService extends Service {
                 { $skip: (pageNo - 1) * pageSize },
                 { $sort: { count: -1 } },
                 { $limit: pageSize },
-            ])
+            ]).exec()
         );
         const all = await Promise.all([count, datas]);
         
@@ -73,14 +73,14 @@ class ErroesService extends Service {
         const query = { app_id: appId, resource_url: url, category: category }
         if (beginTime && endTime) query.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        const count = Promise.resolve(this.ctx.model.Web.WebErrors.count(query));
+        const count = Promise.resolve(this.ctx.model.Web.WebErrors.count(query).exec());
         const datas = Promise.resolve(
             this.ctx.model.Web.WebErrors.aggregate([
                 { $match: query, },
                 { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
                 { $limit: pageSize },
-            ])
+            ]).exec()
         );
         const all = await Promise.all([count, datas]);
 

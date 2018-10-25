@@ -29,7 +29,7 @@ class WxReportService extends Service {
         report.userInfo = query.userInfo;
         report.pages = query.pages;
         report.ajaxs = query.ajaxs;
-        report.save();
+        report.save().exec();
         return {};
     }
 }

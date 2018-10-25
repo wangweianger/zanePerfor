@@ -13,14 +13,14 @@ class ResourceService extends Service {
 
         const query = { $match: { app_id: appId, url: url, speed_type: speedType }, };
 
-        const count = Promise.resolve(this.ctx.model.Web.WebResource.count(query.$match));
+        const count = Promise.resolve(this.ctx.model.Web.WebResource.count(query.$match).exec());
         const datas = Promise.resolve(
             this.ctx.model.Web.WebResource.aggregate([
                 query,
                 { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
                 { $limit: pageSize },
-            ])
+            ]).exec()
         );
         const all = await Promise.all([count, datas]);
 
@@ -65,7 +65,7 @@ class ResourceService extends Service {
                         count: { $sum: 1 },
                     }
                 },
-            ])
+            ]).exec()
         );
         const datas = Promise.resolve(
             this.ctx.model.Web.WebResource.aggregate([
@@ -81,7 +81,7 @@ class ResourceService extends Service {
                 { $skip: (pageNo - 1) * pageSize },
                 { $limit: pageSize },
                 { $sort: { count: -1 } },
-            ])
+            ]).exec()
         );
         const all = await Promise.all([count, datas]);
 
@@ -120,14 +120,14 @@ class ResourceService extends Service {
         const query = { $match: { app_id: appId, name: url }, };
         if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        const count = Promise.resolve(this.ctx.model.Web.WebResource.count(query.$match));
+        const count = Promise.resolve(this.ctx.model.Web.WebResource.count(query.$match).exec());
         const datas = Promise.resolve(
             this.ctx.model.Web.WebResource.aggregate([
                 query,
                 { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
                 { $limit: pageSize },
-            ])
+            ]).exec()
         );
         const all = await Promise.all([count, datas]);
 
@@ -140,7 +140,7 @@ class ResourceService extends Service {
 
     // 获得单个Resource详情信息
     async getOneResourceDetail(appId, markPage) {
-        return await this.ctx.model.Web.WebResource.findOne({ app_id: appId, mark_page: markPage }) || {};
+        return await this.ctx.model.Web.WebResource.findOne({ app_id: appId, mark_page: markPage }).exec() || {};
     }
 }
 

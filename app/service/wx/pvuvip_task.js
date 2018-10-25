@@ -11,7 +11,7 @@ class WxReportService extends Service {
         const beginTime = new Date(interval.prev().toString());
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
 
-        const datas = await this.ctx.model.Wx.WxPages.distinct('app_id', query);
+        const datas = await this.ctx.model.Wx.WxPages.distinct('app_id', query).exec();
         this.groupData(datas, endTime, 2, query);
     }
     // 定时执行每分钟的数据
@@ -22,7 +22,7 @@ class WxReportService extends Service {
         const beginTime = new Date(endTime.getTime() - 60000);
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
 
-        const datas = await this.ctx.model.Wx.WxPages.distinct('app_id', query);
+        const datas = await this.ctx.model.Wx.WxPages.distinct('app_id', query).exec();
         this.groupData(datas, endTime, 1, query);
     }
     // 对数据进行分组
@@ -37,9 +37,9 @@ class WxReportService extends Service {
     async savePvUvIpData(appId, endTime, type, query) {
         query.app_id = appId;
 
-        const pv = Promise.resolve(this.ctx.model.Wx.WxPages.count(query));
-        const uv = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_user', query));
-        const ip = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('ip', query));
+        const pv = Promise.resolve(this.ctx.model.Wx.WxPages.count(query).exec());
+        const uv = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_user', query).exec());
+        const ip = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('ip', query).exec());
         const data = await Promise.all([ pv, uv, ip ]);
 
         const pvuvip = this.ctx.model.Wx.WxPvuvip();
@@ -50,7 +50,7 @@ class WxReportService extends Service {
         pvuvip.create_time = endTime;
         pvuvip.type = type;
 
-        await pvuvip.save();
+        await pvuvip.save().exec();
     }
 
 }

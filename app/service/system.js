@@ -14,7 +14,7 @@ class WebSystemService extends Service {
         if (!query.system_name) throw new Error('新增系统信息操作：系统名称不能为空');
 
         // 检验系统是否存在
-        const search = await ctx.model.System.findOne({ system_domain: query.system_domain });
+        const search = await ctx.model.System.findOne({ system_domain: query.system_domain }).exec();
         if (search && search.system_domain) throw new Error('新增系统信息操作：系统已存在');
 
         // 存储数据
@@ -50,7 +50,7 @@ class WebSystemService extends Service {
         system.is_statisi_system = query.is_statisi_system;
         system.is_statisi_error = query.is_statisi_error;
 
-        const result = await system.save();
+        const result = await system.save().exec();
         ctx.body = this.app.result({
             data: result,
         });
@@ -108,7 +108,7 @@ class WebSystemService extends Service {
     async getSysForUserId(ctx) {
         const token = ctx.request.query.token;
         if (!token) return [];
-        return await ctx.model.System.where('user_id').elemMatch({ $eq: token }) || [];
+        return await ctx.model.System.where('user_id').elemMatch({ $eq: token }).exec() || [];
     }
     // 获得系统列表信息
     async getWebSystemList() {

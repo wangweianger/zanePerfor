@@ -32,23 +32,23 @@ class RemoveService extends Service {
 
         if (type === 'web') {
             // Ajax
-            const remove1 = Promise.resolve(this.ctx.model.Web.WebAjaxs.remove(query));
+            const remove1 = Promise.resolve(this.ctx.model.Web.WebAjaxs.remove(query).exec());
             // Pages
-            const remove2 = Promise.resolve(this.ctx.model.Web.WebPages.remove(query));
+            const remove2 = Promise.resolve(this.ctx.model.Web.WebPages.remove(query).exec());
             // Environment
-            const remove3 = Promise.resolve(this.ctx.model.Web.WebEnvironment.remove(query));
+            const remove3 = Promise.resolve(this.ctx.model.Web.WebEnvironment.remove(query).exec());
             // Errors
-            const remove4 = Promise.resolve(this.ctx.model.Web.WebErrors.remove(query));
+            const remove4 = Promise.resolve(this.ctx.model.Web.WebErrors.remove(query).exec());
             // Resource
-            const remove5 = Promise.resolve(this.ctx.model.Web.WebResource.remove(query));
+            const remove5 = Promise.resolve(this.ctx.model.Web.WebResource.remove(query).exec());
             result = await Promise.all([ remove1, remove2, remove3, remove4, remove5 ]);
         } else if (type === 'wx') {
             // Ajax
-            const remove1 = Promise.resolve(this.ctx.model.Wx.WxAjaxs.remove(query));
+            const remove1 = Promise.resolve(this.ctx.model.Wx.WxAjaxs.remove(query).exec());
             // Pages
-            const remove2 = Promise.resolve(this.ctx.model.Wx.WxPages.remove(query));
+            const remove2 = Promise.resolve(this.ctx.model.Wx.WxPages.remove(query).exec());
             // Errors
-            const remove3 = Promise.resolve(this.ctx.model.Wx.WxErrors.remove(query));
+            const remove3 = Promise.resolve(this.ctx.model.Wx.WxErrors.remove(query).exec());
             result = await Promise.all([ remove1, remove2, remove3 ]);
         }
         return result;

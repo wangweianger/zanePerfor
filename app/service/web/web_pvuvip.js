@@ -7,15 +7,15 @@ class PvuvivService extends Service {
     // 保存用户上报的数据
     async getPvUvIpData(appId, beginTime, endTime) {
         const querydata = { app_id: appId, type: 1, create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
-        const datas = await this.ctx.model.Web.WebPvuvip.find(querydata);
+        const datas = await this.ctx.model.Web.WebPvuvip.find(querydata).exec();
         return datas;
     }
     // 概况统计
     async getPvUvIpSurvey(appId, beginTime, endTime) {
         const querydata = { app_id: appId, create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
-        const pv = Promise.resolve(this.ctx.model.Web.WebEnvironment.count(querydata));
-        const uv = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('mark_user', querydata));
-        const ip = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('ip', querydata));
+        const pv = Promise.resolve(this.ctx.model.Web.WebEnvironment.count(querydata).exec());
+        const uv = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('mark_user', querydata).exec());
+        const ip = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('ip', querydata).exec());
         const data = await Promise.all([ pv, uv, ip ]);
         return {
             pv: data[0],

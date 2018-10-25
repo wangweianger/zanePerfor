@@ -94,8 +94,6 @@ module.exports = () => {
                 options: {
                     server: {
                         auto_reconnect: true,
-                        keepAlive: 10,
-                        connectTimeoutMS: 10000,
                         poolSize: 300,
                     },
                 },
@@ -107,8 +105,6 @@ module.exports = () => {
                 options: {
                     server: {
                         auto_reconnect: true,
-                        keepAlive: 10,
-                        connectTimeoutMS: 10000,
                         poolSize: 300,
                     },
                 },

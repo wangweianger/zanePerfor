@@ -47,7 +47,7 @@ class PagesService extends Service {
     // 获得多个页面的平均性能数据
     async moreThread(appId,beginTime, endTime, queryjson, pageNo, pageSize, group_id) {
         const result = [];
-        let distinct = await this.ctx.model.Wx.WxPages.distinct('path', queryjson.$match) || [];
+        let distinct = await this.ctx.model.Wx.WxPages.distinct('path', queryjson.$match).exec() || [];
         let copdistinct = distinct;
 
         const betinIndex = (pageNo - 1) * pageSize;
@@ -67,7 +67,7 @@ class PagesService extends Service {
                                 count: { $sum: 1 },
                             }
                         },
-                    ])
+                    ]).exec()
                 )
             )
         }
@@ -96,7 +96,7 @@ class PagesService extends Service {
 
     // 单个页面查询平均信息
     async oneThread(queryjson, pageNo, pageSize, group_id) {
-        const count = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('url', queryjson.$match));
+        const count = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('url', queryjson.$match).exec());
         const datas = Promise.resolve(
             this.ctx.model.Wx.WxPages.aggregate([
                 queryjson,
@@ -109,7 +109,7 @@ class PagesService extends Service {
                 { $skip: (pageNo - 1) * pageSize },
                 { $sort: { count: -1 } },
                 { $limit: pageSize },
-            ])
+            ]).exec()
         );
         const all = await Promise.all([count, datas]);
 
@@ -138,14 +138,14 @@ class PagesService extends Service {
 
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        const count = Promise.resolve(this.ctx.model.Wx.WxPages.count(queryjson.$match));
+        const count = Promise.resolve(this.ctx.model.Wx.WxPages.count(queryjson.$match).exec());
         const datas = Promise.resolve(
             this.ctx.model.Wx.WxPages.aggregate([
                 queryjson,
                 { $sort: { create_time: -1 } },
                 { $skip: ((pageNo - 1) * pageSize) },
                 { $limit: pageSize },
-            ])
+            ]).exec()
         );
         const all = await Promise.all([count, datas]);
 

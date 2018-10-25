@@ -66,7 +66,7 @@ class DataTimedTaskService extends Service {
             if (cacheJson[item.app_id]) {
                 system = cacheJson[item.app_id];
             } else {
-                system = await this.service.system.getSystemForAppId(item.app_id);
+                system = await this.service.system.getSystemForAppId(item.app_id).exec();
                 cacheJson[item.app_id] = system;
             }
             if (system.is_use !== 0) return;
@@ -111,7 +111,7 @@ class DataTimedTaskService extends Service {
             pages.screenwidth = item.screenwidth;
             pages.screenheight = item.screenheight;
 
-            pages.save();
+            pages.save().exec();
         }
     }
 
@@ -153,7 +153,7 @@ class DataTimedTaskService extends Service {
         ajaxs.mark_user = data.mark_user;
         ajaxs.query_datas = querydata;
 
-        ajaxs.save();
+        ajaxs.save().exec();
     }
 
     // 储存网页资源性能数据
@@ -194,7 +194,7 @@ class DataTimedTaskService extends Service {
         resours.mark_page = data.mark_page;
         resours.mark_user = data.mark_user;
 
-        resours.save();
+        resours.save().exec();
     }
 
     // 存储错误信息
@@ -224,7 +224,7 @@ class DataTimedTaskService extends Service {
             errors.mark_page = data.mark_page;
             errors.mark_user = data.mark_user;
 
-            errors.save();
+            errors.save().exec();
         });
     }
 
@@ -249,7 +249,7 @@ class DataTimedTaskService extends Service {
         environment.county = data.county;
         environment.province = data.province;
 
-        environment.save();
+        environment.save().exec();
 
     }
 }

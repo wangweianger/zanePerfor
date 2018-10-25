@@ -40,12 +40,12 @@ class UserService extends Service {
         // 设置登录cookie
         this.ctx.cookies.set('usertoken', token);
 
-        return await user.save();
+        return await user.save().exec();
     }
 
     // 根据用户名称查询用户信息
     async getUserInfoForUserName(userName){
-        return await this.ctx.model.User.findOne({ user_name: userName }) || {};
+        return await this.ctx.model.User.findOne({ user_name: userName }).exec() || {};
     }
 
     // 查询用户列表信息（分页）
@@ -57,7 +57,7 @@ class UserService extends Service {
         if (userName) query.user_name = userName;
         
         const count = Promise.resolve(this.ctx.model.User.count(query).exec());
-        const datas = Promise.resolve(this.ctx.model.User.find(query).skip((pageNo - 1) * pageSize).limit(pageSize));
+        const datas = Promise.resolve(this.ctx.model.User.find(query).skip((pageNo - 1) * pageSize).limit(pageSize).exec());
         const all = await Promise.all([count, datas]);
 
         return {
