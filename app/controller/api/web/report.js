@@ -1,7 +1,6 @@
 'use strict';
 
 const Controller = require('egg').Controller;
-
 class ReportController extends Controller {
 
     // web用户数据上报

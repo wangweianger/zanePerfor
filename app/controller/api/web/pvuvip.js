@@ -131,6 +131,17 @@ class PvUvIpController extends Controller {
         }
         return result;
     }
+    // 获取当前pv,uv,ip
+    async getPvUvIp() {
+        const { ctx } = this;
+        const query = ctx.request.query;
+        const appId = query.appId;
+        if (!appId) throw new Error('获取当前pv,uv,ip：appId不能为空');
+
+        ctx.body = this.app.result({
+            data: await ctx.service.web.webPvuvipTask.getPvUvIp(appId),
+        });
+    }
 }
 
 module.exports = PvUvIpController;

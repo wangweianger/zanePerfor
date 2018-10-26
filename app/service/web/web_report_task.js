@@ -5,6 +5,7 @@ const querystring = require('querystring');
 const UAParser = require('ua-parser-js');
 const Service = require('egg').Service;
 let timer = null;
+let cacheJson = {};
 class DataTimedTaskService extends Service {
 
     // 把db2的数据经过加工之后同步到db3中 的定时任务
@@ -35,8 +36,8 @@ class DataTimedTaskService extends Service {
             .sort({ create_time: 1 })
             .exec();
         db1data = true;
-        this.app.logger.info('-----------db1--查询web端db1数据库是否可用----------');
-        this.app.logger.info(datas.length);
+        this.app.logger.info(`-----------db1--查询web端db1数据库是否可用-----${datas.length}-----`);
+        cacheJson = {};
 
         // 开启多线程执行
         if (datas && datas.length) {
@@ -58,7 +59,7 @@ class DataTimedTaskService extends Service {
     async saveDataToDb3(data, type) {
         if (!data && !data.length) return;
         const length = data.length - 1;
-        const cacheJson = {};
+
         // 遍历数据
         data.forEach(async (item, index) => {
             let system = {};

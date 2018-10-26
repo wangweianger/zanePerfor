@@ -1,23 +1,26 @@
 'use strict';
 
 const Service = require('egg').Service;
-
 class WebReportService extends Service {
 
     // 保存用户上报的数据
     async saveWebReportData(ctx) {
         const query = ctx.request.body;
+        const appId = query.appId;
         const ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
 
         // 参数校验
-        if (!query.appId) throw new Error('web端上报数据操作：app_id不能为空');
+        if (!appId) throw new Error('web端上报数据操作：app_id不能为空');
 
-        const system = await this.service.system.getSystemForAppId(query.appId);
+        const system = await this.service.system.getSystemForAppId(appId);
         if (!system) return {};
         if (system.is_use !== 0) return {};
 
+        // ---------求pv,uv,ip---------
+        this.service.web.webPvuvipTask.setPvUvIp(appId, query.markUser, ip);
+
         const report = ctx.model.Web.WebReport();
-        report.app_id = query.appId;
+        report.app_id = appId;
         report.create_time = query.time;
         report.user_agent = ctx.headers['user-agent'];
         report.ip = ip;

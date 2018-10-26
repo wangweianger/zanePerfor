@@ -24,8 +24,7 @@ module.exports = app => {
                 }, 10000);
                 const result = await ctx.model.System.count({}).exec();
                 db3data = true;
-                app.logger.info('-----------db3--查询db3数据库是否可用----------');
-                app.logger.info(result);
+                app.logger.info(`-----------db3--查询db3数据库是否可用-----${result}-----`);
 
             }
             if (app.config.is_web_task_run) ctx.service.web.webReportTask.saveWebReportDatas();

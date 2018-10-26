@@ -60,7 +60,7 @@ class utilfn {
         let noError = true;
         let url = null;
         let asyncVal = typeof(json.async) == 'boolean' ? json.async : true;
-        This.showLoading();
+        if(!json.notloading) This.showLoading();
 
         //是否有请求超时
         if (!json.notimeout) {

@@ -47,9 +47,9 @@
 		<div class="com_block mt20">
 			<h1 class="com_h2 mb20">今日概况</h1>
 			<div class="survey">
-				<div class="com pv ml50"><span>PV: </span>{{surveydata.today.pv}}</div>
-				<div class="com uv"><span>UV: </span>{{surveydata.today.uv}}</div>
-				<div class="com ip"><span>IP: </span>{{surveydata.today.ip}}</div>
+				<div class="com pv ml50"><span>PV: </span>{{today.pv}}</div>
+				<div class="com uv"><span>UV: </span>{{today.uv}}</div>
+				<div class="com ip"><span>IP: </span>{{today.ip}}</div>
 			</div>
 		</div>
 		<div class="com_block mt20">
@@ -84,6 +84,7 @@
 
 <script>
 let myChartPV, myChartUV, myChartIP;
+let timer = null;
 new Vue({
 	el: '#vue_id',
 	data: function () {
@@ -96,10 +97,13 @@ new Vue({
 			datalist:[],
 			surveydata:{ today:{}, yesterday:{}},
 			surveyone:{},
-			errText:''
+			errText:'',
+			today:{},
 		}
 	},
 	mounted() {
+		clearInterval(timer);
+		this.getPvUvIp();
 		this.getPvUvIpSurvey();
 		zaneDate({
 			elem: '#zane-calendar-1',
@@ -139,12 +143,27 @@ new Vue({
 			this.lable = lable;
 			this.beginTime = '';
 			this.endTime = '';
-
+			clearInterval(timer);
 			if(lable == 1){
+				this.getPvUvIp();
 				this.getPvUvIpSurvey();
 			}else if(lable == 2){
 				this.getPvUvIpList();
 			};
+		},
+		getPvUvIp(){
+			const getpvuvip = () =>{
+				util.ajax({
+					type: 'get',
+					notloading: true,
+					url: `${config.baseApi}api/v1/web/pvuvip/getPvUvIp?appId=${this.appId}`,
+					success: (data) => {
+						this.today = data.data || {};
+					}
+				})
+			}
+			getpvuvip();
+			timer = setInterval(() => { getpvuvip(); }, 1000);
 		},
 		// 概况
 		getPvUvIpSurvey(){

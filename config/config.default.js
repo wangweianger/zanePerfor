@@ -92,7 +92,10 @@ module.exports = () => {
                 // url: 'mongodb://127.0.0.1:27017,127.0.0.1:27018/performance?replicaSet=performance',
                 url: 'mongodb://127.0.0.1:27017/performance',
                 options: {
-                    poolSize: 100,
+                    poolSize: 25,
+                    keepAlive: 10000,
+                    connectTimeoutMS: 10000,
+                    autoReconnect: true,
                 },
             },
             // 定时任务执行完之后存储到数据库3
@@ -100,7 +103,10 @@ module.exports = () => {
                 // url: 'mongodb://127.0.0.1:27018,127.0.0.1:27019,127.0.0.1:27020/performance?replicaSet=performance',
                 url: 'mongodb://127.0.0.1:27019/performance',
                 options: {
-                    poolSize: 100,
+                    poolSize: 25,
+                    keepAlive: 10000,
+                    connectTimeoutMS: 10000,
+                    autoReconnect: true,
                 },
             },
         },
