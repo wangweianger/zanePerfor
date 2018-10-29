@@ -50,10 +50,12 @@ class DataTimedTaskService extends Service {
         if (datas && datas.length) {
             // 获得本地文件缓存
             try {
+                const beginTime = new Date().getTime();
                 const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file}`);
                 const ipDatas = fs.readFileSync(filepath, { encoding: 'utf8' });
                 const result = JSON.parse(`{${ipDatas.slice(0, -1)}}`);
                 this.cacheIpJson = result;
+                this.app.logger.info(`--------读取文件城市Ip地址耗时为 ${new Date().getTime() - beginTime}ms-------`);
             } catch (err) {
                 this.cacheIpJson = {};
             }
