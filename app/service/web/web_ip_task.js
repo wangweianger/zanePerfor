@@ -1,8 +1,13 @@
 'use strict';
 
 const Service = require('egg').Service;
-let cacheJson = {};
+const fs = require('fs');
+const path = require('path');
 class IpTaskService extends Service {
+    constructor(params) {
+        super(params);
+        this.cacheJson = {};
+    }
 
     // 定时任务获得ip地理位置信息
     async saveWebGetIpDatas() {
@@ -19,8 +24,17 @@ class IpTaskService extends Service {
             .exec();
 
         // 开启多线程执行
-        cacheJson = {};
         if (datas && datas.length) {
+            // 获得本地文件缓存
+            try {
+                const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file}`);
+                const ipDatas = fs.readFileSync(filepath, { encoding: 'utf8' });
+                const result = JSON.parse(`{${ipDatas.slice(0, -1)}}`);
+                this.cacheJson = result;
+            } catch (err) {
+                this.cacheJson = {};
+            }
+
             for (let i = 0; i < this.app.config.ip_thread; i++) {
                 const newSpit = datas.splice(0, 60);
                 if (datas.length) {
@@ -55,19 +69,19 @@ class IpTaskService extends Service {
         let copyip = ip.split('.');
         copyip = `${copyip[0]}.${copyip[1]}.${copyip[2]}`;
         let datas = null;
-        if (cacheJson[copyip]) {
-            datas = cacheJson[copyip];
+        if (this.cacheJson[copyip]) {
+            datas = this.cacheJson[copyip];
         } else if (this.app.config.ip_redis_or_mongodb === 'redis') {
             // 通过reids获得用户IP对应的地理位置信息
             datas = await this.app.redis.get(copyip);
             if (datas) {
                 datas = JSON.parse(datas);
-                cacheJson[copyip] = datas;
+                this.cacheJson[copyip] = datas;
             }
         } else if (this.app.config.ip_redis_or_mongodb === 'mongodb') {
             // 通过mongodb获得用户IP对应的地理位置信息
             datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).exec();
-            if (datas) cacheJson[copyip] = datas;
+            if (datas) this.cacheJson[copyip] = datas;
         }
         let result = null;
         if (datas) {
@@ -92,13 +106,13 @@ class IpTaskService extends Service {
                 _ip: ip,
                 province: result.data.content.address_detail.province,
                 city: result.data.content.address_detail.city,
-                latitude: result.data.content.point.y,
-                longitude: result.data.content.point.x,
             };
             // 保存到地址库
             this.saveIpDatasToDb(json, copyip);
             // 更新redis
             this.app.redis.set(copyip, JSON.stringify(json));
+            // 更新程序缓存
+            this.cacheJson[copyip] = json;
             // 更新用户地址信息
             return await this.updateWebEnvironment(json, _id);
         }

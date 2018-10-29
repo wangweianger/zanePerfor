@@ -1,8 +1,16 @@
 'use strict';
 
 const Service = require('egg').Service;
-let timer = null;
+const fs = require('fs');
+const path = require('path');
 class WxReportTaskService extends Service {
+
+    constructor(params) {
+        super(params);
+        this.cacheJson = {};
+        this.cacheIpJson = {};
+        this.timer = null;
+    }
 
     // 把db2的数据经过加工之后同步到db3中 的定时任务
     async saveWxReportDatas() {
@@ -20,12 +28,12 @@ class WxReportTaskService extends Service {
         *  查询db1是否正常,不正常则重启
         */
         let db1data = false;
-        clearTimeout(timer);
-        timer = setTimeout(() => {
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
             if (db1data) {
-                db1data = false; clearTimeout(timer);
+                db1data = false; clearTimeout(this.timer);
             } else {
-                this.app.restartMongodbs('db1'); clearTimeout(timer);
+                this.app.restartMongodbs('db1'); clearTimeout(this.timer);
             }
         }, 10000);
         const datas = await this.ctx.model.Wx.WxReport.find(query)
@@ -35,7 +43,18 @@ class WxReportTaskService extends Service {
         this.app.logger.info(`-----------db1--查询wx端db1数据库是否可用----${datas.length}------`);
 
         // 开启多线程执行
+        this.cacheJson = {};
         if (datas && datas.length) {
+            // 获得本地文件缓存
+            try {
+                const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file}`);
+                const ipDatas = fs.readFileSync(filepath, { encoding: 'utf8' });
+                const result = JSON.parse(`{${ipDatas.slice(0, -1)}}`);
+                this.cacheIpJson = result;
+            } catch (err) {
+                this.cacheIpJson = {};
+            }
+
             const length = datas.length;
             const number = Math.ceil(length / this.app.config.report_thread);
 
@@ -54,16 +73,16 @@ class WxReportTaskService extends Service {
     async saveDataToDb3(data, type) {
         if (!data && !data.length) return;
         const length = data.length - 1;
-        const cacheJson = {};
+
         // 遍历数据
         data.forEach(async (item, index) => {
             let system = {};
             // 做一次appId缓存
-            if (cacheJson[item.app_id]) {
-                system = cacheJson[item.app_id];
+            if (this.cacheJson[item.app_id]) {
+                system = this.cacheJson[item.app_id];
             } else {
                 system = await this.service.system.getSystemForAppId(item.app_id);
-                cacheJson[item.app_id] = system;
+                this.cacheJson[item.app_id] = system;
             }
             if (system.is_use !== 0) return;
             if (system.is_statisi_system === 0) this.savePages(item);
@@ -80,14 +99,19 @@ class WxReportTaskService extends Service {
         let copyip = ip.split('.');
         copyip = `${copyip[0]}.${copyip[1]}.${copyip[2]}`;
         let datas = null;
-        // 先查找
-        if (this.app.config.ip_redis_or_mongodb === 'redis') {
+        if (this.cacheIpJson[copyip]) {
+            datas = this.cacheIpJson[copyip];
+        } else if (this.app.config.ip_redis_or_mongodb === 'redis') {
             // 通过reids获得用户IP对应的地理位置信息
             datas = await this.app.redis.get(copyip);
-            if (datas) datas = JSON.parse(datas);
+            if (datas) {
+                datas = JSON.parse(datas);
+                this.cacheIpJson[copyip] = datas;
+            }
         } else if (this.app.config.ip_redis_or_mongodb === 'mongodb') {
             // 通过mongodb获得用户IP对应的地理位置信息
             datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).exec();
+            if (datas) this.cacheIpJson[copyip] = datas;
         }
 
         const pages = this.ctx.model.Wx.WxPages();

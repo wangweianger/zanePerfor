@@ -4,10 +4,16 @@ const url = require('url');
 const querystring = require('querystring');
 const UAParser = require('ua-parser-js');
 const Service = require('egg').Service;
-let timer = null;
-let cacheJson = {};
-let cacheIpJson = {};
+const fs = require('fs');
+const path = require('path');
 class DataTimedTaskService extends Service {
+
+    constructor(params) {
+        super(params);
+        this.cacheJson = {};
+        this.cacheIpJson = {};
+        this.timer = null;
+    }
 
     // 把db2的数据经过加工之后同步到db3中 的定时任务
     async saveWebReportDatas() {
@@ -19,18 +25,18 @@ class DataTimedTaskService extends Service {
             beginTime = new Date(new Date(beginTime).getTime() + 1000);
             query.create_time.$gt = beginTime;
         }
-
+        console.log(this.app.format(beginTime, 'yyyy/MM/dd HH:mm:ss'));
         /*
         * 请求db1数据库进行同步数据
         *  查询db1是否正常,不正常则重启
         */
         let db1data = false;
-        clearTimeout(timer);
-        timer = setTimeout(() => {
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
             if (db1data) {
-                db1data = false; clearTimeout(timer);
+                db1data = false; clearTimeout(this.timer);
             } else {
-                this.app.restartMongodbs('db1'); clearTimeout(timer);
+                this.app.restartMongodbs('db1'); clearTimeout(this.timer);
             }
         }, 10000);
         const datas = await this.ctx.model.Web.WebReport.find(query)
@@ -40,9 +46,18 @@ class DataTimedTaskService extends Service {
         this.app.logger.info(`-----------db1--查询web端db1数据库是否可用---${datas.length}-------`);
 
         // 开启多线程执行
-        cacheJson = {};
-        cacheIpJson = {};
+        this.cacheJson = {};
         if (datas && datas.length) {
+            // 获得本地文件缓存
+            try {
+                const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file}`);
+                const ipDatas = fs.readFileSync(filepath, { encoding: 'utf8' });
+                const result = JSON.parse(`{${ipDatas.slice(0, -1)}}`);
+                this.cacheIpJson = result;
+            } catch (err) {
+                this.cacheIpJson = {};
+            }
+
             const length = datas.length;
             const number = Math.ceil(length / this.app.config.report_thread);
 
@@ -66,11 +81,11 @@ class DataTimedTaskService extends Service {
         data.forEach(async (item, index) => {
             let system = {};
             // 做一次appId缓存
-            if (cacheJson[item.app_id]) {
-                system = cacheJson[item.app_id];
+            if (this.cacheJson[item.app_id]) {
+                system = this.cacheJson[item.app_id];
             } else {
                 system = await this.service.system.getSystemForAppId(item.app_id);
-                cacheJson[item.app_id] = system;
+                this.cacheJson[item.app_id] = system;
             }
             if (system.is_use !== 0) return;
             if (system.is_statisi_pages === 0) this.savePages(item, system.slow_page_time);
@@ -244,19 +259,23 @@ class DataTimedTaskService extends Service {
         copyip = `${copyip[0]}.${copyip[1]}.${copyip[2]}`;
         let datas = null;
 
-        if (cacheIpJson[copyip]) {
-            datas = cacheIpJson[copyip];
+        if (this.cacheIpJson[copyip]) {
+            datas = this.cacheIpJson[copyip];
         } else if (this.app.config.ip_redis_or_mongodb === 'redis') {
             // 通过reids获得用户IP对应的地理位置信息
             datas = await this.app.redis.get(copyip);
             if (datas) {
                 datas = JSON.parse(datas);
-                cacheIpJson[copyip] = datas;
+                this.cacheIpJson[copyip] = datas;
+                this.saveIpDatasInFile(copyip, { city: datas.city, province: datas.province });
             }
         } else if (this.app.config.ip_redis_or_mongodb === 'mongodb') {
             // 通过mongodb获得用户IP对应的地理位置信息
             datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).exec();
-            if (datas) cacheIpJson[copyip] = datas;
+            if (datas) {
+                this.cacheIpJson[copyip] = datas;
+                this.saveIpDatasInFile(copyip, { city: datas.city, province: datas.province });
+            }
         }
 
         const environment = this.ctx.model.Web.WebEnvironment();
@@ -277,6 +296,13 @@ class DataTimedTaskService extends Service {
             environment.city = datas.city;
         }
         environment.save();
+    }
+
+    // 保存城市信息到文件中
+    saveIpDatasInFile(copyip, json) {
+        const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file}`);
+        const str = `"${copyip}":${JSON.stringify(json)},`;
+        fs.appendFile(filepath, str, { encoding: 'utf8' }, () => {});
     }
 }
 
