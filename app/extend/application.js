@@ -86,9 +86,5 @@ module.exports = {
             });
         });
     },
-    deepClone(obj) {
-        const proto = Object.getPrototypeOf(obj);
-        return Object.assign({}, Object.create(proto), obj);
-    },
 };
 

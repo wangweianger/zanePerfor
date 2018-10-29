@@ -1,14 +1,14 @@
 'use strict';
 
 const Service = require('egg').Service;
-
+let cacheJson = {};
 class IpTaskService extends Service {
 
     // 定时任务获得ip地理位置信息
     async saveWebGetIpDatas() {
         let beginTime = await this.app.redis.get('ip_task_begin_time');
 
-        const query = {};
+        const query = { city: { $exists: false } };
         if (beginTime) {
             beginTime = new Date(new Date(beginTime).getTime() + 1000);
             query.create_time = { $gt: beginTime };
@@ -19,6 +19,7 @@ class IpTaskService extends Service {
             .exec();
 
         // 开启多线程执行
+        cacheJson = {};
         if (datas && datas.length) {
             for (let i = 0; i < this.app.config.ip_thread; i++) {
                 const newSpit = datas.splice(0, 60);
@@ -54,17 +55,20 @@ class IpTaskService extends Service {
         let copyip = ip.split('.');
         copyip = `${copyip[0]}.${copyip[1]}.${copyip[2]}`;
         let datas = null;
-
-        // 先查找
-        if (this.app.config.ip_redis_or_mongodb === 'redis') {
+        if (cacheJson[copyip]) {
+            datas = cacheJson[copyip];
+        } else if (this.app.config.ip_redis_or_mongodb === 'redis') {
             // 通过reids获得用户IP对应的地理位置信息
             datas = await this.app.redis.get(copyip);
-            if (datas) datas = JSON.parse(datas);
+            if (datas) {
+                datas = JSON.parse(datas);
+                cacheJson[copyip] = datas;
+            }
         } else if (this.app.config.ip_redis_or_mongodb === 'mongodb') {
             // 通过mongodb获得用户IP对应的地理位置信息
             datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).exec();
+            if (datas) cacheJson[copyip] = datas;
         }
-
         let result = null;
         if (datas) {
             // 直接更新

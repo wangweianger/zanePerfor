@@ -2,7 +2,6 @@
 
 const Service = require('egg').Service;
 let timer = null;
-let cacheJson = {};
 class WxReportTaskService extends Service {
 
     // 把db2的数据经过加工之后同步到db3中 的定时任务
@@ -33,8 +32,7 @@ class WxReportTaskService extends Service {
             .sort({ create_time: 1 })
             .exec();
         db1data = true;
-        this.app.logger.info(`-----------db1--查询wx端db1数据库是否可用--${datas.length}--------`);
-        cacheJson = {};
+        this.app.logger.info(`-----------db1--查询wx端db1数据库是否可用----${datas.length}------`);
 
         // 开启多线程执行
         if (datas && datas.length) {
@@ -56,7 +54,7 @@ class WxReportTaskService extends Service {
     async saveDataToDb3(data, type) {
         if (!data && !data.length) return;
         const length = data.length - 1;
-
+        const cacheJson = {};
         // 遍历数据
         data.forEach(async (item, index) => {
             let system = {};
@@ -76,7 +74,22 @@ class WxReportTaskService extends Service {
     }
 
     // 储存网页性能数据
-    savePages(item) {
+    async savePages(item) {
+        const ip = item.ip;
+        if (!ip) return;
+        let copyip = ip.split('.');
+        copyip = `${copyip[0]}.${copyip[1]}.${copyip[2]}`;
+        let datas = null;
+        // 先查找
+        if (this.app.config.ip_redis_or_mongodb === 'redis') {
+            // 通过reids获得用户IP对应的地理位置信息
+            datas = await this.app.redis.get(copyip);
+            if (datas) datas = JSON.parse(datas);
+        } else if (this.app.config.ip_redis_or_mongodb === 'mongodb') {
+            // 通过mongodb获得用户IP对应的地理位置信息
+            datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).exec();
+        }
+
         const pages = this.ctx.model.Wx.WxPages();
         pages.app_id = item.app_id;
         pages.create_time = item.create_time;
@@ -95,6 +108,10 @@ class WxReportTaskService extends Service {
         pages.system = item.system.system;
         pages.platform = item.system.platform;
         pages.SDKVersion = item.system.SDKVersion;
+        if (datas) {
+            pages.province = datas.province;
+            pages.city = datas.city;
+        }
         pages.save();
     }
 

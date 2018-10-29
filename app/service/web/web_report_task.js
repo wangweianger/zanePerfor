@@ -6,6 +6,7 @@ const UAParser = require('ua-parser-js');
 const Service = require('egg').Service;
 let timer = null;
 let cacheJson = {};
+let cacheIpJson = {};
 class DataTimedTaskService extends Service {
 
     // 把db2的数据经过加工之后同步到db3中 的定时任务
@@ -36,10 +37,11 @@ class DataTimedTaskService extends Service {
             .sort({ create_time: 1 })
             .exec();
         db1data = true;
-        this.app.logger.info(`-----------db1--查询web端db1数据库是否可用-----${datas.length}-----`);
-        cacheJson = {};
+        this.app.logger.info(`-----------db1--查询web端db1数据库是否可用---${datas.length}-------`);
 
         // 开启多线程执行
+        cacheJson = {};
+        cacheIpJson = {};
         if (datas && datas.length) {
             const length = datas.length;
             const number = Math.ceil(length / this.app.config.report_thread);
@@ -230,11 +232,32 @@ class DataTimedTaskService extends Service {
     }
 
     //  储存用户的设备信息
-    saveEnvironment(data) {
+    async saveEnvironment(data) {
         // 检测用户UA相关信息
         const parser = new UAParser();
         parser.setUA(data.user_agent);
         const result = parser.getResult();
+        const ip = data.ip;
+
+        if (!ip) return;
+        let copyip = ip.split('.');
+        copyip = `${copyip[0]}.${copyip[1]}.${copyip[2]}`;
+        let datas = null;
+
+        if (cacheIpJson[copyip]) {
+            datas = cacheIpJson[copyip];
+        } else if (this.app.config.ip_redis_or_mongodb === 'redis') {
+            // 通过reids获得用户IP对应的地理位置信息
+            datas = await this.app.redis.get(copyip);
+            if (datas) {
+                datas = JSON.parse(datas);
+                cacheIpJson[copyip] = datas;
+            }
+        } else if (this.app.config.ip_redis_or_mongodb === 'mongodb') {
+            // 通过mongodb获得用户IP对应的地理位置信息
+            datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).exec();
+            if (datas) cacheIpJson[copyip] = datas;
+        }
 
         const environment = this.ctx.model.Web.WebEnvironment();
         environment.app_id = data.app_id;
@@ -249,9 +272,11 @@ class DataTimedTaskService extends Service {
         environment.ip = data.ip;
         environment.county = data.county;
         environment.province = data.province;
-
+        if (datas) {
+            environment.province = datas.province;
+            environment.city = datas.city;
+        }
         environment.save();
-
     }
 }
 

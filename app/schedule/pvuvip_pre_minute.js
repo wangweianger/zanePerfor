@@ -9,9 +9,8 @@ module.exports = app => {
         },
         // 定时处pv，uv,ip统计信息 每分钟执行一次
         async task(ctx) {
-            // if (app.config.is_web_task_run) await ctx.service.web.webPvuvipTask.getWebPvUvIpByMinute();
-            // if (app.config.is_wx_task_run) await ctx.service.wx.pvuvipTask.getWxPvUvIpByMinute();
-            if (app.config.is_web_task_run) await ctx.service.web.webPvuvipTask.getWebPvUvIpBy();
+            if (app.config.is_web_task_run) await ctx.service.web.webPvuvipTask.getWebPvUvIpByMinute();
+            if (app.config.is_wx_task_run) await ctx.service.wx.pvuvipTask.getWxPvUvIpByMinute();
         },
     };
 };
