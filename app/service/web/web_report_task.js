@@ -12,6 +12,7 @@ class DataTimedTaskService extends Service {
         super(params);
         this.cacheJson = {};
         this.cacheIpJson = {};
+        this.cacheArr = [];
         this.timer = null;
     }
 
@@ -47,11 +48,12 @@ class DataTimedTaskService extends Service {
 
         // 开启多线程执行
         this.cacheJson = {};
+        this.cacheArr = [];
         if (datas && datas.length) {
             // 获得本地文件缓存
             try {
                 const beginTime = new Date().getTime();
-                const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file}`);
+                const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file.web}`);
                 const ipDatas = fs.readFileSync(filepath, { encoding: 'utf8' });
                 const result = JSON.parse(`{${ipDatas.slice(0, -1)}}`);
                 this.cacheIpJson = result;
@@ -302,7 +304,9 @@ class DataTimedTaskService extends Service {
 
     // 保存城市信息到文件中
     saveIpDatasInFile(copyip, json) {
-        const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file}`);
+        if (this.cacheArr.includes(copyip)) return;
+        this.cacheArr.push(copyip);
+        const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file.web}`);
         const str = `"${copyip}":${JSON.stringify(json)},`;
         fs.appendFile(filepath, str, { encoding: 'utf8' }, () => {});
     }

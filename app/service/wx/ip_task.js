@@ -7,6 +7,7 @@ class IpTaskService extends Service {
     constructor(params) {
         super(params);
         this.cacheJson = {};
+        this.cacheArr = [];
     }
 
     // 定时任务获得ip地理位置信息
@@ -24,10 +25,11 @@ class IpTaskService extends Service {
             .exec();
 
         // 开启多线程执行
+        this.cacheArr = [];
         if (datas && datas.length) {
             // 获得本地文件缓存
             try {
-                const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file}`);
+                const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file.wx}`);
                 const ipDatas = fs.readFileSync(filepath, { encoding: 'utf8' });
                 const result = JSON.parse(`{${ipDatas.slice(0, -1)}}`);
                 this.cacheJson = result;
@@ -107,12 +109,15 @@ class IpTaskService extends Service {
                 province: result.data.content.address_detail.province,
                 city: result.data.content.address_detail.city,
             };
-            // 保存到地址库
-            this.saveIpDatasToDb(json, copyip);
-            // 更新redis
-            this.app.redis.set(copyip, JSON.stringify(json));
-            // 更新程序缓存
-            this.cacheJson[copyip] = json;
+            if (!this.cacheArr.includes(copyip)) {
+                this.cacheArr.push(copyip);
+                // 保存到地址库
+                this.saveIpDatasToDb(json, copyip);
+                // 更新redis
+                this.app.redis.set(copyip, JSON.stringify(json));
+                // 更新程序缓存
+                this.cacheJson[copyip] = json;
+            }
             // 更新用户地址信息
             return await this.updateWxPages(json, _id);
         }

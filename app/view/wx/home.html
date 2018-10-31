@@ -38,7 +38,7 @@
 			<div class='search mb20'>
 				<input id="zane-calendar-1" class="inp" type="text" placeholder="点击选择日期">
 			</div>
-			<div class="survey" v-if="surveyone.pv">
+			<div class="survey" v-if="surveyone.app_id">
 				<div class="com pv ml50"><span>PV: </span>{{surveyone.pv}}</div>
 				<div class="com uv"><span>UV: </span>{{surveyone.uv}}</div>
 				<div class="com ip"><span>IP: </span>{{surveyone.ip}}</div>
@@ -47,17 +47,17 @@
 		<div class="com_block mt20">
 			<h1 class="com_h2 mb20">今日概况</h1>
 			<div class="survey">
-				<div class="com pv ml50"><span>PV: </span>{{surveydata.today.pv}}</div>
-				<div class="com uv"><span>UV: </span>{{surveydata.today.uv}}</div>
-				<div class="com ip"><span>IP: </span>{{surveydata.today.ip}}</div>
+				<div class="com pv ml50"><span>PV: </span>{{today.pv||0}}</div>
+				<div class="com uv"><span>UV: </span>{{today.uv||0}}</div>
+				<div class="com ip"><span>IP: </span>{{today.ip||0}}</div>
 			</div>
 		</div>
-		<div class="com_block mt20">
-			<h1 class="com_h2 mb20">昨日概况</h1>
+		<div class="com_block mt20" v-for="item in historylist">
+			<h1 class="com_h2 mb20">{{item.create_time|date}}</h1>
 			<div class="survey">
-				<div class="com pv ml50"><span>PV: </span>{{surveydata.yesterday.pv}}</div>
-				<div class="com uv"><span>UV: </span>{{surveydata.yesterday.uv}}</div>
-				<div class="com ip"><span>IP: </span>{{surveydata.yesterday.ip}}</div>
+				<div class="com pv ml50"><span>PV: </span>{{item.pv||0}}</div>
+				<div class="com uv"><span>UV: </span>{{item.uv||0}}</div>
+				<div class="com ip"><span>IP: </span>{{item.ip||0}}</div>
 			</div>
 		</div>
 	</div>
@@ -94,19 +94,32 @@ new Vue({
 			timer:null,
 			appId: util.getStorage('local', 'appId'),
 			datalist:[],
-			surveydata:{ today:{}, yesterday:{}},
+			today: {},
 			surveyone:{},
-			errText:''
+			errText:'',
+			errTextleft:'',
+			historylist: [],
 		}
+	},
+	filters: {
+		date: window.Filter.date
 	},
 	mounted() {
 		this.getPvUvIpSurvey();
+		this.getHistoryPvUvIplist();
 		zaneDate({
 			elem: '#zane-calendar-1',
 			width: 300,  
 			done: (fulltime, begintime, endtime) => { 
 				let beginTime = begintime+' 00:00:00'
 				let endTime = begintime + ' 23:59:59'
+				const maxday = new Date(new Date().format('yyyy/MM/dd') + ' 00:00:00').getTime();
+				const beginday = new Date(beginTime).getTime();
+				if (beginday >= maxday) {
+					this.errTextleft = '选择时间不能大于今日，请选择小于今日的历史间进行查询。';
+					return;
+				}
+				this.errTextleft = '';
 				this.getPvUvIpSurveyOne(beginTime,endTime)
 			}, 
 		})
@@ -157,7 +170,7 @@ new Vue({
 					endTime: this.beginTime,
 				},
 				success: (data) => {
-					this.surveydata = data.data;
+					this.today = data.data;
 				}
 			})
 		},
@@ -173,6 +186,19 @@ new Vue({
 				},
 				success: (data) => {
 					this.surveyone = data.data;
+				}
+			})
+		},
+		// 历史统计列表
+		getHistoryPvUvIplist() {
+			util.ajax({
+				type: 'get',
+				url: `${config.baseApi}api/v1/wx/pvuvip/getHistoryPvUvIplist`,
+				data: {
+					appId: this.appId,
+				},
+				success: (data) => {
+					this.historylist = data.data || [];
 				}
 			})
 		},

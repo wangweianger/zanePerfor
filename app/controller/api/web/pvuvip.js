@@ -12,20 +12,10 @@ class PvUvIpController extends Controller {
         // 今日数据概况
         const endTime_today = new Date();
         const beginTime_today = this.app.format(endTime_today, 'yyyy/MM/dd') + ' 00:00:00';
-
-        // 昨日数据概况
-        const endTime_yesterday = beginTime_today;
-        const beginTime_yesterday = new Date(new Date(endTime_yesterday).getTime() - 86400000);
-
-        const today = Promise.resolve(ctx.service.web.webPvuvip.getPvUvIpSurvey(appId, beginTime_today, endTime_today));
-        const yesterday = Promise.resolve(ctx.service.web.webPvuvip.getPvUvIpSurvey(appId, beginTime_yesterday, endTime_yesterday));
-        const all = await Promise.all([ today, yesterday ]);
+        const today = await ctx.service.web.webPvuvip.getPvUvIpSurvey(appId, beginTime_today, endTime_today);
 
         ctx.body = this.app.result({
-            data: {
-                today: all[0],
-                yesterday: all[1],
-            },
+            data: today,
         });
     }
     // 某日概况
@@ -39,7 +29,19 @@ class PvUvIpController extends Controller {
         if (!beginTime) throw new Error('pvuvip概况统计：beginTime不能为空');
         if (!endTime) throw new Error('pvuvip概况统计：endTime不能为空');
 
-        const result = await ctx.service.web.webPvuvip.getPvUvIpSurvey(appId, beginTime, endTime);
+        const result = await ctx.service.web.webPvuvip.getPvUvIpSurveyOne(appId, beginTime, endTime);
+
+        ctx.body = this.app.result({
+            data: result,
+        });
+    }
+    // 获得历史概况
+    async getHistoryPvUvIplist() {
+        const { ctx } = this;
+        const query = ctx.request.query;
+        const appId = query.appId;
+        if (!appId) throw new Error('pvuvip获得历史概况：appId不能为空');
+        const result = await ctx.service.web.webPvuvip.getHistoryPvUvIplist(appId);
 
         ctx.body = this.app.result({
             data: result,

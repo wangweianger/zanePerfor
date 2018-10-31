@@ -12,7 +12,7 @@ class WxReportService extends Service {
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
 
         const datas = await this.ctx.model.Wx.WxPages.distinct('app_id', query).exec();
-        this.groupData(datas, endTime, 2, query);
+        this.groupData(datas, beginTime, 2, query);
     }
     // 定时执行每分钟的数据
     async getWxPvUvIpByMinute() {

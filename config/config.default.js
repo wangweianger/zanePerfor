@@ -47,7 +47,10 @@ module.exports = () => {
     config.ip_redis_or_mongodb = 'redis'; // redus  mongodb
 
     // 文件缓存ip对于地理位置（文件名）
-    config.ip_city_cache_file = 'ip_city_cache_file.txt';
+    config.ip_city_cache_file = {
+        web: 'web_ip_city_cache_file.txt',
+        wx: 'wx_ip_city_cache_file.txt',
+    };
 
     // mongodb重启shell,如果mongodb进程kill了，请求不了数据库时重启（可选填）
     // config.mongodb_restart_sh = [ '/usr/local/etc/start.sh' ];
@@ -85,8 +88,7 @@ module.exports = () => {
             db: 0,
         },
     };
-
-
+    
     // mongoose配置
     config.mongoose = {
         clients: {

@@ -9,6 +9,7 @@ class WxReportTaskService extends Service {
         super(params);
         this.cacheJson = {};
         this.cacheIpJson = {};
+        this.cacheArr = [];
         this.timer = null;
     }
 
@@ -44,10 +45,11 @@ class WxReportTaskService extends Service {
 
         // 开启多线程执行
         this.cacheJson = {};
+        this.cacheArr = [];
         if (datas && datas.length) {
             // 获得本地文件缓存
             try {
-                const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file}`);
+                const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file.wx}`);
                 const ipDatas = fs.readFileSync(filepath, { encoding: 'utf8' });
                 const result = JSON.parse(`{${ipDatas.slice(0, -1)}}`);
                 this.cacheIpJson = result;
@@ -107,11 +109,15 @@ class WxReportTaskService extends Service {
             if (datas) {
                 datas = JSON.parse(datas);
                 this.cacheIpJson[copyip] = datas;
+                this.saveIpDatasInFile(copyip, { city: datas.city, province: datas.province });
             }
         } else if (this.app.config.ip_redis_or_mongodb === 'mongodb') {
             // 通过mongodb获得用户IP对应的地理位置信息
             datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).exec();
-            if (datas) this.cacheIpJson[copyip] = datas;
+            if (datas) {
+                this.cacheIpJson[copyip] = datas;
+                this.saveIpDatasInFile(copyip, { city: datas.city, province: datas.province });
+            }
         }
 
         const pages = this.ctx.model.Wx.WxPages();
@@ -185,6 +191,15 @@ class WxReportTaskService extends Service {
             errors.path = data.pages.router;
             errors.save();
         });
+    }
+
+    // 保存城市信息到文件中
+    saveIpDatasInFile(copyip, json) {
+        if (this.cacheArr.includes(copyip)) return;
+        this.cacheArr.push(copyip);
+        const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file.wx}`);
+        const str = `"${copyip}":${JSON.stringify(json)},`;
+        fs.appendFile(filepath, str, { encoding: 'utf8' }, () => { });
     }
 
 }
