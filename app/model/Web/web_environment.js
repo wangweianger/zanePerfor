@@ -11,6 +11,7 @@ module.exports = app => {
         url: { type: String }, // 访问页面的url
         mark_page: { type: String }, // 所有资源页面统一标识 html img css js 用户系统信息等
         mark_user: { type: String }, // 统一某一时间段用户标识
+        mark_uv: { type: String }, // 统一uv标识
         browser: { type: String }, // 浏览器名称
         borwser_version: { type: String }, // 浏览器版本
         system: { type: String }, // 操作系统

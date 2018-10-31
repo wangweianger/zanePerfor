@@ -127,6 +127,7 @@ class WxReportTaskService extends Service {
         pages.options = item.pages.options;
         pages.mark_page = item.mark_page;
         pages.mark_user = item.mark_user;
+        pages.mark_uv = item.mark_uv;
         pages.net = item.net;
         pages.ip = item.ip;
         pages.brand = item.system.brand;

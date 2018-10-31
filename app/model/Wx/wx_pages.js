@@ -13,6 +13,7 @@ module.exports = app => {
         options: { type: Mixed }, // 路径参数
         mark_page: { type: String }, // 所有资源页面统一标识
         mark_user: { type: String }, // 统一某一时间段用户标识
+        mark_uv: { type: String }, // 统一uv标识
         net: { type: String }, // 网络类型
         ip: { type: String }, // 用户ip
         county: { type: String }, // 国家

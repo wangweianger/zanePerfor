@@ -38,7 +38,7 @@ class WebReportService extends Service {
         query.app_id = appId;
 
         const pv = Promise.resolve(this.ctx.model.Web.WebEnvironment.count(query).exec());
-        const uv = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('mark_user', query).exec());
+        const uv = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('mark_uv', query).exec());
         const ip = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('ip', query).exec());
         const data = await Promise.all([ pv, uv, ip ]);
 

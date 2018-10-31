@@ -288,6 +288,7 @@ class DataTimedTaskService extends Service {
         environment.url = data.url;
         environment.mark_page = data.mark_page;
         environment.mark_user = data.mark_user;
+        environment.mark_uv = data.mark_uv;
         environment.browser = result.browser.name || '';
         environment.borwser_version = result.browser.version || '';
         environment.system = result.os.name || '';

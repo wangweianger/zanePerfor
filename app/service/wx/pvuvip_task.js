@@ -38,7 +38,7 @@ class WxReportService extends Service {
         query.app_id = appId;
 
         const pv = Promise.resolve(this.ctx.model.Wx.WxPages.count(query).exec());
-        const uv = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_user', query).exec());
+        const uv = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_uv', query).exec());
         const ip = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('ip', query).exec());
         const data = await Promise.all([ pv, uv, ip ]);
 

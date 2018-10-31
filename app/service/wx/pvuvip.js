@@ -14,7 +14,7 @@ class PvuvivService extends Service {
     async getPvUvIpSurvey(appId, beginTime, endTime) {
         const querydata = { app_id: appId, create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
         const pv = Promise.resolve(this.ctx.model.Wx.WxPages.count(querydata).exec());
-        const uv = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_user', querydata).exec());
+        const uv = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_uv', querydata).exec());
         const ip = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('ip', querydata).exec());
         const data = await Promise.all([ pv, uv, ip ]);
         return {

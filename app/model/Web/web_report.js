@@ -13,6 +13,7 @@ module.exports = app => {
         ip: { type: String }, // 用户ip
         mark_page: { type: String }, // 所有资源页面统一标识 html img css js 用户系统信息等
         mark_user: { type: String }, // 统一某一时间段用户标识
+        mark_uv: { type: String }, // 统一uv标识
         url: { type: String }, // 访问url
         pre_url: { type: String }, // 上一页面来源
         performance: { type: Mixed }, // 用户浏览器性能数据

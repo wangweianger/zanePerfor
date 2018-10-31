@@ -21,8 +21,9 @@ class WxReportService extends Service {
         report.create_time = query.time;
         report.errs = query.errs;
         report.ip = ip;
-        report.mark_page = this.app.randomString(19) + new Date().getTime();
+        report.mark_page = this.app.randomString(10) + new Date().getTime();
         report.mark_user = query.markuser;
+        report.mark_uv = query.markuv;
         report.net = query.net;
         report.system = query.system;
         report.loc = query.loc;
