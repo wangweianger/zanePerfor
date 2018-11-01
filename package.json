@@ -30,8 +30,8 @@
     "node": ">=8.9.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --workers=1",
-    "stop": "egg-scripts stop",
+    "start": "egg-scripts start --daemon --workers=1 --title=performance",
+    "stop": "egg-scripts stop --title=performance",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",

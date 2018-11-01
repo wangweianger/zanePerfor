@@ -53,8 +53,10 @@ module.exports = () => {
     };
 
     // mongodb重启shell,如果mongodb进程kill了，请求不了数据库时重启（可选填）
-    // config.mongodb_restart_sh = [ '/usr/local/etc/start.sh' ];
-    config.mongodb_restart_sh = [ '/data/mongodb/start.sh' ];
+    config.mongodb_restart_sh = [ '/data/mongodb/restart.sh' ];
+
+    // node.js服务重启shell,mongodb重启时，数据库连接池有可能会断，这时需要重启服务
+    config.servers_restart_sh = [ '/data/performance/restart.sh' ];
 
     // 百度地图api key
     config.BAIDUAK = '36UI4dIyIfCVKQWW7hoeSIuM';
@@ -97,10 +99,12 @@ module.exports = () => {
                 // url: 'mongodb://127.0.0.1:27017,127.0.0.1:27018/performance?replicaSet=performance',
                 url: 'mongodb://127.0.0.1:27017/performance',
                 options: {
-                    poolSize: 25,
+                    poolSize: 100,
                     keepAlive: 10000,
                     connectTimeoutMS: 10000,
                     autoReconnect: true,
+                    reconnectTries: 100,
+                    reconnectInterval: 1000,
                 },
             },
             // 定时任务执行完之后存储到数据库3
@@ -108,10 +112,12 @@ module.exports = () => {
                 // url: 'mongodb://127.0.0.1:27018,127.0.0.1:27019,127.0.0.1:27020/performance?replicaSet=performance',
                 url: 'mongodb://127.0.0.1:27019/performance',
                 options: {
-                    poolSize: 25,
+                    poolSize: 100,
                     keepAlive: 10000,
                     connectTimeoutMS: 10000,
                     autoReconnect: true,
+                    reconnectTries: 100,
+                    reconnectInterval: 1000,
                 },
             },
         },

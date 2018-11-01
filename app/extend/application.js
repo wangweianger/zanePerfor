@@ -78,13 +78,22 @@ module.exports = {
     },
     // 重启mongodb服务器
     restartMongodbs(type) {
-        if (!this.config.mongodb_restart_sh && !this.config.mongodb_restart_sh.length) return;
-        this.config.mongodb_restart_sh.forEach(item => {
-            exec(`sh ${item}`, error => {
-                if (error) { this.logger.info(`重启${type}数据库失败!`); return; }
-                this.logger.info(`重启${type}数据库成功!`);
+        if (this.config.mongodb_restart_sh && this.config.mongodb_restart_sh.length) {
+            this.config.mongodb_restart_sh.forEach(item => {
+                exec(`sh ${item}`, error => {
+                    if (error) { this.logger.info(`重启${type}数据库失败!`); return; }
+                    this.logger.info(`重启${type}数据库成功!`);
+                });
             });
-        });
+        }
+        if (this.config.servers_restart_sh && this.config.servers_restart_sh.length) {
+            this.config.servers_restart_sh.forEach(item => {
+                exec(`sh ${item}`, error => {
+                    if (error) { this.logger.info('重启node.js服务失败!'); return; }
+                    this.logger.info('重启node.js服务成功!');
+                });
+            });
+        }
     },
 };
 
