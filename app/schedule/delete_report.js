@@ -5,7 +5,7 @@ module.exports = app => {
     return {
         schedule: {
             cron: app.config.pvuvip_task_day_time,
-            type: 'all',
+            type: 'worker',
         },
         // 每天执行一次，定时删除上报的原始数据
         async task(ctx) {

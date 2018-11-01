@@ -5,7 +5,7 @@ module.exports = app => {
     return {
         schedule: {
             cron: app.config.ip_task_time,
-            type: 'all',
+            type: 'worker',
         },
         // 定时处理ip城市地理位置信息
         async task(ctx) {

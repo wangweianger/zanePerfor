@@ -7,7 +7,7 @@ module.exports = app => {
     return {
         schedule: {
             cron: app.config.report_task_time,
-            type: 'all',
+            type: 'worker',
         },
         // 定时处理上报的数据 db1同步到db3数据
         async task(ctx) {

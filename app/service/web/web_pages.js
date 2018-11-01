@@ -48,20 +48,6 @@ class PagesService extends Service {
 
     // 获得多个页面的平均性能数据
     async moreThread(appId, type, beginTime, endTime, queryjson, pageNo, pageSize, group_id) {
-
-        // let o = {
-        //     map: function () { emit(this.url, 1); },
-        //     reduce: function (key, values) { return values.length },
-        //     query: queryjson.$match,
-        //     out: { replace: 'collectionName' }
-        // }
-
-        // const res = await this.ctx.model.Web.WebPages.mapReduce(o)
-        // const r = await res.model.find().exec();
-        // console.log(r)
-
-        // return r;
-
         const result = [];
         let distinct = await this.ctx.model.Web.WebPages.distinct('url', queryjson.$match).exec() || [];
         let copdistinct = distinct;

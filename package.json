@@ -30,7 +30,7 @@
     "node": ">=8.9.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --workers=1 --title=performance",
+    "start": "egg-scripts start --daemon --workers=4 --title=performance",
     "stop": "egg-scripts stop --title=performance",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",

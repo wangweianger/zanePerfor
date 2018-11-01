@@ -5,7 +5,7 @@ module.exports = app => {
     return {
         schedule: {
             cron: app.config.pvuvip_task_day_time,
-            type: 'all',
+            type: 'worker',
         },
         // 定时处pv，uv,ip统计信息 每天执行一次
         async task(ctx) {
