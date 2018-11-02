@@ -106,6 +106,7 @@
 				<th>返回资源大小</th>
 				<th>请求参数</th>
 				<th>调用页面</th>
+				<th>访问轨迹</th>
 				<th>请求时间</th>
 				<th>操作</th>
 			</tr>
@@ -116,6 +117,7 @@
 				<td class="tc">{{item.body_size|toSize}}</td>
 				<td class="tc">{{item.options}}</td>
 				<td class="tc">{{item.path}}</td>
+				<td class="tc"><a :href="'/wx/analysisdetail?markuser='+item.mark_user">查看轨迹详情</a></td>
 				<td class="tc">{{item.create_time|date('/',true)}}</td>
 				<td class="tc w-100"><a :href="'/wx/ajaxitemdetail?markpage='+item.mark_page">详情</a></td>
 			</tr>

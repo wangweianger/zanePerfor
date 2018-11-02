@@ -8,6 +8,12 @@ module.exports = app => {
     // 首页pvuvip数据统计
     router.get('/web/home', web.webhome);
 
+    // 用户访问轨迹
+    router.get('/web/analysislist', web.analysislist);
+
+    // 访问轨迹详情
+    router.get('/web/analysisdetail', web.analysisdetail);
+
     // 访问页面平均性能
     router.get('/web/pagesavg', web.webpagesavg);
 

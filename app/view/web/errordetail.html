@@ -35,6 +35,7 @@
 				<th v-if="category=='js'">错误行</th>
 				<th v-if="category=='js'">错误列</th>
 				<th>请求方式</th>
+				<th>访问轨迹</th>
 				<th>错误时间</th>
 				<th>操作呢</th>
 			</tr>
@@ -50,6 +51,7 @@
 				<td class="tc" v-if="item.category=='js'">{{item.line}}</td>
 				<td class="tc" v-if="item.category=='js'">{{item.col}}</td>
 				<td class="tc">{{item.method}}</td>
+				<td class="tc"><a :href="'/web/analysisdetail?markuser='+item.mark_user">查看轨迹详情</a></td>
 				<td class="tc">{{item.create_time|date('/',true)}}</td>
 				<td class="tc"><a href="javascript:" @click="gotodetail(item)">详情</a></td>
 			</tr>

@@ -119,6 +119,26 @@ class WxController extends Controller {
         });
     }
 
+    // 用户访问轨迹
+    async analysislist() {
+        const { ctx } = this;
+        await ctx.render('wx/analysislist', {
+            data: {
+                title: '用户行为访问轨迹',
+            },
+        });
+    }
+
+    // 访问轨迹详情
+    async analysisdetail() {
+        const { ctx } = this;
+        await ctx.render('wx/analysisdetail', {
+            data: {
+                title: '用户访问轨迹详情',
+            },
+        });
+    }
+
 }
 
 module.exports = WxController;

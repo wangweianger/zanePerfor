@@ -46,7 +46,7 @@ module.exports = () => {
     // 解析用户ip地址为城市是使用redis还是使用mongodb
     config.ip_redis_or_mongodb = 'redis'; // redus  mongodb
 
-    // 文件缓存ip对于地理位置（文件名）
+    // 文件缓存ip对应地理位置（文件名）
     config.ip_city_cache_file = {
         web: 'web_ip_city_cache_file.txt',
         wx: 'wx_ip_city_cache_file.txt',

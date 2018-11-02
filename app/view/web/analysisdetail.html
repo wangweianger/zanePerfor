@@ -1,0 +1,224 @@
+<% include ./side.html %>
+<style scoped>
+	.com_top_title:after{
+		content:'';
+		display:block;
+		clear:both;
+	}
+	.block-time .item {
+		width: 33.33333%;
+		float: left;
+		border-right: solid 1px #eee;
+		overflow: hidden;
+		padding: 20px; 
+	}
+	.com_h1 {
+		font-size: 22px;
+		color:#333;
+		border-bottom: solid 1px #eee;
+		padding-bottom: 10px;
+		margin-bottom: 10px; 
+	}
+	.block-time .item-full {
+		width: 100%;
+		float: left;
+		overflow: hidden;
+	}
+	.block-time .item-full:nth-child(:odd) {
+		border-right: none; 
+	}
+	.block-time .item-full li {
+		width: 20%;
+		float: left;
+		margin: 8px 0; 
+	}
+	.block-time .item-full li h1 {
+		font-size: 20px;
+		color: #999; 
+		font-weight:300;
+		margin-bottom:10px;
+	}
+	.block-time .item-full h2 {
+		font-size: 30px; 
+	}
+	.block-time .top-width {
+		width: 100% !important; 
+	}
+	.content{
+		overflow:hidden;
+	}
+	.content .item{
+		overflow:hidden;
+		height:60px;
+		line-height:60px;
+		font-size:14px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		padding-left:50px;
+	}
+	.content .item:nth-child(odd){
+		background:#f5f4ff;
+	}
+	.content .item span{
+		display:inline-block;
+		margin-right:20px;
+	}
+	.content .item .inline{
+		width:50px;
+	}
+	.content .item .enter{
+		color:red;
+		font-weight:bold;
+		font-size:16px;
+	}
+	.content .item .leave{
+		color:#ff9800;
+		font-weight:bold;
+		font-size:16px;
+	}
+	.content .item .url{
+		max-width:800px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.content .item .tingliu{
+		font-weight:bold;
+		color:#2196f3;
+	}
+	.content .item .time{
+		font-size:12px;
+		color:#999;
+		margin-left:20px;
+	}
+</style>
+<div class="com_content_body main pb100" id="pages" v-cloak>
+	<div class="com_top_title">
+		<h1 class="com_h1 fl">用户行为轨迹详情信息</h1>
+		<commonsearch></commonsearch>
+	</div>
+	<div class="main mt30">
+		<!-- 页面平均耗时说明 -->
+		<div class="com_block block-time">
+			<div class="item-full div1">
+				<h1 class="com_h1">访问者信息</h1>
+				<li>
+					<h1>用户IP</h1>
+					<h2>{{analysisdetail.ip}}</h2>
+				</li>
+				<li>
+					<h1>用户浏览器</h1>
+					<h2>{{analysisdetail.browser}}</h2>
+				</li>
+				<li>
+					<h1>浏览器版本</h1>
+					<h2>{{analysisdetail.borwser_version}}</h2>
+				</li>
+				<li>
+					<h1>用户系统</h1>
+					<h2>{{analysisdetail.system}}</h2>
+				</li>
+				<li>
+					<h1>系统版本</h1>
+					<h2>{{analysisdetail.system_version}}</h2>
+				</li>
+			</div>
+		</div>
+		<!-- 具体访问详情 -->
+		<div class="com_block mt30">
+			<h1 class="com_h1">访问轨迹详情</h1>
+			<div class="content" v-if="analysislist.length">
+				<div class="item" v-for="(item,i) in analysislist">
+					<span class="inline" :class="{
+						'enter':i==0?true:false,
+						'leave':i==analysislist.length-1?true:false,
+						'online':(i!=analysislist.length-1&&i!=0)?true:false
+					}">
+						{{i==0?'进入':''}}
+						{{i==analysislist.length-1?'离开':''}}
+						<!-- {{(i!=analysislist.length-1&&i!=0)?'停留':''}} -->
+					</span>
+					<span class="url">{{item.url}}</span>
+					<span class="tingliu" v-if="i!=analysislist.length-1">停留 {{item.tingliu}}</span>
+					<span class="time">{{item.create_time|date('/',true)}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	new Vue({
+		el: '#pages',
+		data: function () {
+			return {
+				appId: util.getStorage('local', 'appId'),
+				markuser: util.getQueryString('markuser') || '',
+				analysisdetail:{},
+				analysislist:[],
+			}
+		},
+		filters: {
+			toFixed: window.Filter.toFixed,
+			toSize: window.Filter.toSize,
+			date: window.Filter.date,
+		},
+		mounted() {
+			this.getAnalysisOneList();
+		},
+		methods: {
+			getAnalysisOneList(){
+				util.ajax({
+					type: 'get',
+					url: config.baseApi + 'api/v1/analysis/getAnalysisOneList',
+					data: {
+						appId: this.appId,
+						markuser: this.markuser,
+					},
+					success: data => {
+						if (data.data && data.data.length) {
+							data.data.forEach((item,i)=>{
+								if(data.data[i+1]){
+									let day = 0;
+									let hour = 0;
+									let minute = 0;
+									let sec = 0;
+									let tingliu = new Date(data.data[i + 1].create_time).getTime() - new Date(item.create_time).getTime();
+
+									if (tingliu >= 86400000) {
+											day = Math.floor(tingliu / 86400000);
+											tingliu = tingliu - day * 86400000
+										}
+
+									if(tingliu >= 3600000){
+										hour = Math.floor(tingliu / 3600000);
+										tingliu = tingliu - hour * 3600000
+									}
+
+									if(tingliu >= 60000) {
+										minute = Math.floor(tingliu / 60000);
+										tingliu = tingliu - minute * 60000
+									}
+
+									if(tingliu >= 1000){
+										sec = Math.floor(tingliu / 1000);
+										tingliu = tingliu - sec * 1000
+										console.log(sec)
+									}
+									if(day || hour|| minute|| sec){
+										item.tingliu = (day ? day + '天' : '') + (hour ? hour + '小时' : '') + (minute ? minute + '分' : '') + (sec ? sec + '秒' : '');
+									}else{
+										item.tingliu = tingliu+'毫秒'
+									}
+								}
+							})
+							this.analysisdetail = data.data[0];
+							this.analysislist = data.data;
+						}
+					}
+				})
+			},
+		}
+	})
+</script>

@@ -11,6 +11,7 @@ module.exports = app => {
         ajax,
         resource,
         error,
+        analysis,
     } = controller.api.web;
 
     // 校验用户是否登录中间件
@@ -33,6 +34,12 @@ module.exports = app => {
     apiV1Router.post('pvuvip/getPvUvIpOne', tokenRequired, pvuvip.getPvUvIpOne);
     // 获得历史pvuvip统计列表
     apiV1Router.get('pvuvip/getHistoryPvUvIplist', tokenRequired, pvuvip.getHistoryPvUvIplist);
+
+    // ----------------- 用户漏斗分析 ----------------
+    // 用户行为轨迹列表
+    apiV1Router.get('analysis/getAnalysislist', tokenRequired, analysis.getAnalysislist);
+    // 单个用户行为轨迹列表
+    apiV1Router.get('analysis/getAnalysisOneList', tokenRequired, analysis.getAnalysisOneList);
 
     // ----------------页面性能分析---------------
     // 平均列表

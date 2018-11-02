@@ -17,24 +17,18 @@
 </style>
 <div class="com_content_body main pb100" id="pages" v-cloak>
 	<div class="com_top_title">
-		<h1 class="com_h1 fl">脚本错误</h1>
+		<h1 class="com_h1 fl">用户行为轨迹分析</h1>
 		<commonsearch :done="getDataForTime"></commonsearch>
 	</div>
-	<div class="com_topic mb20 mt20"><span class="iconfont">&#xe63a;</span>统计某一个接口的平均访问性能指标。</div>
-	<div class="com_slide_tab_x mt30 mb30">
-		<div class="item" :class="{'active':type==''}" @click="checkoutLabel('')">全部</div>
-		<div class="item" :class="{'active':type=='ajax'}" @click="checkoutLabel('ajax')">AJAX错误</div>
-		<div class="item" :class="{'active':type=='resource'}" @click="checkoutLabel('resource')">RESOURCE资源错误</div>
-		<div class="item" :class="{'active':type=='js'}" @click="checkoutLabel('js')">JS错误</div>
-	</div>
+	<div class="com_topic mb20 mt20"><span class="iconfont">&#xe63a;</span>统计某个IP用户的页面访问详细轨迹。</div>
 	<div>
 		<!-- 公共搜索条件 -->
 		<div class="com_search">
 			<div class="item">
 				<div>
-					<span class="name">输入资源名称：</span>
-					<input class="inp" v-model="url" placeholder="选填、输入资源名称" type="text">
-					<button class="btn btn-default" @click="searchForUrl">搜索</button>
+					<span class="name">输入IP查询：</span>
+					<input class="inp" v-model="ip" placeholder="选填、输入IP查询" type="text">
+					<button class="btn btn-default" @click="searchForIp">搜索</button>
 				</div>
 				<div class="ml30">
 					<span class="name">选择日期查询：</span>
@@ -43,20 +37,26 @@
 			</div>
 			<div class="tipscolor mt10" v-if="errText">{{errText}}</div>
 		</div>
+		<div class="user-analysis">
+			<div class="left">
+
+			</div>
+			<div class="right">
+
+			</div>
+		</div>
 		<!-- table列表 -->
 		<table class="table" v-if="isLoadend&&listdata.length">
 			<tr class="light_color">
-				<th class="w-300">错误资源</th>
-				<th class="w-100">错误数量</th>
-				<th class="w-100">错误类型</th>
-				<th class="w-500">错误信息</th>
-				<th class="w-100">操作</th>
+				<th class="w-300">访问者IP</th>
+				<th class="w-300">浏览器</th>
+				<th class="w-300">操作系统</th>
+				<th class="w-300">操作</th>
 			</tr>
 			<tr v-for="item in listdata">
-				<td><a href="javascript:" @click="goToList(item)">{{item._id.resourceurl}}</a></td>
-				<td class="tc">{{item.count}}</td>
-				<td class="tc" >{{item._id.category}}</td>
-				<td class="red">{{item._id.msg}}</td>
+				<td><a href="javascript:" @click="goToList(item)">{{item._id.ip}}</a></td>
+				<td class="tc">{{item._id.browser}}</td>
+				<td class="tc">{{item._id.system}}</td>
 				<td class="tc"><a href="javascript:" @click="goToList(item)">详情</a></td>
 			</tr>
 		</table>
@@ -82,8 +82,7 @@
 				endTime: '',
 				isLoadend: false,
 				appId: util.getStorage('local', 'appId'),
-				type: '', 
-				url:'',
+				ip:'',
 				errText:'',
 			}
 		},
@@ -96,13 +95,6 @@
 			this.searchForTime();
 		},
 		methods: {
-			checkoutLabel(type) {
-				this.type = type;
-				this.pageNo = 1;
-				this.totalNum = 0;
-
-				this.getinit();
-			},
 			getDataForTime(){
 				let times = util.getSearchTime()
 				this.beginTime = times.beginTime
@@ -113,15 +105,14 @@
 				this.isLoadend = false;
 				util.ajax({
 					type:'get',
-					url: config.baseApi + 'api/v1/error/getAverageErrorList',
+					url: config.baseApi + 'api/v1/analysis/getAnalysislist',
 					data: {
-						type:this.type,
 						appId:this.appId,
 						pageNo: this.pageNo,
 						pageSize: this.pageSize,
 						beginTime: this.beginTime,
 						endTime: this.endTime,
-						url: this.url,
+						ip: this.ip,
 					},
 					success: data => {
 						this.isLoadend = true;
@@ -140,7 +131,7 @@
 					}
 				})
 			},
-			searchForUrl(){
+			searchForIp(){
 				this.getinit();
 			},
 			searchForTime(){
@@ -168,7 +159,7 @@
 				});
 			},
 			goToList(item) {
-				location.href = "/web/errordetail?url="+ encodeURIComponent(item._id.resourceurl)+'&category='+ item._id.category;
+				location.href = "/web/analysisdetail?markuser="+ item._id.markuser;
 			}
 		}
 	})

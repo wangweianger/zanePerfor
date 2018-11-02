@@ -9,6 +9,12 @@ module.exports = app => {
     // web端新增系统
     router.get('/wx/addsystem', wx.wxaddsystem);
 
+    // 用户访问轨迹
+    router.get('/wx/analysislist', wx.analysislist);
+
+    // 访问轨迹详情
+    router.get('/wx/analysisdetail', wx.analysisdetail);
+
     // 小程序首页
     router.get('/wx/home', wx.wxhome);
 

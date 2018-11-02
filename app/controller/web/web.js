@@ -158,6 +158,26 @@ class WebController extends Controller {
             },
         });
     }
+
+    // 用户访问轨迹
+    async analysislist() {
+        const { ctx } = this;
+        await ctx.render('web/analysislist', {
+            data: {
+                title: '用户行为访问轨迹',
+            },
+        });
+    }
+
+    // 访问轨迹详情
+    async analysisdetail() {
+        const { ctx } = this;
+        await ctx.render('web/analysisdetail', {
+            data: {
+                title: '用户访问轨迹详情',
+            },
+        });
+    }
 }
 
 module.exports = WebController;

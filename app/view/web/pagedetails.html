@@ -130,8 +130,8 @@
 		<commonsearch></commonsearch>
 	</div>
 	<div class="com_block mt20">
-		<span class="text">完整URL：</span>
-		{{datas.full_url}}
+		<div><span class="text">完整URL：</span>{{datas.full_url}}</div>
+		<div class="mt15"><span class="text">访问轨迹：</span><a :href="'/web/analysisdetail?markuser='+datas.mark_user">查看用户访问轨迹详情</a></div>
 	</div>
 	<!-- 页面平均耗时说明 -->
 	<div class="block-time mt20">

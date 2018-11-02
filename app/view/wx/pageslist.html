@@ -98,6 +98,7 @@
 				<th>SDK版本</th>
 				<th>屏幕宽度</th>
 				<th>屏幕高度</th>
+				<th>访问轨迹</th>
 				<th>请求时间</th>
 				<th>操作</th>
 			</tr>
@@ -112,6 +113,7 @@
 				<td class="tc">{{item.SDKVersion}}</td>
 				<td class="tc">{{item.screenWidth}}</td>
 				<td class="tc">{{item.screenHeight}}</td>
+				<td class="tc"><a :href="'/wx/analysisdetail?markuser='+item.mark_user">查看轨迹详情</a></td>
 				<td class="tc">{{item.create_time|date('/',true)}}</td>
 				<td class="tc"><a :href="'/wx/pagesdetails?id='+item._id">详情</a></td>
 			</tr>
