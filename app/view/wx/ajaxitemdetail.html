@@ -125,6 +125,7 @@
 				pages: {},
 				appId: util.getStorage('local', 'appId'),
 				markPage: util.getQueryString('markPage') || '',
+				id: util.getQueryString('id') || '',
 			}
 		},
 		filters: {
@@ -143,8 +144,7 @@
 					type:'get',
 					url: config.baseApi + 'api/v1/wx/ajax/getOneAjaxDetail',
 					data: {
-						appId:this.appId,
-						markPage:this.markPage,
+						id:this.id,
 					},
 					success: data => {
 						this.isLoadend = true;

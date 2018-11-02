@@ -185,8 +185,8 @@ class AjaxsService extends Service {
     }
 
     // 获得单个ajax详情信息
-    async getOneAjaxDetail(appId, markPage) {
-        return await this.ctx.model.Wx.WxAjaxs.findOne({ app_id: appId, mark_page: markPage }).exec() || {};
+    async getOneAjaxDetail(id) {
+        return await this.ctx.model.Wx.WxAjaxs.findOne({ _id: id }).exec() || {};
     }
 }
 

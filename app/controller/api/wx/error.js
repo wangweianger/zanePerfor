@@ -65,13 +65,11 @@ class ErrorController extends Controller {
     async getErrorDetail() {
         const { ctx } = this;
         const query = ctx.request.query;
-        const appId = query.appId;
         const id = query.id;
 
-        if (!appId) throw new Error('单个error详情信息：appId不能为空');
         if (!id) throw new Error('单个error详情信息：id不能为空');
 
-        const result = await ctx.service.wx.errors.getErrorDetail(appId, id);
+        const result = await ctx.service.wx.errors.getErrorDetail(id);
 
         ctx.body = this.app.result({
             data: result,

@@ -80,13 +80,11 @@ class AjaxsController extends Controller {
     async getOneAjaxDetail() {
         const { ctx } = this;
         const query = ctx.request.query;
-        const appId = query.appId;
-        const markPage = query.markPage;
+        const id = query.id;
 
-        if (!appId) throw new Error('获得单个ajax详情信息：appId不能为空');
-        if (!markPage) throw new Error('获得单个ajax详情信息：markPage不能为空');
+        if (!id) throw new Error('获得单个ajax详情信息：id不能为空');
 
-        const result = await ctx.service.wx.ajaxs.getOneAjaxDetail(appId, markPage);
+        const result = await ctx.service.wx.ajaxs.getOneAjaxDetail(id);
 
         ctx.body = this.app.result({
             data: result,

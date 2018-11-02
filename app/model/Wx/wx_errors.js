@@ -22,6 +22,8 @@ module.exports = app => {
         path: { type: String }, // 所属path路径
     });
 
-    WxErrorsSchema.index({ create_time: 1 });
+    WxErrorsSchema.index({ app_id: 1, create_time: -1 });
+    WxErrorsSchema.index({ type: 1, app_id: 1, create_time: 1 });
+
     return conn.model('WxErrors', WxErrorsSchema);
 };

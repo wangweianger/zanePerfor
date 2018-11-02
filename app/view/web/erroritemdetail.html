@@ -142,6 +142,7 @@
 				appId: util.getStorage('local', 'appId'),
 				markPage: util.getQueryString('markPage') || '',
 				category: util.getQueryString('category') || '',
+				id: util.getQueryString('id') || '',
 			}
 		},
 		filters: {
@@ -160,8 +161,7 @@
 					type:'get',
 					url: config.baseApi + 'api/v1/error/getErrorDetail',
 					data: {
-						appId:this.appId,
-						markPage:this.markPage,
+						id:this.id,
 					},
 					success: data => {
 						this.isLoadend = true;

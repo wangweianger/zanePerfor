@@ -47,7 +47,7 @@ class AjaxsService extends Service {
         type = type * 1;
 
         // 查询参数拼接
-        const queryjson = { $match: { app_id: appId, speed_type: type }, }
+        const queryjson = { $match: { speed_type: type, app_id: appId }, }
         if (url) queryjson.$match.url = { $regex: new RegExp(url, 'i') };
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
@@ -76,7 +76,7 @@ class AjaxsService extends Service {
             resolvelist.push(
                 Promise.resolve(
                     this.ctx.model.Web.WebAjaxs.aggregate([
-                        { $match: { app_id: appId, url: distinct[i], speed_type: type, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
+                        { $match: { speed_type: type, app_id: appId, url: distinct[i], create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
                         {
                             $group: {
                                 _id: group_id,
@@ -187,8 +187,8 @@ class AjaxsService extends Service {
     }
 
     // 获得单个ajax详情信息
-    async getOneAjaxDetail(appId, markPage) {
-        return await this.ctx.model.Web.WebAjaxs.findOne({ app_id: appId, mark_page: markPage }).exec() || {};
+    async getOneAjaxDetail(id) {
+        return await this.ctx.model.Web.WebAjaxs.findOne({ _id: id }).exec() || {};
     }
 }
 

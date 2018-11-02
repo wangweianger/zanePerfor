@@ -139,8 +139,8 @@ class ResourceService extends Service {
     }
 
     // 获得单个Resource详情信息
-    async getOneResourceDetail(appId, markPage) {
-        return await this.ctx.model.Web.WebResource.findOne({ app_id: appId, mark_page: markPage }).exec() || {};
+    async getOneResourceDetail(id) {
+        return await this.ctx.model.Web.WebResource.findOne({ _id: id}).exec() || {};
     }
 }
 

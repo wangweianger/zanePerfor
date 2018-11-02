@@ -20,11 +20,7 @@ module.exports = app => {
         query_datas: { type: String }, // ajax 请求参数
     });
 
-    WebAjaxsSchema.index({ app_id: 1, speed_type: 1, create_time: 1 });
-    WebAjaxsSchema.index({ app_id: 1, speed_type: 1, url: 1, create_time: 1 });
-    WebAjaxsSchema.index({ app_id: 1, call_url: -1 });
-    WebAjaxsSchema.index({ app_id: 1, url: 1 });
-
+    WebAjaxsSchema.index({ speed_type: 1, app_id: 1, url: 1, create_time: -1 });
 
     return conn.model('WebAjaxs', WebAjaxsSchema);
 };

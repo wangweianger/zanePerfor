@@ -20,9 +20,12 @@ class PagesService extends Service {
         type = type * 1;
 
         // 查询参数拼接
-        const queryjson = { $match: { app_id: appId, speed_type: type }, }
+        const queryjson = { $match: { 
+            speed_type: type,
+            app_id: appId,
+            create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) },
+        }, }
         if (url) queryjson.$match.url = { $regex: new RegExp(url, 'i') };
-        if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
         const group_id = { 
             url: "$url", 
@@ -49,7 +52,7 @@ class PagesService extends Service {
             resolvelist.push(
                 Promise.resolve(
                     this.ctx.model.Web.WebPages.aggregate([
-                        { $match: { app_id: appId, url: distinct[i], speed_type: type, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
+                        { $match: { speed_type: type, app_id: appId, url: distinct[i], create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
                         {
                             $group: {
                                 _id: group_id,
@@ -141,9 +144,12 @@ class PagesService extends Service {
         type = type * 1;
 
         // 查询参数拼接
-        const queryjson = { $match: { url: url, app_id: appId, speed_type: type }, }
-
-        if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
+        const queryjson = { $match: { 
+            create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) },
+            url: url,
+            app_id: appId,
+            speed_type: type,
+        }, }
 
         const count = Promise.resolve(this.ctx.model.Web.WebPages.count(queryjson.$match).exec());
         const datas = Promise.resolve(
@@ -164,8 +170,8 @@ class PagesService extends Service {
     }
 
     // 单个页面详情
-    async getPageDetails(appId, id) {
-        return await this.ctx.model.Web.WebPages.findOne({ app_id: appId, _id: id }).exec();
+    async getPageDetails(id) {
+        return await this.ctx.model.Web.WebPages.findOne({ _id: id }).exec();
     }
 }
 

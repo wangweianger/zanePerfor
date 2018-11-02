@@ -92,8 +92,8 @@ class ErroesService extends Service {
     }
 
     // 单个error详情信息
-    async getErrorDetail(appId, id) {
-        return await this.ctx.model.Wx.WxErrors.findOne({ app_id: appId, _id: id }).exec() || {};
+    async getErrorDetail(id) {
+        return await this.ctx.model.Wx.WxErrors.findOne({ _id: id }).exec() || {};
     }
 
 }

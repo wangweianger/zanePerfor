@@ -16,7 +16,8 @@ module.exports = app => {
         create_time: { type: Date, default: Date.now },
     });
 
-    WxPvUvIpSchema.index({ app_id: -1, create_time: 1 });
+    WxPvUvIpSchema.index({ type: 1, app_id: 1, create_time: 1 });
+    WxPvUvIpSchema.index({ type: 1, app_id: 1, bounce: 1, depth: 1, create_time: 1 });
 
     return conn.model('WxPvUvIp', WxPvUvIpSchema);
 };
