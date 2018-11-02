@@ -108,3 +108,5 @@ $ open http://localhost:7001/
 ![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/06.png "")
 ![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/07.png "")
 ![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/08.png "")
+![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/09.png "")
+![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/10.png "")
