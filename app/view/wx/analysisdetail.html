@@ -28,7 +28,7 @@
 		border-right: none; 
 	}
 	.block-time .item-full li {
-		width: 20%;
+		width: 25%;
 		float: left;
 		margin: 8px 0; 
 	}
@@ -65,7 +65,8 @@
 		margin-right:20px;
 	}
 	.content .item .inline{
-		width:50px;
+		min-width:50px;
+		max-width:80px;
 	}
 	.content .item .enter{
 		color:red;
@@ -151,7 +152,7 @@
 						{{i==analysislist.length-1?'离开':''}}
 						<!-- {{(i!=analysislist.length-1&&i!=0)?'停留':''}} -->
 					</span>
-					<span class="url">{{item.url}}</span>
+					<span class="url">{{item.path}}</span>
 					<span class="tingliu" v-if="i!=analysislist.length-1">停留 {{item.tingliu}}</span>
 					<span class="time">{{item.create_time|date('/',true)}}</span>
 				</div>
