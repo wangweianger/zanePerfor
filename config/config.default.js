@@ -90,7 +90,7 @@ module.exports = () => {
             db: 0,
         },
     };
-    
+   
     // mongoose配置
     config.mongoose = {
         clients: {
@@ -149,10 +149,8 @@ module.exports = () => {
                 desc: err.toString().replace('Error: ', ''),
             });
             ctx.status = 200;
-            // 统一错误日志打印
-            console.log('----------error信息begin----------');
-            console.log(err);
-            console.log('----------error信息end----------');
+            // 统一错误日志记录
+            ctx.logger.info(`统一错误日志：发现了错误${err}`);
         },
     };
 
