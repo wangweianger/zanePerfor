@@ -90,7 +90,7 @@ module.exports = () => {
             db: 0,
         },
     };
-   
+    
     // mongoose配置
     config.mongoose = {
         clients: {

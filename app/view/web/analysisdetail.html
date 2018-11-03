@@ -28,7 +28,7 @@
 		border-right: none; 
 	}
 	.block-time .item-full li {
-		width: 20%;
+		width: 25%;
 		float: left;
 		margin: 8px 0; 
 	}
@@ -123,6 +123,14 @@
 				<li>
 					<h1>系统版本</h1>
 					<h2>{{analysisdetail.system_version}}</h2>
+				</li>
+				<li>
+					<h1>所属省份</h1>
+					<h2>{{analysisdetail.province||'未知'}}</h2>
+				</li>
+				<li>
+					<h1>所属城市</h1>
+					<h2>{{analysisdetail.city||'未知'}}</h2>
 				</li>
 			</div>
 		</div>
