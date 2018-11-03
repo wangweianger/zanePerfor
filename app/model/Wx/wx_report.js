@@ -21,7 +21,7 @@ module.exports = app => {
         pages: { type: Mixed }, // 小程序path路径信息
         ajaxs: { type: Array }, // 当前path页面ajax相关信息
     });
-
     WxReportSchema.index({ create_time: 1 });
+
     return conn.model('WxReport', WxReportSchema);
 };

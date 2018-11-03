@@ -23,5 +23,6 @@ module.exports = app => {
         screenheight: { type: Number }, // 屏幕高度
     });
     WebReportSchema.index({ create_time: 1 });
+
     return conn.model('WebReport', WebReportSchema);
 };

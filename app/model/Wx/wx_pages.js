@@ -30,7 +30,10 @@ module.exports = app => {
         SDKVersion: { type: String }, // 客户端基础库版本
     });
 
-    // WxPagesSchema.index({ create_time: 1 });
+    WxPagesSchema.index({ app_id: 1, path: 1, create_time: -1 });
+    WxPagesSchema.index({ app_id: 1, create_time: -1 });
+    WxPagesSchema.index({ app_id: 1, mark_page: -1 });
+    WxPagesSchema.index({ app_id: 1, mark_user: -1 });
 
     return conn.model('WxPages', WxPagesSchema);
 };

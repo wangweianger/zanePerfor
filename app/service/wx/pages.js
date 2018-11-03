@@ -39,7 +39,7 @@ class PagesService extends Service {
             net: `${isNet == 'true' ? "$net" : ""}`, 
         };
 
-        return url ? await this.oneThread(queryjson, pageNo, pageSize, group_id)
+        return (url || city) ? await this.oneThread(queryjson, pageNo, pageSize, group_id)
             : await this.moreThread(appId,beginTime, endTime, queryjson, pageNo, pageSize, group_id);
 
     }
@@ -96,7 +96,7 @@ class PagesService extends Service {
 
     // 单个页面查询平均信息
     async oneThread(queryjson, pageNo, pageSize, group_id) {
-        const count = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('url', queryjson.$match).exec());
+        const count = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('path', queryjson.$match).exec());
         const datas = Promise.resolve(
             this.ctx.model.Wx.WxPages.aggregate([
                 queryjson,
