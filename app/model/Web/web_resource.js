@@ -25,6 +25,7 @@ module.exports = app => {
 
     WebResourceSchema.index({ speed_type: 1, app_id: 1, name: 1, create_time: -1 });
     WebResourceSchema.index({ app_id: 1, name: 1, create_time: -1 });
+    WebResourceSchema.index({ speed_type: 1, app_id: 1, url: 1 });
 
     return conn.model('WebResource', WebResourceSchema);
 };

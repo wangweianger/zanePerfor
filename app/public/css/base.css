@@ -440,3 +440,8 @@ table.table tr td{
     border-radius:10px;
 }
 
+.word-wrap {
+    display: inline-block;
+    width: 350px;
+    word-wrap: break-word;
+}
