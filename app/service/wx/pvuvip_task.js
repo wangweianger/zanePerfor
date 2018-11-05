@@ -50,8 +50,8 @@ class WxReportService extends Service {
         const pv = data[0] || 0;
         const uv = data[1].length || 0;
         const ip = data[2].length || 0;
-        const user = data[3] || 0;
-        const bounce = data[4] || 0;
+        const user = type === 2 ? data[3].length : 0;
+        const bounce = type === 2 ? data[4] : 0;
 
         const pvuvip = this.ctx.model.Wx.WxPvuvip();
         pvuvip.app_id = appId;

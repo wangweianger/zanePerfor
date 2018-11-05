@@ -52,14 +52,16 @@ module.exports = () => {
         wx: 'wx_ip_city_cache_file.txt',
     };
 
-    // mongodb重启shell,如果mongodb进程kill了，请求不了数据库时重启（可选填）
-    config.mongodb_restart_sh = [ '/data/mongodb/restart.sh' ];
-
-    // node.js服务重启shell,mongodb重启时，数据库连接池有可能会断，这时需要重启服务
-    config.servers_restart_sh = [ '/data/performance/restart.sh' ];
+    // shell重启
+    config.shell_restart = {
+        // mongodb重启shell,如果mongodb进程kill了，请求不了数据库时重启（可选填）
+        mongodb: [ '/data/performance/mongodb-restart.sh' ],
+        // node.js服务重启shell,mongodb重启时，数据库连接池有可能会断，这时需要重启服务
+        servers: [ '/data/performance/servers-restart.sh' ],
+    };
 
     // 百度地图api key
-    config.BAIDUAK = '36UI4dIyIfCVKQWW7hoeSIuM';
+    config.BAIDUAK = '这里替换为你的百度KEY';
 
     // 分页条数
     config.pageSize = 50;
@@ -81,7 +83,6 @@ module.exports = () => {
     };
 
     // redis配置
-    // test
     config.redis = {
         client: {
             port: 6379, // Redis port
@@ -90,34 +91,22 @@ module.exports = () => {
             db: 0,
         },
     };
-    
+
     // mongoose配置
     config.mongoose = {
         clients: {
             // 主库:负责存储数据 从库：复责读取数据
             db1: {
-                // url: 'mongodb://127.0.0.1:27017,127.0.0.1:27018/performance?replicaSet=performance',
                 url: 'mongodb://127.0.0.1:27017/performance',
                 options: {
-                    poolSize: 100,
-                    keepAlive: 10000,
-                    connectTimeoutMS: 10000,
-                    autoReconnect: true,
-                    reconnectTries: 100,
-                    reconnectInterval: 1000,
+                    poolSize: 20,
                 },
             },
             // 定时任务执行完之后存储到数据库3
             db3: {
-                // url: 'mongodb://127.0.0.1:27018,127.0.0.1:27019,127.0.0.1:27020/performance?replicaSet=performance',
                 url: 'mongodb://127.0.0.1:27019/performance',
                 options: {
-                    poolSize: 100,
-                    keepAlive: 10000,
-                    connectTimeoutMS: 10000,
-                    autoReconnect: true,
-                    reconnectTries: 100,
-                    reconnectInterval: 1000,
+                    poolSize: 20,
                 },
             },
         },
@@ -129,7 +118,7 @@ module.exports = () => {
     };
 
     config.security = {
-        domainWhiteList: [ 'https://performance.niwoning.com', 'http://127.0.0.1:18090' ],
+        domainWhiteList: [ 'http://127.0.0.1:18090' ],
         csrf: {
             enable: false,
             ignore: '/api/v1/report/**',
