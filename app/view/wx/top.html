@@ -46,8 +46,8 @@
 						<th class="w-300">页面地址</th>
 						<th>访问量</th>
 					</tr>
-					<tr v-for="item in listpages">
-						<td>{{item._id.url}}</td>
+					<tr v-for="(item,i) in listpages">
+						<td>{{i+1 +'、'+item._id.url}}</td>
 						<td class="tc">{{item.count}}</td>
 					</tr>
 				</table>
@@ -61,11 +61,11 @@
 				</div>
 				<table class="table" v-if="listjumpout.length">
 					<tr>
-						<th>页面地址</th>
+						<th class="w-300">页面地址</th>
 						<th>访问量</th>
 					</tr>
-					<tr v-for="item in listjumpout">
-						<td>{{item._id.value}}</td>
+					<tr v-for="(item,i) in listjumpout">
+						<td>{{i+1 +'、'+item._id.value}}</td>
 						<td class="tc">{{item.count}}</td>
 					</tr>
 				</table>
