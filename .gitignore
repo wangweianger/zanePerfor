@@ -1,4 +1,5 @@
 logs/
+config/
 npm-debug.log
 yarn-error.log
 node_modules/
@@ -10,5 +11,3 @@ run/
 .DS_Store
 *.sw*
 *.un~
-config/config.prod.js
-
