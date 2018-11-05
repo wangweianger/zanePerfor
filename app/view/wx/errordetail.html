@@ -37,7 +37,7 @@
 				<th>操作呢</th>
 			</tr>
 			<tr v-for="item in listdata">
-				<td class="tc w-300"><a href="javascript:" @click="gotodetail(item)">{{item.name}}</a></td>
+				<td class="tc w-300"><a class="word-wrap" href="javascript:" @click="gotodetail(item)">{{item.name}}</a></td>
 				<td class="tc red">{{item.msg}}</td>
 				<td class="tc">{{item.type}}</td>
 				<td class="tc">{{item.path}}</td>

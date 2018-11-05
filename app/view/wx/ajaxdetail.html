@@ -111,7 +111,7 @@
 				<th>操作</th>
 			</tr>
 			<tr v-for="item in listdata">
-				<td class="tc w-300"><a :href="'/wx/ajaxitemdetail?markpage='+item.mark_page+'&id='+item._id">{{item.name}}</a></td>
+				<td class="tc w-300"><a class="word-wrap" :href="'/wx/ajaxitemdetail?markpage='+item.mark_page+'&id='+item._id">{{item.name}}</a></td>
 				<td class="tc">{{item.method}}</td>
 				<td class="red tc">{{item.duration|toFixed}}</td>
 				<td class="tc">{{item.body_size|toSize}}</td>

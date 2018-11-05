@@ -103,7 +103,7 @@
 				<th>操作</th>
 			</tr>
 			<tr v-for="item in listdata">
-				<td><a :href="'/wx/pagesdetails?id='+item._id">{{item.path}}</a></td>
+				<td><a class="word-wrap" :href="'/wx/pagesdetails?id='+item._id">{{item.path}}</a></td>
 				<td class="red tc">{{item.brand}}</td>
 				<td class="red tc">{{item.model}}</td>
 				<td class="tc">{{item.net}}</td>

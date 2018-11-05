@@ -1,0 +1,150 @@
+<% include ./side.html %>
+<style scoped>
+	.com_top_title:after{
+		content:'';
+		display:block;
+		clear:both;
+	}
+	table.table{
+		background:#fff;
+	}
+	table.table .light_color th{
+		font-weight:400;
+	}
+	table.table tr td{
+		font-size:12px;
+	}
+	
+</style>
+<div class="com_content_body main pb100" id="pages" v-cloak>
+	<div class="com_top_title">
+		<h1 class="com_h1 fl">项目TOP分析</h1>
+		<commonsearch></commonsearch>
+	</div>
+	<div class="main mt20">
+		<!-- 公共搜索条件 -->
+		<div class="com_block com_search mb20">
+			<div class="item">
+				<div class="ml30">
+					<span class="name">选择日期：</span>
+					<input id="zane-calendar-1" class="inp w-300" type="text" placeholder="选择日期查询">
+				</div>
+			</div>
+			<div class="tipscolor mt10" v-if="errText">{{errText}}</div>
+		</div>
+		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span>实时TOP分析会有1分钟的延迟,定时任务1分钟更新一次。</div>
+		<!-- main -->
+		<div class="b-parent mt20">
+			<div class="b-50">
+				<div class="com-title">
+					<div class="com-left"><span class="com-icon"></span>
+						<h1 class="com-h1">TOP10访问页面</h1>
+					</div>
+				</div>
+				<table class="table" v-if="listpages.length">
+					<tr>
+						<th class="w-300">页面地址</th>
+						<th>访问量</th>
+					</tr>
+					<tr v-for="item in listpages">
+						<td>{{item._id.url}}</td>
+						<td class="tc">{{item.count}}</td>
+					</tr>
+				</table>
+				<div class="empty tc mt20" v-if="!listpages.length">暂无数据!</div>
+			</div>
+			<div class="b-50">
+				<div class="com-title">
+					<div class="com-left"><span class="com-icon"></span>
+						<h1 class="com-h1">TOP10跳出率</h1>
+					</div>
+				</div>
+				<table class="table" v-if="listjumpout.length">
+					<tr>
+						<th>页面地址</th>
+						<th>访问量</th>
+					</tr>
+					<tr v-for="item in listjumpout">
+						<td>{{item._id.value}}</td>
+						<td class="tc">{{item.count}}</td>
+					</tr>
+				</table>
+				<div class="empty tc mt20" v-if="!listjumpout.length">暂无数据!</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+<script>
+	new Vue({
+		el: '#pages',
+		data: function () {
+			return {
+				appId: util.getStorage('local', 'appId'),
+				errText:'',
+				beginTime:'',
+				endTime:'',
+				type:1,  // 1:今日  2：历史
+				listpages:[],
+				listjumpout:[],
+			}
+		},
+		filters: {
+			toFixed: window.Filter.toFixed,
+			toSize: window.Filter.toSize,
+			date: window.Filter.date,
+			limitTo: window.Filter.limitTo,
+		},
+		mounted() {
+			this.getDataForTime();
+			this.searchForTime();
+		},
+		methods: {
+			getDataForTime() {
+				this.beginTime = new Date().format('yyyy/MM/dd') + ' 00:00:00';
+				this.endTime = new Date().format('yyyy/MM/dd hh:mm:ss');
+				this.getTopDatas();
+			},
+			getTopDatas(){
+				util.ajax({
+					type: 'get',
+					url: config.baseApi + 'api/v1/wx/analysis/getTopDatas',
+					data: {
+						type: this.type,
+						appId: this.appId,
+						beginTime: this.beginTime,
+						endTime: this.endTime,
+					},
+					success: data => {
+						this.listpages = data.data.top_pages || [];
+						this.listjumpout = data.data.top_jump_out || [];
+					}
+				})
+			},
+			searchForTime() {
+				zaneDate({
+					elem: '#zane-calendar-1',
+					type: 'day',
+					format: 'yyyy/MM/dd',
+					done: (fulltime, begintime, endtime) => {
+						this.errText = '';
+						this.type = 2;
+						this.beginTime = begintime ? begintime + ' 00:00:00' : '';
+						this.endTime = begintime ? begintime + ' 23:59:59' : '';
+						let endstrap = new Date(`${this.endTime}`).getTime();
+						if (endstrap > new Date().getTime()) {
+							this.errText = "只能选择历史时间！";
+							return false;
+						}
+						this.getTopDatas();
+					},
+				});
+			},
+			goToList(item) {
+				util.setStorage('session', 'pagesItemData', JSON.stringify(item))
+				location.href = "/wx/pageslist"
+			}
+		}
+	})
+</script>
