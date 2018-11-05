@@ -62,4 +62,7 @@ module.exports = app => {
     // top指标
     router.get('/web/top', web.webtop);
 
+    // 城市热力图
+    router.get('/web/diagram', web.webdiagram);
+
 };

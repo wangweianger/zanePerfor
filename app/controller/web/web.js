@@ -187,6 +187,15 @@ class WebController extends Controller {
             },
         });
     }
+
+    async webdiagram() {
+        const { ctx } = this;
+        await ctx.render('web/diagram', {
+            data: {
+                title: '全国访问量热力图',
+            },
+        });
+    }
 }
 
 module.exports = WebController;

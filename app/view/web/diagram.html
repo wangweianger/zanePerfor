@@ -1,0 +1,260 @@
+<% include ./side.html %>
+<style scoped>
+	.com_top_title:after{
+		content:'';
+		display:block;
+		clear:both;
+	}
+	table.table{
+		background:#fff;
+	}
+	table.table .light_color th{
+		font-weight:400;
+	}
+	table.table tr td{
+		font-size:12px;
+	}
+	.echartBorwsers{
+		width:100%;
+		height:800px;
+	}
+</style>
+<div class="com_content_body main pb100" id="pages" v-cloak>
+	<div class="com_top_title">
+		<h1 class="com_h1 fl">省份流量实时热力图</h1>
+		<commonsearch></commonsearch>
+	</div>
+	<div class="main mt20">
+		<!-- 公共搜索条件 -->
+		<div class="com_block com_search mb20">
+			<div class="item">
+				<div class="ml30">
+					<span class="name">选择日期：</span>
+					<input id="zane-calendar-1" class="inp w-300" type="text" placeholder="选择日期查询">
+				</div>
+			</div>
+			<div class="tipscolor mt10" v-if="errText">{{errText}}</div>
+		</div>
+		<div class="item div2">
+			<div id="echartBorwsers-citys" class="echartBorwsers"></div>
+		</div>
+	</div>
+	
+</div>
+<script src="/public/js/china.js"></script>
+<script>
+	new Vue({
+		el: '#pages',
+		data: function () {
+			return {
+				appId: util.getStorage('local', 'appId'),
+				errText:'',
+				type:1,
+			}
+		},
+		filters: {
+			toFixed: window.Filter.toFixed,
+			toSize: window.Filter.toSize,
+			date: window.Filter.date,
+			limitTo: window.Filter.limitTo,
+		},
+		mounted() {
+			this.getDataForTime();
+			this.searchForTime();
+		},
+		methods: {
+			getDataForTime() {
+				this.beginTime = new Date().format('yyyy/MM/dd') + ' 00:00:00';
+				this.endTime = new Date().format('yyyy/MM/dd hh:mm:ss');
+				this.getProvinceAvgCount();
+			},
+			getProvinceAvgCount(){
+				util.ajax({
+					type:'get',
+					url:`${config.baseApi}api/v1/analysis/getProvinceAvgCount`,
+					data:{
+						appId: this.appId,
+						beginTime: this.beginTime,
+						endTime: this.endTime,
+						type:this.type,
+					},
+					success: data=>{
+						if(data.data && data.data.length){
+							let datas = [];
+							let max = 0;
+							data.data.forEach(item=>{
+								if(item._id.province){
+									if(max < item.count) max = item.count;
+									datas.push({
+										name: item._id.province,
+										value: item.count
+									})
+								}
+							})
+							this.echarts(datas, max);
+						}
+					}
+				})
+			},
+			searchForTime() {
+				zaneDate({
+					elem: '#zane-calendar-1',
+					type: 'day',
+					format: 'yyyy/MM/dd',
+					done: (fulltime, begintime, endtime) => {
+						this.errText = '';
+						this.type = 2;
+						this.beginTime = begintime ? begintime + ' 00:00:00' : '';
+						this.endTime = begintime ? begintime + ' 23:59:59' : '';
+						let endstrap = new Date(`${this.endTime}`).getTime();
+						if (endstrap > new Date().getTime()) {
+							this.errText = "只能选择历史时间！";
+							return false;
+						}
+						this.getProvinceAvgCount();
+					},
+				});
+			},
+			echarts(datas, max){
+				var myChart = echarts.init(document.getElementById('echartBorwsers-citys'));
+				
+				function randomData() {
+					return Math.round(Math.random() * 2500);
+				}
+
+				option = {
+					tooltip: {
+						trigger: 'item',
+						// formatter: '{b}'
+					},
+					dataRange: {
+						min: 0,
+						max: max,
+						x: 'left',
+						y: 'bottom',
+						text: ['高', '低'], 
+						show:false,          // 文本，默认为数值文本
+						calculable: true,
+						color: ['#3013ec', '#5d47f1', '#9a8df1','#cbc4f5','#f5f3fd']
+					},
+					grid: {
+						height: 200,
+						width: 8,
+						right: 80,
+						bottom: 10
+					},
+					xAxis: {
+						type: 'category',
+						data: [],
+						splitNumber: 1,
+						show: false
+					},
+					yAxis: {
+						position: 'right',
+						min: 0,
+						max: 20,
+						splitNumber: 20,
+						inverse: true,
+						axisLabel: {
+							show: true
+						},
+						axisLine: {
+							show: false
+						},
+						splitLine: {
+							show: false
+						},
+						axisTick: {
+							show: false
+						},
+						data: []
+					},
+					series: [
+						{
+							zlevel: 1,
+							name: '中国',
+							type: 'map',
+							mapType: 'china',
+							selectedMode: 'multiple',
+							roam: false,
+							left: '10%',
+							right: '30%',
+							label: {
+								normal: {
+									show: true
+								},
+								emphasis: {
+									show: true
+								}
+							},
+							data: datas
+						},
+						{
+							zlevel: 2,
+							name: '地图指示',
+							type: 'bar',
+							barWidth: 5,
+							itemStyle: {
+								normal: {
+									color: '#a496fd',
+									shadowColor: 'rgba(0, 0, 0, 0)',
+									shadowBlur: 10
+								}
+							},
+							data: [20]
+						}
+					]
+				};
+
+				myChart.setOption(option)
+				
+				setTimeout(function () {
+					var TOPN = 20
+
+					var option = myChart.getOption()
+					
+					// 修改top
+					option.grid[0].height = TOPN * 20
+					option.grid[0].right= '10%'
+					option.grid[0].top = '15%'
+					option.yAxis[0].max = TOPN
+					option.yAxis[0].splitNumber = TOPN
+					option.series[1].data[0] = TOPN
+					
+					// 排序
+					var data = option.series[0].data.sort(function (a, b) {
+						return b.value - a.value
+					})
+
+					option.series[1].itemStyle.normal.color = '#a496fd';
+
+					// yAxis
+					var newYAxisArr = []
+					echarts.util.each(data, function (item, i) {
+						if (i >= TOPN) {
+							return false
+						}
+						newYAxisArr.push({
+							value: item.name,
+							textStyle: {
+								color: '#4f36f1'
+							}
+						})
+					})
+					option.yAxis[0].data = newYAxisArr
+					option.yAxis[0].axisLabel.formatter = (function (data) {
+						return function (value, i) {
+							if (!value || !data[i].value) return ''
+							return value + ' ' + data[i].value
+						}
+					})(data)
+					window.addEventListener("resize", function () {
+						myChart.resize();
+					});
+					myChart.setOption(option)
+				}, 0);
+				
+			}
+		}
+	})
+</script>

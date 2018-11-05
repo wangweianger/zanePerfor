@@ -188,6 +188,21 @@ class AnalysisService extends Service {
         }
     }
 
+    // 省份流量统计
+    async getProvinceAvgCount(appId, beginTime, endTime, type) {
+        const result = await this.ctx.model.Web.WebEnvironment.aggregate([
+            { $match: { app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
+            {
+                $group: {
+                    _id: { province: "$province", },
+                    count: { $sum: 1 },
+                },
+            },
+            { $sort: { count: -1 } },
+        ]).exec();
+        return result
+    }
+
 }
 
 module.exports = AnalysisService;
