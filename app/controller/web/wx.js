@@ -138,7 +138,15 @@ class WxController extends Controller {
             },
         });
     }
-
+    // TOP分析
+    async wxtop() {
+        const { ctx } = this;
+        await ctx.render('wx/top', {
+            data: {
+                title: 'TOP指标',
+            },
+        });
+    }
 }
 
 module.exports = WxController;

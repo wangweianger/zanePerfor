@@ -47,6 +47,100 @@ class AnalysisService extends Service {
     async getAnalysisOneList(appId, markuser) {
         return await this.ctx.model.Wx.WxPages.find({ app_id: appId, mark_user: markuser }).sort({cerate_time:1}) || {};
     }
+
+    // TOP datas
+    async getTopDatas(appId, beginTime, endTime, type) {
+        type = type * 1;
+        let result = {};
+        if (type === 1) {
+            const pages = Promise.resolve(this.getRealTimeTopPages(appId, beginTime, endTime));
+            const jump = Promise.resolve(this.getRealTimeTopJumpOut(appId, beginTime, endTime));
+            const all = await Promise.all([pages, jump]);
+            result = { top_pages: all[0], top_jump_out: all[1] }
+        } else if (type === 2) {
+            result = await this.getDbTopPages(appId, beginTime, endTime) || {};
+        }
+        return result;
+    };
+    // 历史 top
+    async getDbTopPages(appId, beginTime, endTime) {
+        let data = await this.ctx.model.Wx.WxStatis.findOne({ app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } });
+        if (data) return data;
+        // 不存在则储存
+        return await this.saveRealTimeTopTask(appId, 2, beginTime, endTime)
+    }
+    // top 页面
+    async getRealTimeTopPages(appId, beginTime, endTime) {
+        let result = await this.app.redis.get(`${appId}_top_pages_realtime`);
+        result = result ? JSON.parse(result) : await this.getRealTimeTopPagesForDb(appId, beginTime, endTime);
+        return result;
+    }
+    async getRealTimeTopPagesForDb(appId, beginTime, endTime, type) {
+        const result = await this.ctx.model.Wx.WxPages.aggregate([
+            { $match: { app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) }, }, },
+            {
+                $group: {
+                    _id: { url: "$path", },
+                    count: { $sum: 1 },
+                },
+            },
+            { $sort: { count: -1 } },
+            { $limit: 10 },
+        ]).exec();
+        // 每分钟执行存储到redis
+        if (type === 1) this.app.redis.set(`${appId}_top_pages_realtime`, JSON.stringify(result));
+        return result;
+    }
+    // top跳出率
+    async getRealTimeTopJumpOut(appId, beginTime, endTime) {
+        let result = await this.app.redis.get(`${appId}_top_jump_out_realtime`);
+        result = result ? JSON.parse(result) : await this.getRealTimeTopJumpOutForDb(appId, beginTime, endTime);
+        return result;
+    }
+    async getRealTimeTopJumpOutForDb(appId, beginTime, endTime, type) {
+        const option = {
+            map: function () { emit(this.mark_user, this.path); },
+            reduce: function (key, values) {
+                return values.length === 1;
+            },
+            query: { app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } },
+            out: { replace: 'collectionName' },
+        }
+        const res = await this.ctx.model.Wx.WxPages.mapReduce(option)
+        const result = await res.model.aggregate([
+            { $match: { value: { $ne: false } } },
+            {
+                $group: {
+                    _id: { value: "$value", },
+                    count: { $sum: 1 },
+                },
+            },
+            { $sort: { count: -1 } },
+            { $limit: 10 },
+        ]).exec();
+        if (type === 1) this.app.redis.set(`${appId}_top_jump_out_realtime`, JSON.stringify(result));
+        return result;
+    }
+
+    // top排行榜 Task任务
+    async saveRealTimeTopTask(appId, type, begin, end) {
+        const beginTime = begin || this.app.format(new Date(), 'yyyy/MM/dd') + ' 00:00:00';
+        const endTime = end || new Date();
+
+        const pages = Promise.resolve(this.getRealTimeTopPagesForDb(appId, beginTime, endTime, type));
+        const jump = Promise.resolve(this.getRealTimeTopJumpOutForDb(appId, beginTime, endTime, type));
+        if (type === 2) {
+            // 每天top值存储到数据库
+            const all = await Promise.all([pages, jump]);
+
+            const statis = this.ctx.model.Wx.WxStatis();
+            statis.app_id = appId;
+            statis.top_pages = all[0];
+            statis.top_jump_out = all[1];
+            statis.create_time = beginTime;
+            return await statis.save();
+        }
+    }
 }
 
 module.exports = AnalysisService;

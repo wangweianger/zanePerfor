@@ -28,7 +28,10 @@ class WxReportService extends Service {
     groupData(datas, endTime, type, query) {
         if (!datas && !datas.length) return;
         datas.forEach(item => {
+            // pvuvip
             this.savePvUvIpData(item, endTime, type, query);
+            // top排行
+            this.ctx.service.wx.analysis.saveRealTimeTopTask(item, type);
         });
     }
 

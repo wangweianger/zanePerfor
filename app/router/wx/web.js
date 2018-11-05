@@ -47,4 +47,7 @@ module.exports = app => {
 
     // 错误item详情信息
     router.get('/wx/erroritemdetail', wx.wxerroritemdetail);
+
+    // top指标
+    router.get('/wx/top', wx.wxtop);
 };

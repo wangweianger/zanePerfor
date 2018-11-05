@@ -35,6 +35,8 @@ module.exports = app => {
     apiV1Router.get('analysis/getAnalysislist', tokenRequired, analysis.getAnalysislist);
     // 单个用户行为轨迹列表
     apiV1Router.get('analysis/getAnalysisOneList', tokenRequired, analysis.getAnalysisOneList);
+    // top list
+    apiV1Router.get('analysis/getTopDatas', tokenRequired, analysis.getTopDatas);
 
     // ----------------页面性能分析---------------
     // 平均列表
