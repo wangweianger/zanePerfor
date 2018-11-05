@@ -52,6 +52,12 @@ module.exports = () => {
         wx: 'wx_ip_city_cache_file.txt',
     };
 
+    // top数据分析提取前N条配置
+    config.top_alalysis_size = {
+        web: 10,
+        wx: 10,
+    };
+
     // shell重启
     config.shell_restart = {
         // mongodb重启shell,如果mongodb进程kill了，请求不了数据库时重启（可选填）

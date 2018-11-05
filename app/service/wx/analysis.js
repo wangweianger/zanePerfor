@@ -85,7 +85,7 @@ class AnalysisService extends Service {
                 },
             },
             { $sort: { count: -1 } },
-            { $limit: 10 },
+            { $limit: this.app.config.top_alalysis_size.wx || 10 },
         ]).exec();
         // 每分钟执行存储到redis
         if (type === 1) this.app.redis.set(`${appId}_top_pages_realtime`, JSON.stringify(result));
@@ -116,7 +116,7 @@ class AnalysisService extends Service {
                 },
             },
             { $sort: { count: -1 } },
-            { $limit: 10 },
+            { $limit: this.app.config.top_alalysis_size.wx || 10 },
         ]).exec();
         if (type === 1) this.app.redis.set(`${appId}_top_jump_out_realtime`, JSON.stringify(result));
         return result;
