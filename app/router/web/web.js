@@ -59,4 +59,7 @@ module.exports = app => {
     // web端新增系统
     router.get('/web/addsystem', web.webaddsystem);
 
+    // top指标
+    router.get('/web/top', web.webtop);
+
 };

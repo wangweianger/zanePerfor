@@ -178,6 +178,15 @@ class WebController extends Controller {
             },
         });
     }
+    // TOP分析
+    async webtop() {
+        const { ctx } = this;
+        await ctx.render('web/top', {
+            data: {
+                title: 'TOP指标',
+            },
+        });
+    }
 }
 
 module.exports = WebController;

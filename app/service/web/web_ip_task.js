@@ -98,7 +98,7 @@ class IpTaskService extends Service {
 
     // g根据百度地图api获得地址信息
     async getIpDataForBaiduApi(ip, _id, copyip) {
-        if (!ip) return;
+        if (!ip || ip === '127.0.0.1') return;
         const url = `https://api.map.baidu.com/location/ip?ip=${ip}&ak=${this.app.config.BAIDUAK}&coor=bd09ll`;
         const result = await this.app.curl(url, {
             dataType: 'json',

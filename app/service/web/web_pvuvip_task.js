@@ -28,7 +28,10 @@ class WebReportService extends Service {
     groupData(datas, endTime, type, query) {
         if (!datas && !datas.length) return;
         datas.forEach(item => {
+            // pvuvip
             this.savePvUvIpData(item, endTime, type, query);
+            // top排行
+            this.ctx.service.web.analysis.saveRealTimeTopTask(item, type);
         });
     }
 

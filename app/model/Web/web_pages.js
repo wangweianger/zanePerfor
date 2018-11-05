@@ -30,6 +30,7 @@ module.exports = app => {
     });
 
     WebPagesSchema.index({ speed_type: 1, app_id: 1, url: 1, create_time: -1 });
+    WebPagesSchema.index({ app_id: 1, create_time: -1 });
 
     return conn.model('WebPages', WebPagesSchema);
 };

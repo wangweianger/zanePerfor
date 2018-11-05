@@ -1,5 +1,5 @@
 logs/
-config/config.prod.js
+config/config.prod_1.js
 npm-debug.log
 yarn-error.log
 node_modules/

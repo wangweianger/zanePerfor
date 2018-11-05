@@ -69,7 +69,7 @@
 		<div class="item" :class="{'active':lable==4}" @click="checkoutLabel(4)">资源慢加载追踪</div>
 	</div>
 	<!-- 页面平均耗时说明 -->
-	<div class="com_block block-time" v-show="lable==1">
+	<div class="com_block block-time" v-show="lable==1&&pagesItemData.load_time">
 		<div class="item-full div1">
 			<h1 class="com_h1">页面平均耗时</h1>
 			<li>
