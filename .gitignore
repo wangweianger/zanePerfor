@@ -10,4 +10,5 @@ run/
 .DS_Store
 *.sw*
 *.un~
+config/config.prod.js
 
