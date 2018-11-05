@@ -117,11 +117,6 @@
 			},
 			echarts(datas, max){
 				var myChart = echarts.init(document.getElementById('echartBorwsers-citys'));
-				
-				function randomData() {
-					return Math.round(Math.random() * 2500);
-				}
-
 				option = {
 					tooltip: {
 						trigger: 'item',
@@ -210,9 +205,7 @@
 				
 				setTimeout(function () {
 					var TOPN = 20
-
 					var option = myChart.getOption()
-					
 					// 修改top
 					option.grid[0].height = TOPN * 20
 					option.grid[0].right= '10%'
