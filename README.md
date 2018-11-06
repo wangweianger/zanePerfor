@@ -16,6 +16,7 @@
 >  * 微信分城市统计性能逻辑开发（已完成）
 >  * 用户行为漏斗分析 即用户行为分析（已完成）
 >  * TOP性能统计（已完成）
+>  * 省市流量统计热力图分析（已完成）
 >  * 项目性能优化（进行中）
 >  * 索引优化（已完成）
 >  * 生产环境架构（构建中）
@@ -112,3 +113,5 @@ $ open http://localhost:7001/
 ![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/08.png "")
 ![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/09.png "")
 ![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/10.png "")
+![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/11.png "")
+![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/12.png "")
