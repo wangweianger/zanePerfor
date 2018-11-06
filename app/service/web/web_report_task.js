@@ -30,10 +30,12 @@ class DataTimedTaskService extends Service {
         } catch (err) {
             this.cacheIpJson = {};
         }
-
         // 线程遍历
-        for (let i = 0; i < this.app.config.redis_consumption.thread_web; i++) {
-            if (i === this.app.config.redis_consumption.thread_web - 1) {
+        const totalcount = await this.app.redis.llen('web_repore_datas');
+        let onecount = this.app.config.redis_consumption.thread_web;
+        if (onecount > totalcount) onecount = totalcount;
+        for (let i = 0; i < onecount; i++) {
+            if (i === onecount - 1) {
                 this.getWebItemDataForRedis(true);
             } else {
                 this.getWebItemDataForRedis();

@@ -28,8 +28,12 @@ class WxReportTaskService extends Service {
         }
 
         // 线程遍历
-        for (let i = 0; i < this.app.config.redis_consumption.thread_wx; i++) {
-            if (i === this.app.config.redis_consumption.thread_wx - 1) {
+        const totalcount = await this.app.redis.llen('web_repore_datas');
+        let onecount = this.app.config.redis_consumption.thread_wx;
+        if (onecount > totalcount) onecount = totalcount;
+
+        for (let i = 0; i < onecount; i++) {
+            if (i === onecount - 1) {
                 this.getWebItemDataForRedis(true);
             } else {
                 this.getWebItemDataForRedis();
