@@ -50,4 +50,7 @@ module.exports = app => {
 
     // top指标
     router.get('/wx/top', wx.wxtop);
+
+    // 城市热力图
+    router.get('/wx/diagram', wx.wxdiagram);
 };

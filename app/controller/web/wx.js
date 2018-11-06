@@ -147,6 +147,15 @@ class WxController extends Controller {
             },
         });
     }
+
+    async wxdiagram() {
+        const { ctx } = this;
+        await ctx.render('wx/diagram', {
+            data: {
+                title: '全国省份访问量热力图',
+            },
+        });
+    }
 }
 
 module.exports = WxController;

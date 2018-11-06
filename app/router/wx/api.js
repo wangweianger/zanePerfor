@@ -37,6 +37,8 @@ module.exports = app => {
     apiV1Router.get('analysis/getAnalysisOneList', tokenRequired, analysis.getAnalysisOneList);
     // top list
     apiV1Router.get('analysis/getTopDatas', tokenRequired, analysis.getTopDatas);
+    // 省总访问量排行
+    apiV1Router.get('analysis/getProvinceAvgCount', tokenRequired, analysis.getProvinceAvgCount);
 
     // ----------------页面性能分析---------------
     // 平均列表

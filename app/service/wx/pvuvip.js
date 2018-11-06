@@ -61,7 +61,8 @@ class PvuvivService extends Service {
             map: function () { emit(this.mark_user, 1); },
             reduce: function (key, values) { return values.length == 1 },
             query: querydata,
-            out: { replace: 'collectionName' },
+            keeptemp: false,
+            out: { replace: 'wxjumpout' },
         }
         const res = await this.ctx.model.Wx.WxPages.mapReduce(option)
         const result = await res.model.find().where('value').equals(1).count().exec();

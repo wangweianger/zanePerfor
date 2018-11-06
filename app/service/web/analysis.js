@@ -110,7 +110,7 @@ class AnalysisService extends Service {
     };
     // 历史 top
     async getDbTopPages(appId, beginTime, endTime) {
-        let data = await this.ctx.model.Web.WebStatis.findOne({ app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } });
+        let data = await this.ctx.model.Web.WebStatis.findOne({ app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } }).exec();
         if (data) return data;
         // 不存在则储存
         return await this.saveRealTimeTopTask(appId, 2, beginTime, endTime)
@@ -176,13 +176,15 @@ class AnalysisService extends Service {
         const pages = Promise.resolve(this.getRealTimeTopPagesForDb(appId, beginTime, endTime, type));
         const jump = Promise.resolve(this.getRealTimeTopJumpOutForDb(appId, beginTime, endTime, type));
         if (type === 2) {
-            // 每天top值存储到数据库
-            const all = await Promise.all([pages, jump]);
+            // 每天数据存储到数据库
+            const provinces = Promise.resolve(this.getProvinceAvgCountForDb(appId, beginTime, endTime, type));
+            const all = await Promise.all([pages, jump, provinces]);
 
             const statis = this.ctx.model.Web.WebStatis();
             statis.app_id = appId;
             statis.top_pages = all[0];
             statis.top_jump_out = all[1];
+            statis.provinces = all[2];
             statis.create_time = beginTime;
             return await statis.save();
         }
@@ -190,6 +192,20 @@ class AnalysisService extends Service {
 
     // 省份流量统计
     async getProvinceAvgCount(appId, beginTime, endTime, type) {
+        let result = null;
+        type = type * 1;
+        if(type === 1) {
+            result = await this.getProvinceAvgCountForDb(appId, beginTime, endTime, type);
+        } else if (type === 2) {
+            // 先查询是否存在
+            let data = await this.ctx.model.Web.WebStatis.findOne({ app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } }).exec();
+            // 不存在则储存
+            result = data ? data : await this.saveRealTimeTopTask(appId, 2, beginTime, endTime);
+        }
+        return result
+    }
+
+    async getProvinceAvgCountForDb(appId, beginTime, endTime, type) {
         const result = await this.ctx.model.Web.WebEnvironment.aggregate([
             { $match: { app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
             {
@@ -200,7 +216,7 @@ class AnalysisService extends Service {
             },
             { $sort: { count: -1 } },
         ]).exec();
-        return result
+        return type === 1 ? { provinces: result } : result;
     }
 
 }
