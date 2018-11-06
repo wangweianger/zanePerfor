@@ -3,26 +3,26 @@
 module.exports = () => {
     const config = exports = {};
 
-    // use for cookie sign key, should change to your own and keep security
     config.keys = '_123456789';
 
-    // add your config here
     config.middleware = [];
 
     config.name = '性能监控系统';
 
     config.description = '性能监控系统';
 
-    // debug 为 true 时，用于本地调试
     config.host = '';
 
     // 务必修改config.debug = true;
     config.session_secret = 'node_performance_secret';
 
+    // 用户登录态持续时间 1 天
+    config.user_login_timeout = 86400;
+
     // web浏览器端定时任务是否执行
     config.is_web_task_run = true;
 
-    // web浏览器端定时任务是否执行
+    // wx浏览器端定时任务是否执行
     config.is_wx_task_run = true;
 
     // db1与db3数据库同步每分钟执行一次
@@ -43,6 +43,19 @@ module.exports = () => {
     // 更新用户上报IP对应的城市信息线程数
     config.ip_thread = 10;
 
+    // 上报原始数据使用redis存储还是使用mongodb存储
+    config.report_data_type = 'redis'; // redus  mongodb
+
+    // 使用redis储存原始数据时，相关配置 （若report_data_type=mongodb时忽略此配置）
+    config.redis_consumption = {
+        // 定时任务执行时间
+        task_time: '*/20 * * * * *',
+        // 每次定时任务消费线程数(web端)
+        thread_web: 1000,
+        // 每次定时任务消费线程数(wx端)
+        thread_wx: 0,
+    };
+
     // 解析用户ip地址为城市是使用redis还是使用mongodb
     config.ip_redis_or_mongodb = 'redis'; // redus  mongodb
 
@@ -56,6 +69,23 @@ module.exports = () => {
     config.top_alalysis_size = {
         web: 10,
         wx: 10,
+    };
+
+    // 上报流量限制,防止应用流量太大服务崩溃（服务可用降级处理 ：可选项）
+    // 若启用请设置为true || 如果配置项为0则默认为不启用
+    config.flow_limit = {
+        web: {
+            is_open: true, // 是否开启
+            limit_frequency: 5, // 限制频率为5秒
+            every_user_limit: 5, // 每人每5秒上报次数
+            total_limit: 1000, // 5秒时间内所有请求数量
+        },
+        wx: {
+            is_open: true, // 是否开启
+            limit_frequency: 5, // 限制频率为5秒
+            every_user_limit: 5, // 每人每5秒上报次数
+            total_limit: 1000, // 5秒时间内所有请求数量
+        },
     };
 
     // shell重启

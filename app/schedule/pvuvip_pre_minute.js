@@ -6,6 +6,7 @@ module.exports = app => {
         schedule: {
             cron: app.config.pvuvip_task_minute_time,
             type: 'worker',
+            disable: !(app.config.is_web_task_run || app.config.is_wx_task_run),
         },
         // 定时处pv，uv,ip统计信息 每分钟执行一次
         async task(ctx) {

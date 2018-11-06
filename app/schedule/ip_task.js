@@ -6,6 +6,7 @@ module.exports = app => {
         schedule: {
             cron: app.config.ip_task_time,
             type: 'worker',
+            disable: !(app.config.is_web_task_run || app.config.is_wx_task_run),
         },
         // 定时处理ip城市地理位置信息
         async task(ctx) {
