@@ -10,8 +10,8 @@ module.exports = () => {
     config.redis = {
         client: {
             port: 6379, // Redis port
-            host: '10.1.128.123', // Redis host
-            password: 'yy7943RMB',
+            host: 'xx.xx.xx.xx', // Redis host
+            password: 'xxxxxx',
             db: 0,
         },
     };
@@ -49,7 +49,7 @@ module.exports = () => {
     };
 
     config.security = {
-        domainWhiteList: [ 'https://performance.niwoning.com' ],
+        domainWhiteList: [ 'https://xxx.xx.com' ],
         csrf: {
             enable: false,
             ignore: '/api/v1/report/**',
