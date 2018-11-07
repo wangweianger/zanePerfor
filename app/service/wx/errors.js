@@ -49,7 +49,7 @@ class ErroesService extends Service {
         for (let i = 0, len = distinct.length; i < len; i++) {
             resolvelist.push(
                 Promise.resolve(
-                    this.ctx.model.Wx.WxError.aggregate([
+                    this.ctx.model.Wx.WxErrors.aggregate([
                         (type ?
                             { $match: { app_id: appId, type: type, name: distinct[i], create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } }
                             :
@@ -90,7 +90,7 @@ class ErroesService extends Service {
 
     // 单个api接口查询平均信息
     async oneThread(queryjson, pageNo, pageSize, group_id) {
-        const count = Promise.resolve(this.ctx.model.Wx.WxError.distinct('name', queryjson.$match).exec());
+        const count = Promise.resolve(this.ctx.model.Wx.WxErrors.distinct('name', queryjson.$match).exec());
         const datas = Promise.resolve(
             this.ctx.model.Wx.WxErrors.aggregate([
                 queryjson,
