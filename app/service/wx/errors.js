@@ -38,7 +38,7 @@ class ErroesService extends Service {
     // 平均求值数多线程
     async moreThread(appId, type, beginTime, endTime, queryjson, pageNo, pageSize, group_id) {
         const result = [];
-        let distinct = await this.ctx.model.Wx.WxError.distinct('name', queryjson.$match).exec() || [];
+        let distinct = await this.ctx.model.Wx.WxErrors.distinct('name', queryjson.$match).exec() || [];
         let copdistinct = distinct;
 
         const betinIndex = (pageNo - 1) * pageSize;
