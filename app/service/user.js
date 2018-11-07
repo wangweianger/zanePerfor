@@ -13,7 +13,7 @@ class UserService extends Service {
         if (userInfo.is_use !== 0) throw new Error('用户被冻结不能登录，请联系管理员！');
 
         // 设置redis登录态
-        this.app.redis.set(userInfo.token, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
+        this.app.redis.set(`${userInfo.token}_user_login`, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
         // 设置登录cookie
         this.ctx.cookies.set('usertoken', userInfo.token);
 
@@ -41,7 +41,7 @@ class UserService extends Service {
         user.level = userName === 'admin' ? 0 : 1;
 
         // 设置redis登录态
-        this.app.redis.set(userInfo.token, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
+        this.app.redis.set(`${userInfo.token}_user_login`, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
         // 设置登录cookie
         this.ctx.cookies.set('usertoken', token);
 
@@ -85,7 +85,7 @@ class UserService extends Service {
             { multi: true }
         ).exec();
         // 清空登录态
-        this.app.redis.set(usertoken, '');
+        this.app.redis.set(`${usertoken}_user_login`, '');
         return result;
     }
 
@@ -93,7 +93,7 @@ class UserService extends Service {
     async delete(usertoken) {
         const result = await this.ctx.model.User.findOneAndRemove({ token: usertoken }).exec();
         // 清空登录态
-        this.app.redis.set(usertoken, '');
+        this.app.redis.set(`${usertoken}_user_login`, '');
         return result;
     }
 
