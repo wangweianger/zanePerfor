@@ -54,6 +54,16 @@ class HomeController extends Controller {
         });
     }
 
+    // 系统重启信息
+    async errors() {
+        const { ctx } = this;
+        await ctx.render('errors', {
+            data: {
+                title: '系统重启信息',
+            },
+        });
+    }
+
 }
 
 module.exports = HomeController;

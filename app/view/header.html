@@ -8,6 +8,9 @@
 		<a href="/systems" v-if="userMsg.level==0?true:false">
 			<div class="item">系统管理</div>
 		</a>
+		<a href="/errors" v-if="userMsg.level==0?true:false">
+			<div class="item">重启信息</div>
+		</a>
 		<a href="/users" v-if="userMsg.level==0?true:false">
 			<div class="item">用户管理</div>
 		</a>

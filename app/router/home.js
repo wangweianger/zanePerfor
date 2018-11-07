@@ -19,4 +19,7 @@ module.exports = app => {
     // 用户管理
     router.get('/users', home.users);
 
+    // 系统重启错误信息
+    router.get('/errors', home.errors);
+
 };

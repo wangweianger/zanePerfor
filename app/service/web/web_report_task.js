@@ -13,7 +13,6 @@ class DataTimedTaskService extends Service {
         this.cacheJson = {};
         this.cacheIpJson = {};
         this.cacheArr = [];
-        this.timer = null;
         this.system = {};
     }
 
@@ -96,23 +95,16 @@ class DataTimedTaskService extends Service {
         * 请求db1数据库进行同步数据
         *  查询db1是否正常,不正常则重启
         */
-        let db1data = false;
-        clearTimeout(this.timer);
-        this.timer = setTimeout(() => {
-            if (db1data) {
-                db1data = false; clearTimeout(this.timer);
-            } else {
-                this.app.restartMongodbs('db1'); clearTimeout(this.timer);
-            }
-        }, 10000);
-        const datas = await this.ctx.model.Web.WebReport.find(query)
-            .sort({ create_time: 1 })
-            .exec();
-        db1data = true;
-        this.app.logger.info(`-----------db1--查询web端db1数据库是否可用---${datas.length}-------`);
-
-        // 储存数据
-        this.commonSaveDatas(datas);
+        try {
+            const datas = await this.ctx.model.Web.WebReport.find(query)
+                .sort({ create_time: 1 })
+                .exec();
+            this.app.logger.info(`-----------db1--查询web端db1数据库是否可用---${datas.length}-------`);
+            // 储存数据
+            this.commonSaveDatas(datas);
+        } catch (err) {
+            this.app.restartMongodbs('db1', this.ctx, err);
+        }
     }
 
     // 储存数据到db3

@@ -7,6 +7,7 @@ module.exports = app => {
         user,
         remove,
         system,
+        errors,
     } = controller.api;
 
     // 校验用户是否登录中间件
@@ -49,5 +50,8 @@ module.exports = app => {
     apiV1Router.post('remove/deleteDb1WebData', tokenRequired, remove.deleteDb1WebData);
     // 清空db2 number日之前所有性能数据
     apiV1Router.post('remove/deleteDb2WebData', tokenRequired, remove.deleteDb2WebData);
+
+    // -------------------系统错误信息-----------------------------
+    apiV1Router.get('errors/getSysDbErrorList', tokenRequired, errors.getSysDbErrorList);
 
 };

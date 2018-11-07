@@ -1,5 +1,4 @@
 'use strict';
-
 const { exec } = require('child_process');
 const md5 = require('md5');
 
@@ -77,20 +76,30 @@ module.exports = {
         return fmt;
     },
     // 重启mongodb服务器
-    restartMongodbs(type) {
+    restartMongodbs(type, ctx, catcherr) {
         if (this.config.shell_restart.mongodb && this.config.shell_restart.mongodb.length) {
             this.config.shell_restart.mongodb.forEach(item => {
                 exec(`sh ${item}`, error => {
-                    if (error) { this.logger.info(`重启${type}数据库失败!`); return; }
+                    if (error) {
+                        this.logger.info(`重启${type}数据库失败!`);
+                        ctx.service.errors.saveSysAndDbErrors(type, item, catcherr, error);
+                        return;
+                    }
                     this.logger.info(`重启${type}数据库成功!`);
+                    ctx.service.errors.saveSysAndDbErrors(type, item, catcherr);
                 });
             });
         }
         if (this.config.shell_restart.servers && this.config.shell_restart.servers.length) {
             this.config.shell_restart.servers.forEach(item => {
                 exec(`sh ${item}`, error => {
-                    if (error) { this.logger.info('重启node.js服务失败!'); return; }
+                    if (error) {
+                        this.logger.info('重启node.js服务失败!');
+                        ctx.service.errors.saveSysAndDbErrors(type, item, catcherr, error);
+                        return;
+                    }
                     this.logger.info('重启node.js服务成功!');
+                    ctx.service.errors.saveSysAndDbErrors(type, item, catcherr);
                 });
             });
         }

@@ -10,7 +10,6 @@ class WxReportTaskService extends Service {
         this.cacheJson = {};
         this.cacheIpJson = {};
         this.cacheArr = [];
-        this.timer = null;
     }
 
     // 把redis消费数据经过加工之后同步到db3中 的定时任务（从redis中拉取数据）
@@ -93,21 +92,22 @@ class WxReportTaskService extends Service {
         * 请求db1数据库进行同步数据
         *  查询db1是否正常,不正常则重启
         */
-        let db1data = false;
-        clearTimeout(this.timer);
-        this.timer = setTimeout(() => {
-            if (db1data) {
-                db1data = false; clearTimeout(this.timer);
-            } else {
-                this.app.restartMongodbs('db1'); clearTimeout(this.timer);
-            }
-        }, 10000);
-        const datas = await this.ctx.model.Wx.WxReport.find(query)
-            .sort({ create_time: 1 })
-            .exec();
-        db1data = true;
-        this.app.logger.info(`-----------db1--查询wx端db1数据库是否可用----${datas.length}------`);
+        try {
+            const datas = await this.ctx.model.Wx.WxReport.find(query)
+                .sort({ create_time: 1 })
+                .exec();
+            this.app.logger.info(`-----------db1--查询wx端db1数据库是否可用----${datas.length}------`);
 
+            // 储存数据
+            this.commonSaveDatas(datas);
+        } catch (err) {
+            this.app.restartMongodbs('db1', this.ctx, err);
+        }
+
+    }
+
+    // 储存数据到db3
+    async commonSaveDatas(datas) {
         // 开启多线程执行
         this.cacheJson = {};
         this.cacheArr = [];
