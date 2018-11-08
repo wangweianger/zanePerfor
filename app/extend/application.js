@@ -82,24 +82,22 @@ module.exports = {
                 exec(`sh ${item}`, error => {
                     if (error) {
                         this.logger.info(`重启${type}数据库失败!`);
-                        ctx.service.errors.saveSysAndDbErrors(type, item, catcherr, error);
                         return;
                     }
                     this.logger.info(`重启${type}数据库成功!`);
                     ctx.service.errors.saveSysAndDbErrors(type, item, catcherr);
-                });
-            });
-        }
-        if (this.config.shell_restart.servers && this.config.shell_restart.servers.length) {
-            this.config.shell_restart.servers.forEach(item => {
-                exec(`sh ${item}`, error => {
-                    if (error) {
-                        this.logger.info('重启node.js服务失败!');
-                        ctx.service.errors.saveSysAndDbErrors(type, item, catcherr, error);
-                        return;
+                    // 重启servers
+                    if (this.config.shell_restart.servers && this.config.shell_restart.servers.length) {
+                        this.config.shell_restart.servers.forEach(item => {
+                            exec(`sh ${item}`, error => {
+                                if (error) {
+                                    this.logger.info('重启node.js服务失败!');
+                                    return;
+                                }
+                                this.logger.info('重启node.js服务成功!');
+                            });
+                        });
                     }
-                    this.logger.info('重启node.js服务成功!');
-                    ctx.service.errors.saveSysAndDbErrors(type, item, catcherr);
                 });
             });
         }
