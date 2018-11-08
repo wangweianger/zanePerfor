@@ -27,27 +27,10 @@
 
 ## 服务架构说明
 ### 一：技术选型说明
-* egg.js,ejs,mongoose,redis,vue.js,jquery.js
+* egg.js,ejs,mongoose,redis,vue.js
 
-### 二：mongodb数据库说明
-* db1(27017) db1负责用户数据上报的写操作
-* db2(27018) db2是db1的从库（不一定：有可能db1是从库）负责同步db1的数据 所有的读操作在从库中执行
-* db3(27019) db3是一个独立的数据库 负责读取db2的数据经过处理 最终展示给用户
-
-### 三：定时任务说明
-* web_task定时任务：负责从db2中读取原始数据 经过处理 存储到db3中（网页性能数据，ajax性能数据，用户系统信息，资源性能数据等等）；
-* web_pvuvip定时任务：负责web端的pvuvip统计 （统计每一分钟的数据进行存储）
-* ip_task定时任务：负责更新用户的地址信息，根据ip获得城市相关信息，并建立自己的ip地址库
-
-### 四：性能保证说明
-* 读写数据库分离，即上报用db1数据库，读取数据为db3数据库
-* db1与db3数据同步时间为1分钟一次，同步时根据自己需求开启多线程同步（默认10个线程）
-* 百度地图支持每天10万限量和1s 100次并发量，程序中同步地理位置优先使用自身数据库IP匹配若匹配不到则请求百度地图api，因此请求量不大，本地数据库ip只匹配前三位标识（例如：212.21.22），同步ip地址信息也开启了多线程（默认为20，不建议调的太大）
-* 后台cms界面接口为了保证大数据量的请求效率，求平均数的所有列表接口开启了多线程，线程数由pageSize决定，这样查询性能更高效。
-* 大数据量的列表接口请求总条数和分页列表信息量接口采用异步请求，减少请求耗时
-* 对相关表建立了单索引和复核索引的优化
-* 根据线上实际经验，db3压力更大，因此db3采用了mongodb副本集架构，保证服务的良好运行
-* 程序中有对db1、db3数据库进行是否正常运行监测，若检测到不正常则重启，保证数据上报和同步服务的正常运行（每分钟执行一次）
+### 项目详细文档
+https://blog.seosiwei.com/performance/index.html
 
 ## 浏览器端使用说明
 ### 一：直接使用应用脚本上报数据
@@ -86,19 +69,8 @@ new wxRepotSdk({
 ### 小程序端上报SDK wx-report-sdk：
 https://github.com/wangweianger/wx-report-sdk
 
-
-## 旧版完整前端性能监控系统
-https://github.com/wangweianger/web-performance-monitoring-system
-
-## 开发
-```bash
-$ npm i
-$ npm run dev
-$ open http://localhost:7001/
-```
 ## 服务架构探索
-* 针对于不同的项目，不同的并发量，后期关于项目服务架构我会写一篇独立的文章（待写...）。
-* MongoDB主从复制架构 https://blog.seosiwei.com/detail/39
+* 针对于不同的项目，不同的并发量，后期关于项目服务架构我会写一篇独立的文档（待写...）。
 
 ## mongodb可视化工具推荐 Robomongo
 链接地址：https://robomongo.org/download
