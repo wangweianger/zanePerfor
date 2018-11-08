@@ -29,8 +29,12 @@
 ### 一：技术选型说明
 * egg.js,ejs,mongoose,redis,vue.js
 
-### 项目详细文档
+## 项目详细文档
 https://blog.seosiwei.com/performance/index.html
+* 服务架构探索
+* 如何保证高并发秒杀场景的服务正常运行
+* 如何保证项目的高可用，高性能
+* 还有很多需要慢慢的去完善...
 
 ## 浏览器端使用说明
 ### 一：直接使用应用脚本上报数据
