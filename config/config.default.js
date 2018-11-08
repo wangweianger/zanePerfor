@@ -1,4 +1,5 @@
 'use strict';
+const address = require('address');
 
 module.exports = () => {
     const config = exports = {};
@@ -15,6 +16,14 @@ module.exports = () => {
 
     // 务必修改config.debug = true;
     config.session_secret = 'node_performance_secret';
+
+    config.cluster = {
+        listen: {
+            port: 7001,
+            hostname: '127.0.0.1',
+            ip: address.ip(),
+        },
+    };
 
     // 用户登录态持续时间 1 天
     config.user_login_timeout = 86400;
@@ -54,6 +63,9 @@ module.exports = () => {
         thread_web: 1000,
         // 每次定时任务消费线程数(wx端)
         thread_wx: 0,
+        // 消息队列池限制数, 0：不限制 number: 限制条数 高并发时服务优雅降级方案
+        total_limit_web: 100000,
+        total_limit_wx: 100000,
     };
 
     // 解析用户ip地址为城市是使用redis还是使用mongodb
@@ -69,23 +81,6 @@ module.exports = () => {
     config.top_alalysis_size = {
         web: 10,
         wx: 10,
-    };
-
-    // 上报流量限制,防止应用流量太大服务崩溃（服务可用降级处理 ：可选项）
-    // 若启用请设置为true || 如果配置项为0则默认为不启用
-    config.flow_limit = {
-        web: {
-            is_open: true, // 是否开启
-            limit_frequency: 5, // 限制频率为5秒
-            every_user_limit: 5, // 每人每5秒上报次数
-            total_limit: 1000, // 5秒时间内所有请求数量
-        },
-        wx: {
-            is_open: true, // 是否开启
-            limit_frequency: 5, // 限制频率为5秒
-            every_user_limit: 5, // 每人每5秒上报次数
-            total_limit: 1000, // 5秒时间内所有请求数量
-        },
     };
 
     // shell重启
@@ -128,24 +123,27 @@ module.exports = () => {
         },
     };
 
-    // mongoose配置
-    config.mongoose = {
-        clients: {
-            // 主库:负责存储数据 从库：复责读取数据
-            db1: {
-                url: 'mongodb://127.0.0.1:27017/performance',
-                options: {
-                    poolSize: 20,
-                },
-            },
-            // 定时任务执行完之后存储到数据库3
-            db3: {
-                url: 'mongodb://127.0.0.1:27019/performance',
-                options: {
-                    poolSize: 20,
-                },
+    // mongodb 服务
+    const dbclients = {
+        db3: {
+            url: 'mongodb://127.0.0.1:27019/performance',
+            options: {
+                poolSize: 20,
             },
         },
+    };
+    if (config.report_data_type === 'mongodb') {
+        dbclients.db1 = {
+            url: 'mongodb://127.0.0.1:27017/performance',
+            options: {
+                poolSize: 20,
+            },
+        };
+    }
+
+    // mongoose配置
+    config.mongoose = {
+        clients: dbclients,
     };
 
     config.bodyParser = {

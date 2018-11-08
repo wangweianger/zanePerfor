@@ -5,6 +5,7 @@ module.exports = app => {
     const Schema = mongoose.Schema;
     const Mixed = Schema.Types.Mixed;
     const conn = app.mongooseDB.get('db1');
+    if (!conn) return;
 
     const WebReportSchema = new Schema({
         app_id: { type: String }, // 系统标识

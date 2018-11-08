@@ -11,6 +11,15 @@ module.exports = app => {
         // 定时处理上报的数据 db1同步到db3数据
         async task(ctx) {
             if (app.config.is_web_task_run || app.config.is_wx_task_run) {
+                // 保证集群servers task不冲突
+                const preminute = await app.redis.get('report_task_for_mongodb');
+                const value = app.config.cluster.listen.ip + ':' + app.config.cluster.listen.port;
+                if (preminute && preminute !== value) return;
+                if (!preminute) {
+                    await app.redis.set('report_task_for_mongodb', value, 'EX', 200);
+                    const preminutetwo = await app.redis.get('report_task_for_mongodb');
+                    if (preminutetwo !== value) return;
+                }
                 // 查询db3是否正常,不正常则重启
                 try {
                     const result = await ctx.model.System.count({}).exec();

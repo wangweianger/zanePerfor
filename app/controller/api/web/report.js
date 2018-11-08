@@ -30,36 +30,23 @@ class ReportController extends Controller {
 
     // 通过redis 消费者模式存储数据
     async saveWebReportDataForRedis(query) {
+        if (this.app.config.redis_consumption.total_limit_web){
+            // 限流
+            const length = await this.app.redis.llen('web_repore_datas');
+            if (length >= this.app.config.redis_consumption.total_limit_web) return;
+        }
+        // 生产者
         this.app.redis.lpush('web_repore_datas', JSON.stringify(query));
     }
 
     // 通过mongodb 数据库存储数据
     async saveWebReportDataForMongodb(ctx) {
-        // 限流
-        // const result = await this.limitUserFlow(ctx);
         ctx.service.web.webReport.saveWebReportData(ctx);
     }
 
     // 用户流量限制
     async limitUserFlow(ctx) {
-        const query = ctx.request.body;
-        const ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
-        let result = 1;  // 0:表示请求无效  1：请求有效
-
-        // 参数校验
-        if (!query.appId) return 0;
-
-        // 无限流
-        if (!this.app.config.flow_limit.web.is_open) return 1;
-        if (!this.app.config.flow_limit.web.every_user_limit && !this.app.config.flow_limit.web.total_limit) return 1;
-
-        // 启用限流
-        if (this.app.config.flow_limit.web.every_user_limit) {
-
-        }
-        if (this.app.config.flow_limit.web.total_limit) {
-
-        }
+        
     }
 
     // web端脚本获取
