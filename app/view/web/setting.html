@@ -105,14 +105,14 @@
 			<div class="content">
 				<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch" checked />
 			</div>
-			<h1 class="h1">2.1、使用SDK部署方式（强烈推荐）</h1>
+			<h1 class="h1">2、使用SDK部署方式</h1>
 			<div class="content">
-				<div class="item">2.1.1、下载需要的SDK</div>
+				<div class="item">2.1、下载需要的SDK</div>
 				<a href="/public/file/performance-report-default.min.js.zip"><button class="btn btn-default">通用SDK</button></a>
 				<a href="/public/file/performance-report-jquery.min.js.zip"><button class="btn btn-default ml10">Jquery专用SDK</button></a>
 				<a href="/public/file/performance-report-axios.min.js.zip"><button class="btn btn-default ml10">Axios专用SDK</button></a>
 				<a href="/public/file/performance-report-none.min.js.zip"><button class="btn btn-default ml10">业务代码触发SDK</button></a>
-				<div class="item mt20">2.1.2、详细使用文档请参考以下SDK链接</div>
+				<div class="item mt20">2.2、详细使用文档请参考以下SDK链接</div>
 				<p>在html的头部引以下下代码</p>
 				<div class="script-text mb20">
 					<pre><\script src="/dist/performance-report-default.min.js"><\/script>
@@ -127,10 +127,6 @@ Performance({
 </pre>
 				</div>
 				<a href="https://github.com/wangweianger/performance-report" target="_target">浏览器端性能上报SDK使用文档</a>
-			</div>
-			<h1 class="h1">2.2使用脚本部署方式（不推荐）</h1>
-			<div class="content">
-				<div class="script-text"><code>{{script}}</code></div>
 			</div>
 			<h1 class="h1">3、部署脚本说明</h1>
 			<div class="content code">
@@ -235,7 +231,6 @@ new Vue({
 			lable:1, //1:概况 2：pv|uv|ip
 			appId: util.getStorage('local', 'appId'),
 			systemInfo:{},
-			script:'',
 		}
 	},
 	mounted() {
@@ -257,7 +252,6 @@ new Vue({
 				success: data => {
 					this.systemInfo = data.data || {};
 					if(!this.systemInfo.app_id) return;
-					this.script = `<script src="${location.origin}/api/v1/report/webscript?appId=${this.systemInfo.app_id}&USESDK=FALSE"><\/script>`;
 					this.settingIsUse();
 					this.pagexingneng();
 				}

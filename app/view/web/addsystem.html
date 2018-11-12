@@ -171,20 +171,16 @@
 			</div>
 		</div>
 		<div class="block" v-show="lable==3">
-			<h1 class="h1">1.1、使用SDK部署方式（强烈推荐）</h1>
+			<h1 class="h1">1、使用SDK部署方式</h1>
 			<div class="content">
-				<div class="item">2.1.1、下载需要的SDK</div>
+				<div class="item">1.1、下载需要的SDK</div>
 				<a href="/public/js/performance-report-default.min.js.zip"><button class="btn btn-default">通用SDK</button></a>
 				<a href="/public/js/performance-report-jquery.min.js.zip"><button class="btn btn-default ml10">Jquery专用SDK</button></a>
 				<a href="/public/js/performance-report-axios.min.js.zip"><button class="btn btn-default ml10">Axios专用SDK</button></a>
-				<div class="item mt20">2.1.2、详细使用文档请参考以下SDK链接</div>
+				<div class="item mt20">1.2、详细使用文档请参考以下SDK链接</div>
 				<a href="https://github.com/wangweianger/performance-report" target="_target">浏览器端性能上报SDK使用文档</a>
 			</div>
-			<h1 class="h1">1.2、获取脚本代码（不推荐）</h1>
-			<div class="content">
-				<div class="script-text"><code>{{script}}</code></div>
-			</div>
-			<h1 class="h1">2.部署脚本说明</h1>
+			<h1 class="h1">2、部署脚本说明</h1>
 			<div class="content code">
 				<p>复制生成的代码，将其粘贴在<code>&lt;head&gt;</code>中。</p>
 				<p class="notice">注意：需要将代码粘贴在<code>&lt;meta&gt;</code>后面，所有<code>&lt;script&gt;</code>前面。</p>
@@ -221,7 +217,6 @@ new Vue({
 				user_id:'',
 			},
 			isAdd:false,
-			script:'',
 		}
 	},
 	mounted() {
@@ -255,7 +250,6 @@ new Vue({
 				success: data => {
 					this.query = data.data;
 					this.isAdd = true;
-					this.script = `<script src="${location.origin}/api/v1/report/webscript?appId=${this.query.app_id}&USESDK=FALSE"><\/script>`;
 					popup.miss({ title: "操作成功！" });
 				}
 			})
