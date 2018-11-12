@@ -42,14 +42,36 @@ https://blog.seosiwei.com/performance/index.html
 ### 使用SDK方式上报数据(推荐)
 * 使用web SDK进行数据上报，使用方式请参考 web-report-sdk SDK详情
 * 例如
+
+### npm引入使用方式
 ```
+// 通用版本引入
+import Performance form 'web-report'
+// 使用
 Performance({
     domain:'http://report.com/api/v1/report/web',
     add:{
         appId:'D3D9B9AA45B56F6E424F57EFB36B0XXX',
     }
 })
+
+// 按需引入
+import {
+  axiosReport,
+  defaultReport,
+  fetchReport,
+  jqueryReport,
+  noneReport,
+} rom 'web-report'
+// 使用
+defaultReport({
+    domain:'http://report.com/api/v1/report/web',
+    add:{
+        appId:'D3D9B9AA45B56F6E424F57EFB36B0XXX',
+    }
+})
 ```
+
 ### 浏览器端上报SDK web-report-sdk：
 https://github.com/wangweianger/web-report-sdk
 

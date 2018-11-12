@@ -11,7 +11,8 @@
     "egg-redis": "^2.0.0",
     "egg-router-plus": "^1.3.0",
     "egg-scripts": "^2.10.0",
-    "egg-socket.io": "^4.1.4"
+    "egg-socket.io": "^4.1.4",
+    "kafka-node": "^3.0.1"
   },
   "devDependencies": {
     "autod": "^3.0.1",
