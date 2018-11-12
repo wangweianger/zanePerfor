@@ -44,7 +44,7 @@ https://blog.seosiwei.com/performance/index.html
 * 例如
 
 ### npm引入使用方式
-```
+```js
 // 通用版本引入
 import Performance form 'web-report'
 // 使用
@@ -77,7 +77,7 @@ https://github.com/wangweianger/web-report-sdk
 
 ## 微信小程序端使用说明
 * 直接下载sdk，引入到小程序的app.js最顶部
-```
+```js
 微信小程序 app.js头部引入sdk
 
 const wxRepotSdk = require('./utils/wx-report-sdk.min');
