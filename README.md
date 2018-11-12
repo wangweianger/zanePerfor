@@ -62,7 +62,7 @@ import {
   fetchReport,
   jqueryReport,
   noneReport,
-} rom 'web-report'
+} from 'web-report'
 // 使用
 defaultReport({
     domain:'http://report.com/api/v1/report/web',
