@@ -1,9 +1,7 @@
 /* eslint-disable */
 'use strict';
 const Controller = require('egg').Controller;
-
 class ReportController extends Controller {
-
     // web用户数据上报
     async webReport() {
         const { ctx } = this;
@@ -12,7 +10,7 @@ class ReportController extends Controller {
 
         const query = ctx.request.body;
         if (!query.appId) throw new Error('web端上报数据操作：app_id不能为空');
-        
+
         if (this.app.config.report_data_type === 'redis'){
             query.ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
             query.url = ctx.headers.referer;

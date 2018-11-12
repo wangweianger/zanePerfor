@@ -69,12 +69,14 @@ class PvuvivService extends Service {
     }
     // 保存pvuvip数据
     async savePvUvIpData(appId, endTime, type, pvuvipdata) {
+        console.log(pvuvipdata.bounce / pvuvipdata.pv * 100)
+
         const pvuvip = this.ctx.model.Web.WebPvuvip();
         pvuvip.app_id = appId;
         pvuvip.pv = pvuvipdata.pv || 0;
         pvuvip.uv = pvuvipdata.uv || 0;
         pvuvip.ip = pvuvipdata.ip || 0;
-        pvuvip.bounce = (pvuvipdata.bounce / pvuvipdata.pv * 100).toFixed(2)+'%';
+        pvuvip.bounce = pvuvipdata.bounce ? (pvuvipdata.bounce / pvuvipdata.pv * 100).toFixed(2)+'%' : 0;
         pvuvip.depth = pvuvipdata.pv && pvuvipdata.user ? parseInt(pvuvipdata.pv / pvuvipdata.user) : 0;
         pvuvip.create_time = endTime;
         pvuvip.type = type;

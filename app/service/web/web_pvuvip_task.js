@@ -61,7 +61,7 @@ class WebReportService extends Service {
         pvuvip.pv = pv;
         pvuvip.uv = uv;
         pvuvip.ip = ip;
-        if (type === 2) pvuvip.bounce = (bounce / pv * 100).toFixed(2) + '%';
+        if (type === 2) pvuvip.bounce = bounce ? (bounce / pv * 100).toFixed(2) + '%' : 0;
         if (type === 2) pvuvip.depth = pv && user ? parseInt(pv / user) : 0;
         pvuvip.create_time = endTime;
         pvuvip.type = type;
