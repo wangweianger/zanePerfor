@@ -8,7 +8,6 @@ class ReportController extends Controller {
     async webReport() {
         const { ctx } = this;
         ctx.set('Access-Control-Allow-Origin', '*');
-        ctx.set('Access-Control-Allow-Credentials', true);
         ctx.set('Content-Type', 'application/json;charset=UTF-8');
 
         const query = ctx.request.body;
@@ -44,20 +43,6 @@ class ReportController extends Controller {
         ctx.service.web.webReport.saveWebReportData(ctx);
     }
 
-    // 用户流量限制
-    async limitUserFlow(ctx) {
-        
-    }
-
-    // web端脚本获取
-    async getWebScript() {
-        const { ctx } = this;
-        ctx.set('Access-Control-Allow-Origin', '*');
-        ctx.set('Content-Type', 'application/javascript; charset=utf-8');
-
-        const result = await ctx.service.web.webPerformanceScript.getPerformanceScript(ctx);
-        ctx.body = result;
-    }
 }
 
 module.exports = ReportController;

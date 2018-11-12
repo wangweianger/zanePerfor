@@ -5,7 +5,7 @@ module.exports = app => {
     return {
         schedule: {
             cron: app.config.redis_consumption.task_time,
-            type: 'worker',
+            type: 'all',
             disable: !(app.config.report_data_type === 'redis' && (app.config.redis_consumption.thread_web || app.config.redis_consumption.thread_wx)),
         },
         // 定时处理上报的数据 redis同步到db3数据

@@ -39,23 +39,19 @@ https://blog.seosiwei.com/performance/index.html
 * 还有很多需要慢慢的去完善...
 
 ## 浏览器端使用说明
-### 一：直接使用应用脚本上报数据
-* 申请应用之后直接使用应用脚本，放置到自己web应用的头部。
-* 例如：<script src="http://report.com/api/v1/report/webscript?appId=D3D9B9AA45B56F6E424F57EFB36B063B&USESDK=FALSE"></script>
-
-### 二：使用SDK方式上报数据(推荐)
-* 使用web SDK进行数据上报，使用方式请参考 performance-report SDK详情
+### 使用SDK方式上报数据(推荐)
+* 使用web SDK进行数据上报，使用方式请参考 web-report-sdk SDK详情
 * 例如
 ```
 Performance({
     domain:'http://report.com/api/v1/report/web',
     add:{
-        appId:'D3D9B9AA45B56F6E424F57EFB36B063B',
+        appId:'D3D9B9AA45B56F6E424F57EFB36B0XXX',
     }
 })
 ```
-### 浏览器端上报SDK performance-report：
-https://github.com/wangweianger/web-performance-report
+### 浏览器端上报SDK web-report-sdk：
+https://github.com/wangweianger/web-report-sdk
 
 ## 微信小程序端使用说明
 * 直接下载sdk，引入到小程序的app.js最顶部

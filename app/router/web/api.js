@@ -17,9 +17,6 @@ module.exports = app => {
     // 校验用户是否登录中间件
     const tokenRequired = middleware.tokenRequired();
 
-    // ----------------浏览器端script脚本获取---------------
-    apiV1Router.get('report/webscript', report.getWebScript);
-
     // 浏览器用户数据上报
     apiV1Router.post('report/web', report.webReport);
 

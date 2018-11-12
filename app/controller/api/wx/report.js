@@ -8,7 +8,6 @@ class AjaxsController extends Controller {
     async wxReport() {
         const { ctx } = this;
         ctx.set('Access-Control-Allow-Origin', '*');
-        ctx.set('Access-Control-Allow-Credentials', true);
         ctx.set('Content-Type', 'application/json;charset=UTF-8');
 
         const query = ctx.request.body;
