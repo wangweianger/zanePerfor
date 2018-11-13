@@ -25,7 +25,7 @@ class WxReportService extends Service {
         this.groupData(datas, 1, query, endTime);
     }
     // 对数据进行分组
-    groupData(datas,type, query, beginTime, endTime) {
+    groupData(datas, type, query, beginTime, endTime) {
         if (!datas && !datas.length) return;
         datas.forEach(item => {
             // pvuvip
