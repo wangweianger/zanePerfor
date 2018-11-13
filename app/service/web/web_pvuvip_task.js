@@ -11,7 +11,7 @@ class WebReportService extends Service {
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
 
         const datas = await this.ctx.model.Web.WebEnvironment.distinct('app_id', query).exec();
-        this.groupData(datas, beginTime, 2, query);
+        this.groupData(datas, 2, query, beginTime, endTime);
     }
     // 定时执行每分钟的数据
     async getWebPvUvIpByMinute() {
@@ -22,16 +22,16 @@ class WebReportService extends Service {
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
 
         const datas = await this.ctx.model.Web.WebEnvironment.distinct('app_id', query).exec();
-        this.groupData(datas, endTime, 1, query);
+        this.groupData(datas, 1, query, endTime);
     }
     // 对数据进行分组
-    groupData(datas, endTime, type, query) {
+    groupData(datas, type, query, beginTime, endTime) {
         if (!datas && !datas.length) return;
         datas.forEach(item => {
             // pvuvip
-            this.savePvUvIpData(item, endTime, type, query);
+            this.savePvUvIpData(item, beginTime, type, query);
             // top排行
-            this.ctx.service.web.analysis.saveRealTimeTopTask(item, type);
+            this.ctx.service.web.analysis.saveRealTimeTopTask(item, type, beginTime, endTime);
         });
     }
 
