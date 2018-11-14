@@ -28,14 +28,14 @@ class EnvironmentService extends Service {
             },
             { $sort: { count: -1 } },
             { $limit: 10 },
-        ]).exec();
+        ]).read('sp').exec();
 
         return datas;
     }
 
     // 根据mark_page获得用户系统信息
     async getEnvironmentForPage(appId, markPage) {
-        return await this.ctx.model.Web.WebEnvironment.findOne({ app_id: appId, mark_page: markPage }).exec();
+        return await this.ctx.model.Web.WebEnvironment.findOne({ app_id: appId, mark_page: markPage }).read('sp').exec();
     }
 }
 

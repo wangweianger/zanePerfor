@@ -10,7 +10,7 @@ class WebReportService extends Service {
         const beginTime = new Date(interval.prev().toString());
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
 
-        const datas = await this.ctx.model.Web.WebEnvironment.distinct('app_id', query).exec();
+        const datas = await this.ctx.model.Web.WebEnvironment.distinct('app_id', query).read('sp').exec();
         this.groupData(datas, 2, query, beginTime, endTime);
     }
     // 定时执行每分钟的数据
@@ -21,7 +21,7 @@ class WebReportService extends Service {
         const beginTime = new Date(endTime.getTime() - 60000);
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
 
-        const datas = await this.ctx.model.Web.WebEnvironment.distinct('app_id', query).exec();
+        const datas = await this.ctx.model.Web.WebEnvironment.distinct('app_id', query).read('sp').exec();
         this.groupData(datas, 1, query, endTime);
     }
     // 对数据进行分组
@@ -39,14 +39,14 @@ class WebReportService extends Service {
     async savePvUvIpData(appId, endTime, type, query) {
         query.app_id = appId;
 
-        const pvpro = Promise.resolve(this.ctx.model.Web.WebEnvironment.count(query).exec());
-        const uvpro = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('mark_uv', query).exec());
-        const ippro = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('ip', query).exec());
+        const pvpro = Promise.resolve(this.ctx.model.Web.WebEnvironment.count(query).read('sp').exec());
+        const uvpro = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('mark_uv', query).read('sp').exec());
+        const ippro = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('ip', query).read('sp').exec());
         let data = [];
         if (type === 1) {
             data = await Promise.all([ pvpro, uvpro, ippro ]);
         } else if (type === 2) {
-            const user = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('mark_user', query).exec());
+            const user = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('mark_user', query).read('sp').exec());
             const bounce = Promise.resolve(this.ctx.service.web.webPvuvip.bounceRate(query));
             data = await Promise.all([ pvpro, uvpro, ippro, user, bounce ]);
         }

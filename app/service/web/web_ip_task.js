@@ -20,6 +20,7 @@ class IpTaskService extends Service {
             query.create_time = { $gt: beginTime };
         }
         const datas = await this.ctx.model.Web.WebEnvironment.find(query)
+            .read('sp')
             .limit(this.app.config.ip_thread * 60)
             .sort({ create_time: 1 })
             .exec();
@@ -82,7 +83,7 @@ class IpTaskService extends Service {
             }
         } else if (this.app.config.ip_redis_or_mongodb === 'mongodb') {
             // 通过mongodb获得用户IP对应的地理位置信息
-            datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).exec();
+            datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).read('sp').exec();
             if (datas) this.cacheJson[copyip] = datas;
         }
         let result = null;

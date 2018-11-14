@@ -20,6 +20,7 @@ class IpTaskService extends Service {
             query.create_time = { $gt: beginTime };
         }
         const datas = await this.ctx.model.Wx.WxPages.find(query)
+            .read('sp')
             .limit(this.app.config.ip_thread * 60)
             .sort({ create_time: 1 })
             .exec();
@@ -82,7 +83,7 @@ class IpTaskService extends Service {
             }
         } else if (this.app.config.ip_redis_or_mongodb === 'mongodb') {
             // 通过mongodb获得用户IP对应的地理位置信息
-            datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).exec();
+            datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).read('sp').exec();
             if (datas) this.cacheJson[copyip] = datas;
         }
         let result = null;
@@ -98,7 +99,7 @@ class IpTaskService extends Service {
 
     // g根据百度地图api获得地址信息
     async getIpDataForBaiduApi(ip, _id, copyip) {
-        if (!ip) return;
+        if (!ip || ip === '127.0.0.1') return;
         const url = `https://api.map.baidu.com/location/ip?ip=${ip}&ak=${this.app.config.BAIDUAK}&coor=bd09ll`;
         const result = await this.app.curl(url, {
             dataType: 'json',

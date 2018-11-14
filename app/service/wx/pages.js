@@ -47,7 +47,7 @@ class PagesService extends Service {
     // 获得多个页面的平均性能数据
     async moreThread(appId,beginTime, endTime, queryjson, pageNo, pageSize, group_id) {
         const result = [];
-        let distinct = await this.ctx.model.Wx.WxPages.distinct('path', queryjson.$match).exec() || [];
+        let distinct = await this.ctx.model.Wx.WxPages.distinct('path', queryjson.$match).read('sp').exec() || [];
         let copdistinct = distinct;
 
         const betinIndex = (pageNo - 1) * pageSize;
@@ -67,7 +67,7 @@ class PagesService extends Service {
                                 count: { $sum: 1 },
                             }
                         },
-                    ]).exec()
+                    ]).read('sp').exec()
                 )
             )
         }
@@ -96,7 +96,7 @@ class PagesService extends Service {
 
     // 单个页面查询平均信息
     async oneThread(queryjson, pageNo, pageSize, group_id) {
-        const count = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('path', queryjson.$match).exec());
+        const count = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('path', queryjson.$match).read('sp').exec());
         const datas = Promise.resolve(
             this.ctx.model.Wx.WxPages.aggregate([
                 queryjson,
@@ -109,7 +109,7 @@ class PagesService extends Service {
                 { $skip: (pageNo - 1) * pageSize },
                 { $sort: { count: -1 } },
                 { $limit: pageSize },
-            ]).exec()
+            ]).read('sp').exec()
         );
         const all = await Promise.all([count, datas]);
 
@@ -138,14 +138,14 @@ class PagesService extends Service {
 
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        const count = Promise.resolve(this.ctx.model.Wx.WxPages.count(queryjson.$match).exec());
+        const count = Promise.resolve(this.ctx.model.Wx.WxPages.count(queryjson.$match).read('sp').exec());
         const datas = Promise.resolve(
             this.ctx.model.Wx.WxPages.aggregate([
                 queryjson,
                 { $sort: { create_time: -1 } },
                 { $skip: ((pageNo - 1) * pageSize) },
                 { $limit: pageSize },
-            ]).exec()
+            ]).read('sp').exec()
         );
         const all = await Promise.all([count, datas]);
 
@@ -159,7 +159,7 @@ class PagesService extends Service {
     async getPageDetails(appId, field, type) {
         const query = { app_id: appId };
         type === 1 ? query._id = field : query.mark_page = field
-        return await this.ctx.model.Wx.WxPages.findOne(query).exec();
+        return await this.ctx.model.Wx.WxPages.findOne(query).read('sp').exec();
     }
     // 获得页面性能数据平均值
     async getDataGroupBy(type, url, appId, beginTime, endTime) {
@@ -184,7 +184,7 @@ class PagesService extends Service {
             },
             { $sort: { count: -1 } },
             { $limit: 10 },
-        ]).exec();
+        ]).read('sp').exec();
 
         return datas;
     }

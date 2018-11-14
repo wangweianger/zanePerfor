@@ -24,11 +24,9 @@ class AjaxsController extends Controller {
             data: {},
         };
 
-        const list = await ctx.service.wx.report.saveWxReportData(ctx);
-
         ctx.body = {
             code: 1000,
-            data: list,
+            data: {},
         };
     }
 
@@ -44,7 +42,7 @@ class AjaxsController extends Controller {
 
     // 通过mongodb 数据库存储数据
     async saveWxReportDataForMongodb(ctx) {
-        ctx.service.wx.wxReport.saveWxReportData(ctx);
+        ctx.service.wx.report.saveWxReportData(ctx);
     }
 
 }

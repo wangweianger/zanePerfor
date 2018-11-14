@@ -97,6 +97,7 @@ class DataTimedTaskService extends Service {
         */
         try {
             const datas = await this.ctx.model.Web.WebReport.find(query)
+                .read('sp')
                 .sort({ create_time: 1 })
                 .exec();
             this.app.logger.info(`-----------db1--查询web端db1数据库是否可用---${datas.length}-------`);
@@ -219,7 +220,6 @@ class DataTimedTaskService extends Service {
         const newurl = url.parse(item.name);
         const newName = newurl.protocol + '//' + newurl.host + newurl.pathname;
         const querydata = newurl.query ? JSON.stringify(querystring.parse(newurl.query)) : '{}';
-
         const duration = parseInt(item.duration || 0);
         slowAjaxTime = slowAjaxTime * 1000;
         const speedType = duration >= slowAjaxTime ? 2 : 1;
@@ -234,9 +234,9 @@ class DataTimedTaskService extends Service {
         ajaxs.duration = item.duration;
         ajaxs.decoded_body_size = item.decodedBodySize;
         ajaxs.call_url = data.url;
+        ajaxs.options = item.options || querydata;
         ajaxs.mark_page = data.mark_page;
         ajaxs.mark_user = data.mark_user;
-        ajaxs.query_datas = querydata;
 
         ajaxs.save();
     }
@@ -338,7 +338,7 @@ class DataTimedTaskService extends Service {
             }
         } else if (this.app.config.ip_redis_or_mongodb === 'mongodb') {
             // 通过mongodb获得用户IP对应的地理位置信息
-            datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).exec();
+            datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).read('sp').exec();
             if (datas) {
                 this.cacheIpJson[copyip] = datas;
                 this.saveIpDatasInFile(copyip, { city: datas.city, province: datas.province });

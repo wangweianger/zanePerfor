@@ -27,7 +27,7 @@ class WxReportTaskService extends Service {
         }
 
         // 线程遍历
-        const totalcount = await this.app.redis.llen('web_repore_datas');
+        const totalcount = await this.app.redis.llen('wx_repore_datas');
         let onecount = this.app.config.redis_consumption.thread_wx;
         if (onecount > totalcount) onecount = totalcount;
 
@@ -42,7 +42,7 @@ class WxReportTaskService extends Service {
 
     // 单个item储存数据
     async getWebItemDataForRedis(type) {
-        let query = await this.app.redis.rpop('web_repore_datas');
+        let query = await this.app.redis.rpop('wx_repore_datas');
         if (!query) return;
         query = JSON.parse(query);
 
@@ -94,6 +94,7 @@ class WxReportTaskService extends Service {
         */
         try {
             const datas = await this.ctx.model.Wx.WxReport.find(query)
+                .read('sp')
                 .sort({ create_time: 1 })
                 .exec();
             this.app.logger.info(`-----------db1--查询wx端db1数据库是否可用----${datas.length}------`);
@@ -178,7 +179,7 @@ class WxReportTaskService extends Service {
             }
         } else if (this.app.config.ip_redis_or_mongodb === 'mongodb') {
             // 通过mongodb获得用户IP对应的地理位置信息
-            datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).exec();
+            datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).read('sp').exec();
             if (datas) {
                 this.cacheIpJson[copyip] = datas;
                 this.saveIpDatasInFile(copyip, { city: datas.city, province: datas.province });

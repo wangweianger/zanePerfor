@@ -41,6 +41,42 @@ class ReportController extends Controller {
         ctx.service.web.webReport.saveWebReportData(ctx);
     }
 
+    async write(){
+        const beginTime = Date.now()
+        for(let i=0;i<5000;i++){
+            const pages = this.ctx.model.Web.WebPages();
+            pages.app_id = '2575CEA7435DE9D8831CFBB6890F3835';
+            pages.create_time = 1542111009014;
+            if (i % 3 === 0){
+                pages.url = 'http://127:18090/file00';
+            } else if (i % 3 === 1){
+                pages.url = 'http://127.0.0.1:18090/name';
+            }else {
+                pages.url = 'http://118090/wang';
+            }
+            pages.full_url = 'http://127.0.0.1:18090/file';
+            pages.pre_url = 'http://127.0.0.1:18090/file';
+            pages.speed_type = 1;
+            pages.mark_page = '2575CEA7435DE9D8831CFBB6890F3835';
+            pages.mark_user = this.app.randomString(20);
+            pages.load_time = 10;
+            pages.dns_time = 10;
+            pages.tcp_time = 10;
+            pages.dom_time = 10;
+            pages.resource_list = '';
+            pages.white_time = 10;
+            pages.redirect_time = 10;
+            pages.unload_time = 10;
+            pages.request_time = 10;
+            pages.analysisDom_time = 10;
+            pages.ready_time = 10;
+            pages.screenwidth = 100;
+            pages.screenheight = 100;
+            pages.save();
+        }
+        console.log(`time耗时：${Date.now() - beginTime}`)
+    }
+
 }
 
 module.exports = ReportController;

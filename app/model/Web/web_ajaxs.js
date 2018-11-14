@@ -13,11 +13,11 @@ module.exports = app => {
         method: { type: String }, // 资源请求方式
         duration: { type: Number, default: 0 }, // AJAX响应时间 单位：ms
         decoded_body_size: { type: Number, default: 0 }, // 返回字段大小  单位：B
+        options: { type: String }, // ajax请求参数
         full_url: { type: String }, // 完整url
         call_url: { type: String }, // 调用页面的URL
         mark_page: { type: String }, // 所有资源页面统一标识 html img css js 用户系统信息等
         mark_user: { type: String }, // 统一某一时间段用户标识
-        query_datas: { type: String }, // ajax 请求参数
     });
 
     WebAjaxsSchema.index({ speed_type: 1, app_id: 1, url: 1, create_time: -1 });

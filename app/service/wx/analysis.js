@@ -14,7 +14,7 @@ class AnalysisService extends Service {
         if (ip) queryjson.$match.ip = ip;
         if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        const count = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_user', query.$match).exec());
+        const count = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_user', query.$match).read('sp').exec());
         const datas = Promise.resolve(
             this.ctx.model.Wx.WxPages.aggregate([
                 query,
@@ -31,7 +31,7 @@ class AnalysisService extends Service {
                 { $skip: (pageNo - 1) * pageSize },
                 { $sort: { count: -1 } },
                 { $limit: pageSize },
-            ]).exec()
+            ]).read('sp').exec()
         );
 
         const all = await Promise.all([ count, datas ]);
@@ -45,7 +45,7 @@ class AnalysisService extends Service {
 
     // 单个用户行为轨迹列表
     async getAnalysisOneList(appId, markuser) {
-        return await this.ctx.model.Wx.WxPages.find({ app_id: appId, mark_user: markuser }).sort({cerate_time:1}) || {};
+        return await this.ctx.model.Wx.WxPages.find({ app_id: appId, mark_user: markuser }).read('sp').sort({cerate_time:1}) || {};
     }
 
     // TOP datas
@@ -86,7 +86,7 @@ class AnalysisService extends Service {
             },
             { $sort: { count: -1 } },
             { $limit: this.app.config.top_alalysis_size.wx || 10 },
-        ]).exec();
+        ]).read('sp').exec();
         // 每分钟执行存储到redis
         if (type === 1) this.app.redis.set(`${appId}_top_pages_realtime`, JSON.stringify(result));
         return result;
@@ -152,7 +152,7 @@ class AnalysisService extends Service {
             result = await this.getProvinceAvgCountForDb(appId, beginTime, endTime, type);
         } else if (type === 2) {
             // 先查询是否存在
-            let data = await this.ctx.model.Wx.WxStatis.findOne({ app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } }).exec();
+            let data = await this.ctx.model.Wx.WxStatis.findOne({ app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } }).read('sp').exec();
             // 不存在则储存
             result = data ? data : await this.saveRealTimeTopTask(appId, 2, beginTime, endTime);
         }
@@ -169,7 +169,7 @@ class AnalysisService extends Service {
                 },
             },
             { $sort: { count: -1 } },
-        ]).exec();
+        ]).read('sp').exec();
         return type === 1 ? { provinces: result } : result;
     }
 }

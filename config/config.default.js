@@ -60,12 +60,12 @@ module.exports = () => {
         // 定时任务执行时间
         task_time: '*/20 * * * * *',
         // 每次定时任务消费线程数(web端)
-        thread_web: 1000,
+        thread_web: 100,
         // 每次定时任务消费线程数(wx端)
-        thread_wx: 0,
+        thread_wx: 100,
         // 消息队列池限制数, 0：不限制 number: 限制条数 高并发时服务优雅降级方案
-        total_limit_web: 100000,
-        total_limit_wx: 100000,
+        total_limit_web: 10000,
+        total_limit_wx: 10000,
     };
 
     // 解析用户ip地址为城市是使用redis还是使用mongodb
@@ -126,7 +126,12 @@ module.exports = () => {
     // mongodb 服务
     const dbclients = {
         db3: {
+            // 单机部署
             url: 'mongodb://127.0.0.1:27019/performance',
+            // 副本集 读写分离
+            // url: 'mongodb://127.0.0.1:28100,127.0.0.1:28101,127.0.0.1:28102/performance?replicaSet=rs1',
+            // 集群分片
+            // url: 'mongodb://127.0.0.1:30000/performance',
             options: {
                 poolSize: 20,
             },

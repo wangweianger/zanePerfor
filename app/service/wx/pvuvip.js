@@ -8,13 +8,13 @@ class PvuvivService extends Service {
     // 保存用户上报的数据
     async getPvUvIpData(appId, beginTime, endTime) {
         const querydata = { app_id: appId, type: 1, create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
-        const datas = await this.ctx.model.Wx.WxPvuvip.find(querydata).exec();
+        const datas = await this.ctx.model.Wx.WxPvuvip.find(querydata).read('sp').exec();
         return datas;
     }
     // 查询某日概况
     async getPvUvIpSurveyOne(appId, beginTime, endTime) {
         const query = { app_id: appId, type: 2, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } };
-        const data = await this.ctx.model.Wx.WxPvuvip.findOne(query);
+        const data = await this.ctx.model.Wx.WxPvuvip.findOne(query).read('sp').exec();
         if (data) return data;
         // 不存在则储存
         const pvuvipdata = await this.getPvUvIpSurvey(appId, beginTime, endTime, true);
@@ -25,6 +25,7 @@ class PvuvivService extends Service {
     async getHistoryPvUvIplist(appId) {
         const query = { app_id: appId, type: 2 };
         return await this.ctx.model.Wx.WxPvuvip.find(query)
+            .read('sp')
             .sort({ create_time: -1 })
             .limit(5)
             .exec();
@@ -32,9 +33,9 @@ class PvuvivService extends Service {
     // 概况统计
     async getPvUvIpSurvey(appId, beginTime, endTime, type) {
         const querydata = { app_id: appId, create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
-        const pv = Promise.resolve(this.ctx.model.Wx.WxPages.count(querydata).exec());
-        const uv = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_uv', querydata).exec());
-        const ip = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('ip', querydata).exec());
+        const pv = Promise.resolve(this.ctx.model.Wx.WxPages.count(querydata).read('sp').exec());
+        const uv = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_uv', querydata).read('sp').exec());
+        const ip = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('ip', querydata).read('sp').exec());
         if (!type) {
             const data1 = await Promise.all([ pv, uv, ip ]);
             return {
@@ -43,7 +44,7 @@ class PvuvivService extends Service {
                 ip: data1[2].length,
             };
         } else {
-            const user = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_user', querydata).exec());
+            const user = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_user', querydata).read('sp').exec());
             const bounce = Promise.resolve(this.bounceRate(querydata));
             const data2 = await Promise.all([pv, uv, ip, user, bounce]);
             return {
