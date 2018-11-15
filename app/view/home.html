@@ -10,6 +10,11 @@
 	.com_between button.btn{
 		width:250px;
 	}
+	.com_between .left .icon{
+		width:auto;
+		font-size:60px;
+		color:#bbb;
+	}
 </style>
 <div class="com_content home_body" id="home_body" v-cloak>
 	<div class="com_title">
@@ -21,7 +26,8 @@
 	<div v-if="isLoadend && datalist.length">
 		<div class="com_block com_between mt50" v-for="item in datalist" @click="selectSystem(2,item)">
 			<div class="left">
-				<img class="icon" src="https://cdn.seosiwei.com/TBaCKyXadN6xBnM4YGND6fxTBwQj68Ya.png?imageslim">
+				<span v-if="item.type=='wx'" class="icon iconfont">&#xe65b;</span>
+				<span v-if="item.type=='web'" class="icon iconfont">&#xe6fc;</span>
 				<div class="h1 mt10">{{item.type|systemType}}</div>
 			</div>
 			<div class="right">

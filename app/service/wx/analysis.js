@@ -123,10 +123,7 @@ class AnalysisService extends Service {
     }
 
     // top排行榜 Task任务
-    async saveRealTimeTopTask(appId, type, begin, end) {
-        const beginTime = begin || this.app.format(new Date(), 'yyyy/MM/dd') + ' 00:00:00';
-        const endTime = end || new Date();
-
+    async saveRealTimeTopTask(appId, type, beginTime, endTime) {
         const pages = Promise.resolve(this.getRealTimeTopPagesForDb(appId, beginTime, endTime, type));
         const jump = Promise.resolve(this.getRealTimeTopJumpOutForDb(appId, beginTime, endTime, type));
         if (type === 2) {

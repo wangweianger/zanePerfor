@@ -4,7 +4,9 @@
 		<div class="title">前端性能监控系统</div>
 	</div></a>
 	<div class="right">
-		<div class="item">{{userMsg.user_name}}</div>
+		<a href="/">
+			<div class="item">{{userMsg.user_name}}</div>
+		</a>
 		<a href="/systems" v-if="userMsg.level==0?true:false">
 			<div class="item">系统管理</div>
 		</a>
