@@ -35,10 +35,12 @@
 
 ## 项目详细文档
 https://blog.seosiwei.com/performance/index.html
-* 服务架构探索
-* 如何保证高并发秒杀场景的服务正常运行
-* 如何保证项目的高可用，高性能
-* 还有很多需要慢慢的去完善...
+* [系统高可用之Mongodb集群分片架构](https://blog.seosiwei.com/performance/colony.html)
+* [系统高可用之Mongodb副本集读写分离架构](https://blog.seosiwei.com/performance/replica_set.html)
+* [Servers集群模式下避免定时任务的多次执行](https://blog.seosiwei.com/performance/repeart_task.html)
+* [IP解析城市地理位置逻辑说明](https://blog.seosiwei.com/performance/iptask.html)
+* [项目定时任务功能说明](https://blog.seosiwei.com/performance/tasks.html)
+* ......
 
 ## 浏览器端使用说明
 ### 使用SDK方式上报数据(推荐)
