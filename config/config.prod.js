@@ -19,8 +19,12 @@ module.exports = () => {
     // mongodb 服务
     const dbclients = {
         db3: {
-            // url: 'mongodb://127.0.0.1:27018,127.0.0.1:27019,127.0.0.1:27020/performance?replicaSet=performance',
+            // 单机部署
             url: 'mongodb://127.0.0.1:27019/performance',
+            // 副本集 读写分离
+            // url: 'mongodb://127.0.0.1:28100,127.0.0.1:28101,127.0.0.1:28102/performance?replicaSet=rs1',
+            // 集群分片
+            // url: 'mongodb://127.0.0.1:30000/performance',
             options: {
                 poolSize: 100,
                 keepAlive: 10000,

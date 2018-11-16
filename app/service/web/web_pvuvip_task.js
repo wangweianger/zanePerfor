@@ -30,6 +30,7 @@ class WebReportService extends Service {
         datas.forEach(item => {
             // pvuvip
             this.savePvUvIpData(item, beginTime, type, query);
+            console.log('----------------------------');
             // top排行
             this.ctx.service.web.analysis.saveRealTimeTopTask(item, type, beginTime, endTime);
         });
