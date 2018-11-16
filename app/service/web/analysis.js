@@ -152,7 +152,7 @@ class AnalysisService extends Service {
             query: { app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } },
             out: { replace: 'collectionName' },
         }
-        const res = await this.ctx.model.Web.WebEnvironment.mapReduce(option)
+        const res = await this.ctx.model.Web.WebEnvironment.mapReduce(option);
         const result = await res.model.aggregate([
             { $match: { value: { $ne: false } } },
             {
@@ -163,7 +163,7 @@ class AnalysisService extends Service {
             },
             { $sort: { count: -1 } },
             { $limit: this.app.config.top_alalysis_size.web || 10 },
-        ]).read('sp').exec();
+        ]).exec();
         if (type === 1) this.app.redis.set(`${appId}_top_jump_out_realtime`, JSON.stringify(result));
         return result;
     }
