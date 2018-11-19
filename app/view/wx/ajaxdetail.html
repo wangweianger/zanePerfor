@@ -70,6 +70,29 @@
 		width: 100%;
 		height: 250px; 
 	}
+	@media (max-width: 768px) {
+		.block-time li.li1{
+			margin-right:10px;
+			width: 150px;
+		}
+		.block-time li.li1 h1{
+			width: 150px;
+		}
+		.block-time h1{
+			font-size:14px;
+		}
+		.block-time li.li2{
+			margin-right:10px;
+		}
+		.block-time h2{
+			width:150px;
+			font-size:16px;
+			text-align:center;
+		}
+		.charts{
+			padding:10px 8px;
+		}
+	}
 </style>
 <div class="com_content_body main pb100" id="pages" v-cloak>
 	<div class="com_top_title">
@@ -97,31 +120,33 @@
 	</div>
 	<div class="charts">
 		<h1 class="com_h2 mb20">AJAX性能列表</h1>
-		<!-- table列表 -->
-		<table class="table" v-if="isLoadend&&listdata.length">
-			<tr class="light_color">
-				<th class="w-300">API地址</th>
-				<th>请求方式</th>
-				<th>请求耗时</th>
-				<th>返回资源大小</th>
-				<th>请求参数</th>
-				<th>调用页面</th>
-				<th>访问轨迹</th>
-				<th>请求时间</th>
-				<th>操作</th>
-			</tr>
-			<tr v-for="item in listdata">
-				<td class="tc w-300"><a class="word-wrap" :href="'/wx/ajaxitemdetail?markpage='+item.mark_page+'&id='+item._id">{{item.name}}</a></td>
-				<td class="tc">{{item.method}}</td>
-				<td class="red tc">{{item.duration|toFixed}}</td>
-				<td class="tc">{{item.body_size|toSize}}</td>
-				<td class="tc">{{item.options}}</td>
-				<td class="tc">{{item.path}}</td>
-				<td class="tc"><a :href="'/wx/analysisdetail?markuser='+item.mark_user">查看轨迹详情</a></td>
-				<td class="tc">{{item.create_time|date('/',true)}}</td>
-				<td class="tc w-100"><a :href="'/wx/ajaxitemdetail?markpage='+item.mark_page+'&id='+item._id">详情</a></td>
-			</tr>
-		</table>
+		<div class="overflow_table">
+			<!-- table列表 -->
+			<table class="table" v-if="isLoadend&&listdata.length">
+				<tr class="light_color">
+					<th class="w-300">API地址</th>
+					<th>请求方式</th>
+					<th>请求耗时</th>
+					<th>返回资源大小</th>
+					<th>请求参数</th>
+					<th>调用页面</th>
+					<th>访问轨迹</th>
+					<th>请求时间</th>
+					<th>操作</th>
+				</tr>
+				<tr v-for="item in listdata">
+					<td class="tc w-300"><a class="word-wrap" :href="'/wx/ajaxitemdetail?markpage='+item.mark_page+'&id='+item._id">{{item.name}}</a></td>
+					<td class="tc">{{item.method}}</td>
+					<td class="red tc">{{item.duration|toFixed}}</td>
+					<td class="tc">{{item.body_size|toSize}}</td>
+					<td class="tc">{{item.options}}</td>
+					<td class="tc">{{item.path}}</td>
+					<td class="tc"><a :href="'/wx/analysisdetail?markuser='+item.mark_user">查看轨迹详情</a></td>
+					<td class="tc">{{item.create_time|date('/',true)}}</td>
+					<td class="tc w-100"><a :href="'/wx/ajaxitemdetail?markpage='+item.mark_page+'&id='+item._id">详情</a></td>
+				</tr>
+			</table>
+		</div>
 	</div>
 	<div>
 		<!--  分页 -->

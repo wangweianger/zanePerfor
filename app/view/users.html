@@ -16,26 +16,28 @@
 	</div>
 	<div v-show="isLoadend && datalist.length">
 		<div class="com_block mt20">
-			<table class="table">
-				<tr class="light_color">
-					<th class="tc w-100">用户名称</th>
-					<th class="tc w-100">用户级别</th>
-					<th class="tc w-100">是否冻结</th>
-					<th class="tc w-200">创建时间</th>
-					<th class="tc w-200">操作</th>
-				</tr>
-				<tr v-for="item in datalist">
-					<td class="tc">{{item.user_name}}</td>
-					<td class="tc">{{item.level==0?'管理员':'普通用户'}}</td>
-					<td class="tc">{{item.is_use==0?'正常':'冻结'}}</td>
-					<td class="tc">{{item.create_time|date('/',true)}}</td>
-					<td class="tc">
-						<button v-if="item.is_use==0?true:false" class="btn btn-default" @click="setIsUse(item)">冻结</button>
-						<button v-if="item.is_use==1?true:false" class="btn btn-main" @click="setIsUse(item)">解冻</button>
-						<button class="ml10 btn btn-default" @click="deleteUser(item)">删除</button>
-					</td>
-				</tr>
-			</table>
+			<div class="overflow_table">
+				<table class="table">
+					<tr class="light_color">
+						<th class="tc w-100">用户名称</th>
+						<th class="tc w-100">用户级别</th>
+						<th class="tc w-100">是否冻结</th>
+						<th class="tc w-200">创建时间</th>
+						<th class="tc w-200">操作</th>
+					</tr>
+					<tr v-for="item in datalist">
+						<td class="tc">{{item.user_name}}</td>
+						<td class="tc">{{item.level==0?'管理员':'普通用户'}}</td>
+						<td class="tc">{{item.is_use==0?'正常':'冻结'}}</td>
+						<td class="tc">{{item.create_time|date('/',true)}}</td>
+						<td class="tc">
+							<button v-if="item.is_use==0?true:false" class="btn btn-default" @click="setIsUse(item)">冻结</button>
+							<button v-if="item.is_use==1?true:false" class="btn btn-main" @click="setIsUse(item)">解冻</button>
+							<button class="ml10 btn btn-default" @click="deleteUser(item)">删除</button>
+						</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 		<!--  分页 -->
 		<div class="tc common_page_style mt10">

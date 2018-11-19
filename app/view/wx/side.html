@@ -7,10 +7,11 @@
 		height:100%;
 		padding-top:20px;
 		background:#fff;
+		z-index:101;
 		border-right:solid 1px #f1f1f1;
 	}
 	.com_side .list{
-		overflow:hidden;
+		overflow-y: auto;
 	}
 	.com_side .item{
 		width:100%;
@@ -46,6 +47,11 @@
 	}
 	.com_side .active:after{
 		display:block;
+	}
+	@media (max-width: 768px) {
+		.com_side{
+			display:none;
+    	}
 	}
 </style>
 <div class="com_side">

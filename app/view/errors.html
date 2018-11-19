@@ -13,20 +13,22 @@
 	</div>
 	<div v-show="isLoadend && datalist.length">
 		<div class="com_block mt20">
-			<table class="table">
-				<tr class="light_color">
-					<th class="tc w-100">重启DB</th>
-					<th class="tc w-200">脚本链接</th>
-					<th class="tc w-300">导致重启错误信息</th>
-					<th class="tc w-100">重启时间</th>
-				</tr>
-				<tr v-for="item in datalist">
-					<td class="tc">{{item.dbname}}</td>
-					<td class="tc">{{item.shell}}</td>
-					<td class="tc">{{item.catch_error}}</td>
-					<td class="tc">{{item.create_time|date('/',true)}}</td>
-				</tr>
-			</table>
+			<div class="overflow_table">
+				<table class="table">
+					<tr class="light_color">
+						<th class="tc w-100">重启DB</th>
+						<th class="tc w-200">脚本链接</th>
+						<th class="tc w-300">导致重启错误信息</th>
+						<th class="tc w-100">重启时间</th>
+					</tr>
+					<tr v-for="item in datalist">
+						<td class="tc">{{item.dbname}}</td>
+						<td class="tc">{{item.shell}}</td>
+						<td class="tc">{{item.catch_error}}</td>
+						<td class="tc">{{item.create_time|date('/',true)}}</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 	</div>
 	<div v-if="isLoadend && !datalist.length" class="empty mt30 tc">暂无数据！</div>

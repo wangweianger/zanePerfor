@@ -37,33 +37,35 @@
 			</div>
 			<div class="tipscolor mt10" v-if="errText">{{errText}}</div>
 		</div>
-		<!-- table列表 -->
-		<table class="table" v-if="isLoadend&&listdata.length">
-			<tr class="light_color">
-				<th>URL</th>
-				<th>调用次数</th>
-				<th>页面加载时间</th>
-				<th>白屏时间</th>
-				<th>DOM构建时间</th>
-				<th>解析dom耗时</th>
-				<th>DNS解析时间</th>
-				<th>TCP连接时间</th>
-				<th>request请求耗时</th>
-				<th>操作</th>
-			</tr>
-			<tr v-for="item in listdata">
-				<td><a href="javascript:" @click="goToList(item)">{{item._id.url}}</a></td>
-				<td class="tc" >{{item.count}}</td>
-				<td class="red tc">{{item.load_time|toFixed(true)}}</td>
-				<td class="red tc">{{item.white_time|toFixed}}</td>
-				<td class="red tc">{{item.dom_time|toFixed(true)}}</td>
-				<td class="tc">{{item.analysisDom_time|toFixed}}</td>
-				<td class="tc">{{item.dns_time|toFixed}}</td>
-				<td class="tc">{{item.tcp_time|toFixed}}</td>
-				<td class="tc">{{item.request_time|toFixed}}</td>
-				<td><a href="javascript:" @click="goToList(item)">详情</a></td>
-			</tr>
-		</table>
+		<div class="overflow_table">
+			<!-- table列表 -->
+			<table class="table" v-if="isLoadend&&listdata.length">
+				<tr class="light_color">
+					<th>URL</th>
+					<th>调用次数</th>
+					<th>页面加载时间</th>
+					<th>白屏时间</th>
+					<th>DOM构建时间</th>
+					<th>解析dom耗时</th>
+					<th>DNS解析时间</th>
+					<th>TCP连接时间</th>
+					<th>request请求耗时</th>
+					<th>操作</th>
+				</tr>
+				<tr v-for="item in listdata">
+					<td><a href="javascript:" @click="goToList(item)">{{item._id.url}}</a></td>
+					<td class="tc" >{{item.count}}</td>
+					<td class="red tc">{{item.load_time|toFixed(true)}}</td>
+					<td class="red tc">{{item.white_time|toFixed}}</td>
+					<td class="red tc">{{item.dom_time|toFixed(true)}}</td>
+					<td class="tc">{{item.analysisDom_time|toFixed}}</td>
+					<td class="tc">{{item.dns_time|toFixed}}</td>
+					<td class="tc">{{item.tcp_time|toFixed}}</td>
+					<td class="tc">{{item.request_time|toFixed}}</td>
+					<td><a href="javascript:" @click="goToList(item)">详情</a></td>
+				</tr>
+			</table>
+		</div>
 	</div>
 	<!--  分页 -->
 	<div class="tc common_page_style mt10" v-show="isLoadend&&listdata.length">

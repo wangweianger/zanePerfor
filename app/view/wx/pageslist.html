@@ -56,6 +56,24 @@
 		width: 100%;
 		height: 220px; 
 	}
+	@media (max-width: 768px) {
+		.com_slide_tab_x .item{
+			padding:0;
+			margin-right: 10px;
+		}
+		.block-time .item-full li{
+			height:70px;
+		}
+		.block-time .item-full li h1{
+			font-size:14px;
+		}
+		.block-time .item-full h2{
+			font-size:16px;
+		}
+		.block-time .item{
+			width:100%;
+		}
+	}
 </style>
 <div class="com_content_body main pb100" id="pages" v-cloak>
 	<div class="com_top_title">
@@ -85,39 +103,41 @@
 		</div>
 	</div>
 	<div class="mt20" v-show="lable==1">
-		<!-- table列表 -->
-		<table class="table" v-if="isLoadend&&listdata.length">
-			<tr class="light_color">
-				<th>path路径</th>
-				<th>手机品牌</th>
-				<th>手机类型</th>
-				<th>网络类型</th>
-				<th>访问城市</th>
-				<th>系统版本</th>
-				<th>微信版本</th>
-				<th>SDK版本</th>
-				<th>屏幕宽度</th>
-				<th>屏幕高度</th>
-				<th>访问轨迹</th>
-				<th>请求时间</th>
-				<th>操作</th>
-			</tr>
-			<tr v-for="item in listdata">
-				<td><a class="word-wrap" :href="'/wx/pagesdetails?id='+item._id">{{item.path}}</a></td>
-				<td class="red tc">{{item.brand}}</td>
-				<td class="red tc">{{item.model}}</td>
-				<td class="tc">{{item.net}}</td>
-				<td class="tc">{{item.city||'未知'}}</td>
-				<td class="tc">{{item.system}}</td>
-				<td class="tc">{{item.version}}</td>
-				<td class="tc">{{item.SDKVersion}}</td>
-				<td class="tc">{{item.screenWidth}}</td>
-				<td class="tc">{{item.screenHeight}}</td>
-				<td class="tc"><a :href="'/wx/analysisdetail?markuser='+item.mark_user">查看轨迹详情</a></td>
-				<td class="tc">{{item.create_time|date('/',true)}}</td>
-				<td class="tc"><a :href="'/wx/pagesdetails?id='+item._id">详情</a></td>
-			</tr>
-		</table>
+		<div class="overflow_table">
+			<!-- table列表 -->
+			<table class="table" v-if="isLoadend&&listdata.length">
+				<tr class="light_color">
+					<th>path路径</th>
+					<th>手机品牌</th>
+					<th>手机类型</th>
+					<th>网络类型</th>
+					<th>访问城市</th>
+					<th>系统版本</th>
+					<th>微信版本</th>
+					<th>SDK版本</th>
+					<th>屏幕宽度</th>
+					<th>屏幕高度</th>
+					<th>访问轨迹</th>
+					<th>请求时间</th>
+					<th>操作</th>
+				</tr>
+				<tr v-for="item in listdata">
+					<td><a class="word-wrap" :href="'/wx/pagesdetails?id='+item._id">{{item.path}}</a></td>
+					<td class="red tc">{{item.brand}}</td>
+					<td class="red tc">{{item.model}}</td>
+					<td class="tc">{{item.net}}</td>
+					<td class="tc">{{item.city||'未知'}}</td>
+					<td class="tc">{{item.system}}</td>
+					<td class="tc">{{item.version}}</td>
+					<td class="tc">{{item.SDKVersion}}</td>
+					<td class="tc">{{item.screenWidth}}</td>
+					<td class="tc">{{item.screenHeight}}</td>
+					<td class="tc"><a :href="'/wx/analysisdetail?markuser='+item.mark_user">查看轨迹详情</a></td>
+					<td class="tc">{{item.create_time|date('/',true)}}</td>
+					<td class="tc"><a :href="'/wx/pagesdetails?id='+item._id">详情</a></td>
+				</tr>
+			</table>
+		</div>
 	</div>
 	<div v-show="lable==1">
 		<!--  分页 -->
@@ -129,25 +149,27 @@
 	</div>
 	<!-- ajax性能资源 -->
 	<div v-show="lable==2">
-		<!-- table列表 -->
-		<table class="table" v-if="isLoadend&&listAjax.length">
-			<tr class="light_color">
-				<th>AJAX地址</th>
-				<th>调用次数</th>
-				<th>平均耗时</th>
-				<th>平均BODY大小</th>
-				<th>请求方式</th>
-				<th>调用页面</th>
-			</tr>
-			<tr v-for="item in listAjax">
-				<td class="w-500"><a :href="'/wx/ajaxdetail?url='+item._id.url">{{item._id.url}}</a></td>
-				<td class="tc">{{item.count}}</td>
-				<td class="tc red">{{item.duration|toFixed}}</td>
-				<td class="tc red">{{item.body_size|toSize}}</td>
-				<td class="red tc">{{item._id.method}}</td>
-				<td>{{url}}</td>
-			</tr>
-		</table>
+		<div class="overflow_table">
+			<!-- table列表 -->
+			<table class="table" v-if="isLoadend&&listAjax.length">
+				<tr class="light_color">
+					<th>AJAX地址</th>
+					<th>调用次数</th>
+					<th>平均耗时</th>
+					<th>平均BODY大小</th>
+					<th>请求方式</th>
+					<th>调用页面</th>
+				</tr>
+				<tr v-for="item in listAjax">
+					<td class="w-500"><a :href="'/wx/ajaxdetail?url='+item._id.url">{{item._id.url}}</a></td>
+					<td class="tc">{{item.count}}</td>
+					<td class="tc red">{{item.duration|toFixed}}</td>
+					<td class="tc red">{{item.body_size|toSize}}</td>
+					<td class="red tc">{{item._id.method}}</td>
+					<td>{{url}}</td>
+				</tr>
+			</table>
+		</div>
 		<!-- 暂无数据 -->
 		<div class="tc mt20" v-if="isLoadend&&!listAjax.length">暂无数据!</div>
 	</div>

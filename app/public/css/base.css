@@ -76,11 +76,11 @@ iframe { display: none; }
 /****阿里icon*****/
 @font-face {
   font-family: 'iconfont';  /* project id 865153 */
-  src: url('//at.alicdn.com/t/font_865153_q6ggi49apk.eot');
-  src: url('//at.alicdn.com/t/font_865153_q6ggi49apk.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_865153_q6ggi49apk.woff') format('woff'),
-  url('//at.alicdn.com/t/font_865153_q6ggi49apk.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_865153_q6ggi49apk.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_865153_30rfksfzk6s.eot');
+  src: url('//at.alicdn.com/t/font_865153_30rfksfzk6s.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_865153_30rfksfzk6s.woff') format('woff'),
+  url('//at.alicdn.com/t/font_865153_30rfksfzk6s.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_865153_30rfksfzk6s.svg#iconfont') format('svg');
 }
 .iconfont {
     font-family:"iconfont";
@@ -539,4 +539,42 @@ table.table tr td{
 }
 .block-time .top-width {
     width: 100% !important; 
+}
+
+/* 移动端 */
+@media (max-width: 768px) {
+    .com_content_body{
+        margin:80px 10px 50px 10px; 
+    }
+    .com_between .right{
+        margin-left:10px;
+        overflow-x: auto;
+    }
+    .com_block {
+        padding: 10px 10px 20px;
+    }
+    .com_h1{
+        float:none;
+    }
+    .component_search{
+        float: none;
+    }
+    .b-50{
+        width:100%;
+    }
+    .component_search .select .select-time{
+        left: 0;
+        height: 180px;
+        width: 300px;
+    }
+    .component_search .select .select-time li{
+        margin-bottom:5px;
+    }
+    .inp{
+        width:180px;
+    }
+    .overflow_table{
+        width:100%;
+        overflow-y: auto;
+    }
 }

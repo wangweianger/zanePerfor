@@ -1,11 +1,112 @@
+<style scoped>
+	.com_header {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0 20px;
+		position: fixed;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 60px;
+		background: #fff;
+		border-bottom: solid 1px #f1f1f1;
+		font-weight: 300;
+		z-index: 1000;
+	}
+
+	.com_header .logo {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		font-size: 28px;
+	}
+
+	.com_header .logo .title {
+		color: #333;
+	}
+
+	.com_header .logo img {
+		height: 35px;
+		margin-right: 10px;
+	}
+
+	.com_header .right {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		font-size: 16px;
+	}
+
+	.com_header .right .item {
+		height: 60px;
+		line-height: 60px;
+		padding: 0 15px;
+		cursor: pointer;
+		position: relative;
+		color: #333;
+	}
+	.com_header .right .item:after {
+		content: '';
+		display: block;
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		height: 2px;
+		background: #A79AFE;
+		display: none;
+	}
+	.com_header .right .item:hover {
+		background: #f1f1f1;
+		color: #A79AFE;
+	}
+
+	.com_header .right .item:hover:after {
+		display: block;
+	}
+	.com_slide{
+		display:none;
+	}
+	.com_header .right .phone{
+		display:none;
+	}
+	@media (max-width: 768px) {
+		.com_header .logo .title {
+			font-size:14px;
+		}
+		.com_header .right .item {
+			display:none;
+		}
+		.com_header .right .phone{
+			display:block;
+		}
+		.com_header .right .phone .iconfont{
+			font-size:28px;
+			color:#666;
+		}
+		.com_slide{
+			display:block;
+			margin-left: -10px;
+		}
+		.com_slide span{
+			font-size:25px;
+		}
+		.com_header .right .item{
+			padding:0 10px;
+		}
+	}
+</style>
 <div class="com_header" id="com_header">
+	<div class="com_slide"><span class="iconfont">&#xe612;</span></div>
 	<a href="/"><div class="logo">
 		<img src="/public/img/logo.png" alt="logo">
-		<div class="title">前端性能监控系统</div>
+		<div class="title">前端性能监控平台</div>
 	</div></a>
 	<div class="right">
 		<a href="/">
-			<div class="item">{{userMsg.user_name}}</div>
+			<div class="item phone">{{userMsg.user_name}}</div>
 		</a>
 		<a href="/systems" v-if="userMsg.level==0?true:false">
 			<div class="item">系统管理</div>
@@ -16,74 +117,16 @@
 		<a href="/users" v-if="userMsg.level==0?true:false">
 			<div class="item">用户管理</div>
 		</a>
+		<a href="/">
+			<div class="item phone"><span class="iconfont">&#xe60c;</span></div>
+		</a>
 		<a href="/"><div class="item">我的应用</div></a>
+		<div class="item phone" @click="logout"><span class="iconfont">&#xe614;</span></div>
 		<div class="item" @click="logout">退出登录</div>
 	</div>
 </div>
-<style scoped>
-	.com_header {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
-		padding: 0 20px;
-		position: fixed;
-		left:0;
-		top:0;
-		width: 100%;
-		height: 60px;
-		background: #fff;
-		border-bottom:solid 1px #f1f1f1;
-		font-weight:300;
-		z-index:1000;
-	}
-	.com_header .logo {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		font-size: 28px;
-	}
-	.com_header .logo .title{
-		color:#333;
-	}
-	.com_header .logo img {
-		height: 35px;
-		margin-right: 10px;
-	}
-	.com_header .right {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		font-size: 16px;
-	}
-	.com_header .right .item {
-		height:60px;
-		line-height:60px;
-		padding:0 15px;
-		cursor:pointer;
-		position: relative;
-		color:#333;
-	}
-	.com_header .right .item:after{
-		content:'';
-		display: block;
-		position: absolute;
-		left:0;
-		bottom:0;
-		width:100%;
-		height:2px;
-		background:#A79AFE;
-		display:none;
-	}
-	.com_header .right .item:hover{
-		background:#f1f1f1;
-		color:#A79AFE;
-	}
-	.com_header .right .item:hover:after{
-		display: block;
-	}
-</style>
 <script>
+	$(function () { $(".com_slide").click(function () { if ($(".com_side").css("display") == 'block') { $(".com_side").css("display", "none"); } else { $(".com_side").css("display", "block"); } }); })
 	new Vue({
 		el: '#com_header',
 		data: function () {

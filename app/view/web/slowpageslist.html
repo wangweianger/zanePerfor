@@ -114,41 +114,43 @@
 				</div>
 			</div>
 		</div>
-		<!-- table列表 -->
-		<table class="table" v-if="isLoadend&&listdata.length">
-			<tr class="light_color">
-				<th>URL</th>
-				<th>页面加载时间</th>
-				<th>白屏时间</th>
-				<th>DOM构建时间</th>
-				<th>解析dom耗时</th>
-				<th>DNS解析时间</th>
-				<th>TCP连接时间</th>
-				<th>页面重定向时间</th>
-				<th>unload时间</th>
-				<th>request请求耗时</th>
-				<th>页面准备时间</th>
-				<th>访问轨迹</th>
-				<th>页面请求时间</th>
-				<th>操作</th>
-			</tr>
-			<tr v-for="item in listdata">
-				<td><a :href="'/web/pagesdetails?id='+item._id+'&slowpages'">{{item.url}}</a></td>
-				<td class="red tc">{{item.load_time|toFixed(true)}}</td>
-				<td class="red tc">{{item.white_time|toFixed}}</td>
-				<td class="tc">{{item.dom_time|toFixed(true)}}</td>
-				<td class="tc">{{item.analysisDom_time|toFixed}}</td>
-				<td class="tc">{{item.dns_time|toFixed}}</td>
-				<td class="tc">{{item.tcp_time|toFixed}}</td>
-				<td class="tc">{{item.redirect_time|toFixed}}</td>
-				<td class="tc">{{item.unload_time|toFixed}}</td>
-				<td class="tc">{{item.request_time|toFixed}}</td>
-				<td class="tc">{{item.ready_time|toFixed}}</td>
-				<td class="tc"><a :href="'/web/analysisdetail?markuser='+item.mark_user">查看轨迹详情</a></td>
-				<td class="tc">{{item.create_time|date('/',true)}}</td>
-				<td class="tc"><a :href="'/web/pagesdetails?id='+item._id">详情</a></td>
-			</tr>
-		</table>
+		<div class="overflow_table">
+			<!-- table列表 -->
+			<table class="table" v-if="isLoadend&&listdata.length">
+				<tr class="light_color">
+					<th>URL</th>
+					<th>页面加载时间</th>
+					<th>白屏时间</th>
+					<th>DOM构建时间</th>
+					<th>解析dom耗时</th>
+					<th>DNS解析时间</th>
+					<th>TCP连接时间</th>
+					<th>页面重定向时间</th>
+					<th>unload时间</th>
+					<th>request请求耗时</th>
+					<th>页面准备时间</th>
+					<th>访问轨迹</th>
+					<th>页面请求时间</th>
+					<th>操作</th>
+				</tr>
+				<tr v-for="item in listdata">
+					<td><a :href="'/web/pagesdetails?id='+item._id+'&slowpages'">{{item.url}}</a></td>
+					<td class="red tc">{{item.load_time|toFixed(true)}}</td>
+					<td class="red tc">{{item.white_time|toFixed}}</td>
+					<td class="tc">{{item.dom_time|toFixed(true)}}</td>
+					<td class="tc">{{item.analysisDom_time|toFixed}}</td>
+					<td class="tc">{{item.dns_time|toFixed}}</td>
+					<td class="tc">{{item.tcp_time|toFixed}}</td>
+					<td class="tc">{{item.redirect_time|toFixed}}</td>
+					<td class="tc">{{item.unload_time|toFixed}}</td>
+					<td class="tc">{{item.request_time|toFixed}}</td>
+					<td class="tc">{{item.ready_time|toFixed}}</td>
+					<td class="tc"><a :href="'/web/analysisdetail?markuser='+item.mark_user">查看轨迹详情</a></td>
+					<td class="tc">{{item.create_time|date('/',true)}}</td>
+					<td class="tc"><a :href="'/web/pagesdetails?id='+item._id">详情</a></td>
+				</tr>
+			</table>
+		</div>
 	</div>
 	<div>
 		<!--  分页 -->

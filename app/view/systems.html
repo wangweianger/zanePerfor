@@ -50,31 +50,33 @@
 	<div v-if="isLoadend && datalist.length">
 		<div class="com_block mt20">
 			<h1 class="com_h2 mb20">WEB应用系统</h1>
-			<table class="table">
-				<tr class="light_color">
-					<th class="tc w-100">应用名称</th>
-					<th class="tc w-200">应用类型</th>
-					<th class="tc w-200">应用链接</th>
-					<th class="tc w-300">appId</th>
-					<th class="tc w-100">是否可用</th>
-					<th class="tc">开放用户</th>
-					<th class="tc w-200">操作</th>
-				</tr>
-				<tr v-for="item in datalist">
-					<td class="tc"><strong>{{item.system_name}}</strong></td>
-					<td class="tc">{{item.type}}</td>
-					<td class="tc">{{item.system_domain}}</td>
-					<td class="tc">{{item.app_id}}</td>
-					<td class="tc">{{item.is_use==0?'是':'否'}}</td>
-					<td class="tc">
-						<span class="user" v-for="user in item.userlist" @click="deleteUser(item,user)">{{user.user_name}}<span class="iconfont">&#xe674;</span></span>
-					</td>
-					<td class="tc">
-						<button class="btn btn-main" @click="addUser(item)">分配用户</button>
-						<button class="ml10 btn btn-default" @click="deleteSystem(item)">删除应用</button>
-					</td>
-				</tr>
-			</table>
+			<div class="overflow_table">
+				<table class="table">
+					<tr class="light_color">
+						<th class="tc w-100">应用名称</th>
+						<th class="tc w-200">应用类型</th>
+						<th class="tc w-200">应用链接</th>
+						<th class="tc w-300">appId</th>
+						<th class="tc w-100">是否可用</th>
+						<th class="tc">开放用户</th>
+						<th class="tc w-200">操作</th>
+					</tr>
+					<tr v-for="item in datalist">
+						<td class="tc"><strong>{{item.system_name}}</strong></td>
+						<td class="tc">{{item.type}}</td>
+						<td class="tc">{{item.system_domain}}</td>
+						<td class="tc">{{item.app_id}}</td>
+						<td class="tc">{{item.is_use==0?'是':'否'}}</td>
+						<td class="tc">
+							<span class="user" v-for="user in item.userlist" @click="deleteUser(item,user)">{{user.user_name}}<span class="iconfont">&#xe674;</span></span>
+						</td>
+						<td class="tc">
+							<button class="btn btn-main" @click="addUser(item)">分配用户</button>
+							<button class="ml10 btn btn-default" @click="deleteSystem(item)">删除应用</button>
+						</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 	</div>
 	<div v-if="isLoadend && !datalist.length" class="empty mt30 tc">暂无应用！</div>
@@ -93,22 +95,24 @@
 						</div>
 					</div>
 				</div>
-				<table class="table" v-if="isUserLoadend&&userlist.length">
-					<tr class="light_color">
-						<th class="tc w-100">用户名称</th>
-						<th class="tc w-200">用户级别</th>
-						<th class="tc w-300">是否冻结</th>
-						<th class="tc w-200">操作</th>
-					</tr>
-					<tr v-for="(item,i) in userlist" :key="i">
-						<td class="tc">{{item.user_name}}</td>
-						<td class="tc">{{item.level==0?'管理员':'普通用户'}}</td>
-						<td class="tc">{{item.is_use==0?'正常':'冻结'}}</td>
-						<td class="tc">
-							<button class="btn btn-main" @click="addSystemUser(item)">分配</button>
-						</td>
-					</tr>
-				</table>
+				<div class="overflow_table">
+					<table class="table" v-if="isUserLoadend&&userlist.length">
+						<tr class="light_color">
+							<th class="tc w-100">用户名称</th>
+							<th class="tc w-200">用户级别</th>
+							<th class="tc w-300">是否冻结</th>
+							<th class="tc w-200">操作</th>
+						</tr>
+						<tr v-for="(item,i) in userlist" :key="i">
+							<td class="tc">{{item.user_name}}</td>
+							<td class="tc">{{item.level==0?'管理员':'普通用户'}}</td>
+							<td class="tc">{{item.is_use==0?'正常':'冻结'}}</td>
+							<td class="tc">
+								<button class="btn btn-main" @click="addSystemUser(item)">分配</button>
+							</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 			<!--  分页 -->
 			<div class="tc common_page_style mt10" v-show="isUserLoadend&&userlist.length">

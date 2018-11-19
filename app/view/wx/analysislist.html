@@ -45,21 +45,23 @@
 
 			</div>
 		</div>
-		<!-- table列表 -->
-		<table class="table" v-if="isLoadend&&listdata.length">
-			<tr class="light_color">
-				<th class="w-300">访问者IP</th>
-				<th class="w-300">手机品牌</th>
-				<th class="w-300">操作系统</th>
-				<th class="w-300">操作</th>
-			</tr>
-			<tr v-for="item in listdata">
-				<td><a href="javascript:" @click="goToList(item)">{{item._id.ip}}</a></td>
-				<td class="tc">{{item._id.brand}}</td>
-				<td class="tc">{{item._id.system}}</td>
-				<td class="tc"><a href="javascript:" @click="goToList(item)">详情</a></td>
-			</tr>
-		</table>
+		<div class="overflow_table">
+			<!-- table列表 -->
+			<table class="table" v-if="isLoadend&&listdata.length">
+				<tr class="light_color">
+					<th class="w-300">访问者IP</th>
+					<th class="w-300">手机品牌</th>
+					<th class="w-300">操作系统</th>
+					<th class="w-300">操作</th>
+				</tr>
+				<tr v-for="item in listdata">
+					<td><a href="javascript:" @click="goToList(item)">{{item._id.ip}}</a></td>
+					<td class="tc">{{item._id.brand}}</td>
+					<td class="tc">{{item._id.system}}</td>
+					<td class="tc"><a href="javascript:" @click="goToList(item)">详情</a></td>
+				</tr>
+			</table>
+		</div>
 	</div>
 	<!--  分页 -->
 	<div class="tc common_page_style mt10" v-show="isLoadend&&listdata.length">

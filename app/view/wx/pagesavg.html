@@ -44,29 +44,31 @@
 			</div>
 			<div class="tipscolor mt10" v-if="errText">{{errText}}</div>
 		</div>
-		<!-- table列表 -->
-		<table class="table" v-if="isLoadend&&listdata.length">
-			<tr class="light_color">
-				<th class="w-500">URL</th>
-				<th>调用次数</th>
-				<th v-if="isCity">城市</th>
-				<th v-if="isBrand">手机品牌</th>
-				<th v-if="isModel">手机型号</th>
-				<th v-if="isNet">网络类型</th>
-				<th v-if="isSystem">手机系统</th>
-				<th>操作</th>
-			</tr>
-			<tr v-for="item in listdata">
-				<td><a class="word-wrap" href="javascript:" @click="goToList(item)">{{item._id.url}}</a></td>
-				<td class="tc" >{{item.count}}</td>
-				<td class="tc" v-if="isCity">{{item._id.city||'未知'}}</td>
-				<td class="tc" v-if="isBrand">{{item._id.brand}}</td>
-				<td class="tc" v-if="isModel">{{item._id.model}}</td>
-				<td class="tc" v-if="isNet">{{item._id.net}}</td>
-				<td class="tc" v-if="isSystem">{{item._id.system}}</td>
-				<td><a href="javascript:" @click="goToList(item)">详情</a></td>
-			</tr>
-		</table>
+		<div class="overflow_table">
+			<!-- table列表 -->
+			<table class="table" v-if="isLoadend&&listdata.length">
+				<tr class="light_color">
+					<th class="w-500">URL</th>
+					<th>调用次数</th>
+					<th v-if="isCity">城市</th>
+					<th v-if="isBrand">手机品牌</th>
+					<th v-if="isModel">手机型号</th>
+					<th v-if="isNet">网络类型</th>
+					<th v-if="isSystem">手机系统</th>
+					<th>操作</th>
+				</tr>
+				<tr v-for="item in listdata">
+					<td><a class="word-wrap" href="javascript:" @click="goToList(item)">{{item._id.url}}</a></td>
+					<td class="tc" >{{item.count}}</td>
+					<td class="tc" v-if="isCity">{{item._id.city||'未知'}}</td>
+					<td class="tc" v-if="isBrand">{{item._id.brand}}</td>
+					<td class="tc" v-if="isModel">{{item._id.model}}</td>
+					<td class="tc" v-if="isNet">{{item._id.net}}</td>
+					<td class="tc" v-if="isSystem">{{item._id.system}}</td>
+					<td><a href="javascript:" @click="goToList(item)">详情</a></td>
+				</tr>
+			</table>
+		</div>
 	</div>
 	<!--  分页 -->
 	<div class="tc common_page_style mt10" v-show="isLoadend&&listdata.length">

@@ -21,35 +21,37 @@
 		<commonsearch></commonsearch>
 	</div>
 	<div class="charts mt20">
-		<!-- table列表 -->
-		<table class="table" v-if="isLoadend&&listdata.length">
-			<tr class="light_color">
-				<th class="w-300">错误资源</th>
-				<th>错误信息</th>
-				<th>错误类型</th>
-				<th>所属PATH</th>
-				<th v-if="category=='ajax'">状态码</th>
-				<th v-if="category=='js'">错误行</th>
-				<th v-if="category=='js'">错误列</th>
-				<th v-if="category=='ajax'">请求方式</th>
-				<th>访问轨迹</th>
-				<th>错误时间</th>
-				<th>操作呢</th>
-			</tr>
-			<tr v-for="item in listdata">
-				<td class="tc w-300"><a class="word-wrap" href="javascript:" @click="gotodetail(item)">{{item.name}}</a></td>
-				<td class="tc red">{{item.msg}}</td>
-				<td class="tc">{{item.type}}</td>
-				<td class="tc">{{item.path}}</td>
-				<td class="tc" v-if="item.type=='ajax'">{{item.status}}</td>
-				<td class="tc" v-if="item.type=='js'">{{item.line}}</td>
-				<td class="tc" v-if="item.type=='js'">{{item.col}}</td>
-				<td class="tc" v-if="item.type=='ajax'">{{item.method}}</td>
-				<td class="tc"><a :href="'/wx/analysisdetail?markuser='+item.mark_user">查看轨迹详情</a></td>
-				<td class="tc">{{item.create_time|date('/',true)}}</td>
-				<td class="tc"><a href="javascript:" @click="gotodetail(item)">详情</a></td>
-			</tr>
-		</table>
+		<div class="overflow_table">
+			<!-- table列表 -->
+			<table class="table" v-if="isLoadend&&listdata.length">
+				<tr class="light_color">
+					<th class="w-300">错误资源</th>
+					<th>错误信息</th>
+					<th>错误类型</th>
+					<th>所属PATH</th>
+					<th v-if="category=='ajax'">状态码</th>
+					<th v-if="category=='js'">错误行</th>
+					<th v-if="category=='js'">错误列</th>
+					<th v-if="category=='ajax'">请求方式</th>
+					<th>访问轨迹</th>
+					<th>错误时间</th>
+					<th>操作呢</th>
+				</tr>
+				<tr v-for="item in listdata">
+					<td class="tc w-300"><a class="word-wrap" href="javascript:" @click="gotodetail(item)">{{item.name}}</a></td>
+					<td class="tc red">{{item.msg}}</td>
+					<td class="tc">{{item.type}}</td>
+					<td class="tc">{{item.path}}</td>
+					<td class="tc" v-if="item.type=='ajax'">{{item.status}}</td>
+					<td class="tc" v-if="item.type=='js'">{{item.line}}</td>
+					<td class="tc" v-if="item.type=='js'">{{item.col}}</td>
+					<td class="tc" v-if="item.type=='ajax'">{{item.method}}</td>
+					<td class="tc"><a :href="'/wx/analysisdetail?markuser='+item.mark_user">查看轨迹详情</a></td>
+					<td class="tc">{{item.create_time|date('/',true)}}</td>
+					<td class="tc"><a href="javascript:" @click="gotodetail(item)">详情</a></td>
+				</tr>
+			</table>
+		</div>
 	</div>
 	<div>
 		<!--  分页 -->
