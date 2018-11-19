@@ -28,11 +28,15 @@
 		.survey .com{
 			margin-left:0!important;
 			font-size:20px;
-			width: auto;
-			margin-right:8px;
+			width: 80px;
+			text-align:center;
+			display:flex;
+			align-items: center;
+			flex-direction: column;
 		}
 		.survey .com span{
 			margin-right:3px;
+			display:block;
 		}
 	}
 </style>
@@ -55,7 +59,7 @@
 				<div class="com uv"><span>UV: </span>{{surveyone.uv}}</div>
 				<div class="com ip"><span>IP: </span>{{surveyone.ip}}</div>
 				<div class="com ip"><span>跳出率: </span>{{surveyone.bounce||'0%'}}</div>
-				<div class="com ip"><span>平均访问深度: </span>{{surveyone.depth||0}}</div>
+				<div class="com ip"><span>访问深度: </span>{{surveyone.depth||0}}</div>
 			</div>
 		</div>
 		<div class="com_block mt20">
@@ -73,7 +77,7 @@
 				<div class="com uv"><span>UV: </span>{{item.uv||0}}</div>
 				<div class="com ip"><span>IP: </span>{{item.ip||0}}</div>
 				<div class="com ip"><span>跳出率: </span>{{item.bounce||'0%'}}</div>
-				<div class="com ip"><span>平均访问深度: </span>{{item.depth||0}}</div>
+				<div class="com ip"><span>访问深度: </span>{{item.depth||0}}</div>
 			</div>
 		</div>
 	</div>
