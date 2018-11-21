@@ -7,8 +7,8 @@ class AjaxsService extends Service {
 
     // 获得页面性能数据平均值
     async getPageAjaxsAvg(appId, url) {
-        const datas = await this.ctx.model.Wx.WxAjaxs.aggregate([
-            { $match: { app_id: appId, path: url }, },
+        const datas = await this.app.models.WxAjaxs(appId).aggregate([
+            { $match: { path: url }, },
             {
                 $group: {
                     _id: {
@@ -45,7 +45,7 @@ class AjaxsService extends Service {
         type = type * 1;
 
         // 查询参数拼接
-        const queryjson = { $match: { app_id: appId, speed_type: type }, }
+        const queryjson = { $match: { speed_type: type }, }
         if (url) queryjson.$match.name = { $regex: new RegExp(url, 'i') };
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
@@ -54,14 +54,14 @@ class AjaxsService extends Service {
             method:"$method",
         };
 
-        return url ? await this.oneThread(queryjson, pageNo, pageSize, group_id) 
+        return url ? await this.oneThread(appId, queryjson, pageNo, pageSize, group_id) 
             : await this.moreThread(appId, type, beginTime,endTime,queryjson, pageNo, pageSize, group_id);
     }
 
     // 平均求值数多线程
     async moreThread(appId, type, beginTime,endTime,queryjson, pageNo, pageSize, group_id){
         const result = [];
-        let distinct = await this.ctx.model.Wx.WxAjaxs.distinct('name', queryjson.$match).read('sp').exec() || [];
+        let distinct = await this.app.models.WxAjaxs(appId).distinct('name', queryjson.$match).read('sp').exec() || [];
         let copdistinct = distinct;
 
         const betinIndex = (pageNo - 1) * pageSize;
@@ -73,8 +73,8 @@ class AjaxsService extends Service {
             queryjson.$match.url = distinct[i];
             resolvelist.push(
                 Promise.resolve(
-                    this.ctx.model.Wx.WxAjaxs.aggregate([
-                        { $match: { app_id: appId, name: distinct[i], speed_type: type, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
+                    this.app.models.WxAjaxs(appId).aggregate([
+                        { $match: { name: distinct[i], speed_type: type, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
                         {
                             $group: {
                                 _id: group_id,
@@ -111,10 +111,10 @@ class AjaxsService extends Service {
     }
 
     // 单个api接口查询平均信息
-    async oneThread(queryjson, pageNo, pageSize, group_id) {
-        const count = Promise.resolve(this.ctx.model.Wx.WxAjaxs.distinct('name', queryjson.$match).read('sp').exec());
+    async oneThread(appId, queryjson, pageNo, pageSize, group_id) {
+        const count = Promise.resolve(this.app.models.WxAjaxs(appId).distinct('name', queryjson.$match).read('sp').exec());
         const datas = Promise.resolve(
-            this.ctx.model.Wx.WxAjaxs.aggregate([
+            this.app.models.WxAjaxs(appId).aggregate([
                 queryjson,
                 {
                     $group: {
@@ -140,10 +140,10 @@ class AjaxsService extends Service {
     // 获得单个api的平均性能数据
     async getOneAjaxAvg(appId, url, beginTime, endTime, type) {
         type = type * 1;
-        const query = { $match: { app_id: appId, name: url, speed_type: type}, };
+        const query = { $match: { name: url, speed_type: type}, };
         if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        const datas = await this.ctx.model.Wx.WxAjaxs.aggregate([
+        const datas = await this.app.models.WxAjaxs(appId).aggregate([
             query,
             {
                 $group: {
@@ -164,11 +164,11 @@ class AjaxsService extends Service {
         pageSize = pageSize * 1;
         type = type * 1;
 
-        const query = { $match: { app_id: appId, name: url, speed_type: type }, };
+        const query = { $match: { name: url, speed_type: type }, };
         if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
-        const count = Promise.resolve(this.ctx.model.Wx.WxAjaxs.count(query.$match).read('sp').exec());
+        const count = Promise.resolve(this.app.models.WxAjaxs(appId).count(query.$match).read('sp').exec());
         const datas = Promise.resolve(
-            this.ctx.model.Wx.WxAjaxs.aggregate([
+            this.app.models.WxAjaxs(appId).aggregate([
                 query,
                 { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
@@ -185,8 +185,8 @@ class AjaxsService extends Service {
     }
 
     // 获得单个ajax详情信息
-    async getOneAjaxDetail(id) {
-        return await this.ctx.model.Wx.WxAjaxs.findOne({ _id: id }).read('sp').exec() || {};
+    async getOneAjaxDetail(appId, id) {
+        return await this.app.models.WxAjaxs(appId).findOne({ _id: id }).read('sp').exec() || {};
     }
 }
 

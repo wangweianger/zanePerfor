@@ -166,7 +166,6 @@ class DataTimedTaskService extends Service {
 
     // 储存网页性能数据
     savePages(item, slowPageTime = 5) {
-        // const pages = this.ctx.model.Web.WebPages();
         const pages = this.app.models.WebPages(item.app_id)();
 
         const performance = item.performance;
@@ -226,7 +225,7 @@ class DataTimedTaskService extends Service {
         slowAjaxTime = slowAjaxTime * 1000;
         const speedType = duration >= slowAjaxTime ? 2 : 1;
 
-        const ajaxs = this.ctx.model.Web.WebAjaxs();
+        const ajaxs = this.app.models.WebAjaxs(data.app_id)();
         ajaxs.app_id = data.app_id;
         ajaxs.create_time = data.create_time;
         ajaxs.speed_type = speedType;
@@ -266,7 +265,7 @@ class DataTimedTaskService extends Service {
         const newurl = url.parse(item.name);
         const newName = newurl.protocol + '//' + newurl.host + newurl.pathname;
 
-        const resours = this.ctx.model.Web.WebResource();
+        const resours = this.app.models.WebResource(data.app_id)();
         resours.app_id = data.app_id;
         resours.create_time = data.create_time;
         resours.url = data.url;
@@ -292,7 +291,7 @@ class DataTimedTaskService extends Service {
             const newName = newurl.protocol + '//' + newurl.host + newurl.pathname;
             const querydata = newurl.query ? JSON.stringify(querystring.parse(newurl.query)) : '{}';
 
-            const errors = this.ctx.model.Web.WebErrors();
+            const errors = this.app.models.WebErrors(data.app_id)();
             errors.app_id = data.app_id;
             errors.url = data.url;
             errors.create_time = data.create_time;
@@ -347,7 +346,7 @@ class DataTimedTaskService extends Service {
             }
         }
 
-        const environment = this.ctx.model.Web.WebEnvironment();
+        const environment = this.app.models.WebEnvironment(data.app_id)();
         environment.app_id = data.app_id;
         environment.create_time = data.create_time;
         environment.url = data.url;

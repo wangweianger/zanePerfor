@@ -11,11 +11,11 @@ class ResourceService extends Service {
         pageSize = pageSize * 1;
         speedType = speedType * 1;
 
-        const query = { $match: { app_id: appId, url: url, speed_type: speedType }, };
+        const query = { $match: { url: url, speed_type: speedType }, };
 
-        const count = Promise.resolve(this.ctx.model.Web.WebResource.count(query.$match).read('sp').exec());
+        const count = Promise.resolve(this.app.models.WebResource(appId).count(query.$match).read('sp').exec());
         const datas = Promise.resolve(
-            this.ctx.model.Web.WebResource.aggregate([
+            this.app.models.WebResource(appId).aggregate([
                 query,
                 { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
@@ -47,7 +47,7 @@ class ResourceService extends Service {
         type = type * 1;
 
         // 查询参数拼接
-        const queryjson = { $match: { app_id: appId, speed_type: type }, }
+        const queryjson = { $match: { speed_type: type }, }
         if (url) queryjson.$match.name = { $regex: new RegExp(url, 'i') };
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
@@ -56,14 +56,14 @@ class ResourceService extends Service {
             method: "$method",
         };
 
-        return url ? await this.oneThread(queryjson, pageNo, pageSize, group_id)
+        return url ? await this.oneThread(appId, queryjson, pageNo, pageSize, group_id)
             : await this.moreThread(appId, type, beginTime, endTime, queryjson, pageNo, pageSize, group_id);
     }
 
     // 平均求值数多线程
     async moreThread(appId, type, beginTime, endTime, queryjson, pageNo, pageSize, group_id) {
         const result = [];
-        let distinct = await this.ctx.model.Web.WebResource.distinct('name', queryjson.$match).read('sp').exec() || [];
+        let distinct = await this.app.models.WebResource(appId).distinct('name', queryjson.$match).read('sp').exec() || [];
         let copdistinct = distinct;
 
         const betinIndex = (pageNo - 1) * pageSize;
@@ -74,8 +74,8 @@ class ResourceService extends Service {
         for (let i = 0, len = distinct.length; i < len; i++) {
             resolvelist.push(
                 Promise.resolve(
-                    this.ctx.model.Web.WebResource.aggregate([
-                        { $match: { speed_type: type, app_id: appId, name: distinct[i], create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
+                    this.app.models.WebResource(appId).aggregate([
+                        { $match: { speed_type: type, name: distinct[i], create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
                         {
                             $group: {
                                 _id: group_id,
@@ -112,10 +112,10 @@ class ResourceService extends Service {
     }
 
     // 单个api接口查询平均信息
-    async oneThread(queryjson, pageNo, pageSize, group_id) {
-        const count = Promise.resolve(this.ctx.model.Web.WebResource.distinct('name', queryjson.$match).read('sp').exec());
+    async oneThread(appId, queryjson, pageNo, pageSize, group_id) {
+        const count = Promise.resolve(this.app.models.WebResource(appId).distinct('name', queryjson.$match).read('sp').exec());
         const datas = Promise.resolve(
-            this.ctx.model.Web.WebResource.aggregate([
+            this.app.models.WebResource(appId).aggregate([
                 queryjson,
                 {
                     $group: {
@@ -140,10 +140,10 @@ class ResourceService extends Service {
 
     // 获得单个resourc的平均性能数据
     async getOneResourceAvg(appId, url, beginTime, endTime) {
-        const query = { $match: { app_id: appId, name: url }, };
+        const query = { $match: { name: url }, };
         if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        const datas = await this.ctx.model.Web.WebResource.aggregate([
+        const datas = await this.app.models.WebResource(appId).aggregate([
             query,
             {
                 $group: {
@@ -163,12 +163,12 @@ class ResourceService extends Service {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
 
-        const query = { $match: { app_id: appId, name: url }, };
+        const query = { $match: { name: url }, };
         if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        const count = Promise.resolve(this.ctx.model.Web.WebResource.count(query.$match).read('sp').exec());
+        const count = Promise.resolve(this.app.models.WebResource(appId).count(query.$match).read('sp').exec());
         const datas = Promise.resolve(
-            this.ctx.model.Web.WebResource.aggregate([
+            this.app.models.WebResource(appId).aggregate([
                 query,
                 { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
@@ -185,8 +185,8 @@ class ResourceService extends Service {
     }
 
     // 获得单个Resource详情信息
-    async getOneResourceDetail(id) {
-        return await this.ctx.model.Web.WebResource.findOne({ _id: id }).read('sp').exec() || {};
+    async getOneResourceDetail(appId, id) {
+        return await this.app.models.WebResource(appId).findOne({ _id: id }).read('sp').exec() || {};
     }
 }
 

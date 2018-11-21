@@ -20,7 +20,9 @@ module.exports = app => {
         path: { type: String }, // 所属path路径
     });
 
-    WxAjaxsSchema.index({ speed_type: 1, app_id: 1, name: 1, create_time: -1 });
+    WxAjaxsSchema.index({ speed_type: 1, name: 1, create_time: -1 });
 
-    return conn.model('WxAjaxs', WxAjaxsSchema);
+    app.models.WxAjaxs = function(appId) {
+        return conn.model(`wx_ajaxs_${appId}`, WxAjaxsSchema);
+    };
 };

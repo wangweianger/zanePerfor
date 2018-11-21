@@ -28,7 +28,7 @@ class PagesController extends Controller {
         if (!appId) throw new Error('单个页面性能列表：appId不能为空');
         if (!url) throw new Error('单个页面性能列表：url不能为空');
 
-        const result = await ctx.service.wx.pages.getOnePageList(ctx);
+        const result = await ctx.service.wx.pages.getOnePageList(appId, ctx);
 
         ctx.body = this.app.result({
             data: result,

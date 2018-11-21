@@ -156,6 +156,7 @@
 					url: config.baseApi + 'api/v1/wx/error/getErrorDetail',
 					data: {
 						id:this.id,
+						appId: this.appId,
 					},
 					success: data => {
 						this.isLoadend = true;

@@ -22,9 +22,11 @@ module.exports = app => {
         path: { type: String }, // 所属path路径
     });
 
-    WxErrorsSchema.index({ type: 1, app_id: 1, name: 1, create_time: 1 });
-    WxErrorsSchema.index({ type: 1, app_id: 1, path: 1, create_time: 1 });
-    WxErrorsSchema.index({ app_id: 1, name: 1, create_time: -1 });
+    WxErrorsSchema.index({ type: 1, name: 1, create_time: 1 });
+    WxErrorsSchema.index({ type: 1, path: 1, create_time: 1 });
+    WxErrorsSchema.index({ name: 1, create_time: -1 });
 
-    return conn.model('WxErrors', WxErrorsSchema);
+    app.models.WxErrors = function(appId) {
+        return conn.model(`wx_errors_${appId}`, WxErrorsSchema);
+    };
 };

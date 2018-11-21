@@ -186,7 +186,7 @@ class WxReportTaskService extends Service {
             }
         }
 
-        const pages = this.ctx.model.Wx.WxPages();
+        const pages = this.app.models.WxPages(item.app_id)();
         pages.app_id = item.app_id;
         pages.create_time = item.create_time;
         pages.path = item.pages.router;
@@ -222,7 +222,7 @@ class WxReportTaskService extends Service {
             slowAjaxTime = slowAjaxTime * 1000;
             const speedType = duration >= slowAjaxTime ? 2 : 1;
 
-            const ajaxs = this.ctx.model.Wx.WxAjaxs();
+            const ajaxs = this.app.models.WxAjaxs(data.app_id)();
             ajaxs.app_id = data.app_id;
             ajaxs.create_time = data.create_time;
             ajaxs.speed_type = speedType;
@@ -242,7 +242,7 @@ class WxReportTaskService extends Service {
     saveErrors(data) {
         if (!data.errs && !data.errs.length) return;
         data.errs.forEach(item => {
-            const errors = this.ctx.model.Wx.WxErrors();
+            const errors = this.app.models.WxErrors(data.app_id)();
             errors.app_id = data.app_id;
             errors.name = item.name;
             errors.create_time = data.create_time;

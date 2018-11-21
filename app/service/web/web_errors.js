@@ -20,7 +20,7 @@ class ErroesService extends Service {
         pageSize = pageSize * 1;
 
         // 查询参数拼接
-        const queryjson = { $match: { app_id: appId }, }
+        const queryjson = { $match: { }, }
         if (type) queryjson.$match.category = type;
         if (url) queryjson.$match.resource_url = { $regex: new RegExp(url, 'i') };
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
@@ -31,14 +31,14 @@ class ErroesService extends Service {
             msg: "$msg",
         };
 
-        return url ? await this.oneThread(queryjson, pageNo, pageSize, group_id)
+        return url ? await this.oneThread(appId, queryjson, pageNo, pageSize, group_id)
             : await this.moreThread(appId, type, beginTime, endTime, queryjson, pageNo, pageSize, group_id);
     }
 
     // 平均求值数多线程
     async moreThread(appId, type, beginTime, endTime, queryjson, pageNo, pageSize, group_id) {
         const result = [];
-        let distinct = await this.ctx.model.Web.WebErrors.distinct('resource_url', queryjson.$match).read('sp').exec() || [];
+        let distinct = await this.app.models.WebErrors(appId).distinct('resource_url', queryjson.$match).read('sp').exec() || [];
         let copdistinct = distinct;
 
         const betinIndex = (pageNo - 1) * pageSize;
@@ -49,11 +49,11 @@ class ErroesService extends Service {
         for (let i = 0, len = distinct.length; i < len; i++) {
             resolvelist.push(
                 Promise.resolve(
-                    this.ctx.model.Web.WebErrors.aggregate([
+                    this.app.models.WebErrors(appId).aggregate([
                         (type?
-                            { $match: { app_id: appId, category: type, resource_url: distinct[i], create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } }
+                            { $match: { category: type, resource_url: distinct[i], create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } }
                             :
-                            { $match: { app_id: appId, resource_url: distinct[i], create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } }
+                            { $match: { resource_url: distinct[i], create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } }
                         ),
                         {
                             $group: {
@@ -89,10 +89,10 @@ class ErroesService extends Service {
     }
 
     // 单个api接口查询平均信息
-    async oneThread(queryjson, pageNo, pageSize, group_id) {
-        const count = Promise.resolve(this.ctx.model.Web.WebErrors.distinct('resource_url', queryjson.$match).read('sp').exec());
+    async oneThread(appId, queryjson, pageNo, pageSize, group_id) {
+        const count = Promise.resolve(this.app.models.WebErrors(appId).distinct('resource_url', queryjson.$match).read('sp').exec());
         const datas = Promise.resolve(
-            this.ctx.model.Web.WebErrors.aggregate([
+            this.app.models.WebErrors(appId).aggregate([
                 queryjson,
                 {
                     $group: {
@@ -118,12 +118,12 @@ class ErroesService extends Service {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
 
-        const query = { app_id: appId, resource_url: url, category: category }
+        const query = { resource_url: url, category: category }
         if (beginTime && endTime) query.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        const count = Promise.resolve(this.ctx.model.Web.WebErrors.count(query).read('sp').exec());
+        const count = Promise.resolve(this.app.models.WebErrors(appId).count(query).read('sp').exec());
         const datas = Promise.resolve(
-            this.ctx.model.Web.WebErrors.aggregate([
+            this.app.models.WebErrors(appId).aggregate([
                 { $match: query, },
                 { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
@@ -140,8 +140,8 @@ class ErroesService extends Service {
     }
 
     // 单个error详情信息
-    async getErrorDetail(id) {
-        return await this.ctx.model.Web.WebErrors.findOne({ _id: id }).read('sp').exec() || {};
+    async getErrorDetail(appId, id) {
+        return await this.app.models.WebErrors(appId).findOne({ _id: id }).read('sp').exec() || {};
     }
 
 }

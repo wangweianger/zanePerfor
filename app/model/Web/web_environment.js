@@ -21,11 +21,13 @@ module.exports = app => {
         province: { type: String }, // 省
         city: { type: String }, // 市
     });
-    WebEnvironmentSchema.index({ app_id: 1, url: 1, create_time: -1 });
-    WebEnvironmentSchema.index({ app_id: 1, ip: 1, create_time: -1 });
-    WebEnvironmentSchema.index({ app_id: 1, create_time: -1 });
-    WebEnvironmentSchema.index({ app_id: 1, mark_page: 1 });
-    WebEnvironmentSchema.index({ app_id: 1, mark_user: 1 });
+    WebEnvironmentSchema.index({ url: 1, create_time: -1 });
+    WebEnvironmentSchema.index({ ip: 1, create_time: -1 });
+    WebEnvironmentSchema.index({ create_time: -1 });
+    WebEnvironmentSchema.index({ mark_page: 1 });
+    WebEnvironmentSchema.index({ mark_user: 1 });
 
-    return conn.model('WebEnvironment', WebEnvironmentSchema);
+    app.models.WebEnvironment = function(appId) {
+        return conn.model(`web_environment_${appId}`, WebEnvironmentSchema);
+    };
 };

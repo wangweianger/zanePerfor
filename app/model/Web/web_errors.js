@@ -25,9 +25,11 @@ module.exports = app => {
         mark_user: { type: String }, // 统一某一时间段用户标识
     });
 
-    WebErrorsSchema.index({ category: 1, app_id: 1, resource_url: 1, create_time: -1 });
-    WebErrorsSchema.index({ app_id: 1, resource_url: 1, create_time: -1 });
-    WebErrorsSchema.index({ app_id: 1, create_time: -1 });
+    WebErrorsSchema.index({ category: 1, resource_url: 1, create_time: -1 });
+    WebErrorsSchema.index({ resource_url: 1, create_time: -1 });
+    WebErrorsSchema.index({ create_time: -1 });
 
-    return conn.model('WebErrors', WebErrorsSchema);
+    app.models.WebErrors = function(appId) {
+        return conn.model(`web_errors_${appId}`, WebErrorsSchema);
+    };
 };

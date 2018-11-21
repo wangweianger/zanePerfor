@@ -9,7 +9,7 @@ class EnvironmentService extends Service {
     async getDataGroupBy(type, url, appId, beginTime, endTime) {
         type = type*1;
 
-        const queryjson = { $match: { app_id: appId, url: url }, }
+        const queryjson = { $match: { url: url }, }
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
         const group_id = {
             url: "$url",
@@ -17,8 +17,8 @@ class EnvironmentService extends Service {
             browser: `${type == 2 ? "$browser" : ""}`,
             system: `${type == 3 ? "$system" : ""}`,
         };
-
-        const datas = await this.ctx.model.Web.WebEnvironment.aggregate([
+        
+        const datas = await this.app.models.WebEnvironment(appId).aggregate([
             queryjson,
             {
                 $group: {
@@ -35,7 +35,7 @@ class EnvironmentService extends Service {
 
     // 根据mark_page获得用户系统信息
     async getEnvironmentForPage(appId, markPage) {
-        return await this.ctx.model.Web.WebEnvironment.findOne({ app_id: appId, mark_page: markPage }).read('sp').exec();
+        return await this.app.models.WebEnvironment(appId).findOne({ mark_page: markPage }).read('sp').exec();
     }
 }
 

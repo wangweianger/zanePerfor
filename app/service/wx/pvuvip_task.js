@@ -10,7 +10,7 @@ class WxReportService extends Service {
         const beginTime = new Date(interval.prev().toString());
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
 
-        const datas = await this.ctx.model.Wx.WxPages.distinct('app_id', query).read('sp').exec();
+        const datas = await this.ctx.model.System.distinct('app_id', { type: 'wx' }).read('sp').exec();
         this.groupData(datas, 2, query, beginTime, endTime);
     }
     // 定时执行每分钟的数据
@@ -21,7 +21,7 @@ class WxReportService extends Service {
         const beginTime = new Date(endTime.getTime() - 60000);
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
 
-        const datas = await this.ctx.model.Wx.WxPages.distinct('app_id', query).read('sp').exec();
+        const datas = await this.ctx.model.System.distinct('app_id', { type: 'wx' }).read('sp').exec();
         this.groupData(datas, 1, query, endTime);
     }
     // 对数据进行分组
@@ -37,35 +37,37 @@ class WxReportService extends Service {
 
     // 获得pvuvip数据
     async savePvUvIpData(appId, endTime, type, query) {
-        query.app_id = appId;
-        const pvpro = Promise.resolve(this.ctx.model.Wx.WxPages.count(query).read('sp').exec());
-        const uvpro = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_uv', query).read('sp').exec());
-        const ippro = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('ip', query).read('sp').exec());
+        try {
+            query.app_id = appId;
+            const pvpro = Promise.resolve(this.app.models.WxPages(appId).count(query).read('sp'));
+            const uvpro = Promise.resolve(this.app.models.WxPages(appId).distinct('mark_uv', query).read('sp'));
+            const ippro = Promise.resolve(this.app.models.WxPages(appId).distinct('ip', query).read('sp'));
 
-        let data = [];
-        if (type === 1) {
-            data = await Promise.all([ pvpro, uvpro, ippro ]);
-        } else if (type === 2) {
-            const user = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_user', query).read('sp').exec());
-            const bounce = Promise.resolve(this.ctx.service.wx.pvuvip.bounceRate(query));
-            data = await Promise.all([ pvpro, uvpro, ippro, user, bounce ]);
-        }
-        const pv = data[0] || 0;
-        const uv = data[1].length || 0;
-        const ip = data[2].length || 0;
-        const user = type === 2 ? data[3].length : 0;
-        const bounce = type === 2 ? data[4] : 0;
+            let data = [];
+            if (type === 1) {
+                data = await Promise.all([ pvpro, uvpro, ippro ]);
+            } else if (type === 2) {
+                const user = Promise.resolve(this.app.models.WxPages(appId).distinct('mark_user', query).read('sp'));
+                const bounce = Promise.resolve(this.ctx.service.wx.pvuvip.bounceRate(appId, query));
+                data = await Promise.all([ pvpro, uvpro, ippro, user, bounce ]);
+            }
+            const pv = data[0] || 0;
+            const uv = data[1].length || 0;
+            const ip = data[2].length || 0;
+            const user = type === 2 ? data[3].length : 0;
+            const bounce = type === 2 ? data[4] : 0;
 
-        const pvuvip = this.ctx.model.Wx.WxPvuvip();
-        pvuvip.app_id = appId;
-        pvuvip.pv = pv;
-        pvuvip.uv = uv;
-        pvuvip.ip = ip;
-        if (type === 2) pvuvip.bounce = bounce ? (bounce / pv * 100).toFixed(2) + '%' : 0;
-        if (type === 2) pvuvip.depth = pv && user ? parseInt(pv / user) : 0;
-        pvuvip.create_time = endTime;
-        pvuvip.type = type;
-        await pvuvip.save();
+            const pvuvip = this.ctx.model.Wx.WxPvuvip();
+            pvuvip.app_id = appId;
+            pvuvip.pv = pv;
+            pvuvip.uv = uv;
+            pvuvip.ip = ip;
+            if (type === 2) pvuvip.bounce = bounce ? (bounce / pv * 100).toFixed(2) + '%' : 0;
+            if (type === 2) pvuvip.depth = pv && user ? parseInt(pv / user) : 0;
+            pvuvip.create_time = endTime;
+            pvuvip.type = type;
+            await pvuvip.save();
+        } catch (err) { console.log(err); }
 
     }
 

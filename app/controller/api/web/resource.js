@@ -85,10 +85,12 @@ class ResourceController extends Controller {
         const { ctx } = this;
         const query = ctx.request.query;
         const id = query.id;
+        const appId = query.appId;
 
         if (!id) throw new Error('获得单个Resource详情信息：id不能为空');
+        if (!appId) throw new Error('获得单个Resource详情信息：appId不能为空');
 
-        const result = await ctx.service.web.webResource.getOneResourceDetail(id);
+        const result = await ctx.service.web.webResource.getOneResourceDetail(appId, id);
 
         ctx.body = this.app.result({
             data: result,

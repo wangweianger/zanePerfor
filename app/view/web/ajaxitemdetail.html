@@ -141,6 +141,7 @@
 					url: config.baseApi + 'api/v1/ajax/getOneAjaxDetail',
 					data: {
 						id:this.id,
+						appId:this.appId,
 					},
 					success: data => {
 						this.isLoadend = true;

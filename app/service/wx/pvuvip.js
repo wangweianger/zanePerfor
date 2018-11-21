@@ -32,10 +32,10 @@ class PvuvivService extends Service {
     }
     // 概况统计
     async getPvUvIpSurvey(appId, beginTime, endTime, type) {
-        const querydata = { app_id: appId, create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
-        const pv = Promise.resolve(this.ctx.model.Wx.WxPages.count(querydata).read('sp').exec());
-        const uv = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_uv', querydata).read('sp').exec());
-        const ip = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('ip', querydata).read('sp').exec());
+        const querydata = { create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
+        const pv = Promise.resolve(this.app.models.WxPages(appId).count(querydata).read('sp').exec());
+        const uv = Promise.resolve(this.app.models.WxPages(appId).distinct('mark_uv', querydata).read('sp').exec());
+        const ip = Promise.resolve(this.app.models.WxPages(appId).distinct('ip', querydata).read('sp').exec());
         if (!type) {
             const data1 = await Promise.all([ pv, uv, ip ]);
             return {
@@ -44,8 +44,8 @@ class PvuvivService extends Service {
                 ip: data1[2].length,
             };
         } else {
-            const user = Promise.resolve(this.ctx.model.Wx.WxPages.distinct('mark_user', querydata).read('sp').exec());
-            const bounce = Promise.resolve(this.bounceRate(querydata));
+            const user = Promise.resolve(this.app.models.WxPages(appId).distinct('mark_user', querydata).read('sp').exec());
+            const bounce = Promise.resolve(this.bounceRate(appId, querydata));
             const data2 = await Promise.all([pv, uv, ip, user, bounce]);
             return {
                 pv: data2[0] || 0,
@@ -57,7 +57,7 @@ class PvuvivService extends Service {
         }
     }
     // 跳出率
-    async bounceRate(querydata) {
+    async bounceRate(appId, querydata) {
         const option = {
             map: function () { emit(this.mark_user, 1); },
             reduce: function (key, values) { return values.length == 1 },
@@ -65,7 +65,7 @@ class PvuvivService extends Service {
             keeptemp: false,
             out: { replace: 'wxjumpout' },
         }
-        const res = await this.ctx.model.Wx.WxPages.mapReduce(option)
+        const res = await this.app.models.WxPages(appId).mapReduce(option)
         const result = await res.model.find().where('value').equals(1).count().exec();
         return result;
     }

@@ -163,35 +163,35 @@
 			<h1 class="com_h1">页面平均耗时</h1>
 			<ul>
 				<li>
-					<h1>平均加载耗时(s)</h1>
+					<h1>加载耗时(s)</h1>
 					<h2 class="red">{{datas.load_time|toFixed(true)}}</h2>
 				</li>
 				<li>
-					<h1>平均白屏耗时(ms)</h1>
+					<h1>白屏耗时(ms)</h1>
 					<h2 class="red">{{datas.white_time|toFixed}}</h2>
 				</li>
 				<li>
-					<h1>平均DOM构建耗时(s)</h1>
+					<h1>DOM构建耗时(s)</h1>
 					<h2>{{datas.dom_time|toFixed(true)}}</h2>
 				</li>
 				<li>
-					<h1>平均解析DOM耗时(s)</h1>
+					<h1>解析DOM耗时(s)</h1>
 					<h2>{{datas.analysisDom_time|toFixed(true)}}</h2>
 				</li>
 				<li>
-					<h1>平均DNS解析耗时(ms)</h1>
+					<h1>DNS解析耗时(ms)</h1>
 					<h2>{{datas.dns_time|toFixed}}</h2>
 				</li>
 				<li>
-					<h1>平均TCP连接耗时(ms)</h1>
+					<h1>TCP连接耗时(ms)</h1>
 					<h2>{{datas.tcp_time|toFixed}}</h2>
 				</li>
 				<li>
-					<h1>平均request请求耗时(ms)</h1>
+					<h1>request请求耗时(ms)</h1>
 					<h2>{{datas.request_time|toFixed}}</h2>
 				</li>
 				<li>
-					<h1>平均页面准备耗时(ms)</h1>
+					<h1>页面准备耗时(ms)</h1>
 					<h2>{{datas.ready_time|toFixed}}</h2>
 				</li>
 			</ul>
@@ -325,6 +325,7 @@
 					type:'get',
 					url: config.baseApi + 'api/v1/pages/getPageDetails',
 					data: {
+						appId:this.appId,
 						id:this.id,
 					},
 					success: data => {

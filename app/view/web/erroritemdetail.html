@@ -162,6 +162,7 @@
 					url: config.baseApi + 'api/v1/error/getErrorDetail',
 					data: {
 						id:this.id,
+						appId:this.appId,
 					},
 					success: data => {
 						this.isLoadend = true;

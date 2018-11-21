@@ -50,7 +50,7 @@ module.exports = () => {
     config.report_thread = 10;
 
     // 更新用户上报IP对应的城市信息线程数
-    config.ip_thread = 10;
+    config.ip_thread = 5;
 
     // 上报原始数据使用redis存储还是使用mongodb存储
     config.report_data_type = 'redis'; // redus  mongodb

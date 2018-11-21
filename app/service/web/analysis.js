@@ -10,18 +10,18 @@ class AnalysisService extends Service {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
 
-        const query = { $match: { app_id: appId }, };
+        const query = { $match: { }, };
         if (ip) query.$match.ip = ip;
         if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        return ip ? await this.oneThread(query, pageNo, pageSize)
+        return ip ? await this.oneThread(appId, query, pageNo, pageSize)
             : await this.moreThread(appId, beginTime, endTime, query, pageNo, pageSize);
     }
 
     // 平均求值数多线程
     async moreThread(appId, beginTime, endTime, queryjson, pageNo, pageSize) {
         const result = [];
-        let distinct = await this.ctx.model.Web.WebEnvironment.distinct('mark_user', queryjson.$match).exec() || [];
+        let distinct = await this.app.models.WebEnvironment(appId).distinct('mark_user', queryjson.$match).exec() || [];
         let copdistinct = distinct;
 
         const betinIndex = (pageNo - 1) * pageSize;
@@ -32,8 +32,8 @@ class AnalysisService extends Service {
         for (let i = 0, len = distinct.length; i < len; i++) {
             resolvelist.push(
                 Promise.resolve(
-                    this.ctx.model.Web.WebEnvironment.aggregate([
-                        { $match: { app_id: appId, mark_user: distinct[i], create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
+                    this.app.models.WebEnvironment(appId).aggregate([
+                        { $match: { mark_user: distinct[i], create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
                         {
                             $group: {
                                 _id: {
@@ -61,10 +61,10 @@ class AnalysisService extends Service {
     }
 
     // 单个api接口查询平均信息
-    async oneThread(queryjson, pageNo, pageSize) {
-        const count = Promise.resolve(this.ctx.model.Web.WebEnvironment.distinct('mark_user', queryjson.$match).exec());
+    async oneThread(appId, queryjson, pageNo, pageSize) {
+        const count = Promise.resolve(this.app.models.WebEnvironment(appId).distinct('mark_user', queryjson.$match).exec());
         const datas = Promise.resolve(
-            this.ctx.model.Web.WebEnvironment.aggregate([
+            this.app.models.WebEnvironment(appId).aggregate([
                 queryjson,
                 {
                     $group: {
@@ -91,7 +91,7 @@ class AnalysisService extends Service {
 
     // 单个用户行为轨迹列表
     async getAnalysisOneList(appId, markuser) {
-        return await this.ctx.model.Web.WebEnvironment.find({ app_id: appId, mark_user: markuser }).read('sp').sort({ cerate_time: 1 }).exec() || {};
+        return await this.app.models.WebEnvironment(appId).find({ mark_user: markuser }).read('sp').sort({ cerate_time: 1 }).exec() || {};
     }
 
     // TOP datas
@@ -122,20 +122,22 @@ class AnalysisService extends Service {
         return result;
     }
     async getRealTimeTopPagesForDb(appId, beginTime, endTime, type) {
-        const result = await this.ctx.model.Web.WebPages.aggregate([
-            { $match: { app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) }, }, },
-            {
-                $group: {
-                    _id: { url: "$url", },
-                    count: { $sum: 1 },
+        try{
+            const result = await this.app.models.WebPages(appId).aggregate([
+                { $match: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) }, }, },
+                {
+                    $group: {
+                        _id: { url: "$url", },
+                        count: { $sum: 1 },
+                    },
                 },
-            },
-            { $sort: { count: -1 } },
-            { $limit: this.app.config.top_alalysis_size.web || 10 },
-        ]).read('sp').exec();
-        // 每分钟执行存储到redis
-        if (type === 1) this.app.redis.set(`${appId}_top_pages_realtime`, JSON.stringify(result));
-        return result;
+                { $sort: { count: -1 } },
+                { $limit: this.app.config.top_alalysis_size.web || 10 },
+            ]).read('sp').exec();
+            // 每分钟执行存储到redis
+            if (type === 1) this.app.redis.set(`${appId}_top_pages_realtime`, JSON.stringify(result));
+            return result;
+        } catch (err) { console.log(err); };
     }
     // top跳出率
     async getRealTimeTopJumpOut(appId, beginTime, endTime) {
@@ -144,53 +146,57 @@ class AnalysisService extends Service {
         return result;
     }
     async getRealTimeTopJumpOutForDb(appId, beginTime, endTime, type) {
-        const option = {
-            map: function () { emit(this.mark_user, this.url); },
-            reduce: function (key, values) {
-                return values.length === 1;
-            },
-            query: { app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } },
-            out: { replace: 'collectionName' },
-        }
-        const res = await this.ctx.model.Web.WebEnvironment.mapReduce(option);
-        const result = await res.model.aggregate([
-            { $match: { value: { $ne: false } } },
-            {
-                $group: {
-                    _id: { value: "$value", },
-                    count: { $sum: 1 },
+        try {
+            const option = {
+                map: function () { emit(this.mark_user, this.url); },
+                reduce: function (key, values) {
+                    return values.length === 1;
                 },
-            },
-            { $sort: { count: -1 } },
-            { $limit: this.app.config.top_alalysis_size.web || 10 },
-        ]).exec();
-        if (type === 1) this.app.redis.set(`${appId}_top_jump_out_realtime`, JSON.stringify(result));
-        return result;
+                query: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } },
+                out: { replace: 'collectionName' },
+            }
+            const res = await this.app.models.WebEnvironment(appId).mapReduce(option);
+            const result = await res.model.aggregate([
+                { $match: { value: { $ne: false } } },
+                {
+                    $group: {
+                        _id: { value: "$value", },
+                        count: { $sum: 1 },
+                    },
+                },
+                { $sort: { count: -1 } },
+                { $limit: this.app.config.top_alalysis_size.web || 10 },
+            ]).exec();
+            if (type === 1) this.app.redis.set(`${appId}_top_jump_out_realtime`, JSON.stringify(result));
+            return result;
+        } catch (err) { console.log(err); }
     }
 
     // top排行榜 Task任务
     async saveRealTimeTopTask(appId, type, begin, end) {
-        let beginTime = begin;
-        let endTime = end;
-        if (type === 1){
-            beginTime = this.app.format(new Date(),'yyyy/MM/dd')+' 00:00:00';
-            endTime = new Date();
-        }
-        const pages = Promise.resolve(this.getRealTimeTopPagesForDb(appId, beginTime, endTime, type));
-        const jump = Promise.resolve(this.getRealTimeTopJumpOutForDb(appId, beginTime, endTime, type));
-        if (type === 2) {
-            // 每天数据存储到数据库
-            const provinces = Promise.resolve(this.getProvinceAvgCountForDb(appId, beginTime, endTime, type));
-            const all = await Promise.all([pages, jump, provinces]);
+        try {
+            let beginTime = begin;
+            let endTime = end;
+            if (type === 1) {
+                beginTime = this.app.format(new Date(), 'yyyy/MM/dd') + ' 00:00:00';
+                endTime = new Date();
+            }
+            const pages = Promise.resolve(this.getRealTimeTopPagesForDb(appId, beginTime, endTime, type));
+            const jump = Promise.resolve(this.getRealTimeTopJumpOutForDb(appId, beginTime, endTime, type));
+            if (type === 2) {
+                // 每天数据存储到数据库
+                const provinces = Promise.resolve(this.getProvinceAvgCountForDb(appId, beginTime, endTime, type));
+                const all = await Promise.all([pages, jump, provinces]);
 
-            const statis = this.ctx.model.Web.WebStatis();
-            statis.app_id = appId;
-            statis.top_pages = all[0];
-            statis.top_jump_out = all[1];
-            statis.provinces = all[2];
-            statis.create_time = beginTime;
-            return await statis.save();
-        }
+                const statis = this.ctx.model.Web.WebStatis();
+                statis.app_id = appId;
+                statis.top_pages = all[0];
+                statis.top_jump_out = all[1];
+                statis.provinces = all[2];
+                statis.create_time = beginTime;
+                return await statis.save();
+            }
+        } catch (err) { console.log(err); }
     }
 
     // 省份流量统计
@@ -209,17 +215,19 @@ class AnalysisService extends Service {
     }
 
     async getProvinceAvgCountForDb(appId, beginTime, endTime, type) {
-        const result = await this.ctx.model.Web.WebEnvironment.aggregate([
-            { $match: { app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
-            {
-                $group: {
-                    _id: { province: "$province", },
-                    count: { $sum: 1 },
+        try {
+            const result = await this.app.models.WebEnvironment(appId).aggregate([
+                { $match: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
+                {
+                    $group: {
+                        _id: { province: "$province", },
+                        count: { $sum: 1 },
+                    },
                 },
-            },
-            { $sort: { count: -1 } },
-        ]).read('sp').exec();
-        return type === 1 ? { provinces: result } : result;
+                { $sort: { count: -1 } },
+            ]).read('sp').exec();
+            return type === 1 ? { provinces: result } : result;
+        } catch (err) { console.log(err); }
     }
 
 }

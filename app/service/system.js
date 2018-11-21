@@ -128,7 +128,15 @@ class WebSystemService extends Service {
     // 删除某个系统
     async deleteSystem(appId) {
         const result = await this.ctx.model.System.findOneAndRemove({ app_id: appId }).exec();
-        this.app.redis.set(appId, '');
+        this.app.redis.set(appId, '', 'EX', 200);
+        setTimeout(async () => {
+            const conn = this.app.mongooseDB.get('db3');
+            try { await conn.dropCollection(`web_pages_${appId}`); } catch (err) { console.log(err); }
+            try { await conn.dropCollection(`web_ajaxs_${appId}`); } catch (err) { console.log(err); }
+            try { await conn.dropCollection(`web_errors_${appId}`); } catch (err) { console.log(err); }
+            try { await conn.dropCollection(`web_resources_${appId}`); } catch (err) { console.log(err); }
+            try { await conn.dropCollection(`web_environment_${appId}`); } catch (err) { console.log(err); }
+        }, 500);
         return result;
     }
 }

@@ -12,54 +12,67 @@ class IpTaskService extends Service {
 
     // 定时任务获得ip地理位置信息
     async saveWebGetIpDatas() {
-        let beginTime = await this.app.redis.get('ip_task_begin_time');
+        const apps = await this.ctx.model.System.distinct('app_id', { type: 'web' }).read('sp').exec();
+        if (!apps || !apps.length) return;
 
-        const query = { city: { $exists: false } };
-        if (beginTime) {
-            beginTime = new Date(new Date(beginTime).getTime() + 1000);
-            query.create_time = { $gt: beginTime };
-        }
-        const datas = await this.ctx.model.Web.WebEnvironment.find(query)
-            .read('sp')
-            .limit(this.app.config.ip_thread * 60)
-            .sort({ create_time: 1 })
-            .exec();
-
-        // 开启多线程执行
+        // 获得本地文件缓存
         this.cacheArr = [];
-        if (datas && datas.length) {
-            // 获得本地文件缓存
-            try {
-                const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file.web}`);
-                const ipDatas = fs.readFileSync(filepath, { encoding: 'utf8' });
-                const result = JSON.parse(`{${ipDatas.slice(0, -1)}}`);
-                this.cacheJson = result;
-            } catch (err) {
-                this.cacheJson = {};
-            }
+        try {
+            const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file.web}`);
+            const ipDatas = fs.readFileSync(filepath, { encoding: 'utf8' });
+            const result = JSON.parse(`{${ipDatas.slice(0, -1)}}`);
+            this.cacheJson = result;
+        } catch (err) {
+            this.cacheJson = {};
+        }
+        // 遍历
+        apps.forEach(item => {
+            this.saveWebGetIpDatasByOne(item);
+        });
+    }
 
-            for (let i = 0; i < this.app.config.ip_thread; i++) {
-                const newSpit = datas.splice(0, 60);
-                if (datas.length) {
-                    this.handleDatas(newSpit);
-                } else {
-                    this.handleDatas(newSpit, true);
+    // 单独一个应用的Ip地址更新
+    async saveWebGetIpDatasByOne(appId) {
+        try {
+            let beginTime = await this.app.redis.get(`ip_task_begin_time_${appId}`);
+
+            const query = { city: { $exists: false } };
+            if (beginTime) {
+                beginTime = new Date(new Date(beginTime).getTime() + 1000);
+                query.create_time = { $gt: beginTime };
+            }
+            const datas = await this.app.models.WebEnvironment(appId).find(query)
+                .read('sp')
+                .limit(this.app.config.ip_thread * 60)
+                .sort({ create_time: 1 })
+                .exec();
+            // 开启多线程执行
+            if (datas && datas.length) {
+                for (let i = 0; i < this.app.config.ip_thread; i++) {
+                    const newSpit = datas.splice(0, 60);
+                    if (datas.length) {
+                        this.handleDatas(appId, newSpit);
+                    } else {
+                        this.handleDatas(appId, newSpit, true);
+                    }
                 }
             }
+        } catch (err) {
+            console.log(err);
         }
     }
 
     // 遍历数据 查询ip地址信息
-    async handleDatas(data, type) {
+    async handleDatas(appId, data, type) {
         if (!data && !data.length) return;
         const length = data.length - 1;
         let i = 0;
         const timer = setInterval(() => {
             if (data[i] && data[i].ip) {
                 const ip = data[i].ip;
-                this.getIpData(ip, data[i]._id);
+                this.getIpData(ip, data[i]._id, data[i].app_id);
                 if (i === length && type) {
-                    this.app.redis.set('ip_task_begin_time', data[i].create_time);
+                    this.app.redis.set(`ip_task_begin_time_${appId}`, data[i].create_time);
                     clearInterval(timer);
                 }
                 i++;
@@ -68,7 +81,7 @@ class IpTaskService extends Service {
     }
 
     // 根据ip获得地址信息 先查找数据库 再使用百度地图查询
-    async getIpData(ip, _id) {
+    async getIpData(ip, _id, appId) {
         let copyip = ip.split('.');
         copyip = `${copyip[0]}.${copyip[1]}.${copyip[2]}`;
         let datas = null;
@@ -89,16 +102,16 @@ class IpTaskService extends Service {
         let result = null;
         if (datas) {
             // 直接更新
-            result = await this.updateWebEnvironment(datas, _id);
+            result = await this.updateWebEnvironment(datas, _id, appId);
         } else {
             // 查询百度地图地址信息并更新
-            result = await this.getIpDataForBaiduApi(ip, _id, copyip);
+            result = await this.getIpDataForBaiduApi(ip, _id, copyip, appId);
         }
         return result;
     }
 
     // g根据百度地图api获得地址信息
-    async getIpDataForBaiduApi(ip, _id, copyip) {
+    async getIpDataForBaiduApi(ip, _id, copyip, appId) {
         if (!ip || ip === '127.0.0.1') return;
         const url = `https://api.map.baidu.com/location/ip?ip=${ip}&ak=${this.app.config.BAIDUAK}&coor=bd09ll`;
         const result = await this.app.curl(url, {
@@ -120,7 +133,7 @@ class IpTaskService extends Service {
                 this.cacheJson[copyip] = json;
             }
             // 更新用户地址信息
-            return await this.updateWebEnvironment(json, _id);
+            return await this.updateWebEnvironment(json, _id, appId);
         }
     }
 
@@ -136,12 +149,12 @@ class IpTaskService extends Service {
         return await iplibrary.save();
     }
     // 更新IP相关信息
-    async updateWebEnvironment(data, id) {
+    async updateWebEnvironment(data, id, appId) {
         const update = {
             province: data.province,
             city: data.city,
         };
-        const result = await this.ctx.model.Web.WebEnvironment.findByIdAndUpdate(id, update).exec();
+        const result = await this.app.models.WebEnvironment(appId).findByIdAndUpdate(id, update).exec();
         return result;
     }
 }
