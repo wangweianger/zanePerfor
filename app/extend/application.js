@@ -11,14 +11,14 @@ module.exports = {
     },
     /* 生成随机字符串 */
     randomString(len) {
-        len = len || 32;
+        len = len || 7;
         const $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
         const maxPos = $chars.length;
         let pwd = '';
         for (let i = 0; i < len; i++) {
             pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
         }
-        return pwd;
+        return pwd + Date.now();
     },
 
     /* 本地加密算法 */

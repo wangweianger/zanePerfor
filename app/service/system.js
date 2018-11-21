@@ -18,26 +18,14 @@ class WebSystemService extends Service {
         if (search && search.system_domain) throw new Error('新增系统信息操作：系统已存在');
 
         // 存储数据
-        let token = '';
-        const date = new Date();
-        if (type === 'web') {
-            token = this.app.signwx({
-                systemName: query.systemName,
-                systemDomain: query.systemDomain,
-                timestamp: date,
-                random: this.app.randomString(),
-            }).paySign;
-        } else if (type === 'wx') {
-            token = query.app_id;
-        }
-
+        const token = this.app.randomString();
         const system = ctx.model.System();
         system.system_domain = query.system_domain;
         system.system_name = query.system_name;
         system.type = query.type;
         system.app_id = token;
         system.user_id = [];
-        system.create_time = date;
+        system.create_time = new Date();
         system.is_use = query.is_use;
         system.slow_page_time = query.slow_page_time || 5;
         system.slow_js_time = query.slow_js_time || 2;

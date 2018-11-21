@@ -26,6 +26,7 @@
     "egg-view-ejs": "^2.0.0",
     "eslint": "^4.11.0",
     "eslint-config-egg": "^6.0.0",
+    "eslint-plugin-html": "^5.0.0",
     "md5": "^2.2.1",
     "ua-parser-js": "^0.7.18",
     "webstorm-disable-index": "^1.2.0"
@@ -34,7 +35,7 @@
     "node": ">=8.9.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --workers=4 --title=performance",
+    "start": "egg-scripts start --daemon --workers=2 --title=performance",
     "stop": "egg-scripts stop --title=performance",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",

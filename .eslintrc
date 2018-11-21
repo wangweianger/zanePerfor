@@ -1,6 +1,17 @@
 {
-  "extends": "eslint-config-egg",
-  "rules":{
-    "indent": ["error",4]
-  }
+    "extends": "eslint-config-egg",
+    "rules": {
+        "indent": [
+            "error",
+            4
+        ]
+    },
+    "plugins": [
+        "html"
+    ],
+    "settings": {
+        "html/html-extensions": [
+            ".html"
+        ]
+    }
 }

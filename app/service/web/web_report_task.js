@@ -53,7 +53,7 @@ class DataTimedTaskService extends Service {
             create_time: new Date(query.time),
             user_agent: query.user_agent,
             ip: query.ip,
-            mark_page: this.app.randomString(10) + new Date().getTime(),
+            mark_page: this.app.randomString(),
             mark_user: query.markUser,
             mark_uv: query.markUv,
             url: query.url,
@@ -166,7 +166,9 @@ class DataTimedTaskService extends Service {
 
     // 储存网页性能数据
     savePages(item, slowPageTime = 5) {
-        const pages = this.ctx.model.Web.WebPages();
+        // const pages = this.ctx.model.Web.WebPages();
+        const pages = this.app.models.WebPages(item.app_id)();
+
         const performance = item.performance;
         if (item.performance && item.performance.lodt > 0) {
             const newurl = url.parse(item.url);

@@ -18,5 +18,4 @@ do
         echo "执行失败重新执行"
     fi
 done
-npm start
 

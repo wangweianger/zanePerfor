@@ -18,7 +18,7 @@ class WebReportService extends Service {
         report.create_time = query.time;
         report.user_agent = ctx.headers['user-agent'];
         report.ip = ip;
-        report.mark_page = this.app.randomString(10) + new Date().getTime();
+        report.mark_page = this.app.randomString();
         report.mark_user = query.markUser;
         report.mark_uv = query.markUv;
         report.url = ctx.headers.referer;

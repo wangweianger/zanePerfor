@@ -51,7 +51,7 @@ class WxReportTaskService extends Service {
             create_time: new Date(query.time),
             errs: query.errs,
             ip: query.ip,
-            mark_page: this.app.randomString(10) + new Date().getTime(),
+            mark_page: this.app.randomString(),
             mark_user: query.markuser,
             mark_uv: query.markuv,
             net: query.net,

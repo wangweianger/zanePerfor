@@ -58,7 +58,7 @@ class ReportController extends Controller {
             pages.pre_url = 'http://127.0.0.1:18090/file';
             pages.speed_type = 1;
             pages.mark_page = '2575CEA7435DE9D8831CFBB6890F3835';
-            pages.mark_user = this.app.randomString(20);
+            pages.mark_user = this.app.randomString();
             pages.load_time = 10;
             pages.dns_time = 10;
             pages.tcp_time = 10;
