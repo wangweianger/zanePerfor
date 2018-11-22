@@ -1,5 +1,5 @@
-## 前端性能监控系统
-
+# zanePerfor一款完整、高性能、高可用的前端性能监控和统计平台
+## 开发功能进度说明
 >  * 集成框架选型及其相关配置（已完成）
 >  * 主重数据库相关配置开发（已完成）
 >  * web网页sdk开发 （已完成）
@@ -29,11 +29,10 @@
 >  * 集群配置 （排期中）
 >  * 性能测试（排期中）
 
-## 服务架构说明
-### 一：技术选型说明
+## 技术选型说明
 * egg.js,ejs,mongoose,redis,vue.js
 
-## 项目详细文档
+## 项目开发文档
 https://blog.seosiwei.com/performance/index.html
 * [系统高可用之Mongodb集群分片架构](https://blog.seosiwei.com/performance/colony.html)
 * [系统高可用之Mongodb副本集读写分离架构](https://blog.seosiwei.com/performance/replica_set.html)
@@ -41,6 +40,22 @@ https://blog.seosiwei.com/performance/index.html
 * [IP解析城市地理位置逻辑说明](https://blog.seosiwei.com/performance/iptask.html)
 * [项目定时任务功能说明](https://blog.seosiwei.com/performance/tasks.html)
 * ......
+
+## 项目说明
+* 项目已部署到正式环境，并已稳定运行一段时间，请放心使用。
+* 前期推荐使用单机数据库或者Mongodb副本集架构，后期根据自身需求考虑是否使用集群分片
+* 目前4核8G单机服务器大概能支撑每日50-100W的pv,8核16G单机服务器可支撑100W-500W的PV流量
+* 如果项目日PV超千万，需要器群Redis,Mongodb集群分片的部署方式
+* 项目后台查询性能增加合适的索引之后，千万以上的数据量可在500ms-2s之内查询出来，平均500-800ms(单机/副本集)
+
+## 分支说明
+### master分支
+* 项目masterf分支做了分表功能，即每新增一个应用都会把数据存放到自己的表中，这样很好的做到了横向的扩展，支持N个应用的同时查询也会比较快，因为查询的数据表中全是自己应用的数据
+* 此模式适合单机和副本集部署方式，因为表（集合）的名称不固定，如果要做集群分片模式会比较麻烦（应用多的情况），如果应用少，可新增一个应用之后针对新增应用的表做分片。
+* 此模式可做集群分片，只是分片操作可能会比较频繁，每增加一个应用，需要分片是就需要去设置分片。
+### onetable分支
+* onetable所有应用的数据存放于相同表中，因此应用多时数据量比较大，查询会相对于耗时一些
+* 基于所有应用数据存放在相同表中，此模式适合做集群分片，分片只需要在项目初始化时执行一次
 
 ## 浏览器端使用说明
 ### 使用SDK方式上报数据(推荐)
@@ -89,7 +104,7 @@ const wxRepotSdk = require('./utils/wx-report-sdk.min');
 new wxRepotSdk({
     domain:'http://test.com',
     add:{
-        appId:'123456789'
+        appId:'56F6E424F57EFB36B0XXX'
     }
 })
 
@@ -102,17 +117,3 @@ https://github.com/wangweianger/wx-report-sdk
 
 ## mongodb可视化工具推荐 Robomongo
 链接地址：https://robomongo.org/download
-
-## DEMO图片
-![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/01.png "")
-![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/02.png "")
-![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/03.png "")
-![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/04.png "")
-![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/05.png "")
-![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/06.png "")
-![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/07.png "")
-![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/08.png "")
-![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/09.png "")
-![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/10.png "")
-![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/11.png "")
-![](https://github.com/wangweianger/egg-mongoose-performance-system/blob/master/demo/12.png "")
