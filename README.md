@@ -46,7 +46,7 @@ https://blog.seosiwei.com/performance/index.html
 * 前期推荐使用单机数据库或者Mongodb副本集架构，后期根据自身需求考虑是否使用集群分片
 * 目前4核8G单机服务器大概能支撑每日50-100W的pv,8核16G单机服务器可支撑100W-500W的PV流量
 * 如果项目日PV超千万，需要器群Redis,Mongodb集群分片的部署方式
-* 项目后台查询性能增加合适的索引之后，千万以上的数据量可在500ms-2s之内查询出来，平均500-800ms(单机/副本集)
+* 项目后台查询性能增加合适的索引之后，千万以上的数据量可在300ms-2s之内查询出来，平均500-800ms(单机/副本集)
 
 ## 分支说明
 ### master分支
@@ -115,5 +115,3 @@ https://github.com/wangweianger/wx-report-sdk
 ## 服务架构探索
 * 针对于不同的项目，不同的并发量，后期关于项目服务架构我会写一篇独立的文档（待写...）。
 
-## mongodb可视化工具推荐 Robomongo
-链接地址：https://robomongo.org/download
