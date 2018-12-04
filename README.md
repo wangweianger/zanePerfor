@@ -39,7 +39,6 @@ https://blog.seosiwei.com/performance/index.html
 * [Servers集群模式下避免定时任务的多次执行](https://blog.seosiwei.com/performance/repeart_task.html)
 * [IP解析城市地理位置逻辑说明](https://blog.seosiwei.com/performance/iptask.html)
 * [项目定时任务功能说明](https://blog.seosiwei.com/performance/tasks.html)
-* ......
 
 ## 项目说明
 * 项目已部署到正式环境，并已稳定运行一段时间，请放心使用。
