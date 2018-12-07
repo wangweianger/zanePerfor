@@ -34,7 +34,7 @@ class AjaxsController extends Controller {
     async saveWxReportDataForRedis(query) {
         if (this.app.config.redis_consumption.total_limit_wx) {
             // 限流
-            const length = await this.app.redis.llen('web_repore_datas');
+            const length = await this.app.redis.llen('wx_repore_datas');
             if (length >= this.app.config.redis_consumption.total_limit_wx) return;
         }
         this.app.redis.lpush('wx_repore_datas', JSON.stringify(query));

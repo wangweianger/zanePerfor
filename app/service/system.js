@@ -18,12 +18,13 @@ class WebSystemService extends Service {
         if (search && search.system_domain) throw new Error('新增系统信息操作：系统已存在');
 
         // 存储数据
-        const token = this.app.randomString();
+        const token = query.app_id ? query.app_id : this.app.randomString();
+
         const system = ctx.model.System();
         system.system_domain = query.system_domain;
         system.system_name = query.system_name;
         system.type = query.type;
-        system.app_id = type === 'wx' ? query.app_id : token;
+        system.app_id = token;
         system.user_id = [ query.token || '' ];
         system.create_time = new Date();
         system.is_use = query.is_use;

@@ -70,6 +70,7 @@ class WxReportTaskService extends Service {
             system = await this.service.system.getSystemForAppId(item.app_id);
             this.cacheJson[item.app_id] = system;
         }
+
         if (system.is_use !== 0) return;
         if (system.is_statisi_system === 0) this.savePages(item);
         if (system.is_statisi_ajax === 0) this.saveAjaxs(item, system);
