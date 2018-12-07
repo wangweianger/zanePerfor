@@ -6,9 +6,11 @@ const Service = require('egg').Service;
 class AjaxsService extends Service {
 
     // 获得页面性能数据平均值
-    async getPageAjaxsAvg(appId, url) {
+    async getPageAjaxsAvg(appId, url, beginTime, endTime) {
+        const query = { $match: { path: url, speed_type: 1 }, };
+        if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
         const datas = await this.app.models.WxAjaxs(appId).aggregate([
-            { $match: { path: url }, },
+            query,
             {
                 $group: {
                     _id: {

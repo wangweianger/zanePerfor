@@ -7,7 +7,7 @@ class AjaxsService extends Service {
 
     // 获得页面性能数据平均值
     async getPageAjaxsAvg(appId, url, beginTime, endTime) {
-        const query = { $match: { call_url: url }, };
+        const query = { $match: { call_url: url, speed_type: 1 }, };
         if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
         const datas = await this.app.models.WebAjaxs(appId).aggregate([
             query,

@@ -249,11 +249,16 @@ new Vue({
 				is_statisi_system:0,
 				is_statisi_error:0,
 				user_id:'',
+				token:'',
 			},
 			isAdd:false,
 		}
 	},
 	mounted() {
+		let userMsg = util.getStorage('local', 'userMsg');
+		userMsg = userMsg ? JSON.parse(userMsg) : {};
+		this.query.token = userMsg.token || '';
+
 		this.settingIsUse();
 		this.pagexingneng();
 	},

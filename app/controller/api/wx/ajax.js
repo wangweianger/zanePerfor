@@ -10,11 +10,13 @@ class AjaxsController extends Controller {
         const query = ctx.request.query;
         const appId = query.appId;
         const url = query.url;
+        const beginTime = query.beginTime;
+        const endTime = query.endTime;
 
         if (!appId) throw new Error('页面ajax信息：appId不能为空');
         if (!url) throw new Error('页面ajax信息：url不能为空');
 
-        const result = await ctx.service.wx.ajaxs.getPageAjaxsAvg(appId, url);
+        const result = await ctx.service.wx.ajaxs.getPageAjaxsAvg(appId, url, beginTime, endTime);
 
         ctx.body = this.app.result({
             data: result,

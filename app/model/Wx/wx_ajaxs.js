@@ -21,6 +21,7 @@ module.exports = app => {
     });
 
     WxAjaxsSchema.index({ speed_type: 1, name: 1, create_time: -1 });
+    WxAjaxsSchema.index({ speed_type: 1, path: 1, create_time: -1 });
 
     app.models.WxAjaxs = function(appId) {
         return conn.model(`wx_ajaxs_${appId}`, WxAjaxsSchema);

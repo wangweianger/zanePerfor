@@ -21,6 +21,7 @@ module.exports = app => {
     });
 
     WebAjaxsSchema.index({ speed_type: 1, url: 1, create_time: -1 });
+    WebAjaxsSchema.index({ speed_type: 1, call_url: 1, create_time: -1 });
 
     app.models.WebAjaxs = function(appId) {
         return conn.model(`web_ajaxs_${appId}`, WebAjaxsSchema);

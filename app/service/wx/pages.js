@@ -134,7 +134,7 @@ class PagesService extends Service {
         pageSize = pageSize * 1;
 
         // 查询参数拼接
-        const queryjson = { $match: { path: url }, }
+        const queryjson = { $match: { path: url, }, }
 
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 

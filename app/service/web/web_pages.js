@@ -145,9 +145,9 @@ class PagesService extends Service {
 
         // 查询参数拼接
         const queryjson = { $match: { 
-            create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) },
-            url: url,
             speed_type: type,
+            url: url,
+            create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) },
         }, }
 
         const count = Promise.resolve(this.app.models.WebPages(appId).count(queryjson.$match).read('sp').exec());

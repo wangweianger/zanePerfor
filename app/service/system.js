@@ -23,8 +23,8 @@ class WebSystemService extends Service {
         system.system_domain = query.system_domain;
         system.system_name = query.system_name;
         system.type = query.type;
-        system.app_id = token;
-        system.user_id = [];
+        system.app_id = type === 'wx' ? query.app_id : token;
+        system.user_id = [ query.token || '' ];
         system.create_time = new Date();
         system.is_use = query.is_use;
         system.slow_page_time = query.slow_page_time || 5;
