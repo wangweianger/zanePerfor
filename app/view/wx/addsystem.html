@@ -178,9 +178,9 @@
 					<pre>const wxRepotSdk = require('./utils/wx-report-sdk.min');
 
 new wxRepotSdk({
-  domain:'http://test.com',
+  domain:'{{location.origin}}/api/v1/wx/report/wx',
   add:{
-    appId:'wx3feeea844b1dxxxx'
+    appId:'{{query.app_id}}'
   }
 })</pre>
 

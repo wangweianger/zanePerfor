@@ -24,7 +24,6 @@
 		color: #333;
 		font-size: 14px;
 		border: none;
-		height: 60px;
 		padding: 10px; 
 	}
 	.setting-body .block .code code {
@@ -212,6 +211,19 @@
 				<a href="/public/file/web-report-axios.min.js.zip"><button class="btn btn-default ml10">Axios专用SDK</button></a>
 				<a href="/public/file/web-report-none.min.js.zip"><button class="btn btn-default ml10">业务代码触发SDK</button></a>
 				<div class="item mt20">1.2、详细使用文档请参考以下SDK链接</div>
+				<div class="script-text mb20">
+					<pre><\script src="/dist/performance-report-default.min.js"><\/script>
+
+<\script>
+Performance({
+  	domain: '{{location.origin}}/api/v1/report/web', 
+  	add:{
+  		appId:'{{query.app_id}}'
+  	}
+})
+<\/script>
+</pre>
+				</div>
 				<a href="https://github.com/wangweianger/performance-report" target="_target">浏览器端性能上报SDK使用文档</a>
 			</div>
 			<h1 class="h1">2、部署脚本说明</h1>
@@ -249,6 +261,7 @@ new Vue({
 				is_statisi_system:0,
 				is_statisi_error:0,
 				user_id:'',
+				app_id:'',
 				token:'',
 			},
 			isAdd:false,
