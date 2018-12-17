@@ -1,0 +1,187 @@
+<style scoped>
+	.home_body {
+		width: 80%;
+		margin: 100px auto 100px;
+	}
+	.com_block table.table .btn{
+		padding:5px 8px;
+	}
+	.table .user{
+		display:inline-block;
+		padding:5px 8px;
+		background:#f5f5f5;
+		border:solid 1px #ddd;
+		border-radius: 20px;
+		font-size:14px;
+		color:#333;
+		cursor:pointer;
+		font-weight:bold;
+		margin:0 10px 10px 0;
+	}
+	.table .user .iconfont{
+		color:#aaa;
+		font-size:20px;
+		margin-left:5px;
+	}
+	.com_model .content{
+		width:450px;
+		height:280px;
+		border-radius: 5px;
+	}
+	.com_model .content .com_h2{
+		text-align:center;
+	}
+	.com_model .content .main{
+		padding:20px;
+	}
+	.com_model .content .main .item {
+		height:40px;
+		margin-top:10px;
+		font-size:15px;
+	}
+	.com_model .content .main .item span {
+		display: inline-block;
+		width:80px;
+		line-height:35px;
+		padding-left:30px;
+	}
+	.com_model .content .main .item input {
+		display: inline-block;
+		width:300px;
+		height:35px;
+		padding-left:10px;
+	}
+	.com_model .content .main .btn{
+		display: block;
+		margin:40px auto 0;
+		padding:10px 100px;
+	}
+	.com_model .content .iconfont{
+		font-size:30px;
+		color:#aaa;
+		margin:0px 20px 0 0 ;
+		cursor: pointer;
+	}
+</style>
+<div class="com_content home_body" id="home_body" v-cloak>
+	<div class="com_title">
+		<div class="h1">邮件列表</div>
+		<div class="right">
+			<button class="btn btn-main" @click="showModel=true">+添加邮件</button>
+		</div>
+	</div>
+	<div v-if="isLoadend && datalist.length">
+		<div class="com_block mt20">
+			<h1 class="com_h2 mb20">邮件列表信息</h1>
+			<div class="overflow_table">
+				<table class="table">
+					<tr class="light_color">
+						<th class="tc w-200">邮件</th>
+						<th class="tc w-100">中文名</th>
+						<th class="tc w-200">权限</th>
+						<th class="tc w-200">操作</th>
+						deleteEmail
+					</tr>
+					<tr v-for="item in datalist">
+						<td class="tc"><strong>{{item.email}}</strong></td>
+						<td class="tc">{{item.name}}</td>
+						<td class="tc">
+							<button class="btn" v-if="item.system_ids&&item.system_ids.length" v-for="items in item.system_ids">{{items.name}}</button>
+						</td>
+						<td class="tc"><button class="btn btn-default" @click="deleteEmail(item)">删除</button></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div v-if="isLoadend && !datalist.length" class="empty mt30 tc">暂无邮件！</div>
+	<!-- 弹出model -->
+	<div class="com_model" v-show="showModel">
+		<div class="mask" @click="showModel=false"></div>
+		<div class="content">
+			<h1 class="com_h2 mt20 ml20">新增邮件 <span class="iconfont fr" @click="showModel=false">&#xe674;</span></h1>
+			<div class="main">
+				<div class="item"><span>邮件：</span><input type="text" v-model.trim="email" placeholder="邮件地址"></div>
+				<div class="item"><span>姓名：</span><input type="text" v-model.trim="name" placeholder="所属人"></div>
+				<button class="btn btn-main" @click="submit">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	new Vue({
+		el: '#home_body',
+		data: function () {
+			return {
+				showModel:false,
+				datalist:[],
+				userMsg:{},
+				isLoadend:false,
+				email:'',
+				name:'',
+			}
+		},
+		filters: {
+			systemType: window.Filter.systemType,
+		},
+		mounted() {
+			const userMsg = util.getStorage('local', 'userMsg');
+			this.userMsg = userMsg ? JSON.parse(userMsg) : {};
+			
+			this.getEmailsList();
+		},
+		methods: {
+			getEmailsList() {
+				util.ajax({
+					type:'get',
+					url: config.baseApi + 'api/v1/emails/list',
+					success:  (data) => {
+						this.isLoadend = true;
+						this.datalist = data.data || [];
+					}
+				})
+			},
+			submit(){
+				if(!util.regCombination('e').test(this.email)){
+					popup.miss({title:'请填写邮件地址!'})
+					return false;
+				};
+				if (!util.regCombination('*').test(this.name)) {
+					popup.miss({ title: '请填写邮件所属人!' })
+					return false;
+				};
+				util.ajax({
+					url: config.baseApi + 'api/v1/emails/add',
+					data:{
+						email:this.email,
+						name:this.name,
+					},
+					success: (data) => {
+						this.showModel = false;
+						this.getEmailsList();
+						this.email = '';
+						this.name = '';
+						popup.miss({title:'操作成功!'});
+					}
+				})
+			},
+			deleteEmail(item){
+				const _this = this;
+				popup.confirm({
+					title: '确定删除此邮件吗？', yes() {
+						util.ajax({
+							url: `${config.baseApi}api/v1/emails/delete`,
+							data:{
+								id: item._id,
+							},
+							success: data => {
+								_this.getEmailsList();
+								popup.miss({title:'操作成功!'})
+							}
+						})
+					}
+				})
+			},
+		},
+	})
+</script>

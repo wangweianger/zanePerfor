@@ -65,4 +65,7 @@ module.exports = app => {
     // 城市热力图
     router.get('/web/diagram', web.webdiagram);
 
+    // 告警
+    router.get('/web/alarm', web.webalarm);
+
 };

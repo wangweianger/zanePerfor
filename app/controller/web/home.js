@@ -64,6 +64,16 @@ class HomeController extends Controller {
         });
     }
 
+    // 系统重启信息
+    async emails() {
+        const { ctx } = this;
+        await ctx.render('emails', {
+            data: {
+                title: '邮件管理',
+            },
+        });
+    }
+
 }
 
 module.exports = HomeController;

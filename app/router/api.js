@@ -8,6 +8,7 @@ module.exports = app => {
         remove,
         system,
         errors,
+        emails,
     } = controller.api;
 
     // 校验用户是否登录中间件
@@ -53,5 +54,12 @@ module.exports = app => {
 
     // -------------------系统错误信息-----------------------------
     apiV1Router.get('errors/getSysDbErrorList', tokenRequired, errors.getSysDbErrorList);
+
+    // -------------------邮件信息-----------------------------
+    apiV1Router.get('emails/list', tokenRequired, emails.getList);
+
+    apiV1Router.post('emails/add', tokenRequired, emails.addEmail);
+
+    apiV1Router.post('emails/delete', tokenRequired, emails.deleteEmail);
 
 };

@@ -22,4 +22,7 @@ module.exports = app => {
     // 系统重启错误信息
     router.get('/errors', home.errors);
 
+    // 邮件管理
+    router.get('/emails', home.emails);
+
 };

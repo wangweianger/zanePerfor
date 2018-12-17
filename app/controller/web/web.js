@@ -196,6 +196,17 @@ class WebController extends Controller {
             },
         });
     }
+
+    async webalarm() {
+        const { ctx } = this;
+        await ctx.render('web/alarm', {
+            data: {
+                title: '应用告警设置',
+            },
+        });
+    }
+
 }
 
 module.exports = WebController;
+
