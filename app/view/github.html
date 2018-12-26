@@ -1,0 +1,63 @@
+<!-- 样式 -->
+<style>
+    html {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .com_header{
+        display:none!important;
+    }
+    .msgs{
+        height:40px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        font-size:16px;
+    }
+   .github_login{
+       width:35px;
+       height:35px;
+       margin-right:10px;
+   }
+</style>
+<div class="login" id="login">
+    <div class="main">
+        <div class="center center-ewm">
+           <div class="msgs">
+               <img class="github_login" src="/public/img/github.png">
+               <span>{{title}}</span>
+           </div>
+        </div>
+    </div>
+</div>
+<script>
+    let user_data = '<%- data.data %>';
+    if(user_data) user_data = JSON.parse(user_data);
+    new Vue({
+            el: '#login',
+            data: function () {
+                return {
+                    title:''
+                }
+            },
+            mounted() {
+                if(user_data && user_data.desc){
+                    this.title = user_data.desc;
+                    popup.alert({title: user_data.desc})
+                }else if (user_data && user_data.token) {
+                    util.setStorage('local', 'userMsg', JSON.stringify(user_data))
+                    window.close();
+                    window.opener.location.href = "/"
+                } else {
+                    this.title = 'github 权限验证失败, 请重试！'
+                }
+            },
+        })
+</script>

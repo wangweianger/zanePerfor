@@ -79,8 +79,8 @@
         cursor: pointer; 
     }
     .github_login{
-        width:40px;
-        height:40px;
+        width:35px;
+        height:35px;
         cursor:pointer;
     }
 </style>
@@ -184,7 +184,7 @@
                 path += '?client_id=' + '<%= data.client_id %>';
                 path += '&scope=' + '<%= data.scope %>';
                 path += '&state=' + Date.now();
-                location.href = path;
+                window.open(path,'','width=800,height=500,location=no,menubar=no')
             },
         }
     })

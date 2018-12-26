@@ -46,13 +46,14 @@ class UserService extends Service {
         user.token = token;
         user.create_time = new Date();
         user.level = userName === 'admin' ? 0 : 1;
+        const result = await user.save();
 
         // 设置redis登录态
-        this.app.redis.set(`${userInfo.token}_user_login`, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
+        this.app.redis.set(`${token}_user_login`, JSON.stringify(result), 'EX', this.app.config.user_login_timeout);
         // 设置登录cookie
         this.ctx.cookies.set('usertoken', token);
 
-        return await user.save();
+        return result;
     }
 
     // 根据用户名称查询用户信息
@@ -116,6 +117,42 @@ class UserService extends Service {
         return await this.ctx.model.User.findOne({ token: usertoken }).exec();
     }
 
+    // 根据github node_id 获得用户是否已存在
+    async getUserInfoForGithubId(id) {
+        return await this.ctx.model.User.findOne({ token: id }).exec() || {};
+    }
+
+    // github register
+    async githubRegister(data = {}) {
+        const login = data.login;
+        const token = data.node_id;
+
+        let userInfo = await this.getUserInfoForGithubId(token);
+        if (userInfo.token) {
+            // 存在则直接登录
+            if (userInfo.is_use !== 0) {
+                userInfo = { desc: '用户被冻结不能登录，请联系管理员！' };
+            } else {
+                // 设置redis登录态
+                this.app.redis.set(`${token}_user_login`, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
+                // 设置登录cookie
+                this.ctx.cookies.set('usertoken', token);
+            }
+        } else {
+            // 不存在 先注册 再登录
+            const user = this.ctx.model.User();
+            user.user_name = login;
+            user.token = token;
+            user.create_time = new Date();
+            user.level = 1;
+            userInfo = await user.save();
+            // 设置redis登录态
+            this.app.redis.set(`${token}_user_login`, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
+            // 设置登录cookie
+            this.ctx.cookies.set('usertoken', token);
+        }
+        return userInfo;
+    }
 }
 
 module.exports = UserService;

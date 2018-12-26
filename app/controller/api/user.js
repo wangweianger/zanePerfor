@@ -101,29 +101,61 @@ class AjaxsController extends Controller {
     async githubLogin() {
         const { ctx } = this;
         const query_code = ctx.query.code;
-        const result = await ctx.curl('https://github.com/login/oauth/access_token', {
-            method: 'POST',
-            contentType: 'json',
-            data: {
-                client_id: this.app.config.github.client_id,
-                client_secret: this.app.config.github.client_secret,
-                code: query_code,
-            },
-            dataType: 'json',
-        });
-        console.log(result);
-        if (!result.data || !result.data.access_token) {
-            ctx.body = {
-                code: 1004,
-                desc: '验证失败',
-            };
-            return;
+        try {
+            const tokenResult = await ctx.curl('https://github.com/login/oauth/access_token', {
+                method: 'POST',
+                contentType: 'json',
+                data: {
+                    client_id: this.app.config.github.client_id,
+                    client_secret: this.app.config.github.client_secret,
+                    code: query_code,
+                },
+                dataType: 'json',
+                timeout: 8000,
+            });
+            if (tokenResult.error) {
+                await ctx.render('github', {
+                    data: {
+                        title: 'github login',
+                        data: JSON.stringify({ desc: tokenResult.error_description }),
+                    },
+                });
+                return;
+            }
+
+            const userResult = await ctx.curl(`https://api.github.com/user?access_token=${tokenResult.data.access_token}`, {
+                dataType: 'json',
+                timeout: 8000,
+            });
+            if (userResult.error) {
+                await ctx.render('github', {
+                    data: {
+                        title: 'github login',
+                        data: JSON.stringify({ desc: userResult.error_description }),
+                    },
+                });
+                return;
+            }
+
+            const result = await ctx.service.user.githubRegister(userResult.data);
+            await ctx.render('github', {
+                data: {
+                    title: 'github login',
+                    data: JSON.stringify(result),
+                },
+            });
+        } catch (err) {
+            let result = { desc: 'github 权限验证失败, 请重试！' };
+            if (err.toString().indexOf('timeout') > -1) {
+                result = { desc: 'github 接口请求超时,请重试！' };
+            }
+            await ctx.render('github', {
+                data: {
+                    title: 'github login',
+                    data: JSON.stringify(result),
+                },
+            });
         }
-        const userResult = await ctx.curl(`https://api.github.com/user?access_token=${result.data.access_token}`, {
-            dataType: 'json',
-        });
-        console.log(userResult);
-        ctx.body = userResult;
     }
 }
 
