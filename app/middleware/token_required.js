@@ -13,9 +13,11 @@ module.exports = () => {
         }
         const data = await ctx.service.user.finUserForToken(usertoken);
         if (!data || !data.user_name) {
+            ctx.cookies.set('usertoken', '');
+            const descr = data && !data.user_name ? data.desc : '登录用户无效！';
             ctx.body = {
                 code: 1004,
-                desc: '登录用户无效！',
+                desc: descr,
             };
             return;
         }

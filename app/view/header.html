@@ -137,6 +137,7 @@
 				userMsg: {
 					user_name:'游小白',
 					level:1,
+					token:''
 				},
 			}
 		},
@@ -149,10 +150,11 @@
 				location.href = `/selectype`
 			},
 			logout(){
+				const _this = this;
 				popup.confirm({title:'确定退出登录吗？',yes(){
 					util.ajax({
 						type:'get',
-						url:`${config.baseApi}api/v1/user/logout`,
+						url:`${config.baseApi}api/v1/user/logout?token=${_this.userMsg.token}`,
 						success:data=>{
 							util.setStorage('local','userMsg','');
 							location.href = `/login`

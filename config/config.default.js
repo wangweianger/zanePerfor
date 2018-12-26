@@ -6,7 +6,7 @@ module.exports = () => {
 
     config.keys = '_123456789';
 
-    config.middleware = [];
+    config.middleware = [ ];
 
     config.name = '性能监控系统';
 
@@ -96,6 +96,13 @@ module.exports = () => {
 
     // 分页条数
     config.pageSize = 50;
+
+    // github login
+    config.github = {
+        client_id: '8c4c1abb7124eed614cb',
+        client_secret: 'd73f6fa2b4d5cd73819d8370a4d40769e85b2f0b',
+        scope: [ 'user' ],
+    };
 
     // ejs模板
     config.view = {

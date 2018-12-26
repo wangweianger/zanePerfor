@@ -21,7 +21,7 @@
     }
     .main .top {
         width: 100%;
-        height: 120px;
+        height: 90px;
         position: relative;
         display: flex;
         justify-content: center;
@@ -104,6 +104,11 @@
                     <button class="button" v-show="type===1" @click="login">立即登录</button>
                     <button class="button" v-show="type===2" @click="register">立即注册</button>
                 </div>
+                <% if( data.client_id ) { %>
+                    <div class="submit mt20">
+                        <button class="button" @click="github">github</button>
+                    </div>
+                <% } %>
             </div>
         </div>
     </div>
@@ -166,7 +171,14 @@
                         setTimeout(() => { location.href = '/' }, 500)
                     }
                 })
-            }
+            },
+            github(){
+                var path = "https://github.com/login/oauth/authorize";
+                path += '?client_id=' + '<%= data.client_id %>';
+                path += '&scope=' + '<%= data.scope %>';
+                path += '&state=' + Date.now();
+                location.href = path;
+            },
         }
     })
 </script>

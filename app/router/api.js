@@ -28,6 +28,9 @@ module.exports = app => {
     // 删除用户
     apiV1Router.post('user/delete', tokenRequired, user.delete);
 
+    // -----------------github 登录------------------
+    apiV1Router.get('github/callback', user.githubLogin);
+
     // ----------------系统配置相关---------------
     // 新增系统
     apiV1Router.post('system/add', tokenRequired, system.addNewSystem);

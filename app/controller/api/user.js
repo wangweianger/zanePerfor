@@ -40,7 +40,12 @@ class AjaxsController extends Controller {
 
     // 退出登录
     async logout() {
-        this.ctx.cookies.set('usertoken', '');
+        const { ctx } = this;
+        const query = ctx.request.query;
+        const token = query.token;
+        if (!token) throw new Error('退出登录：token不能为空');
+
+        await ctx.service.user.logout(token);
         this.ctx.body = this.app.result({
             data: {},
         });
@@ -90,6 +95,35 @@ class AjaxsController extends Controller {
         ctx.body = this.app.result({
             data: result,
         });
+    }
+
+    // github callback
+    async githubLogin() {
+        const { ctx } = this;
+        const query_code = ctx.query.code;
+        const result = await ctx.curl('https://github.com/login/oauth/access_token', {
+            method: 'POST',
+            contentType: 'json',
+            data: {
+                client_id: this.app.config.github.client_id,
+                client_secret: this.app.config.github.client_secret,
+                code: query_code,
+            },
+            dataType: 'json',
+        });
+        console.log(result);
+        if (!result.data || !result.data.access_token) {
+            ctx.body = {
+                code: 1004,
+                desc: '验证失败',
+            };
+            return;
+        }
+        const userResult = await ctx.curl(`https://api.github.com/user?access_token=${result.data.access_token}`, {
+            dataType: 'json',
+        });
+        console.log(userResult);
+        ctx.body = userResult;
     }
 }
 

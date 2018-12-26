@@ -20,6 +20,13 @@ class UserService extends Service {
         return userInfo;
     }
 
+    // 登出
+    logout(usertoken) {
+        this.ctx.cookies.set('usertoken', '');
+        this.app.redis.set(`${usertoken}_user_login`, '');
+        return {};
+    }
+
     // 用户注册
     async register(userName, passWord) {
         // 检测用户是否存在
@@ -99,6 +106,13 @@ class UserService extends Service {
 
     // 根据token查询用户信息
     async finUserForToken(usertoken) {
+        let user_token = await this.app.redis.get(`${usertoken}_user_login`);
+        if (user_token) {
+            user_token = JSON.parse(user_token);
+            if (user_token.is_use !== 0) return { desc: '用户被冻结不能登录，请联系管理员！' };
+        } else {
+            return null;
+        }
         return await this.ctx.model.User.findOne({ token: usertoken }).exec();
     }
 

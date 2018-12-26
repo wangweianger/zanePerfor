@@ -6,6 +6,13 @@ module.exports = () => {
     // 百度地图api key
     config.BAIDUAK = 'xxxxxxxxxx';
 
+    // github login
+    config.github = {
+        client_id: 'xxxxxx',
+        client_secret: 'xxxxxx',
+        scope: [ 'user' ],
+    };
+
     // redis配置
     config.redis = {
         client: {
