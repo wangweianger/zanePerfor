@@ -112,8 +112,9 @@ new wxRepotSdk({
 ### 小程序端上报SDK wx-report-sdk：
 https://github.com/wangweianger/wx-report-sdk
 
-### github 登录授权
-> * Sign in github.
+## github 登录授权
+**Sign in github.**
+
 > * Then enter Settings -> Developer settings -> New OAuth App -> Register a new OAuth application
 > * get Client ID and Client Secret.
 
