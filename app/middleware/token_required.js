@@ -3,7 +3,10 @@
 
 module.exports = () => {
     return async function(ctx, next) {
-        const usertoken = ctx.cookies.get('usertoken') || '';
+        const usertoken = ctx.cookies.get('usertoken', {
+            encrypt: true,
+            signed: true,
+        }) || '';
         if (!usertoken) {
             ctx.body = {
                 code: 1004,

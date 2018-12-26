@@ -99,8 +99,8 @@ module.exports = () => {
 
     // github login
     config.github = {
-        client_id: '8c4c1abb7124eed614cb',
-        client_secret: 'd73f6fa2b4d5cd73819d8370a4d40769e85b2f0b',
+        client_id: 'xxxxxx',
+        client_secret: 'xxxxxx',
         scope: [ 'user' ],
     };
 

@@ -41,11 +41,13 @@ class AjaxsController extends Controller {
     // 退出登录
     async logout() {
         const { ctx } = this;
-        const query = ctx.request.query;
-        const token = query.token;
-        if (!token) throw new Error('退出登录：token不能为空');
+        const usertoken = ctx.cookies.get('usertoken', {
+            encrypt: true,
+            signed: true,
+        }) || '';
+        if (!usertoken) throw new Error('退出登录：token不能为空');
 
-        await ctx.service.user.logout(token);
+        await ctx.service.user.logout(usertoken);
         this.ctx.body = this.app.result({
             data: {},
         });
@@ -70,8 +72,8 @@ class AjaxsController extends Controller {
     async setIsUse() {
         const { ctx } = this;
         const query = ctx.request.body;
-        const token = query.token;
         const isUse = query.isUse || 0;
+        const token = query.token || '';
 
         if (!token) throw new Error('冻结解冻用户：token不能为空');
 
@@ -86,7 +88,7 @@ class AjaxsController extends Controller {
     async delete() {
         const { ctx } = this;
         const query = ctx.request.body;
-        const token = query.token;
+        const token = query.token || '';
 
         if (!token) throw new Error('删除用户：token不能为空');
 

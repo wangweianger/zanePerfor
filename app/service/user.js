@@ -13,9 +13,17 @@ class UserService extends Service {
         if (userInfo.is_use !== 0) throw new Error('用户被冻结不能登录，请联系管理员！');
 
         // 设置redis登录态
-        this.app.redis.set(`${userInfo.token}_user_login`, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
+        const random_key = this.app.randomString();
+        this.app.redis.set(`${random_key}_user_login`, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
         // 设置登录cookie
-        this.ctx.cookies.set('usertoken', userInfo.token);
+        this.ctx.cookies.set('usertoken', random_key, {
+            maxAge: this.app.config.user_login_timeout * 1000,
+            httpOnly: true,
+            encrypt: true,
+            signed: true,
+        });
+        // 更新用户信息
+        await this.updateUserToken({ username: userName, usertoken: random_key });
 
         return userInfo;
     }
@@ -34,11 +42,7 @@ class UserService extends Service {
         if (userInfo.token) throw new Error('用户注册：用户已存在！');
 
         // 新增用户
-        const token = this.app.signwx({
-            mark: 'markuser',
-            timestamp: new Date().getTime(),
-            random: this.app.randomString(),
-        }).paySign;
+        const token = this.app.randomString();
 
         const user = this.ctx.model.User();
         user.user_name = userName;
@@ -46,12 +50,18 @@ class UserService extends Service {
         user.token = token;
         user.create_time = new Date();
         user.level = userName === 'admin' ? 0 : 1;
+        user.usertoken = token;
         const result = await user.save();
 
         // 设置redis登录态
         this.app.redis.set(`${token}_user_login`, JSON.stringify(result), 'EX', this.app.config.user_login_timeout);
         // 设置登录cookie
-        this.ctx.cookies.set('usertoken', token);
+        this.ctx.cookies.set('usertoken', token, {
+            maxAge: this.app.config.user_login_timeout * 1000,
+            httpOnly: true,
+            encrypt: true,
+            signed: true,
+        });
 
         return result;
     }
@@ -84,37 +94,73 @@ class UserService extends Service {
         };
     }
 
+    // 通过redis登录key获取用户信息
+    async getUserInfoForUsertoken(usertoken) {
+        return this.app.redis.get(`${usertoken}_user_login`) || {};
+    }
+
+    // 通过 token 获得 usertoken
+    async getUserInfoForToken(_token) {
+        return await this.ctx.model.User.findOne({ token: _token }).exec() || {};
+    }
+
     // 冻结解冻用户
-    async setIsUse(usertoken, isUse) {
+    async setIsUse(_token, isUse) {
+        // 冻结用户信息
         isUse = isUse * 1;
         const result = await this.ctx.model.User.update(
-            { token: usertoken },
+            { token: _token },
             { is_use: isUse },
             { multi: true }
         ).exec();
+        // 通过usertoken获得用户信息
+        const userInfo = await this.getUserInfoForToken(_token);
+        const userInfoToken = userInfo.usertoken;
         // 清空登录态
-        this.app.redis.set(`${usertoken}_user_login`, '');
+        if (userInfoToken) this.app.redis.set(`${userInfoToken}_user_login`, '');
         return result;
     }
 
     // 删除用户
-    async delete(usertoken) {
-        const result = await this.ctx.model.User.findOneAndRemove({ token: usertoken }).exec();
+    async delete(_token) {
+        // 删除
+        const result = await this.ctx.model.User.findOneAndRemove({ token: _token }).exec();
+        // 通过usertoken获得用户信息
+        const userInfo = await this.getUserInfoForToken(_token);
+        const userInfoToken = userInfo.usertoken;
         // 清空登录态
-        this.app.redis.set(`${usertoken}_user_login`, '');
+        this.app.redis.set(`${userInfoToken}_user_login`, '');
+        return result;
+    }
+
+    // 更新用户登录态随机数
+    async updateUserToken(opt) {
+        const query = {};
+        if (opt.username) {
+            query.user_name = opt.username;
+        } else if (opt.token) {
+            query.token = opt.token;
+        }
+        const result = await this.ctx.model.User.update(
+            query,
+            { usertoken: opt.usertoken },
+            { multi: true }
+        ).exec();
+
         return result;
     }
 
     // 根据token查询用户信息
     async finUserForToken(usertoken) {
-        let user_token = await this.app.redis.get(`${usertoken}_user_login`);
-        if (user_token) {
-            user_token = JSON.parse(user_token);
-            if (user_token.is_use !== 0) return { desc: '用户被冻结不能登录，请联系管理员！' };
+        let user_info = await this.app.redis.get(`${usertoken}_user_login`);
+
+        if (user_info) {
+            user_info = JSON.parse(user_info);
+            if (user_info.is_use !== 0) return { desc: '用户被冻结不能登录，请联系管理员！' };
         } else {
             return null;
         }
-        return await this.ctx.model.User.findOne({ token: usertoken }).exec();
+        return await this.ctx.model.User.findOne({ token: user_info.token }).exec();
     }
 
     // 根据github node_id 获得用户是否已存在
@@ -133,15 +179,23 @@ class UserService extends Service {
         }
 
         userInfo = await this.getUserInfoForGithubId(token);
+        const random_key = this.app.randomString();
         if (userInfo.token) {
             // 存在则直接登录
             if (userInfo.is_use !== 0) {
                 userInfo = { desc: '用户被冻结不能登录，请联系管理员！' };
             } else {
                 // 设置redis登录态
-                this.app.redis.set(`${token}_user_login`, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
+                this.app.redis.set(`${random_key}_user_login`, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
                 // 设置登录cookie
-                this.ctx.cookies.set('usertoken', token);
+                this.ctx.cookies.set('usertoken', random_key, {
+                    maxAge: this.app.config.user_login_timeout * 1000,
+                    httpOnly: true,
+                    encrypt: true,
+                    signed: true,
+                });
+                // 更新用户信息
+                await this.updateUserToken({ username: login, usertoken: random_key });
             }
         } else {
             // 不存在 先注册 再登录
@@ -150,11 +204,17 @@ class UserService extends Service {
             user.token = token;
             user.create_time = new Date();
             user.level = 1;
+            user.usertoken = random_key;
             userInfo = await user.save();
             // 设置redis登录态
-            this.app.redis.set(`${token}_user_login`, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
+            this.app.redis.set(`${random_key}_user_login`, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
             // 设置登录cookie
-            this.ctx.cookies.set('usertoken', token);
+            this.ctx.cookies.set('usertoken', random_key, {
+                maxAge: this.app.config.user_login_timeout * 1000,
+                httpOnly: true,
+                encrypt: true,
+                signed: true,
+            });
         }
         return userInfo;
     }
