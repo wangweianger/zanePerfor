@@ -126,8 +126,14 @@ class UserService extends Service {
     async githubRegister(data = {}) {
         const login = data.login;
         const token = data.node_id;
+        let userInfo = {};
+        console.log(data);
+        if (!login || !token) {
+            userInfo = { desc: 'github 权限验证失败, 请重试！' };
+            return;
+        }
 
-        let userInfo = await this.getUserInfoForGithubId(token);
+        userInfo = await this.getUserInfoForGithubId(token);
         if (userInfo.token) {
             // 存在则直接登录
             if (userInfo.is_use !== 0) {
@@ -151,6 +157,7 @@ class UserService extends Service {
             // 设置登录cookie
             this.ctx.cookies.set('usertoken', token);
         }
+        console.log(userInfo);
         return userInfo;
     }
 }
