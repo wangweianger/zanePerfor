@@ -63,9 +63,11 @@
         margin-right: 10px; 
     }
     .main .center .submit {
+        width:290px;
+        margin:0 auto 20px;
         display: flex;
         height: 45px;
-        justify-content: center; 
+        justify-content: flex-start; 
     }
     .main .center .button {
         width: 250px;
@@ -76,9 +78,14 @@
         border-radius: 5px;
         cursor: pointer; 
     }
+    .github_login{
+        width:40px;
+        height:40px;
+        cursor:pointer;
+    }
 </style>
 <div class="login" id="login">
-    <div class="main">
+    <div class="main" :style="{'height':type==2?'480px':'450px'}">
         <div class="top">
             <img class="img1" src="/public/img/logo_1.png">
         </div>
@@ -106,7 +113,7 @@
                 </div>
                 <% if( data.client_id ) { %>
                     <div class="submit mt20">
-                        <button class="button" @click="github">github</button>
+                        <img @click="github" class="github_login" src="/public/img/github.png" alt="github login" title="use gitbub login.">
                     </div>
                 <% } %>
             </div>
