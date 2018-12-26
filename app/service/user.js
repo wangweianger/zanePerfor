@@ -127,7 +127,6 @@ class UserService extends Service {
         const login = data.login;
         const token = data.node_id;
         let userInfo = {};
-        console.log(data);
         if (!login || !token) {
             userInfo = { desc: 'github 权限验证失败, 请重试！' };
             return;
@@ -157,7 +156,6 @@ class UserService extends Service {
             // 设置登录cookie
             this.ctx.cookies.set('usertoken', token);
         }
-        console.log(userInfo);
         return userInfo;
     }
 }
