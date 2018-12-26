@@ -116,10 +116,10 @@ https://github.com/wangweianger/wx-report-sdk
 **1、Sign in github.**
 
 **2、Then enter Settings -> Developer settings -> New OAuth App -> Register a new OAuth application**
-![](https://github.com/wangweianger/zanePerfor/blob/master/demo/20.png "")
+**![](https://github.com/wangweianger/zanePerfor/blob/master/demo/20.png "")**
 
 **get Client ID and Client Secret.**
-![](https://github.com/wangweianger/zanePerfor/blob/master/demo/21.png "")
+**![](https://github.com/wangweianger/zanePerfor/blob/master/demo/21.png "")**
 
 
 ## 服务架构探索
