@@ -12,7 +12,10 @@ class UserService extends Service {
         if (userInfo.pass_word !== passWord) throw new Error('用户密码不正确！');
         if (userInfo.is_use !== 0) throw new Error('用户被冻结不能登录，请联系管理员！');
 
-        // 设置redis登录态
+        // 清空以前的登录态
+        if (userInfo.usertoken) this.app.redis.set(`${userInfo.usertoken}_user_login`, '');
+
+        // 设置新的redis登录态
         const random_key = this.app.randomString();
         this.app.redis.set(`${random_key}_user_login`, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
         // 设置登录cookie
@@ -99,37 +102,26 @@ class UserService extends Service {
         return this.app.redis.get(`${usertoken}_user_login`) || {};
     }
 
-    // 通过 token 获得 usertoken
-    async getUserInfoForToken(_token) {
-        return await this.ctx.model.User.findOne({ token: _token }).exec() || {};
-    }
-
     // 冻结解冻用户
-    async setIsUse(_token, isUse) {
+    async setIsUse(id, isUse, usertoken) {
         // 冻结用户信息
         isUse = isUse * 1;
         const result = await this.ctx.model.User.update(
-            { token: _token },
+            { _id: id },
             { is_use: isUse },
             { multi: true }
         ).exec();
-        // 通过usertoken获得用户信息
-        const userInfo = await this.getUserInfoForToken(_token);
-        const userInfoToken = userInfo.usertoken;
         // 清空登录态
-        if (userInfoToken) this.app.redis.set(`${userInfoToken}_user_login`, '');
+        if (usertoken) this.app.redis.set(`${usertoken}_user_login`, '');
         return result;
     }
 
     // 删除用户
-    async delete(_token) {
+    async delete(id, usertoken) {
         // 删除
-        const result = await this.ctx.model.User.findOneAndRemove({ token: _token }).exec();
-        // 通过usertoken获得用户信息
-        const userInfo = await this.getUserInfoForToken(_token);
-        const userInfoToken = userInfo.usertoken;
+        const result = await this.ctx.model.User.findOneAndRemove({ _id: id }).exec();
         // 清空登录态
-        this.app.redis.set(`${userInfoToken}_user_login`, '');
+        if (usertoken) this.app.redis.set(`${usertoken}_user_login`, '');
         return result;
     }
 
@@ -185,6 +177,8 @@ class UserService extends Service {
             if (userInfo.is_use !== 0) {
                 userInfo = { desc: '用户被冻结不能登录，请联系管理员！' };
             } else {
+                // 清空以前的登录态
+                if (userInfo.usertoken) this.app.redis.set(`${userInfo.usertoken}_user_login`, '');
                 // 设置redis登录态
                 this.app.redis.set(`${random_key}_user_login`, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
                 // 设置登录cookie

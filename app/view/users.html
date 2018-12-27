@@ -107,7 +107,8 @@
 				util.ajax({
 					url: `${config.baseApi}api/v1/user/setIsUse`,
 					data: {
-						token: item.token,
+						id: item._id,
+						usertoken: item.usertoken,
 						isUse: item.is_use == 0 ? 1 : 0,
 					},
 					success: data => {
@@ -123,7 +124,8 @@
 						util.ajax({
 							url: `${config.baseApi}api/v1/user/delete`,
 							data:{
-								token: item.token,
+								id: item._id,
+								usertoken: item.usertoken,
 							},
 							success: data => {
 								_this.getUserList();

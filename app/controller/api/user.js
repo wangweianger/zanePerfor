@@ -73,11 +73,12 @@ class AjaxsController extends Controller {
         const { ctx } = this;
         const query = ctx.request.body;
         const isUse = query.isUse || 0;
-        const token = query.token || '';
+        const id = query.id || '';
+        const usertoken = query.usertoken || '';
 
-        if (!token) throw new Error('冻结解冻用户：token不能为空');
+        if (!id) throw new Error('冻结解冻用户：id不能为空');
 
-        const result = await ctx.service.user.setIsUse(token, isUse);
+        const result = await ctx.service.user.setIsUse(id, isUse, usertoken);
 
         ctx.body = this.app.result({
             data: result,
@@ -88,11 +89,12 @@ class AjaxsController extends Controller {
     async delete() {
         const { ctx } = this;
         const query = ctx.request.body;
-        const token = query.token || '';
+        const id = query.id || '';
+        const usertoken = query.usertoken || '';
 
-        if (!token) throw new Error('删除用户：token不能为空');
+        if (!id) throw new Error('删除用户：id不能为空');
 
-        const result = await ctx.service.user.delete(token);
+        const result = await ctx.service.user.delete(id, usertoken);
 
         ctx.body = this.app.result({
             data: result,
