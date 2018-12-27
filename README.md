@@ -41,6 +41,7 @@ https://blog.seosiwei.com/performance/index.html
 * [IP解析城市地理位置逻辑说明](https://blog.seosiwei.com/performance/iptask.html)
 * [项目定时任务功能说明](https://blog.seosiwei.com/performance/tasks.html)
 * [github 登录授权](https://blog.seosiwei.com/performance/github.html)
+* [简单通用的Node前后端Token登录机制和github授权登录方式](https://blog.seosiwei.com/detail/49)
 
 ## 项目说明
 * 项目已部署到正式环境，并已稳定运行一段时间，请放心使用。
