@@ -114,15 +114,8 @@ new wxRepotSdk({
 ### 小程序端上报SDK wx-report-sdk：
 https://github.com/wangweianger/wx-report-sdk
 
-## github 登录授权
-**1、Sign in github.**
-
-**2、Then enter Settings -> Developer settings -> New OAuth App -> Register a new OAuth application** <br/>
-![](https://github.com/wangweianger/zanePerfor/blob/master/demo/20.png "")<br/>
-
-**3、get Client ID and Client Secret.** <br/>
-![](https://github.com/wangweianger/zanePerfor/blob/master/demo/21.png "")<br/>
-
+### github 登录授权
+https://blog.seosiwei.com/performance/github.html
 
 ## 服务架构探索
 * 针对于不同的项目，不同的并发量，后期关于项目服务架构我会写一篇独立的文档（待写...）。
