@@ -161,15 +161,8 @@ class UserService extends Service {
     }
 
     // github register
-    async githubRegister(data = {}) {
-        const login = data.login;
-        const token = data.node_id;
+    async githubRegister(userinfo, token) {
         let userInfo = {};
-        if (!login || !token) {
-            userInfo = { desc: 'github 权限验证失败, 请重试！' };
-            return;
-        }
-
         userInfo = await this.getUserInfoForGithubId(token);
         const random_key = this.app.randomString();
         if (userInfo.token) {
@@ -189,12 +182,12 @@ class UserService extends Service {
                     signed: true,
                 });
                 // 更新用户信息
-                await this.updateUserToken({ username: login, usertoken: random_key });
+                await this.updateUserToken({ username: userinfo, usertoken: random_key });
             }
         } else {
             // 不存在 先注册 再登录
             const user = this.ctx.model.User();
-            user.user_name = login;
+            user.user_name = userinfo;
             user.token = token;
             user.create_time = new Date();
             user.level = 1;

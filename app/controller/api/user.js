@@ -104,8 +104,8 @@ class AjaxsController extends Controller {
     // github callback
     async githubLogin() {
         const { ctx } = this;
-        const query_code = ctx.query.code;
         try {
+            const query_code = ctx.query.code;
             const tokenResult = await ctx.curl('https://github.com/login/oauth/access_token', {
                 method: 'POST',
                 contentType: 'json',
@@ -121,7 +121,7 @@ class AjaxsController extends Controller {
                 await ctx.render('github', {
                     data: {
                         title: 'github login',
-                        data: JSON.stringify({ desc: tokenResult.error_description }),
+                        data: JSON.stringify({ desc: tokenResult.error_description, type: 'github' }),
                     },
                 });
                 return;
@@ -135,13 +135,19 @@ class AjaxsController extends Controller {
                 await ctx.render('github', {
                     data: {
                         title: 'github login',
-                        data: JSON.stringify({ desc: userResult.error_description }),
+                        data: JSON.stringify({ desc: userResult.error_description, type: 'github' }),
                     },
                 });
                 return;
             }
 
-            const result = await ctx.service.user.githubRegister(userResult.data);
+            let result = {};
+            if (!userResult.data.login || !userResult.data.node_id) {
+                result.desc = 'github 权限验证失败, 请重试！';
+            } else {
+                result = await ctx.service.user.githubRegister(userResult.data.login, userResult.data.node_id);
+            }
+            result.type = 'github';
             await ctx.render('github', {
                 data: {
                     title: 'github login',
@@ -149,14 +155,83 @@ class AjaxsController extends Controller {
                 },
             });
         } catch (err) {
-            let result = { desc: 'github 权限验证失败, 请重试！' };
+            const result = { desc: 'github 权限验证失败, 请重试！', type: 'github' };
             if (err.toString().indexOf('timeout') > -1) {
-                result = { desc: 'github 接口请求超时,请重试！' };
+                result.desc = 'github 接口请求超时,请重试！';
             }
             await ctx.render('github', {
                 data: {
                     title: 'github login',
                     data: JSON.stringify(result),
+                },
+            });
+        }
+    }
+
+    // 新浪微博登录
+    async weiboLogin() {
+        const { ctx } = this;
+        try {
+            const query_code = ctx.query.code;
+
+            const getTokenPath = `https://api.weibo.com/oauth2/access_token?client_id=${this.app.config.weibo.client_id}&client_secret=${this.app.config.weibo.client_secret}&grant_type=authorization_code&code=${query_code}&redirect_uri=http://127.0.0.1:7001/api/v1/weibo/callback`;
+            const tokenResult = await ctx.curl(getTokenPath, {
+                method: 'POST',
+                contentType: 'json',
+                data: '',
+                dataType: 'json',
+                timeout: 8000,
+            });
+            if (tokenResult.status !== 200) {
+                await ctx.render('github', {
+                    data: {
+                        title: 'weibo login',
+                        data: JSON.stringify({ desc: tokenResult.data.error_description || '微博授权有误!', type: 'weibo' }),
+                    },
+                });
+                return;
+            }
+            const getTokenInfo = await ctx.curl(`https://api.weibo.com/oauth2/get_token_info?access_token=${tokenResult.data.access_token}`, {
+                method: 'POST',
+                contentType: 'json',
+                data: '',
+                dataType: 'json',
+                timeout: 8000,
+            });
+            if (getTokenInfo.status !== 200) {
+                await ctx.render('github', {
+                    data: {
+                        title: 'weibo get access_token',
+                        data: JSON.stringify({ desc: tokenResult.data.error_description || '微博获取access_token有误!', type: 'weibo' }),
+                    },
+                });
+                return;
+            }
+            const getUserInfo = await ctx.curl(`https://api.weibo.com/2/users/show.json?access_token=${tokenResult.data.access_token}&uid=${getTokenInfo.data.uid}`, {
+                dataType: 'json',
+                timeout: 8000,
+            });
+
+            let result = {};
+            if (!getUserInfo.data.name || !getUserInfo.data.idstr) {
+                result.desc = '新浪微博权限验证失败, 请重试！';
+            } else {
+                result = await ctx.service.user.githubRegister(getUserInfo.data.name, getUserInfo.data.idstr);
+            }
+            result.type = 'weibo';
+            await ctx.render('github', {
+                data: {
+                    title: 'weibo login',
+                    data: JSON.stringify(result),
+                },
+            });
+
+        } catch (err) {
+            console.log(err);
+            await ctx.render('weibo', {
+                data: {
+                    title: 'weibo login',
+                    data: JSON.stringify({ desc: '新浪微博授权失败,请重试！', type: 'weibo' }),
                 },
             });
         }

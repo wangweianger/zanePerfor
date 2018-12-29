@@ -31,6 +31,9 @@ module.exports = app => {
     // -----------------github 登录------------------
     apiV1Router.get('github/callback', user.githubLogin);
 
+    // -----------------新浪微博 登录------------------
+    apiV1Router.get('weibo/callback', user.weiboLogin);
+
     // ----------------系统配置相关---------------
     // 新增系统
     apiV1Router.post('system/add', tokenRequired, system.addNewSystem);

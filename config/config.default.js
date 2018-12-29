@@ -104,6 +104,13 @@ module.exports = () => {
         scope: [ 'user' ],
     };
 
+    // weibo login
+    config.weibo = {
+        client_id: '1873754551',
+        client_secret: 'ae98df0a53714c2a0a05625e47375791',
+        scope: [ 'all' ],
+    };
+
     // ejs模板
     config.view = {
         defaultExtension: '.html',

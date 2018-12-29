@@ -31,7 +31,8 @@
     <div class="main">
         <div class="center center-ewm">
            <div class="msgs">
-               <img class="github_login" src="/public/img/github.png">
+                <img v-if="type=='github'?true:false" class="github_login" src="/public/img/github.png">
+                <img v-if="type=='weibo'?true:false" class="github_login" src="/public/img/github.png">
                <span>{{title}}</span>
            </div>
         </div>
@@ -44,10 +45,12 @@
             el: '#login',
             data: function () {
                 return {
-                    title:''
+                    title:'',
+                    type:'github'
                 }
             },
             mounted() {
+                this.type = user_data.type;
                 if(user_data && user_data.desc){
                     this.title = user_data.desc;
                     popup.alert({title: user_data.desc})
@@ -56,7 +59,7 @@
                     window.close();
                     window.opener.location.href = "/"
                 } else {
-                    this.title = 'github 权限验证失败, 请重试！'
+                    this.title = this.type=='github'?'github 权限验证失败, 请重试！':'新浪微博权限验证失败，请重试!';
                 }
             },
         })

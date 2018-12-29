@@ -78,12 +78,23 @@
         border-radius: 5px;
         cursor: pointer; 
     }
+    .main .center .btns{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+    }
     .github_login{
-        width:35px;
-        height:35px;
+        width:50px;
+        height:50px;
         cursor:pointer;
+        margin-right:30px;
+        border:solid 12px rgba(121,136,250,.1);
+        border-radius:100%;
     }
 </style>
+<html xmlns:wb=“http://open.weibo.com/wb”></html>
+<script src="https://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
 <div class="login" id="login">
     <div class="main" :style="{'height':type==2?'480px':'450px'}">
         <div class="top">
@@ -111,11 +122,15 @@
                     <button class="button" v-show="type===1" @click="login">立即登录</button>
                     <button class="button" v-show="type===2" @click="register">立即注册</button>
                 </div>
-                <% if( data.client_id ) { %>
-                    <div class="submit mt20">
+                <div class="submit btns mt20">
+                    <% if( data.gh_client_id ) { %>
                         <img @click="github" class="github_login" src="/public/img/github.png" alt="github login" title="use gitbub login.">
-                    </div>
-                <% } %>
+                    <% } %>
+                    <% if( data.wb_client_id ) { %>
+                        <img @click="weibo" class="github_login" src="/public/img/weibo.png" alt="github login" title="use gitbub login.">
+                    <% } %>
+                    <wb:follow-button uid="2093120674" type="red_1" width="67" height="24"></wb:follow-button>
+                </div>
             </div>
         </div>
     </div>
@@ -180,12 +195,20 @@
                 })
             },
             github(){
-                var path = "https://github.com/login/oauth/authorize";
-                path += '?client_id=' + '<%= data.client_id %>';
-                path += '&scope=' + '<%= data.scope %>';
+                let path = "https://github.com/login/oauth/authorize";
+                path += '?client_id=' + '<%= data.gh_client_id %>';
+                path += '&scope=' + '<%= data.gh_scope %>';
                 path += '&state=' + Date.now();
                 window.open(path,'','width=800,height=500,location=no,menubar=no')
             },
+            weibo(){
+                let path = "https://api.weibo.com/oauth2/authorize";
+                path += '?client_id=' + '<%= data.wb_client_id %>';
+                path += '&scope=' + '<%= data.wb_client_id %>';
+                path += '&state=' + Date.now();
+                path += '&redirect_uri=' + encodeURIComponent(location.origin+'/api/v1/weibo/callback');
+                window.open(path, '', 'width=800,height=500,location=no,menubar=no')
+            }
         }
     })
 </script>

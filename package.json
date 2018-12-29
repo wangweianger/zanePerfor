@@ -13,8 +13,7 @@
     "egg-scripts": "^2.10.0",
     "egg-socket.io": "^4.1.4",
     "kafka-node": "^3.0.1",
-    "kafkajs": "^1.4.4",
-    "node-rdkafka": "^2.4.2"
+    "kafkajs": "^1.4.4"
   },
   "devDependencies": {
     "autod": "^3.0.1",
