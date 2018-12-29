@@ -17,6 +17,10 @@ module.exports = () => {
     // 务必修改config.debug = true;
     config.session_secret = 'node_performance_secret';
 
+    // 用于安全校验和回调域名根路径 开发路径域名（必填）
+    config.origin = 'http://127.0.0.1:7001';
+
+    // 集群配置（一般默认即可）
     config.cluster = {
         listen: {
             port: 7001,
@@ -104,10 +108,10 @@ module.exports = () => {
         scope: [ 'user' ],
     };
 
-    // weibo login
+    // 新浪微博 login
     config.weibo = {
-        client_id: '1873754551',
-        client_secret: 'ae98df0a53714c2a0a05625e47375791',
+        client_id: 'xxxxxx', // 微博的App Key
+        client_secret: 'xxxxxx', // 微博的App Secret
         scope: [ 'all' ],
     };
 

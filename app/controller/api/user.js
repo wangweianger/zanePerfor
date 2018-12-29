@@ -174,7 +174,7 @@ class AjaxsController extends Controller {
         try {
             const query_code = ctx.query.code;
 
-            const getTokenPath = `https://api.weibo.com/oauth2/access_token?client_id=${this.app.config.weibo.client_id}&client_secret=${this.app.config.weibo.client_secret}&grant_type=authorization_code&code=${query_code}&redirect_uri=http://127.0.0.1:7001/api/v1/weibo/callback`;
+            const getTokenPath = `https://api.weibo.com/oauth2/access_token?client_id=${this.app.config.weibo.client_id}&client_secret=${this.app.config.weibo.client_secret}&grant_type=authorization_code&code=${query_code}&redirect_uri=${this.app.config.origin}/api/v1/weibo/callback`;
             const tokenResult = await ctx.curl(getTokenPath, {
                 method: 'POST',
                 contentType: 'json',

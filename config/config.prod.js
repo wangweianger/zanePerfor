@@ -3,6 +3,9 @@
 module.exports = () => {
     const config = exports = {};
 
+    // 用于安全校验和回调域名根路径 生产线域名（必填）
+    config.origin = 'https://xxx.xxx.com';
+
     // 百度地图api key
     config.BAIDUAK = 'xxxxxxxxxx';
 
@@ -11,6 +14,13 @@ module.exports = () => {
         client_id: 'xxxxxx',
         client_secret: 'xxxxxx',
         scope: [ 'user' ],
+    };
+
+    // 新浪微博 login
+    config.weibo = {
+        client_id: 'xxxxxx', // 微博的App Key
+        client_secret: 'xxxxxx', // 微博的App Secret
+        scope: [ 'all' ],
     };
 
     // redis配置
