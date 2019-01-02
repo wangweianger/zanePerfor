@@ -54,7 +54,7 @@ class ErrorController extends Controller {
         if (!url) throw new Error('单个Resource性能列表数据：api地址不能为空');
 
 
-        const result = await ctx.service.web.webResource.getOneResourceList(appId, url, pageNo, pageSize);
+        const result = await ctx.service.web.resource.getOneResourceList(appId, url, pageNo, pageSize);
 
         ctx.body = this.app.result({
             data: result,

@@ -19,7 +19,7 @@ module.exports = app => {
                 const preminutetwo = await app.redis.get('ip_task_time');
                 if (preminutetwo !== value) return;
             }
-            if (app.config.is_web_task_run) await ctx.service.web.webIpTask.saveWebGetIpDatas();
+            if (app.config.is_web_task_run) await ctx.service.web.ipTask.saveWebGetIpDatas();
             if (app.config.is_wx_task_run) await ctx.service.wx.ipTask.saveWxGetIpDatas();
         },
     };

@@ -16,7 +16,7 @@ module.exports = app => {
                     const result = await ctx.model.System.count({}).exec();
                     app.logger.info(`-----------db3--查询db3数据库是否可用----${result}------`);
 
-                    if (app.config.is_web_task_run && app.config.redis_consumption.thread_web) ctx.service.web.webReportTask.saveWebReportDatasForRedis();
+                    if (app.config.is_web_task_run && app.config.redis_consumption.thread_web) ctx.service.web.reportTask.saveWebReportDatasForRedis();
                     if (app.config.is_wx_task_run && app.config.redis_consumption.thread_wx) ctx.service.wx.reportTask.saveWxReportDatasForRedis();
                 } catch (err) {
                     app.restartMongodbs('db3', ctx, err);

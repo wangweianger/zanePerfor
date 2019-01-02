@@ -38,7 +38,7 @@ class ReportController extends Controller {
 
     // 通过mongodb 数据库存储数据
     async saveWebReportDataForMongodb(ctx) {
-        ctx.service.web.webReport.saveWebReportData(ctx);
+        ctx.service.web.report.saveWebReportData(ctx);
     }
 
     async write(){

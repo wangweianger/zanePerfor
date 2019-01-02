@@ -46,7 +46,7 @@ class WebReportService extends Service {
                 data = await Promise.all([ pvpro, uvpro, ippro ]);
             } else if (type === 2) {
                 const user = Promise.resolve(this.app.models.WebEnvironment(appId).distinct('mark_user', query).read('sp'));
-                const bounce = Promise.resolve(this.ctx.service.web.webPvuvip.bounceRate(appId, query));
+                const bounce = Promise.resolve(this.ctx.service.web.pvuvip.bounceRate(appId, query));
                 data = await Promise.all([ pvpro, uvpro, ippro, user, bounce ]);
             }
             const pv = data[0] || 0;

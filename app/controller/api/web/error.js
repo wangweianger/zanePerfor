@@ -12,7 +12,7 @@ class ResourceController extends Controller {
 
         if (!appId) throw new Error('获得error分类列表：appId不能为空');
 
-        const result = await ctx.service.web.webErrors.getAverageErrorList(ctx);
+        const result = await ctx.service.web.errors.getAverageErrorList(ctx);
 
         ctx.body = this.app.result({
             data: result,
@@ -34,7 +34,7 @@ class ResourceController extends Controller {
         if (!appId) throw new Error('获得单个ERROR资源列表信息：appId不能为空');
         if (!url) throw new Error('获得单个ERROR资源列表信息：url地址不能为空');
 
-        const result = await ctx.service.web.webErrors.getOneErrorList(appId, url, category, pageNo, pageSize, beginTime, endTime);
+        const result = await ctx.service.web.errors.getOneErrorList(appId, url, category, pageNo, pageSize, beginTime, endTime);
 
         ctx.body = this.app.result({
             data: result,
@@ -54,7 +54,7 @@ class ResourceController extends Controller {
         if (!url) throw new Error('单个Resource性能列表数据：api地址不能为空');
 
 
-        const result = await ctx.service.web.webResource.getOneResourceList(appId, url, pageNo, pageSize);
+        const result = await ctx.service.web.resource.getOneResourceList(appId, url, pageNo, pageSize);
 
         ctx.body = this.app.result({
             data: result,
@@ -71,7 +71,7 @@ class ResourceController extends Controller {
         if (!id) throw new Error('单个error详情信息：id不能为空');
         if (!appId) throw new Error('单个error详情信息：appId不能为空');
 
-        const result = await ctx.service.web.webErrors.getErrorDetail(appId, id);
+        const result = await ctx.service.web.errors.getErrorDetail(appId, id);
 
         ctx.body = this.app.result({
             data: result,

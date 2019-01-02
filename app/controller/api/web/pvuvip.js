@@ -12,7 +12,7 @@ class PvUvIpController extends Controller {
         // 今日数据概况
         const endTime_today = new Date();
         const beginTime_today = this.app.format(endTime_today, 'yyyy/MM/dd') + ' 00:00:00';
-        const today = await ctx.service.web.webPvuvip.getPvUvIpSurvey(appId, beginTime_today, endTime_today);
+        const today = await ctx.service.web.pvuvip.getPvUvIpSurvey(appId, beginTime_today, endTime_today);
 
         ctx.body = this.app.result({
             data: today,
@@ -29,7 +29,7 @@ class PvUvIpController extends Controller {
         if (!beginTime) throw new Error('pvuvip概况统计：beginTime不能为空');
         if (!endTime) throw new Error('pvuvip概况统计：endTime不能为空');
 
-        const result = await ctx.service.web.webPvuvip.getPvUvIpSurveyOne(appId, beginTime, endTime);
+        const result = await ctx.service.web.pvuvip.getPvUvIpSurveyOne(appId, beginTime, endTime);
 
         ctx.body = this.app.result({
             data: result,
@@ -41,7 +41,7 @@ class PvUvIpController extends Controller {
         const query = ctx.request.query;
         const appId = query.appId;
         if (!appId) throw new Error('pvuvip获得历史概况：appId不能为空');
-        const result = await ctx.service.web.webPvuvip.getHistoryPvUvIplist(appId);
+        const result = await ctx.service.web.pvuvip.getHistoryPvUvIplist(appId);
 
         ctx.body = this.app.result({
             data: result,
@@ -59,7 +59,7 @@ class PvUvIpController extends Controller {
         const beginTime = query.beginTime || new Date(timestrat - 3660000);
         const endTime = query.endTime || new Date(timestrat - 60000);
 
-        const datalist = await ctx.service.web.webPvuvip.getPvUvIpData(appId, beginTime, endTime) || [];
+        const datalist = await ctx.service.web.pvuvip.getPvUvIpData(appId, beginTime, endTime) || [];
         const result = await this.getTimeList(beginTime, endTime, datalist);
 
         ctx.body = this.app.result({
@@ -78,7 +78,7 @@ class PvUvIpController extends Controller {
         const beginTime = new Date(timestrat - 120000);
         const endTime = new Date(timestrat - 60000);
 
-        const datalist = await ctx.service.web.webPvuvip.getPvUvIpData(appId, beginTime, endTime) || [];
+        const datalist = await ctx.service.web.pvuvip.getPvUvIpData(appId, beginTime, endTime) || [];
         let result = {};
         if (datalist.length) {
             result = {

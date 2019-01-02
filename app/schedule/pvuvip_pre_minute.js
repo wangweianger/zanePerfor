@@ -19,7 +19,7 @@ module.exports = app => {
                 const preminutetwo = await app.redis.get('pvuvip_task_minute_time');
                 if (preminutetwo !== value) return;
             }
-            if (app.config.is_web_task_run) await ctx.service.web.webPvuvipTask.getWebPvUvIpByMinute();
+            if (app.config.is_web_task_run) await ctx.service.web.pvuvipTask.getWebPvUvIpByMinute();
             if (app.config.is_wx_task_run) await ctx.service.wx.pvuvipTask.getWxPvUvIpByMinute();
         },
     };

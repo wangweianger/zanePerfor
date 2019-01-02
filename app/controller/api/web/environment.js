@@ -17,7 +17,7 @@ class EnfironmentController extends Controller {
         if (!appId) throw new Error('页面性能列表：appId不能为空');
         if (!url) throw new Error('页面性能列表：url不能为空');
 
-        const result = await ctx.service.web.webEnvironment.getDataGroupBy(type, url, appId, beginTime, endTime);
+        const result = await ctx.service.web.environment.getDataGroupBy(type, url, appId, beginTime, endTime);
 
         ctx.body = this.app.result({
             data: result,
@@ -34,7 +34,7 @@ class EnfironmentController extends Controller {
         if (!appId) throw new Error('根据mark_page获得用户系统信息：appId不能为空');
         if (!markPage) throw new Error('根据mark_page获得用户系统信息：markPage不能为空');
 
-        const result = await ctx.service.web.webEnvironment.getEnvironmentForPage(appId, markPage);
+        const result = await ctx.service.web.environment.getEnvironmentForPage(appId, markPage);
 
         ctx.body = this.app.result({
             data: result,

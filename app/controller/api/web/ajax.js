@@ -16,7 +16,7 @@ class AjaxsController extends Controller {
         if (!appId) throw new Error('页面ajax信息：appId不能为空');
         if (!url) throw new Error('页面ajax信息：url不能为空');
 
-        const result = await ctx.service.web.webAjaxs.getPageAjaxsAvg(appId, url, beginTime, endTime);
+        const result = await ctx.service.web.ajaxs.getPageAjaxsAvg(appId, url, beginTime, endTime);
 
         ctx.body = this.app.result({
             data: result,
@@ -31,7 +31,7 @@ class AjaxsController extends Controller {
 
         if (!appId) throw new Error('平均AJAX性能列表：appId不能为空');
 
-        const result = await ctx.service.web.webAjaxs.getAverageAjaxList(ctx);
+        const result = await ctx.service.web.ajaxs.getAverageAjaxList(ctx);
 
         ctx.body = this.app.result({
             data: result,
@@ -50,7 +50,7 @@ class AjaxsController extends Controller {
         if (!appId) throw new Error('单个AJAX平均性能数据：appId不能为空');
         if (!url) throw new Error('单个AJAX平均性能数据：api地址不能为空');
 
-        const result = await ctx.service.web.webAjaxs.getOneAjaxAvg(appId, url, beginTime, endTime, type);
+        const result = await ctx.service.web.ajaxs.getOneAjaxAvg(appId, url, beginTime, endTime, type);
 
         ctx.body = this.app.result({
             data: result,
@@ -71,7 +71,7 @@ class AjaxsController extends Controller {
         if (!appId) throw new Error('单个AJAX平均性能数据：appId不能为空');
         if (!url) throw new Error('单个AJAX平均性能数据：api地址不能为空');
 
-        const result = await ctx.service.web.webAjaxs.getOneAjaxList(appId, url, pageNo, pageSize, beginTime, endTime, type);
+        const result = await ctx.service.web.ajaxs.getOneAjaxList(appId, url, pageNo, pageSize, beginTime, endTime, type);
 
         ctx.body = this.app.result({
             data: result,
@@ -88,7 +88,7 @@ class AjaxsController extends Controller {
         if (!id) throw new Error('获得单个ajax详情信息：id不能为空');
         if (!appId) throw new Error('获得单个ajax详情信息：appId不能为空');
 
-        const result = await ctx.service.web.webAjaxs.getOneAjaxDetail(appId, id);
+        const result = await ctx.service.web.ajaxs.getOneAjaxDetail(appId, id);
 
         ctx.body = this.app.result({
             data: result,
