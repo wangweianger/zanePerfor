@@ -33,6 +33,7 @@
            <div class="msgs">
                 <img v-if="type=='github'?true:false" class="github_login" src="/public/img/github.png">
                 <img v-if="type=='weibo'?true:false" class="github_login" src="/public/img/github.png">
+                <img v-if="type=='wechat'?true:false" class="github_login" src="/public/img/wechat.png">
                <span>{{title}}</span>
            </div>
         </div>
@@ -59,7 +60,13 @@
                     window.close();
                     window.opener.location.href = "/"
                 } else {
-                    this.title = this.type=='github'?'github 权限验证失败, 请重试！':'新浪微博权限验证失败，请重试!';
+                    if(this.type == 'github'){
+                        this.title = 'github权限验证失败, 请重试！'
+                    }else if(this.type == 'weibo'){
+                        this.title = '新浪微博权限验证失败，请重试!'
+                    }else if(this.type == 'wechat'){
+                        this.title = '微信登录权限验证失败，请重试!'
+                    }
                 }
             },
         })

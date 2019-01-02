@@ -34,6 +34,7 @@ class HomeController extends Controller {
                 gh_scope: this.app.config.github.scope,
                 wb_client_id: this.app.config.weibo.client_id,
                 wb_scope: this.app.config.weibo.scope,
+                wx_client_id: this.app.config.wechat.client_id,
             },
         });
     }

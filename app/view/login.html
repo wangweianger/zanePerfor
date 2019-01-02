@@ -127,7 +127,10 @@
                         <img @click="github" class="github_login" src="/public/img/github.png" alt="github login" title="use gitbub login.">
                     <% } %>
                     <% if( data.wb_client_id ) { %>
-                        <img @click="weibo" class="github_login" src="/public/img/weibo.png" alt="github login" title="use gitbub login.">
+                        <img @click="weibo" class="github_login" src="/public/img/weibo.png" alt="weibo login" title="use weibo login.">
+                    <% } %>
+                    <% if( data.wx_client_id ) { %>
+                    <img @click="wechat" class="github_login" src="/public/img/wechat.png" alt="wechat login" title="use wechat login.">
                     <% } %>
                     <wb:follow-button uid="2093120674" type="red_1" width="67" height="24"></wb:follow-button>
                 </div>
@@ -204,9 +207,19 @@
             weibo(){
                 let path = "https://api.weibo.com/oauth2/authorize";
                 path += '?client_id=' + '<%= data.wb_client_id %>';
-                path += '&scope=' + '<%= data.wb_client_id %>';
+                path += '&scope=' + '<%= data.wb_scope %>';
                 path += '&state=' + Date.now();
                 path += '&redirect_uri=' + encodeURIComponent(location.origin+'/api/v1/weibo/callback');
+                window.open(path, '', 'width=800,height=500,location=no,menubar=no')
+            },
+            wechat(){
+                let path = "https://open.weixin.qq.com/connect/qrconnect";
+                path += '?appid=' + '<%= data.wx_client_id %>';
+                path += '&response_type=code';
+                path += '&scope=snsapi_login';
+                path += '&state=' + Date.now();
+                path += '&redirect_uri=' + encodeURIComponent(location.origin + '/api/v1/wechat/callback');
+                path += '#wechat_redirect'
                 window.open(path, '', 'width=800,height=500,location=no,menubar=no')
             }
         }

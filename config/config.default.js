@@ -114,6 +114,11 @@ module.exports = () => {
         client_secret: 'xxxxxx', // 微博的App Secret
         scope: [ 'all' ],
     };
+    // wechat login
+    config.wechat = {
+        client_id: 'wxbdc5610cc59c1631', // 微信的AppId
+        client_secret: 'xxxxxx', // 微信的App Secret
+    };
 
     // ejs模板
     config.view = {

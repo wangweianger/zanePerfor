@@ -239,6 +239,75 @@ class AjaxsController extends Controller {
             });
         }
     }
+
+    // 微信登录
+    async wechatLogin() {
+        const { ctx } = this;
+        try {
+            const query_code = ctx.query.code;
+            // get access_token
+            const getTokenPath = `https://api.weixin.qq.com/sns/oauth2/access_token?appid=${this.app.config.wechat.client_id}&secret=${this.app.config.wechat.client_secret}&code=${query_code}&grant_type=authorization_code`;
+            const tokenResult = await ctx.curl(getTokenPath, {
+                method: 'POST',
+                contentType: 'json',
+                data: '',
+                dataType: 'json',
+                timeout: 8000,
+            });
+            if (tokenResult.status !== 200 && tokenResult.data.errcode) {
+                await ctx.render('github', {
+                    data: {
+                        title: 'wechat login',
+                        data: JSON.stringify({ desc: tokenResult.data.errmsg || '微信授权有误!', type: 'wechat' }),
+                    },
+                });
+                return;
+            }
+            // get user msg
+            const getUserMsg = await ctx.curl(`https://api.weixin.qq.com/sns/userinfo?access_token=${tokenResult.data.access_token}&openid=${tokenResult.data.openid}`, {
+                method: 'POST',
+                contentType: 'json',
+                data: '',
+                dataType: 'json',
+                timeout: 8000,
+            });
+            if (getUserMsg.status !== 200 && getUserMsg.data.errcode) {
+                await ctx.render('github', {
+                    data: {
+                        title: 'wechat login',
+                        data: JSON.stringify({ desc: getUserMsg.data.errmsg || '微信授权有误!', type: 'wechat' }),
+                    },
+                });
+                return;
+            }
+            // get result
+            let result = {};
+            if (!getUserMsg.data.nickname || !getUserMsg.data.openid) {
+                result.desc = '微信登录权限验证失败, 请重试！';
+            } else {
+                result = await ctx.service.user.githubRegister(getUserMsg.data.nickname, getUserMsg.data.openid);
+            }
+            result.type = 'wechat';
+            await ctx.render('github', {
+                data: {
+                    title: 'wechat login',
+                    data: JSON.stringify(result),
+                },
+            });
+
+        } catch (err) {
+            const result = { desc: '微信登录授权失败,请重试！', type: 'wechat' };
+            if (err.toString().indexOf('timeout') > -1) {
+                result.desc = '微信登录授权接口请求超时,请重试！';
+            }
+            await ctx.render('wechat', {
+                data: {
+                    title: 'wechat login',
+                    data: JSON.stringify(result),
+                },
+            });
+        }
+    }
 }
 
 module.exports = AjaxsController;
