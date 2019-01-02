@@ -23,6 +23,12 @@ module.exports = () => {
         scope: [ 'all' ],
     };
 
+    // wechat login
+    config.wechat = {
+        client_id: 'xxxxxx', // 微信的AppId
+        client_secret: 'xxxxxx', // 微信的App Secret
+    };
+
     // redis配置
     config.redis = {
         client: {
