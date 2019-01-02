@@ -117,11 +117,11 @@ class AjaxsController extends Controller {
                 dataType: 'json',
                 timeout: 8000,
             });
-            if (tokenResult.error) {
+            if (tokenResult.status !== 200) {
                 await ctx.render('github', {
                     data: {
                         title: 'github login',
-                        data: JSON.stringify({ desc: tokenResult.error_description, type: 'github' }),
+                        data: JSON.stringify({ desc: tokenResult.data.error, type: 'github' }),
                     },
                 });
                 return;
@@ -131,11 +131,11 @@ class AjaxsController extends Controller {
                 dataType: 'json',
                 timeout: 8000,
             });
-            if (userResult.error) {
+            if (userResult.status !== 200) {
                 await ctx.render('github', {
                     data: {
                         title: 'github login',
-                        data: JSON.stringify({ desc: userResult.error_description, type: 'github' }),
+                        data: JSON.stringify({ desc: userResult.data.error, type: 'github' }),
                     },
                 });
                 return;
@@ -227,11 +227,14 @@ class AjaxsController extends Controller {
             });
 
         } catch (err) {
-            console.log(err);
+            const result = { desc: '新浪微博授权失败,请重试！', type: 'weibo' };
+            if (err.toString().indexOf('timeout') > -1) {
+                result.desc = '新浪微博授权接口请求超时,请重试！';
+            }
             await ctx.render('weibo', {
                 data: {
                     title: 'weibo login',
-                    data: JSON.stringify({ desc: '新浪微博授权失败,请重试！', type: 'weibo' }),
+                    data: JSON.stringify(result),
                 },
             });
         }
