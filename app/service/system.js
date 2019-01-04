@@ -158,7 +158,21 @@ class WebSystemService extends Service {
         // 更新redis缓存
         this.updateSystemCache(appId);
 
+        // 更新邮件相关信息
+        this.updateEmailSystemIds(email, appId, type);
+
         return result;
+    }
+
+    // 更新邮件信息
+    async updateEmailSystemIds(email, appId, handletype = 1) {
+        if (!email) return;
+        await this.ctx.service.emails.updateSystemIds({
+            email,
+            appId,
+            type: 'daliy',
+            handletype,
+        });
     }
 }
 
