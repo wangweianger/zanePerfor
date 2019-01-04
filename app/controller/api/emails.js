@@ -37,9 +37,12 @@ class SystemController extends Controller {
         const { ctx } = this;
         const query = ctx.request.body;
         const id = query.id;
+        const systemIds = query.systemIds || [];
+        const email = query.email;
+
         if (!id) throw new Error('删除邮件：id不能为空!');
 
-        const result = await ctx.service.emails.deleteEmail(id);
+        const result = await ctx.service.emails.deleteEmail(id, systemIds, email);
 
         ctx.body = this.app.result({
             data: result,

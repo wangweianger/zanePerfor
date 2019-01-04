@@ -62,6 +62,16 @@
 		margin:0px 20px 0 0 ;
 		cursor: pointer;
 	}
+	.table .author{
+		font-size:12px;
+		border-bottom:solid 1px #ddd;
+		padding-bottom:10px;
+		margin-bottom:10px;
+		color:#8776f7;
+	}
+	.table .author:last-child{
+		border-bottom:none;
+	}
 </style>
 <div class="com_content home_body" id="home_body" v-cloak>
 	<div class="com_title">
@@ -85,7 +95,10 @@
 						<td class="tc"><strong>{{item.email}}</strong></td>
 						<td class="tc">{{item.name}}</td>
 						<td class="tc">
-							<button class="btn" v-if="item.system_ids&&item.system_ids.length" v-for="items in item.system_ids">{{items.name}}</button>
+							<div class="author" v-if="item.system_ids&&item.system_ids.length" v-for="items in item.system_ids">
+								<div>{{items.desc}}</div>
+								<div>系统ID：{{items.system_id}}</div>
+							</div>
 						</td>
 						<td class="tc"><button class="btn btn-default" @click="deleteEmail(item)">删除</button></td>
 					</tr>
@@ -199,6 +212,8 @@
 							url: `${config.baseApi}api/v1/emails/delete`,
 							data:{
 								id: item._id,
+								systemIds:item.system_ids,
+								email: item.email,
 							},
 							success: data => {
 								_this.getEmailsList();

@@ -35,11 +35,19 @@ class EmailsService extends Service {
         return await emails.save();
     }
 
-    async deleteEmail(id) {
+    async deleteEmail(id, systemIds, email) {
         const result = await this.ctx.model.Email.findOneAndRemove({ _id: id }).exec();
+        if (systemIds && systemIds.length) {
+            systemIds.forEach(item => {
+                if (item.system_id && item.type === 'daliy') {
+                    this.ctx.service.system.handleDaliyEmail(item.system_id, email, 2, false);
+                }
+            });
+        }
         return result;
     }
 
+    // 更新 system_ids字段
     async updateSystemIds(opt) {
         switch (opt.type) {
         case 'daliy':
@@ -54,15 +62,13 @@ class EmailsService extends Service {
     async updateDaliyList(emails, appId, handletype) {
         handletype = handletype * 1;
         const handleData = handletype === 1 ?
-            { $push: { system_ids: { $each: [{ systemId: appId, desc: '每日发送日报权限', type: 'daliy' }] } } } :
-            { $pull: { system_ids: { $elemMatch: { systemId: appId, type: 'daliy' } } } };
-
-        console.log(JSON.stringify(handleData));
+            { $push: { system_ids: { $each: [{ system_id: appId, desc: '每日发送日报权限', type: 'daliy' }] } } } :
+            { $pull: { system_ids: { system_id: appId, type: 'daliy' } } };
 
         const result = await this.ctx.model.Email.update(
             { email: emails },
             handleData,
-            { multi: true }).exec();
+            { multi: false }).exec();
         return result;
     }
 }

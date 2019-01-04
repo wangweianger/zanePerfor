@@ -147,7 +147,7 @@ class WebSystemService extends Service {
     }
 
     // 新增 | 删除 日报邮件
-    async handleDaliyEmail(appId, email, type) {
+    async handleDaliyEmail(appId, email, type, handleEmali = true) {
         type = type * 1;
         const handleData = type === 1 ? { $addToSet: { daliy_list: email } } : { $pull: { daliy_list: email } };
         const result = await this.ctx.model.System.update(
@@ -159,7 +159,7 @@ class WebSystemService extends Service {
         this.updateSystemCache(appId);
 
         // 更新邮件相关信息
-        this.updateEmailSystemIds(email, appId, type);
+        if (handleEmali) this.updateEmailSystemIds(email, appId, type);
 
         return result;
     }
