@@ -76,11 +76,12 @@ iframe { display: none; }
 /****阿里icon*****/
 @font-face {
   font-family: 'iconfont';  /* project id 865153 */
-  src: url('//at.alicdn.com/t/font_865153_7rwd120k82t.eot');
-  src: url('//at.alicdn.com/t/font_865153_7rwd120k82t.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_865153_7rwd120k82t.woff') format('woff'),
-  url('//at.alicdn.com/t/font_865153_7rwd120k82t.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_865153_7rwd120k82t.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_865153_7somvh3yiok.eot');
+  src: url('//at.alicdn.com/t/font_865153_7somvh3yiok.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_865153_7somvh3yiok.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_865153_7somvh3yiok.woff') format('woff'),
+  url('//at.alicdn.com/t/font_865153_7somvh3yiok.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_865153_7somvh3yiok.svg#iconfont') format('svg');
 }
 .iconfont {
     font-family:"iconfont";

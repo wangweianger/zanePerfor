@@ -20,8 +20,11 @@ class AjaxsController extends Controller {
         const { ctx } = this;
         const query = ctx.request.body;
         const number = query.number || 10;
+        const appId = query.appId;
 
-        const result = await ctx.service.remove.deleteDb2WebData(number, query.type);
+        if (!appId) throw new Error('获得error分类列表：appId不能为空');
+
+        const result = await ctx.service.remove.deleteDb2WebData(appId, number, query.type);
         ctx.body = this.app.result({
             data: result,
         });

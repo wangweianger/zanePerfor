@@ -27,7 +27,7 @@ class RemoveService extends Service {
     }
 
     // 清空db2 number日之前所有性能数据
-    async deleteDb2WebData(number, type = 'web') {
+    async deleteDb2WebData(appId, number, type = 'web') {
         number = number * 1;
         const interval = parser.parseExpression(this.app.config.pvuvip_task_day_time);
         const endTime = new Date(new Date(interval.prev().toString()).getTime() - number * 86400000);
@@ -36,15 +36,15 @@ class RemoveService extends Service {
 
         if (type === 'web') {
             // Ajax
-            const remove1 = Promise.resolve(this.ctx.model.Web.WebAjaxs.remove(query).exec());
+            const remove1 = Promise.resolve(this.app.models.WebAjaxs(appId).remove(query).exec());
             // Pages
-            const remove2 = Promise.resolve(this.ctx.model.Web.WebPages.remove(query).exec());
+            const remove2 = Promise.resolve(this.app.models.WebPages(appId).remove(query).exec());
             // Environment
-            const remove3 = Promise.resolve(this.ctx.model.Web.WebEnvironment.remove(query).exec());
+            const remove3 = Promise.resolve(this.app.models.WebEnvironment(appId).remove(query).exec());
             // Errors
-            const remove4 = Promise.resolve(this.ctx.model.Web.WebErrors.remove(query).exec());
+            const remove4 = Promise.resolve(this.app.models.WebErrors(appId).remove(query).exec());
             // Resource
-            const remove5 = Promise.resolve(this.ctx.model.Web.WebResource.remove(query).exec());
+            const remove5 = Promise.resolve(this.app.models.WebResource(appId).remove(query).exec());
             result = await Promise.all([ remove1, remove2, remove3, remove4, remove5 ]);
         } else if (type === 'wx') {
             // Ajax

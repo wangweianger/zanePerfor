@@ -95,6 +95,23 @@ class SystemController extends Controller {
             data: result,
         });
     }
+
+    // 新增 | 删除 日报邮件
+    async handleDaliyEmail() {
+        const { ctx } = this;
+        const query = ctx.request.body;
+        const appId = query.appId;
+        const email = query.email;
+        const type = query.type || 1;
+
+        if (!appId) throw new Error('删除某个系统：appId不能为空');
+
+        const result = await ctx.service.system.handleDaliyEmail(appId, email, type);
+
+        ctx.body = this.app.result({
+            data: result,
+        });
+    }
 }
 
 module.exports = SystemController;

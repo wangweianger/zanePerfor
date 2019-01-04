@@ -68,6 +68,7 @@ class WebSystemService extends Service {
             is_statisi_resource: query.is_statisi_resource || 0,
             is_statisi_system: query.is_statisi_system || 0,
             is_statisi_error: query.is_statisi_error || 0,
+            is_daily_use: query.is_daily_use || 0,
         } };
         const result = await this.ctx.model.System.update(
             { app_id: appId },
@@ -77,6 +78,10 @@ class WebSystemService extends Service {
         ctx.body = this.app.result({ data: result });
 
         // 更新redis缓存
+        this.updateSystemCache(appId);
+    }
+    // 更新redis缓存
+    async updateSystemCache(appId) {
         const system = await this.getSystemForDb(appId);
         await this.app.redis.set(appId, JSON.stringify(system));
     }
@@ -138,6 +143,21 @@ class WebSystemService extends Service {
             try { await conn.dropCollection(`web_resources_${appId}`); } catch (err) { console.log(err); }
             try { await conn.dropCollection(`web_environment_${appId}`); } catch (err) { console.log(err); }
         }, 500);
+        return result;
+    }
+
+    // 新增 | 删除 日报邮件
+    async handleDaliyEmail(appId, email, type) {
+        type = type * 1;
+        const handleData = type === 1 ? { $addToSet: { daliy_list: email } } : { $pull: { daliy_list: email } };
+        const result = await this.ctx.model.System.update(
+            { app_id: appId },
+            handleData,
+            { multi: true }).exec();
+
+        // 更新redis缓存
+        this.updateSystemCache(appId);
+
         return result;
     }
 }

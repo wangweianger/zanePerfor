@@ -6,7 +6,12 @@ class SystemController extends Controller {
 
     async getList() {
         const { ctx } = this;
-        const result = await ctx.service.emails.getList();
+        const query = ctx.request.query;
+        const pageNo = query.pageNo;
+        const pageSize = query.pageSize || this.app.config.pageSize;
+        const email = query.email;
+
+        const result = await ctx.service.emails.getList(pageNo, pageSize, email);
 
         ctx.body = this.app.result({
             data: result,

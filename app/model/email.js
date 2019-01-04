@@ -7,7 +7,7 @@ module.exports = app => {
 
     const EmailSchema = new Schema({
         email: { type: String }, // 用户名称
-        name: { type: String }, // 用户密码
+        name: { type: String }, // 用户名
         system_ids: { type: Array }, // 用户所拥有的应用信息
         create_time: { type: Date, default: Date.now }, // 用户访问时间
     });

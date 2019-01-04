@@ -93,6 +93,12 @@
 			</div>
 		</div>
 	</div>
+	
+	<!--  分页 -->
+	<div class="tc common_page_style mt10">
+		<div id="copot-page" class="copot-page"></div>
+	</div>
+
 	<div v-if="isLoadend && !datalist.length" class="empty mt30 tc">暂无邮件！</div>
 	<!-- 弹出model -->
 	<div class="com_model" v-show="showModel">
@@ -112,6 +118,9 @@
 		el: '#home_body',
 		data: function () {
 			return {
+				pageNo: 1,
+				pageSize: 6,
+				totalNum: 0,
 				showModel:false,
 				datalist:[],
 				userMsg:{},
@@ -134,9 +143,27 @@
 				util.ajax({
 					type:'get',
 					url: config.baseApi + 'api/v1/emails/list',
+					data:{
+						pageNo: this.pageNo,
+						pageSize: this.pageSize,
+					},
 					success:  (data) => {
 						this.isLoadend = true;
-						this.datalist = data.data || [];
+						if (!data.data.datalist && !data.data.datalist.length) {
+							this.datalist = [];
+							return;
+						} 
+						this.datalist = data.data.datalist
+						new Page({
+							parent: $('#copot-page'),
+							nowPage: this.pageNo,
+							pageSize: this.pageSize,
+							totalCount: data.data.totalNum,
+							callback: (nowPage, totalPage) => {
+								this.pageNo = nowPage;
+								this.getEmailsList();
+							}
+						});
 					}
 				})
 			},

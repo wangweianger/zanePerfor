@@ -88,6 +88,42 @@
 		max-width:1200px;
 		margin-left:80px;
 	}
+	.email_content{
+		padding: 30px;
+	}
+	.email_content .item{
+		display: inline-block;
+		padding:6px 5px 5px 15px;
+		border:solid 1px #8776f7;
+		color:#8776f7;
+		border-radius:20px;
+		margin-right:20px;
+	}
+	.email_content .item span{
+		padding:5px 8px;
+		color:#d6d5d5;
+		font-size:25px;
+		cursor:pointer;
+	}
+	.email_content .btn{
+		border-radius:20px;
+	}
+	.com_model .content{
+		width:800px;
+		height:600px;
+	}
+	.com_model .content .main{
+		padding:20px;
+	}
+	.com_model .content .iconfont{
+		font-size:30px;
+		color:#aaa;
+		margin:0px 20px 0 0 ;
+		cursor: pointer;
+	}
+	.com_search {
+		padding: 0;
+	}
 	@media (max-width: 768px) {
 		.setting-body .block .content {
 			margin: 15px 0 20px 5px;
@@ -126,6 +162,7 @@
 		<div class="item" :class="{'active':lable==1}" @click="checkoutLabel(1)">部署说明</div>
 		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">阈值设置</div>
 		<div class="item" :class="{'active':lable==3}" @click="checkoutLabel(3)">统计设置</div>
+		<div class="item" :class="{'active':lable==5}" @click="checkoutEmail(5)">日报设置</div>
 		<div class="item" :class="{'active':lable==4}" @click="checkoutLabel(4)">性能优化</div>
 
 	</div>
@@ -252,9 +289,67 @@ Performance({
 				</div>
 			</div>
 		</div>
+		<div class="block" v-show="lable==5">
+			<h1 class="h1">是否开启发送日报</h1>
+			<div class="content">
+				<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-rb" checked />
+			</div>
+			<h1 class="h1">设置接收邮箱</h1>
+			<div class="email_content">
+				<span v-if="!!daliylist.length">
+					<div class="item" v-for="item in daliylist" v-if="!!item" @click="handleEmail(item,2)">{{item}}<span class="iconfont">&#xe613;</span></div>
+				</span>
+				<button class="btn btn-main" @click="isModelShow=true">+新增</button>
+			</div>
+		</div>
 	</div>
+
+	<!-- 弹出model -->
+	<div class="com_model" v-show="isModelShow">
+		<div class="mask" @click="isModelShow=false"></div>
+		<div class="content">
+			<h1 class="com_h2 mt20 ml20">邮件列表 <span class="iconfont fr" @click="isModelShow=false">&#xe674;</span></h1>
+			<div class="main">
+				<div class="com_search">
+					<div class="item">
+						<div>
+							<span class='name'>邮件地址搜索</span>
+							<input class="inp" v-model="email" placeholder="选填、输入邮件地址" type="text">
+							<button class="btn btn-default" @click="searchEmailList">搜索</button>
+						</div>
+					</div>
+				</div>
+				<div class="overflow_table">
+					<table class="table" v-if="isEmailLoadend&&emaillist.length">
+						<tr class="light_color">
+							<th class="tc w-100">邮件号码</th>
+							<th class="tc w-200">所属人员</th>
+							<th class="tc w-300">创建时间</th>
+							<th class="tc w-200">操作</th>
+						</tr>
+						<tr v-for="(item,i) in emaillist" :key="i">
+							<td class="tc">{{item.email}}</td>
+							<td class="tc">{{item.name}}</td>
+							<td class="tc">{{item.create_time|date('/',true)}}</td>
+							<td class="tc">
+								<button class="btn btn-main" @click="handleEmail(item.email,1)">增加</button>
+								<button class="btn btn-default" @click="handleEmail(item.email,2)">删除</button>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<!--  分页 -->
+			<div class="tc common_page_style mt10" v-show="isEmailLoadend&&emaillist.length">
+				<div id="copot-page" class="copot-page"></div>
+			</div>
+			<!-- 暂无数据 -->
+			<div class="tc" v-if="!emaillist.length">暂无邮箱!</div>
+		</div>
+	</div>
+
 </div>
-x<script src="//cdn.bootcss.com/switchery/0.8.2/switchery.min.js"></script>
+<script src="//cdn.bootcss.com/switchery/0.8.2/switchery.min.js"></script>
 <script>
 new Vue({
 	el: '#vue_id',
@@ -263,13 +358,25 @@ new Vue({
 			lable:1, //1:概况 2：pv|uv|ip
 			appId: util.getStorage('local', 'appId'),
 			systemInfo:{},
+			pageNo: 1,
+			pageSize: 6,
+			totalNum: 0,
+			isModelShow: false,
+			isEmailLoadend: false,
+			email:'',
+			emaillist:[],
+			daliylist:[],
 		}
+	},
+	filters: {
+		date: window.Filter.date,
 	},
 	mounted() {
 		this.getDetail();
 	},
 	methods: {
 		checkoutLabel(lable){
+			if(lable == this.lable) return;
 			this.lable = lable;
 			this.beginTime = '';
 			this.endTime = '';
@@ -282,10 +389,12 @@ new Vue({
 					appId: this.appId
 				},
 				success: data => {
+					if(!data.data.app_id) return;
 					this.systemInfo = data.data || {};
-					if(!this.systemInfo.app_id) return;
+					this.daliylist = this.systemInfo.daliy_list || [];
 					this.settingIsUse();
 					this.pagexingneng();
+					this.openDaily();
 				}
 			})
 		},
@@ -378,7 +487,8 @@ new Vue({
 				util.ajax({
 					url:`${config.baseApi}api/v1/remove/deleteDb1WebData`,
 					data: {
-						type: 'web'
+						type: 'web',
+						appId: this.appId,
 					},
 					success:data=>{
 						popup.alert({title:'操作成功!'})
@@ -393,7 +503,8 @@ new Vue({
 						url: `${config.baseApi}api/v1/remove/deleteDb2WebData`,
 						data:{
 							number: number,
-							type: 'web'
+							type: 'web',
+							appId: this.appId,
 						},
 						success: data => {
 							popup.alert({ title: '操作成功!' })
@@ -401,7 +512,81 @@ new Vue({
 					})
 				}
 			})
-		}
+		},
+		openDaily() {
+			let elem = document.querySelector('.js-switch-rb');
+			elem.checked = this.systemInfo.is_daily_use == 0 ? true : false;
+			const init = new Switchery(elem, { color: '#8776f7' });
+			const _this = this;
+			elem.onchange = function () {
+				_this.systemInfo.is_daily_use = elem.checked ? 0 : 1;
+				util.ajax({
+					url: config.baseApi + 'api/v1/system/update',
+					data: _this.systemInfo,
+					success: data => {
+						popup.miss({ title: '操作成功!' })
+					}
+				})
+			};
+		},
+		checkoutEmail(lable){
+			if (lable == this.lable) return;
+			this.lable = lable;
+			this.beginTime = '';
+			this.endTime = '';
+			this.getEmailList();
+		},
+		searchEmailList() {
+			this.pageNo = 1;
+			this.isEmailLoadend = false;
+			this.getEmailList();
+		},
+		getEmailList() {
+			this.isUserLoadend = false;
+			util.ajax({
+				type: 'get',
+				url: config.baseApi + 'api/v1/emails/list',
+				data: {
+					pageNo: this.pageNo,
+					pageSize: this.pageSize,
+					email: this.email,
+				},
+				success: data => {
+					this.isEmailLoadend = true;
+					if (!data.data.datalist && !data.data.datalist.length) {
+						this.emaillist = [];
+						return;
+					}
+					this.emaillist = data.data.datalist
+					new Page({
+						parent: $('#copot-page'),
+						nowPage: this.pageNo,
+						pageSize: this.pageSize,
+						totalCount: data.data.totalNum,
+						callback: (nowPage, totalPage) => {
+							this.pageNo = nowPage;
+							this.getEmailList();
+						}
+					});
+				}
+			})
+		},
+		handleEmail(email,type=1){
+			util.ajax({
+				url: `${config.baseApi}api/v1/system/handleDaliyEmail`,
+				data: {
+					appId: this.appId,
+					email: email,
+					type: type
+				},
+				success: data => {
+					let index = this.daliylist.indexOf(email)
+					if(type === 1 && index === -1) this.daliylist.push(email);
+					if (type === 2) this.daliylist.splice(index,1);
+					popup.miss({ title: '操作成功!' })
+				}
+			})
+		},
 	},
 })
 </script>

@@ -54,6 +54,8 @@ module.exports = app => {
     apiV1Router.post('system/addUser', tokenRequired, system.addWebSystemUser);
     // 删除某个系统
     apiV1Router.post('system/deleteSystem', tokenRequired, system.deleteSystem);
+    // 日报邮件操作
+    apiV1Router.post('system/handleDaliyEmail', tokenRequired, system.handleDaliyEmail);
 
     // -------------------清空数据-----------------------------
     // 清空db1 1日之前无用数据

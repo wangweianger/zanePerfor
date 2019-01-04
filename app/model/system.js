@@ -23,6 +23,8 @@ module.exports = app => {
         is_statisi_resource: { type: Number, default: 0 }, // 是否统计页面加载资源性能信息 0：是    1：否
         is_statisi_system: { type: Number, default: 0 }, // 是否存储用户系统信息资源信息 0：是   1：否
         is_statisi_error: { type: Number, default: 0 }, // 是否上报页面错误信息  0：是   1：否
+        is_daily_use: { type: Number, default: 0 }, // 是否发送日报  0：是  1：否
+        daliy_list: { type: Array }, // 日报列表
     });
 
     WebResourceSchema.index({ app_id: -1, create_time: 1, system_domain: -1, user_id: -1 });
