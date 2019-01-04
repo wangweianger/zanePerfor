@@ -68,7 +68,7 @@ class EmailsService extends Service {
         const result = await this.ctx.model.Email.update(
             { email: emails },
             handleData,
-            { multi: false }).exec();
+            { multi: true }).exec();
         return result;
     }
 }
