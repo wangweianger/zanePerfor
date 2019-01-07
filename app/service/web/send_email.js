@@ -11,7 +11,10 @@ class SendEmailService extends Service {
 
     // 收集每日日报数据
     async getDaliyDatas(data, type) {
+        const config = this.app.config.email.client;
+        if (!((config.host && config.port && typeof (config.secure) === 'boolean') || config.service) || !config.auth) return;
         if (!data.appId) return;
+
         if (!this.daliy[data.appId]) this.daliy[data.appId] = { pvuvip: null, toplist: null };
         this.daliy[data.appId][type] = data;
 
