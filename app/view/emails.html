@@ -71,6 +71,8 @@
 	}
 	.table .author:last-child{
 		border-bottom:none;
+		padding-bottom:0px;
+		margin-bottom:0px;
 	}
 </style>
 <div class="com_content home_body" id="home_body" v-cloak>
@@ -94,9 +96,10 @@
 					<tr v-for="item in datalist">
 						<td class="tc"><strong>{{item.email}}</strong></td>
 						<td class="tc">{{item.name}}</td>
-						<td class="tc">
+						<td class="tl">
 							<div class="author" v-if="item.system_ids&&item.system_ids.length" v-for="items in item.system_ids">
 								<div>{{items.desc}}</div>
+								<div>系统名称：{{items.system_name}}</div>
 								<div>系统ID：{{items.system_id}}</div>
 							</div>
 						</td>

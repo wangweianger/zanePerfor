@@ -19,9 +19,30 @@ class EmailsService extends Service {
                 .exec()
         );
         const all = await Promise.all([ count, datas ]);
+        const systemMags = {};
+        const list = all[1] || [];
+
+        // 获得邮件系统信息
+        if (list && list.length) {
+            for (let i = 0, len = list.length; i < len; i++) {
+                if (list[i].system_ids && list[i].system_ids.length) {
+                    const item = list[i].system_ids;
+                    for (let o = 0, len = item.length; o < len; o++) {
+                        const citem = item[o];
+                        if (!systemMags[citem.system_id]) {
+                            const result = await this.ctx.service.system.getSystemForAppId(citem.system_id);
+                            systemMags[citem.system_id] = result;
+                            citem.system_name = result.system_name;
+                        }
+                    }
+                }
+            }
+        }
+
+        console.log(systemMags);
 
         return {
-            datalist: all[1],
+            datalist: list,
             totalNum: all[0],
             pageNo: pageNos,
         };
