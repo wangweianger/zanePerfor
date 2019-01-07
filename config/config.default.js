@@ -121,6 +121,20 @@ module.exports = () => {
         client_secret: 'xxxxxx', // 微信的App Secret
     };
 
+    // send email config
+    exports.email = {
+        client: {
+            // service: '163',
+            host: 'smtp.163.com',
+            port: 465,
+            secure: true,
+            auth: {
+                user: 'zanewangwei@163.com',
+                pass: '752636052aaaa',
+            },
+        },
+    };
+
     // ejs模板
     config.view = {
         defaultExtension: '.html',

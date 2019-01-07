@@ -21,6 +21,7 @@
     "cron-parser": "^2.6.0",
     "egg-bin": "^4.3.5",
     "egg-ci": "^1.8.0",
+    "egg-email": "^1.0.2",
     "egg-mock": "^3.14.0",
     "egg-view-ejs": "^2.0.0",
     "eslint": "^4.11.0",

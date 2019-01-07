@@ -39,8 +39,6 @@ class EmailsService extends Service {
             }
         }
 
-        console.log(systemMags);
-
         return {
             datalist: list,
             totalNum: all[0],

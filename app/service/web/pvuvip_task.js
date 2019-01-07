@@ -65,6 +65,19 @@ class WebReportService extends Service {
             pvuvip.create_time = endTime;
             pvuvip.type = type;
             await pvuvip.save();
+
+            // 触发日报邮件
+            if (type === 2) {
+                this.ctx.service.web.sendEmail.getDaliyDatas({
+                    appId,
+                    pv,
+                    uv,
+                    ip,
+                    bounce: bounce ? (bounce / pv * 100).toFixed(2) + '%' : 0,
+                    depth: pv && user ? parseInt(pv / user) : 0,
+                }, 'pvuvip');
+            }
+
         } catch (err) { console.log(err); }
     }
 

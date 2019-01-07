@@ -1,7 +1,5 @@
 'use strict';
-
-// had enabled by egg
-// exports.static = true;
+const path = require('path');
 
 exports.ejs = {
     enable: true,
@@ -26,4 +24,9 @@ exports.routerPlus = {
 exports.cors = {
     enable: true,
     package: 'egg-cors',
+};
+
+exports.email = {
+    enable: true,
+    path: path.join(__dirname, '../lib/plugin/egg-email'),
 };
