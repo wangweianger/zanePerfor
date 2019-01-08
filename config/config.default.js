@@ -77,6 +77,7 @@ module.exports = () => {
 
     // 文件缓存ip对应地理位置（文件名）
     config.ip_city_cache_file = {
+        use: true, // 是否开启本地文件缓存
         web: 'web_ip_city_cache_file.txt',
         wx: 'wx_ip_city_cache_file.txt',
     };
@@ -129,8 +130,8 @@ module.exports = () => {
             port: 465,
             secure: true,
             auth: {
-                user: 'zanewangwei@163.com',
-                pass: '752636052aaaa',
+                user: 'xxxxxx',
+                pass: 'xxxxxx',
             },
         },
     };
