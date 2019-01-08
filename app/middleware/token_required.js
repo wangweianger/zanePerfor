@@ -1,8 +1,19 @@
 'use strict';
-// 校验用户是否登录
+const { URL } = require('url');
 
+// 校验用户是否登录
 module.exports = () => {
     return async function(ctx, next) {
+        const referer = ctx.request.header.referer;
+        const url = new URL(referer);
+        if (ctx.app.config.origin && ctx.app.config.origin.indexOf(url.origin) === -1) {
+            ctx.body = {
+                code: 1004,
+                desc: '域名来源有误',
+            };
+            return;
+        }
+        // console.log(ctx.req.headers.referer);
         const usertoken = ctx.cookies.get('usertoken', {
             encrypt: true,
             signed: true,

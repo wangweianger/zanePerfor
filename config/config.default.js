@@ -1,4 +1,5 @@
 'use strict';
+const path = require('path');
 const address = require('address');
 
 module.exports = () => {
@@ -77,7 +78,7 @@ module.exports = () => {
 
     // 文件缓存ip对应地理位置（文件名）
     config.ip_city_cache_file = {
-        use: true, // 是否开启本地文件缓存
+        isuse: false, // 是否开启本地文件缓存
         web: 'web_ip_city_cache_file.txt',
         wx: 'wx_ip_city_cache_file.txt',
     };
@@ -91,9 +92,9 @@ module.exports = () => {
     // shell重启
     config.shell_restart = {
         // mongodb重启shell,如果mongodb进程kill了，请求不了数据库时重启（可选填）
-        // mongodb: [ '/data/performance/mongodb-restart.sh' ],
+        mongodb: [ path.resolve(__dirname, '../mongodb-restart.sh') ],
         // node.js服务重启shell,mongodb重启时，数据库连接池有可能会断，这时需要重启服务
-        // servers: [ '/data/performance/servers-restart.sh' ],
+        servers: [ path.resolve(__dirname, '../servers-restart.sh') ],
     };
 
     // 百度地图api key
@@ -149,7 +150,7 @@ module.exports = () => {
 
     // 定义日志路径
     exports.logger = {
-        dir: '/data/performance/buildlogs',
+        dir: path.resolve(__dirname, '../buildlogs'),
     };
 
     // redis配置

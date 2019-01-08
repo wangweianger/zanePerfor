@@ -15,8 +15,19 @@ class IpTaskService extends Service {
         const apps = await this.ctx.model.System.distinct('app_id', { type: 'web' }).read('sp').exec();
         if (!apps || !apps.length) return;
 
-        // 获得本地文件缓存
         this.cacheArr = [];
+        await this.ipCityFileCache();
+
+        // 遍历
+        apps.forEach(item => {
+            this.saveWebGetIpDatasByOne(item);
+        });
+    }
+
+    // 获得本地文件缓存
+    async ipCityFileCache() {
+        this.cacheJson = {};
+        if (!this.app.config.ip_city_cache_file.isuse) return {};
         try {
             const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file.web}`);
             const ipDatas = fs.readFileSync(filepath, { encoding: 'utf8' });
@@ -25,10 +36,6 @@ class IpTaskService extends Service {
         } catch (err) {
             this.cacheJson = {};
         }
-        // 遍历
-        apps.forEach(item => {
-            this.saveWebGetIpDatasByOne(item);
-        });
     }
 
     // 单独一个应用的Ip地址更新

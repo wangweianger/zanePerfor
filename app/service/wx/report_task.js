@@ -12,9 +12,10 @@ class WxReportTaskService extends Service {
         this.cacheArr = [];
     }
 
-    // 把redis消费数据经过加工之后同步到db3中 的定时任务（从redis中拉取数据）
-    async saveWxReportDatasForRedis() {
-        // 获得本地文件缓存
+    // 获得本地文件缓存
+    async ipCityFileCache() {
+        this.cacheIpJson = {};
+        if (!this.app.config.ip_city_cache_file.isuse) return {};
         try {
             const beginTime = new Date().getTime();
             const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file.wx}`);
@@ -25,7 +26,11 @@ class WxReportTaskService extends Service {
         } catch (err) {
             this.cacheIpJson = {};
         }
+    }
 
+    // 把redis消费数据经过加工之后同步到db3中 的定时任务（从redis中拉取数据）
+    async saveWxReportDatasForRedis() {
+        await this.ipCityFileCache();
         // 线程遍历
         const totalcount = await this.app.redis.llen('wx_repore_datas');
         let onecount = this.app.config.redis_consumption.thread_wx;
@@ -114,15 +119,7 @@ class WxReportTaskService extends Service {
         this.cacheJson = {};
         this.cacheArr = [];
         if (datas && datas.length) {
-            // 获得本地文件缓存
-            try {
-                const filepath = path.resolve(__dirname, `../../cache/${this.app.config.ip_city_cache_file.wx}`);
-                const ipDatas = fs.readFileSync(filepath, { encoding: 'utf8' });
-                const result = JSON.parse(`{${ipDatas.slice(0, -1)}}`);
-                this.cacheIpJson = result;
-            } catch (err) {
-                this.cacheIpJson = {};
-            }
+            await this.ipCityFileCache();
 
             const length = datas.length;
             const number = Math.ceil(length / this.app.config.report_thread);
