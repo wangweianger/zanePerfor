@@ -1,4 +1,3 @@
-/* eslint-disable */
 'use strict';
 const Service = require('egg').Service;
 
@@ -18,21 +17,21 @@ class SendEmailService extends Service {
         if (!this.daliy[data.appId]) this.daliy[data.appId] = { pvuvip: null, toplist: null };
         this.daliy[data.appId][type] = data;
 
-        if (this.daliy[data.appId].pvuvip && this.daliy[data.appId].toplist){
+        if (this.daliy[data.appId].pvuvip && this.daliy[data.appId].toplist) {
             this.sendDaliyEmail();
         }
     }
 
     // 发送每日日报
     async sendDaliyEmail() {
-        for (let key in this.daliy) {
+        for (const key in this.daliy) {
             this.sendDaliyEmailBySystem(key, this.daliy[key]);
             this.daliy[key] = null;
         }
     }
 
     // 根据系统ID发送邮件
-    async sendDaliyEmailBySystem(appId, datas={}) {
+    async sendDaliyEmailBySystem(appId, datas = {}) {
         const systemMsg = await this.ctx.service.system.getSystemForAppId(appId);
         if (systemMsg.is_use !== 0 && systemMsg.is_daily_use !== 0) return;
         const from = systemMsg.system_name + '应用日报';
@@ -45,7 +44,7 @@ class SendEmailService extends Service {
 
         const mailOptions = {
             from: `${from}<${this.app.config.email.client.auth.user}>`,
-            to: to,
+            to,
             subject: day,
             html: await this.daliyHtmlTem(datas),
         };
@@ -54,22 +53,20 @@ class SendEmailService extends Service {
 
     // 每日日邮件模板
     async daliyHtmlTem(datas) {
-        console.log(JSON.stringify(datas))
         const pvuvip = datas.pvuvip || {};
         const toplist = datas.toplist || {};
         const systemMsg = datas.systemMsg || {};
-        const provinces = datas.provinces || [];
 
         let provincehtml = '';
-        let toppageshtml = ''
-        let topjumpout = ''
+        let toppageshtml = '';
+        let topjumpout = '';
 
-        if (provinces.length){
-            for (let i = 0, len = provinces.length;i<len;i++){
-                provincehtml += `<div class="item">${provinces[i]._id.province}：<span class="main_color">${provinces[i].count}</span></div>`;
+        if (toplist.provinces && toplist.provinces.length) {
+            for (let i = 0, len = toplist.provinces.length; i < len; i++) {
+                provincehtml += `<div class="item">${toplist.provinces[i]._id.province}：<span class="main_color">${toplist.provinces[i].count}</span></div>`;
             }
         }
-        if (toplist.toppages && toplist.toppages.length){
+        if (toplist.toppages && toplist.toppages.length) {
             for (let i = 0, len = toplist.toppages.length; i < len; i++) {
                 toppageshtml += `<tr>
                     <td>${i + 1}、${toplist.toppages[i]._id.url}</td>
@@ -117,7 +114,7 @@ class SendEmailService extends Service {
                     <div class="block mt20">
                         <h2>省市流量排行</h2>
                         <div>
-                            `+ provincehtml +`
+                            ` + provincehtml + `
                         </div>
                     </div>
                     <div class="block mt20">
@@ -128,7 +125,7 @@ class SendEmailService extends Service {
                                     <th>页面地址</th>
                                     <th>访问量</th>
                                 </tr>
-                                `+ toppageshtml +`
+                                ` + toppageshtml + `
                             </table>
                         </div>
                         <div class="w-100 mt20">
@@ -138,7 +135,7 @@ class SendEmailService extends Service {
                                     <th>页面地址</th>
                                     <th>访问量</th>
                                 </tr>
-                                `+ topjumpout +`
+                                ` + topjumpout + `
                             </table>
                         </div>
                     </div>

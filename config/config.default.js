@@ -129,8 +129,8 @@ module.exports = () => {
             port: 465,
             secure: true,
             auth: {
-                user: 'xxxxxx',
-                pass: 'xxxxxx',
+                user: 'zanewangwei@163.com',
+                pass: '752636052aaaa',
             },
         },
     };

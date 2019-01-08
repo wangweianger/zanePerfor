@@ -1,4 +1,3 @@
-/* eslint-disable */
 'use strict';
 
 const Service = require('egg').Service;
@@ -10,7 +9,7 @@ class AnalysisService extends Service {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
 
-        const query = { $match: { }, };
+        const query = { $match: { } };
         if (ip) query.$match.ip = ip;
         if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
@@ -22,7 +21,7 @@ class AnalysisService extends Service {
     async moreThread(appId, beginTime, endTime, queryjson, pageNo, pageSize) {
         const result = [];
         let distinct = await this.app.models.WebEnvironment(appId).distinct('mark_user', queryjson.$match).exec() || [];
-        let copdistinct = distinct;
+        const copdistinct = distinct;
 
         const betinIndex = (pageNo - 1) * pageSize;
         if (distinct && distinct.length) {
@@ -37,26 +36,27 @@ class AnalysisService extends Service {
                         {
                             $group: {
                                 _id: {
-                                    ip: "$ip",
-                                    markuser: "$mark_user",
-                                    browser: "$browser",
-                                    system: "$system",
+                                    ip: '$ip',
+                                    markuser: '$mark_user',
+                                    browser: '$browser',
+                                    system: '$system',
                                 },
-                            }
+                            },
                         },
-                    ]).read('sp').exec()
+                    ]).read('sp')
+                        .exec()
                 )
-            )
+            );
         }
         const all = await Promise.all(resolvelist) || [];
         all.forEach(item => {
             result.push(item[0]);
-        })
+        });
 
         return {
             datalist: result,
             totalNum: copdistinct.length,
-            pageNo: pageNo,
+            pageNo,
         };
     }
 
@@ -69,51 +69,57 @@ class AnalysisService extends Service {
                 {
                     $group: {
                         _id: {
-                            ip: "$ip",
-                            markuser: "$mark_user",
-                            browser: "$browser",
-                            system: "$system",
+                            ip: '$ip',
+                            markuser: '$mark_user',
+                            browser: '$browser',
+                            system: '$system',
                         },
-                    }
+                    },
                 },
                 { $skip: (pageNo - 1) * pageSize },
                 { $sort: { count: -1 } },
                 { $limit: pageSize },
-            ]).read('sp').exec()
+            ]).read('sp')
+                .exec()
         );
-        const all = await Promise.all([count, datas]);
+        const all = await Promise.all([ count, datas ]);
         return {
             datalist: all[1],
             totalNum: all[0].length,
-            pageNo: pageNo,
+            pageNo,
         };
     }
 
     // 单个用户行为轨迹列表
     async getAnalysisOneList(appId, markuser) {
-        return await this.app.models.WebEnvironment(appId).find({ mark_user: markuser }).read('sp').sort({ cerate_time: 1 }).exec() || {};
+        return await this.app.models.WebEnvironment(appId)
+            .find({ mark_user: markuser })
+            .read('sp')
+            .sort({ cerate_time: 1 })
+            .exec() || {};
     }
 
     // TOP datas
     async getTopDatas(appId, beginTime, endTime, type) {
         type = type * 1;
         let result = {};
-        if (type === 1){
+        if (type === 1) {
             const pages = Promise.resolve(this.getRealTimeTopPages(appId, beginTime, endTime));
             const jump = Promise.resolve(this.getRealTimeTopJumpOut(appId, beginTime, endTime));
-            const all = await Promise.all([pages, jump]);
-            result = { top_pages: all[0], top_jump_out: all[1] }
+            const all = await Promise.all([ pages, jump ]);
+            result = { top_pages: all[0], top_jump_out: all[1] };
         } else if (type === 2) {
             result = await this.getDbTopPages(appId, beginTime, endTime) || {};
         }
-        return result;    
-    };
+        return result;
+    }
+
     // 历史 top
     async getDbTopPages(appId, beginTime, endTime) {
-        let data = await this.ctx.model.Web.WebStatis.findOne({ app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } }).read('sp').exec();
+        const data = await this.ctx.model.Web.WebStatis.findOne({ app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } }).read('sp').exec();
         if (data) return data;
         // 不存在则储存
-        return await this.saveRealTimeTopTask(appId, 2, beginTime, endTime)
+        return await this.saveRealTimeTopTask(appId, 2, beginTime, endTime);
     }
     // top 页面
     async getRealTimeTopPages(appId, beginTime, endTime) {
@@ -122,22 +128,25 @@ class AnalysisService extends Service {
         return result;
     }
     async getRealTimeTopPagesForDb(appId, beginTime, endTime, type) {
-        try{
+        try {
             const result = await this.app.models.WebPages(appId).aggregate([
-                { $match: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) }, }, },
+                { $match: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
                 {
                     $group: {
-                        _id: { url: "$url", },
+                        _id: { url: '$url' },
                         count: { $sum: 1 },
                     },
                 },
                 { $sort: { count: -1 } },
                 { $limit: this.app.config.top_alalysis_size.web || 10 },
-            ]).read('sp').exec();
+            ])
+                .read('sp')
+                .exec();
+
             // 每分钟执行存储到redis
             if (type === 1) this.app.redis.set(`${appId}_top_pages_realtime`, JSON.stringify(result));
             return result;
-        } catch (err) { console.log(err); };
+        } catch (err) { console.log(err); }
     }
     // top跳出率
     async getRealTimeTopJumpOut(appId, beginTime, endTime) {
@@ -147,6 +156,7 @@ class AnalysisService extends Service {
     }
     async getRealTimeTopJumpOutForDb(appId, beginTime, endTime, type) {
         try {
+            /* eslint-disable */
             const option = {
                 map: function () { emit(this.mark_user, this.url); },
                 reduce: function (key, values) {
@@ -154,13 +164,14 @@ class AnalysisService extends Service {
                 },
                 query: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } },
                 out: { replace: 'collectionName' },
-            }
+            };
+            /* eslint-enable */
             const res = await this.app.models.WebEnvironment(appId).mapReduce(option);
             const result = await res.model.aggregate([
                 { $match: { value: { $ne: false } } },
                 {
                     $group: {
-                        _id: { value: "$value", },
+                        _id: { value: '$value' },
                         count: { $sum: 1 },
                     },
                 },
@@ -187,7 +198,7 @@ class AnalysisService extends Service {
             if (type === 2) {
                 // 每天数据存储到数据库
                 const provinces = Promise.resolve(this.getProvinceAvgCountForDb(appId, beginTime, endTime, type));
-                const all = await Promise.all([pages, jump, provinces]);
+                const all = await Promise.all([ pages, jump, provinces ]);
 
                 const statis = this.ctx.model.Web.WebStatis();
                 statis.app_id = appId;
@@ -214,15 +225,15 @@ class AnalysisService extends Service {
     async getProvinceAvgCount(appId, beginTime, endTime, type) {
         let result = null;
         type = type * 1;
-        if(type === 1) {
+        if (type === 1) {
             result = await this.getProvinceAvgCountForDb(appId, beginTime, endTime, type);
         } else if (type === 2) {
             // 先查询是否存在
-            let data = await this.ctx.model.Web.WebStatis.findOne({ app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } }).read('sp').exec();
+            const data = await this.ctx.model.Web.WebStatis.findOne({ app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } }).read('sp').exec();
             // 不存在则储存
             result = data ? data : await this.saveRealTimeTopTask(appId, 2, beginTime, endTime);
         }
-        return result
+        return result;
     }
 
     async getProvinceAvgCountForDb(appId, beginTime, endTime, type) {
@@ -231,12 +242,15 @@ class AnalysisService extends Service {
                 { $match: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
                 {
                     $group: {
-                        _id: { province: "$province", },
+                        _id: { province: '$province' },
                         count: { $sum: 1 },
                     },
                 },
                 { $sort: { count: -1 } },
-            ]).read('sp').exec();
+            ])
+                .read('sp')
+                .exec();
+
             return type === 1 ? { provinces: result } : result;
         } catch (err) { console.log(err); }
     }
