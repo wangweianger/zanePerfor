@@ -194,7 +194,17 @@ class AnalysisService extends Service {
                 statis.top_jump_out = all[1];
                 statis.provinces = all[2];
                 statis.create_time = beginTime;
-                return await statis.save();
+                const result = await statis.save();
+
+                // 触发日报邮件
+                this.ctx.service.wx.sendEmail.getDaliyDatas({
+                    appId,
+                    toppages: all[0],
+                    topjumpout: all[1],
+                    provinces: all[2],
+                }, 'toplist');
+
+                return result;
             }
         } catch (err) { console.log(err); }
     }
