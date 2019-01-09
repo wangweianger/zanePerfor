@@ -124,7 +124,7 @@ module.exports = () => {
     };
 
     // send email config
-    exports.email = {
+    config.email = {
         client: {
             // service: '163',
             host: 'smtp.163.com',
