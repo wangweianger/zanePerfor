@@ -125,6 +125,11 @@ new Vue({
 		date: window.Filter.date
 	},
 	mounted() {
+		this.xAxislist = [];
+		this.itemlist1 = [];
+		this.itemlist2 = [];
+		this.itemlist3 = [];
+
 		this.getPvUvIpSurvey();
 		this.getHistoryPvUvIplist();
 		zaneDate({
@@ -233,20 +238,20 @@ new Vue({
 					endTime:this.endTime,
 				},
 				success: (data) => {
-					const xAxislist = [];
-					const itemlist1 = [];
-					const itemlist2 = [];
-					const itemlist3 = [];
+					this.xAxislist = [];
+					this.itemlist1 = [];
+					this.itemlist2 = [];
+					this.itemlist3 = [];
 					data.data.forEach(item=>{
 						let time = new Date(item.time).format('HH:mm');
-						xAxislist.push(time);
-						itemlist1.push(item.pv)
-						itemlist2.push(item.uv)
-						itemlist3.push(item.ip)
+						this.xAxislist.push(time);
+						this.itemlist1.push(item.pv)
+						this.itemlist2.push(item.uv)
+						this.itemlist3.push(item.ip)
 					});
-					this.drow('PV',xAxislist, itemlist1);
-					this.drow('UV', xAxislist, itemlist2);
-					this.drow('IP', xAxislist, itemlist3);
+					this.drow('PV', this.xAxislist, this.itemlist1);
+					this.drow('UV', this.xAxislist, this.itemlist2);
+					this.drow('IP', this.xAxislist, this.itemlist3);
 					this.timer = setInterval(() => {
 						this.getPvUvIpOne();
 					}, 60000)
@@ -264,9 +269,17 @@ new Vue({
 					let datas = data.data;
 					let time = new Date(datas.time).format('mm');
 					// 动态数据接口 addData
-					myChartPV.addData(0, datas.pv, false, false, time);
-					myChartUV.addData(0, datas.uv, false, false, time);
-					myChartIP.addData(0, datas.ip, false, false, time);
+					this.xAxislist.shift();
+					this.itemlist1.shift();
+					this.itemlist2.shift();
+					this.itemlist3.shift();
+
+					this.xAxislist.push(time);
+					this.itemlist1.push(datas.pv || 0)
+					this.itemlist2.push(datas.uv || 0)
+					this.itemlist3.push(datas.ip || 0)
+
+					myChartPV.setOption({series: [{data: this.itemlist1}]});
 				}
 			})
 		},
