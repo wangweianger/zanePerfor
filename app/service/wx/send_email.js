@@ -63,81 +63,67 @@ class SendEmailService extends Service {
 
         if (toplist.provinces && toplist.provinces.length) {
             for (let i = 0, len = toplist.provinces.length; i < len; i++) {
-                provincehtml += `<div class="item">${toplist.provinces[i]._id.province}：<span class="main_color">${toplist.provinces[i].count}</span></div>`;
+                provincehtml += `<div style="display:inline-block;margin-right:20px;margin-bottom:20px;">${toplist.provinces[i]._id.province}：<span style="color:#8776f7;">${toplist.provinces[i].count}</span></div>`;
             }
         }
         if (toplist.toppages && toplist.toppages.length) {
             for (let i = 0, len = toplist.toppages.length; i < len; i++) {
-                toppageshtml += `<tr>
-                    <td>${i + 1}、${toplist.toppages[i]._id.url}</td>
-                    <td class="main_color">${toplist.toppages[i].count}</td>
+                toppageshtml += `<tr style="border:solid 1px #eee;border-collapse:collapse;">
+                    <td style="font-size:13px;border:solid 1px #eee;padding:8px;">${i + 1}、${toplist.toppages[i]._id.url}</td>
+                    <td style="color:#8776f7;font-size:13px;border:solid 1px #eee;padding:8px;">${toplist.toppages[i].count}</td>
                 </tr>`;
             }
         }
         if (toplist.topjumpout && toplist.topjumpout.length) {
             for (let i = 0, len = toplist.topjumpout.length; i < len; i++) {
-                topjumpout += `<tr>
-                    <td>${i + 1}、${toplist.topjumpout[i]._id.value}</td>
-                    <td class="main_color">${toplist.topjumpout[i].count}</td>
+                topjumpout += `<tr style="border:solid 1px #eee;border-collapse:collapse;">
+                    <td style="font-size:13px;border:solid 1px #eee;padding:8px;">${i + 1}、${toplist.topjumpout[i]._id.value}</td>
+                    <td style="color:#8776f7;font-size:13px;border:solid 1px #eee;padding:8px;">${toplist.topjumpout[i].count}</td>
                 </tr>`;
             }
         }
-        return `<html>
+        return `<html style="margin:0;padding:0;">
             <style>*{margin:0;padding:0;}
-            body{background:#f4f4f4;}
-            h1{font-size:20px;text-align:center;line-height:60px;}
-            h2{font-size:18px;line-height:50px;}
-            .mt20{margin-top:20px!important;}
-            .block{width:90%;margin:0 auto;background:#fff;border-radius:6px;padding:20px;overflow:hidden;}
-            .block .item{display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;}
-            .w-50{width:50%;float:left;}
-            .table{width:100%;}
-            table.table tr{border:solid 1px #eee;border-collapse:collapse;}
-            table.table tr th{font-size:13px;height:40px;font-weight:300;padding:8px;}
+            .block .item{}
             table.table tr:nth-child(odd) {background: #f7f9ff;}
-            table.table tr td{font-size:13px;border:solid 1px #eee;padding:8px;}
-            .main_color{color:#8776f7;}
             </style>
-            <body>
-                <div class="main">
-                    <h1>${systemMsg.system_name}应用${datas.day}详情</h1>
-                    <div class="block">
-                        <h2>PV/UV/IP统计</h2>
+            <body style="background:#f4f4f4;">
+                <div>
+                    <h1 style="font-size:20px;text-align:center;line-height:60px;">${systemMsg.system_name}应用${datas.day}详情</h1>
+                    <div style="width:90%;margin:0 auto;background:#fff;border-radius:6px;padding:20px;overflow:hidden;">
+                        <h2 style="font-size:18px;line-height:50px;">PV/UV/IP统计</h2>
                         <div>
-                            <div class="item">PV：<span class="main_color">${pvuvip.pv || 0}</span></div>
-                            <div class="item">UV：<span class="main_color">${pvuvip.uv || 0}</span></div>
-                            <div class="item">IP：<span class="main_color">${pvuvip.ip || 0}</span></div>
-                            <div class="item">跳出率：<span class="main_color">${pvuvip.bounce || 0}</span></div>
-                            <div class="item">访问深度：<span class="main_color">${pvuvip.depth || 0}</span></div>
+                            <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">PV：<span style="color:#8776f7;">${pvuvip.pv || 0}</span></div>
+                            <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">UV：<span style="color:#8776f7;">${pvuvip.uv || 0}</span></div>
+                            <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">IP：<span style="color:#8776f7;">${pvuvip.ip || 0}</span></div>
+                            <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">跳出率：<span style="color:#8776f7;">${pvuvip.bounce || 0}</span></div>
+                            <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">访问深度：<span style="color:#8776f7;">${pvuvip.depth || 0}</span></div>
                         </div>
                     </div>
-                    <div class="block mt20">
-                        <h2>省市流量排行</h2>
+                    <div style="width:90%;margin:0 auto;margin-top:20px;background:#fff;border-radius:6px;padding:20px;overflow:hidden;">
+                        <h2 style="font-size:18px;line-height:50px;">省市流量排行</h2>
                         <div>
                             ` + provincehtml + `
                         </div>
                     </div>
-                    <div class="block mt20">
-                        <div class="w-100">
-                            <h2>TOP10访问页面</h2>
-                            <table class="table" cellspacing="0">
-                                <tr>
-                                    <th>页面地址</th>
-                                    <th>访问量</th>
-                                </tr>
-                                ` + toppageshtml + `
-                            </table>
-                        </div>
-                        <div class="w-100 mt20">
-                            <h2>TOP10跳出率</h2>
-                            <table class="table" cellspacing="0">
-                                <tr>
-                                    <th>页面地址</th>
-                                    <th>访问量</th>
-                                </tr>
-                                ` + topjumpout + `
-                            </table>
-                        </div>
+                    <div style="width:90%;margin:0 auto;margin-top:20px;background:#fff;border-radius:6px;padding:20px;overflow:hidden;">
+                        <h2 style="font-size:18px;line-height:50px;">TOP10访问页面</h2>
+                        <table cellspacing="0" style="width:100%;">
+                            <tr style="border:solid 1px #eee;border-collapse:collapse;">
+                                <th style="font-size:13px;height:40px;font-weight:300;padding:8px;">页面地址</th>
+                                <th style="font-size:13px;height:40px;font-weight:300;padding:8px;">访问量</th>
+                            </tr>
+                            ` + toppageshtml + `
+                        </table>
+                    </div>
+                    <div style="width:90%;margin:0 auto;margin-top:20px;background:#fff;border-radius:6px;padding:20px;overflow:hidden;">
+                        <h2 style="font-size:18px;line-height:50px;">TOP10跳出率</h2>
+                        <table cellspacing="0" style="width:100%;">
+                            <tr style="border:solid 1px #eee;border-collapse:collapse;">
+                                <th style="font-size:13px;height:40px;font-weight:300;padding:8px;">页面地址</th>
+                                <th style="font-size:13px;height:40px;font-weight:300;padding:8px;">访问量</th>
+                            ` + topjumpout + `
+                        </table>
                     </div>
                 </div>
             </body>
