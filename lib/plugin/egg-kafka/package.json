@@ -1,5 +1,5 @@
 {
-  "name": "egg-email",
+  "name": "egg-kafka",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -9,9 +9,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemailer": "^5.0.0"
+    "kafka-node": "^4.0.0"
   },
   "eggPlugin": {
-    "name": "egg-email"
+    "name": "egg-kafka"
   }
 }

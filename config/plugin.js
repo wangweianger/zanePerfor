@@ -30,3 +30,9 @@ exports.email = {
     enable: true,
     path: path.join(__dirname, '../lib/plugin/egg-email'),
 };
+
+exports.kafka = {
+    enable: true,
+    path: path.join(__dirname, '../lib/plugin/egg-kafka'),
+};
+

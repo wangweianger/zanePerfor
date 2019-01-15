@@ -11,9 +11,7 @@
     "egg-redis": "^2.0.0",
     "egg-router-plus": "^1.3.0",
     "egg-scripts": "^2.10.0",
-    "egg-socket.io": "^4.1.4",
-    "kafka-node": "^3.0.1",
-    "kafkajs": "^1.4.4"
+    "egg-socket.io": "^4.1.4"
   },
   "devDependencies": {
     "autod": "^3.0.1",
@@ -27,6 +25,7 @@
     "eslint": "^4.11.0",
     "eslint-config-egg": "^6.0.0",
     "eslint-plugin-html": "^5.0.0",
+    "kafka-node": "^4.0.0",
     "md5": "^2.2.1",
     "ua-parser-js": "^0.7.18",
     "webstorm-disable-index": "^1.2.0"

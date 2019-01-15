@@ -58,9 +58,9 @@ module.exports = () => {
     config.ip_thread = 5;
 
     // 上报原始数据使用redis存储还是使用mongodb存储
-    config.report_data_type = 'redis'; // redus  mongodb
+    config.report_data_type = 'kafka'; // redus  mongodb  kafka
 
-    // 使用redis储存原始数据时，相关配置 （若report_data_type=mongodb时忽略此配置）
+    // 使用redis储存原始数据时，相关配置 （report_data_type=redus生效）
     config.redis_consumption = {
         // 定时任务执行时间
         task_time: '*/20 * * * * *',
@@ -71,6 +71,21 @@ module.exports = () => {
         // 消息队列池限制数, 0：不限制 number: 限制条数 高并发时服务优雅降级方案
         total_limit_web: 10000,
         total_limit_wx: 10000,
+    };
+
+    // kafka 配置 (report_data_type=kafka生效)
+    // 配置参考 https://www.npmjs.com/package/kafka-node
+    config.kafka = {
+        client: { // kafkaClient
+            kafkaHost: 'localhost:9092',
+        },
+        producer: {
+            topic: 'test',
+            partition: 0, // default 0
+            attributes: 0, // default: 0
+            timestamp: Date.now(), // defaults to Date.now() (only available with kafka v0.10+)
+        },
+        consumer: {},
     };
 
     // 解析用户ip地址为城市是使用redis还是使用mongodb
