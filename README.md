@@ -36,7 +36,6 @@
 * egg.js,ejs,mongoose,redis,vue.js
 
 ## 项目开发文档
-https://blog.seosiwei.com/performance/index.html
 * [系统高可用之Mongodb集群分片架构](https://blog.seosiwei.com/performance/colony.html)
 * [系统高可用之Mongodb副本集读写分离架构](https://blog.seosiwei.com/performance/replica_set.html)
 * [Servers集群模式下避免定时任务的多次执行](https://blog.seosiwei.com/performance/repeart_task.html)
