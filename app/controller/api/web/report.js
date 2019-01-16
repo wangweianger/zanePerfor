@@ -1,7 +1,12 @@
 /* eslint-disable */
 'use strict';
 const Controller = require('egg').Controller;
+let isKafkaConsumer = false;
+
 class ReportController extends Controller {
+    constructor(params) {
+        super(params);
+    }
     // web用户数据上报
     async webReport() {
         const { ctx } = this;
@@ -10,13 +15,12 @@ class ReportController extends Controller {
 
         const query = ctx.request.body;
         if (!query.appId) throw new Error('web端上报数据操作：app_id不能为空');
+        query.ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
+        query.url = ctx.headers.referer;
+        query.user_agent = ctx.headers['user-agent'];
 
-        if (this.app.config.report_data_type === 'redis'){
-            query.ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
-            query.url = ctx.headers.referer;
-            query.user_agent = ctx.headers['user-agent'];
-            this.saveWebReportDataForRedis(query);
-        } 
+        if (this.app.config.report_data_type === 'redis') this.saveWebReportDataForRedis(query);
+        if (this.app.config.report_data_type === 'kafka') this.saveWebReportDataForKafka(query);
         if (this.app.config.report_data_type === 'mongodb') this.saveWebReportDataForMongodb(ctx);
 
         ctx.body = {
@@ -25,7 +29,7 @@ class ReportController extends Controller {
         };
     }
 
-    // 通过redis 消费者模式存储数据
+    // 通过redis 消息队列消费数据
     async saveWebReportDataForRedis(query) {
         if (this.app.config.redis_consumption.total_limit_web){
             // 限流
@@ -36,47 +40,26 @@ class ReportController extends Controller {
         this.app.redis.lpush('web_repore_datas', JSON.stringify(query));
     }
 
+    // 通过kafka 消息队列消费数据
+    async saveWebReportDataForKafka(query) {
+        // 生产者
+        this.app.kafka.send(
+            'web',
+            JSON.stringify(query)
+        );
+
+        // 消费者
+        if (!isKafkaConsumer && !this.app.config.kafka.consumer.web.isone) {
+            this.ctx.service.web.reportTask.saveWebReportDatasForKafka();
+            isKafkaConsumer = true;
+            this.app.config.kafka.consumer.web.isone = true;
+        }
+    }
+
     // 通过mongodb 数据库存储数据
     async saveWebReportDataForMongodb(ctx) {
         ctx.service.web.report.saveWebReportData(ctx);
     }
-
-    async write(){
-        const beginTime = Date.now()
-        for(let i=0;i<5000;i++){
-            const pages = this.ctx.model.Web.WebPages();
-            pages.app_id = '2575CEA7435DE9D8831CFBB6890F3835';
-            pages.create_time = 1542111009014;
-            if (i % 3 === 0){
-                pages.url = 'http://127:18090/file00';
-            } else if (i % 3 === 1){
-                pages.url = 'http://127.0.0.1:18090/name';
-            }else {
-                pages.url = 'http://118090/wang';
-            }
-            pages.full_url = 'http://127.0.0.1:18090/file';
-            pages.pre_url = 'http://127.0.0.1:18090/file';
-            pages.speed_type = 1;
-            pages.mark_page = '2575CEA7435DE9D8831CFBB6890F3835';
-            pages.mark_user = this.app.randomString();
-            pages.load_time = 10;
-            pages.dns_time = 10;
-            pages.tcp_time = 10;
-            pages.dom_time = 10;
-            pages.resource_list = '';
-            pages.white_time = 10;
-            pages.redirect_time = 10;
-            pages.unload_time = 10;
-            pages.request_time = 10;
-            pages.analysisDom_time = 10;
-            pages.ready_time = 10;
-            pages.screenwidth = 100;
-            pages.screenheight = 100;
-            pages.save();
-        }
-        console.log(`time耗时：${Date.now() - beginTime}`)
-    }
-
 }
 
 module.exports = ReportController;

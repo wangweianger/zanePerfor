@@ -14,6 +14,7 @@ class DataTimedTaskService extends Service {
         this.cacheIpJson = {};
         this.cacheArr = [];
         this.system = {};
+        this.kafkaConsumerList = [];
     }
 
     // 获得本地文件缓存
@@ -85,6 +86,16 @@ class DataTimedTaskService extends Service {
         if (system.is_statisi_error === 0) this.saveErrors(item);
         if (system.is_statisi_system === 0) this.saveEnvironment(item);
         if (type) this.app.redis.set('web_task_begin_time', item.create_time);
+    }
+
+    // kafka 消费信息
+    async saveWebReportDatasForKafka() {
+        this.app.kafka.consumer('web', message => {
+            try {
+                console.log(this.kafkaConsumerList.length);
+                if (message.value) this.kafkaConsumerList.push(JSON.parse(message.value));
+            } catch (err) { console.log(err); }
+        });
     }
 
     // 把db2的数据经过加工之后同步到db3中 的定时任务（从mongodb中拉取数据）

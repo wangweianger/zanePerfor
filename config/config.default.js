@@ -80,12 +80,28 @@ module.exports = () => {
             kafkaHost: 'localhost:9092',
         },
         producer: {
-            topic: 'test',
-            partition: 0, // default 0
-            attributes: 0, // default: 0
-            timestamp: Date.now(), // defaults to Date.now() (only available with kafka v0.10+)
+            web: {
+                topic: 'zane_perfor_web',
+                partition: 0, // default 0
+                attributes: 0, // default: 0
+                // timestamp: Date.now(),
+            },
+            wx: {
+                topic: 'zane_perfor_wx',
+            },
         },
-        consumer: {},
+        consumer: {
+            web: {
+                topic: 'zane_perfor_web',
+                isone: false, // 此参数默认不可更改
+                offset: 0, // default 0
+                partition: 0, // default 0
+            },
+            wx: {
+                topic: 'zane_perfor_wx',
+                isone: false, // 此参数默认不可更改
+            },
+        },
     };
 
     // 解析用户ip地址为城市是使用redis还是使用mongodb

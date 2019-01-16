@@ -1,2 +1,2 @@
-# egg-email
+# egg-kafka
 
