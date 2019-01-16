@@ -57,7 +57,7 @@ module.exports = () => {
     // 更新用户上报IP对应的城市信息线程数
     config.ip_thread = 5;
 
-    // 上报原始数据使用redis存储还是使用mongodb存储
+    // 上报原始数据使用redis存储、kafka储存、还是使用mongodb存储
     config.report_data_type = 'kafka'; // redus  mongodb  kafka
 
     // 使用redis储存原始数据时，相关配置 （report_data_type=redus生效）

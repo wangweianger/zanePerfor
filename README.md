@@ -30,7 +30,7 @@
 >  * 邮件触发服务开发（已完成)
 >  * 每日日报邮件发送（已完成）
 >  * 所有预警相关业务开发（开发中）
->  * Kafka消息队列的引入和使用 （开发中）
+>  * Kafka消息队列的引入和使用 （已完成）
 
 ## 技术选型说明
 * egg.js,ejs,mongoose,redis,vue.js
@@ -44,6 +44,7 @@ https://blog.seosiwei.com/performance/index.html
 * [项目定时任务功能说明](https://blog.seosiwei.com/performance/tasks.html)
 * [github 登录授权](https://blog.seosiwei.com/performance/github.html)
 * [简单通用的Node前后端Token登录机制和github授权登录方式](https://blog.seosiwei.com/detail/49)
+* [zanePerfor中kafka的应用和api多种使用方式说明](https://blog.seosiwei.com/detail/51)
 
 ## 项目说明
 * 项目已部署到正式环境，并已稳定运行一段时间，请放心使用。
@@ -54,7 +55,7 @@ https://blog.seosiwei.com/performance/index.html
 
 ## 分支说明
 ### master分支
-* 项目masterf分支做了分表功能，即每新增一个应用都会把数据存放到自己的表中，这样很好的做到了横向的扩展，支持N个应用的同时查询也会比较快，因为查询的数据表中全是自己应用的数据
+* 项目master分支做了分表功能，即每新增一个应用都会把数据存放到自己的表中，这样很好的做到了横向的扩展，支持N个应用的同时查询也会比较快，因为查询的数据表中全是自己应用的数据
 * 此模式适合单机和副本集部署方式，因为表（集合）的名称不固定，如果要做集群分片模式会比较麻烦（应用多的情况），如果应用少，可新增一个应用之后针对新增应用的表做分片。
 * 此模式可做集群分片，只是分片操作可能会比较频繁，每增加一个应用，需要分片是就需要去设置分片。
 ### onetable分支
