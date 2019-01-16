@@ -10,6 +10,8 @@ class WxReportTaskService extends Service {
         this.cacheJson = {};
         this.cacheIpJson = {};
         this.cacheArr = [];
+        // 缓存一次ip地址库信息
+        this.ipCityFileCache();
     }
 
     // 获得本地文件缓存
@@ -30,7 +32,6 @@ class WxReportTaskService extends Service {
 
     // 把redis消费数据经过加工之后同步到db3中 的定时任务（从redis中拉取数据）
     async saveWxReportDatasForRedis() {
-        await this.ipCityFileCache();
         // 线程遍历
         const totalcount = await this.app.redis.llen('wx_repore_datas');
         let onecount = this.app.config.redis_consumption.thread_wx;
@@ -83,6 +84,55 @@ class WxReportTaskService extends Service {
         if (type) this.app.redis.set('wx_task_begin_time', item.create_time);
     }
 
+    // kafka 消费信息
+    async saveWxReportDatasForKafka() {
+        this.app.kafka.consumer('wx', message => {
+            try {
+                if (!message.value) return;
+                const json = {};
+                const query = JSON.parse(message.value);
+                if (json.time) return;
+                json.time = query.time;
+
+                this.getWxItemDataForKafka(query);
+
+            } catch (err) { console.log(err); }
+        });
+    }
+
+    // 单个item储存数据
+    async getWxItemDataForKafka(query) {
+        const item = {
+            app_id: query.appId,
+            create_time: new Date(query.time),
+            errs: query.errs,
+            ip: query.ip,
+            mark_page: this.app.randomString(),
+            mark_user: query.markuser,
+            mark_uv: query.markuv,
+            net: query.net,
+            system: query.system,
+            loc: query.loc,
+            userInfo: query.userInfo,
+            pages: query.pages,
+            ajaxs: query.ajaxs,
+        };
+
+        let system = {};
+        // 做一次appId缓存
+        if (this.cacheJson[item.app_id]) {
+            system = this.cacheJson[item.app_id];
+        } else {
+            system = await this.service.system.getSystemForAppId(item.app_id);
+            this.cacheJson[item.app_id] = system;
+        }
+
+        if (system.is_use !== 0) return;
+        if (system.is_statisi_system === 0) this.savePages(item);
+        if (system.is_statisi_ajax === 0) this.saveAjaxs(item, system);
+        if (system.is_statisi_error === 0) this.saveErrors(item);
+    }
+
     // 把db2的数据经过加工之后同步到db3中 的定时任务
     async saveWxReportDatasForMongodb() {
         let beginTime = await this.app.redis.get('wx_task_begin_time');
@@ -119,8 +169,6 @@ class WxReportTaskService extends Service {
         this.cacheJson = {};
         this.cacheArr = [];
         if (datas && datas.length) {
-            await this.ipCityFileCache();
-
             const length = datas.length;
             const number = Math.ceil(length / this.app.config.report_thread);
 

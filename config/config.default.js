@@ -93,13 +93,13 @@ module.exports = () => {
         consumer: {
             web: {
                 topic: 'zane_perfor_web',
-                isone: false, // 此参数默认不可更改
                 offset: 0, // default 0
                 partition: 0, // default 0
+                isone: false, // 此参数默认不可更改
             },
             wx: {
                 topic: 'zane_perfor_wx',
-                isone: false, // 此参数默认不可更改
+                isone: false,
             },
         },
     };

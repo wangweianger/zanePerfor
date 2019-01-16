@@ -14,7 +14,8 @@ class DataTimedTaskService extends Service {
         this.cacheIpJson = {};
         this.cacheArr = [];
         this.system = {};
-        this.kafkaConsumerList = [];
+        // 缓存一次ip地址库信息
+        this.ipCityFileCache();
     }
 
     // 获得本地文件缓存
@@ -35,7 +36,6 @@ class DataTimedTaskService extends Service {
 
     // 把redis消费数据经过加工之后同步到db3中 的定时任务（从redis中拉取数据）
     async saveWebReportDatasForRedis() {
-        await this.ipCityFileCache();
         // 线程遍历
         const totalcount = await this.app.redis.llen('web_repore_datas');
         let onecount = this.app.config.redis_consumption.thread_web;
@@ -92,10 +92,50 @@ class DataTimedTaskService extends Service {
     async saveWebReportDatasForKafka() {
         this.app.kafka.consumer('web', message => {
             try {
-                console.log(this.kafkaConsumerList.length);
-                if (message.value) this.kafkaConsumerList.push(JSON.parse(message.value));
+                if (!message.value) return;
+                const json = {};
+                const query = JSON.parse(message.value);
+                if (json.time) return;
+                json.time = query.time;
+
+                this.getWebItemDataForKafka(query);
+
             } catch (err) { console.log(err); }
         });
+    }
+
+    // 单个item储存数据
+    async getWebItemDataForKafka(query) {
+        const item = {
+            app_id: query.appId,
+            create_time: new Date(query.time),
+            user_agent: query.user_agent,
+            ip: query.ip,
+            mark_page: this.app.randomString(),
+            mark_user: query.markUser,
+            mark_uv: query.markUv,
+            url: query.url,
+            pre_url: query.preUrl,
+            performance: query.performance,
+            error_list: query.errorList,
+            resource_list: query.resourceList,
+            screenwidth: query.screenwidth,
+            screenheight: query.screenheight,
+        };
+
+        let system = {};
+        // 做一次appId缓存
+        if (this.cacheJson[item.app_id]) {
+            system = this.cacheJson[item.app_id];
+        } else {
+            system = await this.service.system.getSystemForAppId(item.app_id);
+            this.cacheJson[item.app_id] = system;
+        }
+        if (system.is_use !== 0) return;
+        if (system.is_statisi_pages === 0) this.savePages(item, system.slow_page_time);
+        if (system.is_statisi_resource === 0 || system.is_statisi_ajax === 0) this.forEachResources(item, system);
+        if (system.is_statisi_error === 0) this.saveErrors(item);
+        if (system.is_statisi_system === 0) this.saveEnvironment(item);
     }
 
     // 把db2的数据经过加工之后同步到db3中 的定时任务（从mongodb中拉取数据）
@@ -131,8 +171,6 @@ class DataTimedTaskService extends Service {
         this.cacheJson = {};
         this.cacheArr = [];
         if (datas && datas.length) {
-            await this.ipCityFileCache();
-
             const length = datas.length;
             const number = Math.ceil(length / this.app.config.report_thread);
 
