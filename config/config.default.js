@@ -96,10 +96,12 @@ module.exports = () => {
                 offset: 0, // default 0
                 partition: 0, // default 0
                 isone: false, // 此参数默认不可更改
+                total_limit: 10000, // 消息队列消费池限制数, 0：不限制 number: 限制条数 高并发时服务优雅降级方案
             },
             wx: {
                 topic: 'zane_perfor_wx',
                 isone: false,
+                total_limit: 10000,
             },
         },
     };
@@ -198,7 +200,7 @@ module.exports = () => {
     const dbclients = {
         db3: {
             // 单机部署
-            url: 'mongodb://127.0.0.1:27019/performance',
+            url: 'mongodb://127.0.0.1:27017/performance',
             // 副本集 读写分离
             // url: 'mongodb://127.0.0.1:28100,127.0.0.1:28101,127.0.0.1:28102/performance?replicaSet=rs1',
             // 集群分片
@@ -211,7 +213,7 @@ module.exports = () => {
     };
     if (config.report_data_type === 'mongodb') {
         dbclients.db1 = {
-            url: 'mongodb://127.0.0.1:27017/performance',
+            url: 'mongodb://127.0.0.1:27019/performance',
             options: {
                 poolSize: 20,
             },

@@ -14,6 +14,9 @@ class DataTimedTaskService extends Service {
         this.cacheIpJson = {};
         this.cacheArr = [];
         this.system = {};
+        // kafka 消费池限制
+        this.kafkalist = [];
+        this.kafkatotal = this.app.config.kafka.consumer.web.total_limit || 0;
         // 缓存一次ip地址库信息
         this.ipCityFileCache();
     }
@@ -100,7 +103,10 @@ class DataTimedTaskService extends Service {
 
                 this.getWebItemDataForKafka(query);
 
-            } catch (err) { console.log(err); }
+            } catch (err) { 
+                this.app.coreLogger.error(`kafka 消息队列消费消息 error ${err}`);
+                console.log(err);
+            }
         });
     }
 
@@ -122,7 +128,6 @@ class DataTimedTaskService extends Service {
             screenwidth: query.screenwidth,
             screenheight: query.screenheight,
         };
-
         let system = {};
         // 做一次appId缓存
         if (this.cacheJson[item.app_id]) {
@@ -132,7 +137,17 @@ class DataTimedTaskService extends Service {
             this.cacheJson[item.app_id] = system;
         }
         if (system.is_use !== 0) return;
-        if (system.is_statisi_pages === 0) this.savePages(item, system.slow_page_time);
+
+        // kafka 连接池限制
+        const msgtab = query.time + query.ip;
+        if(this.kafkatotal && this.kafkalist.length >= this.kafkatotal) return;
+        this.kafkalist.push(msgtab);
+
+        if (system.is_statisi_pages === 0) this.savePages(item, system.slow_page_time, () => {
+            // 释放
+            const index = this.kafkalist.indexOf(msgtab);
+            if(index > -1) this.kafkalist.splice(index,1);
+        });
         if (system.is_statisi_resource === 0 || system.is_statisi_ajax === 0) this.forEachResources(item, system);
         if (system.is_statisi_error === 0) this.saveErrors(item);
         if (system.is_statisi_system === 0) this.saveEnvironment(item);
@@ -210,40 +225,46 @@ class DataTimedTaskService extends Service {
     }
 
     // 储存网页性能数据
-    savePages(item, slowPageTime = 5) {
-        const pages = this.app.models.WebPages(item.app_id)();
+    async savePages(item, slowPageTime = 5, fn) {
+        try {
+            const pages = this.app.models.WebPages(item.app_id)();
+            const performance = item.performance;
+            if (item.performance && item.performance.lodt > 0) {
+                const newurl = url.parse(item.url);
+                const newName = newurl.protocol + '//' + newurl.host + newurl.pathname;
 
-        const performance = item.performance;
-        if (item.performance && item.performance.lodt > 0) {
-            const newurl = url.parse(item.url);
-            const newName = newurl.protocol + '//' + newurl.host + newurl.pathname;
+                slowPageTime = slowPageTime * 1000;
+                const speedType = performance.lodt >= slowPageTime ? 2 : 1;
 
-            slowPageTime = slowPageTime * 1000;
-            const speedType = performance.lodt >= slowPageTime ? 2 : 1;
+                pages.app_id = item.app_id;
+                pages.create_time = item.create_time;
+                pages.url = newName;
+                pages.full_url = item.url;
+                pages.pre_url = item.pre_url;
+                pages.speed_type = speedType;
+                pages.mark_page = item.mark_page;
+                pages.mark_user = item.mark_user;
+                pages.load_time = performance.lodt;
+                pages.dns_time = performance.dnst;
+                pages.tcp_time = performance.tcpt;
+                pages.dom_time = performance.domt;
+                pages.resource_list = item.resource_list;
+                pages.white_time = performance.wit;
+                pages.redirect_time = performance.rdit;
+                pages.unload_time = performance.uodt;
+                pages.request_time = performance.reqt;
+                pages.analysisDom_time = performance.andt;
+                pages.ready_time = performance.radt;
+                pages.screenwidth = item.screenwidth;
+                pages.screenheight = item.screenheight;
+                await pages.save();
 
-            pages.app_id = item.app_id;
-            pages.create_time = item.create_time;
-            pages.url = newName;
-            pages.full_url = item.url;
-            pages.pre_url = item.pre_url;
-            pages.speed_type = speedType;
-            pages.mark_page = item.mark_page;
-            pages.mark_user = item.mark_user;
-            pages.load_time = performance.lodt;
-            pages.dns_time = performance.dnst;
-            pages.tcp_time = performance.tcpt;
-            pages.dom_time = performance.domt;
-            pages.resource_list = item.resource_list;
-            pages.white_time = performance.wit;
-            pages.redirect_time = performance.rdit;
-            pages.unload_time = performance.uodt;
-            pages.request_time = performance.reqt;
-            pages.analysisDom_time = performance.andt;
-            pages.ready_time = performance.radt;
-            pages.screenwidth = item.screenwidth;
-            pages.screenheight = item.screenheight;
-
-            pages.save();
+                fn && fn();
+            } else {
+                fn && fn();
+            }
+        } catch (err) {
+            fn && fn();
         }
     }
 
