@@ -39,9 +39,6 @@ module.exports = () => {
     // wx浏览器端定时任务是否执行
     config.is_wx_task_run = true;
 
-    // db1与db3数据库同步每分钟执行一次
-    config.report_task_time = '0 */1 * * * *';
-
     // 执行pvuvip定时任务的时间间隔 每分钟定时执行一次
     config.pvuvip_task_minute_time = '0 */1 * * * *';
 
@@ -50,9 +47,6 @@ module.exports = () => {
 
     // 执行ip地理位置转换的定时任务 每分钟定时执行一次
     config.ip_task_time = '0 */1 * * * *';
-
-    // db3同步db1上报数据线程数
-    config.report_thread = 10;
 
     // 更新用户上报IP对应的城市信息线程数
     config.ip_thread = 5;
@@ -103,6 +97,12 @@ module.exports = () => {
             },
         },
     };
+
+    // report_data_type=mongodb生效
+    // db1与db3数据库同步每分钟执行一次
+    config.report_task_time = '0 */1 * * * *';
+    // db3同步db1上报数据线程数
+    config.report_thread = 10;
 
     // 解析用户ip地址为城市是使用redis还是使用mongodb
     config.ip_redis_or_mongodb = 'redis'; // redus  mongodb

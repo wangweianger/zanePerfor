@@ -2,7 +2,7 @@
 
 const Controller = require('egg').Controller;
 
-class AjaxsController extends Controller {
+class RemoveController extends Controller {
 
     // 清空db1 1日之前无用数据
     async deleteDb1WebData() {
@@ -32,4 +32,4 @@ class AjaxsController extends Controller {
 
 }
 
-module.exports = AjaxsController;
+module.exports = RemoveController;

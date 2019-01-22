@@ -2,7 +2,7 @@
 
 const Service = require('egg').Service;
 
-class WebSystemService extends Service {
+class SystemService extends Service {
 
     // 保存用户上报的数据
     async saveSystemData(ctx) {
@@ -176,4 +176,4 @@ class WebSystemService extends Service {
     }
 }
 
-module.exports = WebSystemService;
+module.exports = SystemService;

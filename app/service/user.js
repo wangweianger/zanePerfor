@@ -160,7 +160,7 @@ class UserService extends Service {
         return await this.ctx.model.User.findOne({ token: id }).exec() || {};
     }
 
-    // github | 新浪微博 register
+    // github | 新浪微博 | 微信 register
     async githubRegister(userinfo, token) {
         let userInfo = {};
         userInfo = await this.getUserInfoForGithubId(token);

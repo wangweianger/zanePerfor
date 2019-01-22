@@ -2,7 +2,7 @@
 
 const Controller = require('egg').Controller;
 
-class AjaxsController extends Controller {
+class UserController extends Controller {
 
     // 用户登录
     async login() {
@@ -231,7 +231,7 @@ class AjaxsController extends Controller {
             if (err.toString().indexOf('timeout') > -1) {
                 result.desc = '新浪微博授权接口请求超时,请重试！';
             }
-            await ctx.render('weibo', {
+            await ctx.render('github', {
                 data: {
                     title: 'weibo login',
                     data: JSON.stringify(result),
@@ -300,7 +300,7 @@ class AjaxsController extends Controller {
             if (err.toString().indexOf('timeout') > -1) {
                 result.desc = '微信登录授权接口请求超时,请重试！';
             }
-            await ctx.render('wechat', {
+            await ctx.render('github', {
                 data: {
                     title: 'wechat login',
                     data: JSON.stringify(result),
@@ -310,4 +310,4 @@ class AjaxsController extends Controller {
     }
 }
 
-module.exports = AjaxsController;
+module.exports = UserController;

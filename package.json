@@ -27,6 +27,7 @@
     "eslint-plugin-html": "^5.0.0",
     "kafka-node": "^4.0.0",
     "md5": "^2.2.1",
+    "nodemailer": "^5.1.1",
     "ua-parser-js": "^0.7.18",
     "webstorm-disable-index": "^1.2.0"
   },

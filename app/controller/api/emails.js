@@ -2,7 +2,7 @@
 
 const Controller = require('egg').Controller;
 
-class SystemController extends Controller {
+class EmailsController extends Controller {
 
     async getList() {
         const { ctx } = this;
@@ -50,4 +50,4 @@ class SystemController extends Controller {
     }
 }
 
-module.exports = SystemController;
+module.exports = EmailsController;
