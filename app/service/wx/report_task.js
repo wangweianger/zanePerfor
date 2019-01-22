@@ -10,6 +10,9 @@ class WxReportTaskService extends Service {
         this.cacheJson = {};
         this.cacheIpJson = {};
         this.cacheArr = [];
+        // kafka 消费池限制
+        this.kafkalist = [];
+        this.kafkatotal = this.app.config.kafka.consumer.wx.total_limit || 0;
         // 缓存一次ip地址库信息
         this.ipCityFileCache();
     }
@@ -128,7 +131,17 @@ class WxReportTaskService extends Service {
         }
 
         if (system.is_use !== 0) return;
-        if (system.is_statisi_system === 0) this.savePages(item);
+
+         // kafka 连接池限制
+         const msgtab = query.time + query.ip;
+         if(this.kafkatotal && this.kafkalist.length >= this.kafkatotal) return;
+         this.kafkalist.push(msgtab);
+
+        if (system.is_statisi_system === 0) this.savePages(item, () => {
+            // 释放
+            const index = this.kafkalist.indexOf(msgtab);
+            if(index > -1) this.kafkalist.splice(index,1);
+        });
         if (system.is_statisi_ajax === 0) this.saveAjaxs(item, system);
         if (system.is_statisi_error === 0) this.saveErrors(item);
     }
@@ -207,55 +220,63 @@ class WxReportTaskService extends Service {
     }
 
     // 储存网页性能数据
-    async savePages(item) {
+    async savePages(item, fn) {
         const ip = item.ip;
-        if (!ip) return;
-        let copyip = ip.split('.');
-        copyip = `${copyip[0]}.${copyip[1]}.${copyip[2]}`;
-        let datas = null;
-        if (this.cacheIpJson[copyip]) {
-            datas = this.cacheIpJson[copyip];
-        } else if (this.app.config.ip_redis_or_mongodb === 'redis') {
-            // 通过reids获得用户IP对应的地理位置信息
-            datas = await this.app.redis.get(copyip);
-            if (datas) {
-                datas = JSON.parse(datas);
-                this.cacheIpJson[copyip] = datas;
-                this.saveIpDatasInFile(copyip, { city: datas.city, province: datas.province });
-            }
-        } else if (this.app.config.ip_redis_or_mongodb === 'mongodb') {
-            // 通过mongodb获得用户IP对应的地理位置信息
-            datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).read('sp').exec();
-            if (datas) {
-                this.cacheIpJson[copyip] = datas;
-                this.saveIpDatasInFile(copyip, { city: datas.city, province: datas.province });
-            }
+        if (!ip) {
+            fn && fn();
+            return;
         }
-
-        const pages = this.app.models.WxPages(item.app_id)();
-        pages.app_id = item.app_id;
-        pages.create_time = item.create_time;
-        pages.path = item.pages.router;
-        pages.options = item.pages.options;
-        pages.mark_page = item.mark_page;
-        pages.mark_user = item.mark_user;
-        pages.mark_uv = item.mark_uv;
-        pages.net = item.net;
-        pages.ip = item.ip;
-        pages.brand = item.system.brand;
-        pages.model = item.system.model;
-        pages.screenWidth = item.system.screenWidth;
-        pages.screenHeight = item.system.screenHeight;
-        pages.language = item.system.language;
-        pages.version = item.system.version;
-        pages.system = item.system.system;
-        pages.platform = item.system.platform;
-        pages.SDKVersion = item.system.SDKVersion;
-        if (datas) {
-            pages.province = datas.province;
-            pages.city = datas.city;
+        try {
+            let copyip = ip.split('.');
+            copyip = `${copyip[0]}.${copyip[1]}.${copyip[2]}`;
+            let datas = null;
+            if (this.cacheIpJson[copyip]) {
+                datas = this.cacheIpJson[copyip];
+            } else if (this.app.config.ip_redis_or_mongodb === 'redis') {
+                // 通过reids获得用户IP对应的地理位置信息
+                datas = await this.app.redis.get(copyip);
+                if (datas) {
+                    datas = JSON.parse(datas);
+                    this.cacheIpJson[copyip] = datas;
+                    this.saveIpDatasInFile(copyip, { city: datas.city, province: datas.province });
+                }
+            } else if (this.app.config.ip_redis_or_mongodb === 'mongodb') {
+                // 通过mongodb获得用户IP对应的地理位置信息
+                datas = await this.ctx.model.IpLibrary.findOne({ ip: copyip }).read('sp').exec();
+                if (datas) {
+                    this.cacheIpJson[copyip] = datas;
+                    this.saveIpDatasInFile(copyip, { city: datas.city, province: datas.province });
+                }
+            }
+            const pages = this.app.models.WxPages(item.app_id)();
+            pages.app_id = item.app_id;
+            pages.create_time = item.create_time;
+            pages.path = item.pages.router;
+            pages.options = item.pages.options;
+            pages.mark_page = item.mark_page;
+            pages.mark_user = item.mark_user;
+            pages.mark_uv = item.mark_uv;
+            pages.net = item.net;
+            pages.ip = item.ip;
+            pages.brand = item.system.brand;
+            pages.model = item.system.model;
+            pages.screenWidth = item.system.screenWidth;
+            pages.screenHeight = item.system.screenHeight;
+            pages.language = item.system.language;
+            pages.version = item.system.version;
+            pages.system = item.system.system;
+            pages.platform = item.system.platform;
+            pages.SDKVersion = item.system.SDKVersion;
+            if (datas) {
+                pages.province = datas.province;
+                pages.city = datas.city;
+            }
+            await pages.save();
+            
+            fn && fn();
+        } catch (err) {
+            fn && fn();
         }
-        pages.save();
     }
 
     // 存储ajax信息
