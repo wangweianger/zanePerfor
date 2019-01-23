@@ -43,7 +43,7 @@
 * [项目定时任务功能说明](https://blog.seosiwei.com/performance/tasks.html)
 * [github 登录授权](https://blog.seosiwei.com/performance/github.html)
 * [简单通用的Node前后端Token登录机制和github授权登录方式](https://blog.seosiwei.com/detail/49)
-* [zanePerfor中kafka的应用和api多种使用方式说明](https://blog.seosiwei.com/detail/51)
+* [zanePerfor中集成kafka的开发实践和限流优雅降级](https://blog.seosiwei.com/detail/51)
 
 ## 项目说明
 * 项目已部署到正式环境，并已稳定运行一段时间，请放心使用。
