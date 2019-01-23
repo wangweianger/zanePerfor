@@ -105,11 +105,13 @@ module.exports = () => {
                 topic: 'zane_perfor_web',
                 groupId: 'WebPerformanceGroup',
                 commitOffsetsOnFirstJoin: true,
+                total_limit: 10000,
             },
             wx: {
                 topic: 'zane_perfor_wx',
                 groupId: 'WxPerformanceGroup',
                 commitOffsetsOnFirstJoin: true,
+                total_limit: 10000,
             },
         },
     };

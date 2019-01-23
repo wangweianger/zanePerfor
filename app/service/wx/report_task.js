@@ -12,7 +12,13 @@ class WxReportTaskService extends Service {
         this.cacheArr = [];
         // kafka 消费池限制
         this.kafkalist = [];
-        this.kafkatotal = this.app.config.kafka.consumer.wx.total_limit || 0;
+        this.kafkaConfig = this.app.config.kafka;
+        this.kafkatotal = 0;
+        if (this.kafkaConfig.consumer) {
+            this.kafkatotal = this.kafkaConfig.consumer.wx.total_limit || 0;
+        } else if (this.kafkaConfig.consumerGroup) {
+            this.kafkatotal = this.kafkaConfig.consumerGroup.wx.total_limit || 0;
+        }
         // 缓存一次ip地址库信息
         this.ipCityFileCache();
     }
@@ -89,18 +95,28 @@ class WxReportTaskService extends Service {
 
     // kafka 消费信息
     async saveWxReportDatasForKafka() {
-        this.app.kafka.consumer('wx', message => {
-            try {
-                if (!message.value) return;
-                const json = {};
-                const query = JSON.parse(message.value);
-                if (json.time) return;
-                json.time = query.time;
+        if (this.kafkaConfig.consumer) {
+            this.app.kafka.consumer('wx', message => {
+                this.consumerDatas(message);
+            });
+        } else if (this.kafkaConfig.consumerGroup) {
+            this.app.kafka.consumerGroup('wx', message => {
+                this.consumerDatas(message);
+            });
+        }
+    }
 
-                this.getWxItemDataForKafka(query);
+    async consumerDatas(message) {
+        try {
+            if (!message.value) return;
+            const json = {};
+            const query = JSON.parse(message.value);
+            if (json.time) return;
+            json.time = query.time;
 
-            } catch (err) { console.log(err); }
-        });
+            this.getWxItemDataForKafka(query);
+
+        } catch (err) { console.log(err); }
     }
 
     // 单个item储存数据

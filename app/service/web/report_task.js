@@ -17,7 +17,12 @@ class DataTimedTaskService extends Service {
         // kafka 消费池限制
         this.kafkalist = [];
         this.kafkaConfig = this.app.config.kafka;
-        this.kafkatotal = this.kafkaConfig.consumer.web.total_limit || 0;
+        this.kafkatotal = 0;
+        if (this.kafkaConfig.consumer) {
+            this.kafkatotal = this.kafkaConfig.consumer.web.total_limit || 0;
+        } else if (this.kafkaConfig.consumerGroup) {
+            this.kafkatotal = this.kafkaConfig.consumerGroup.web.total_limit || 0;
+        }
         // 缓存一次ip地址库信息
         this.ipCityFileCache();
     }
