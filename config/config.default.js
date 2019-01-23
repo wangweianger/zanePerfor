@@ -84,6 +84,8 @@ module.exports = () => {
                 topic: 'zane_perfor_wx',
             },
         },
+        // consumer 和 consumerGroup消费任选其一即可
+        // 优先选择consumer消费，两种消费配置任留一种即可
         consumer: {
             web: {
                 topic: 'zane_perfor_web',
@@ -96,6 +98,18 @@ module.exports = () => {
                 topic: 'zane_perfor_wx',
                 isone: false,
                 total_limit: 10000,
+            },
+        },
+        consumerGroup: {
+            web: { // ConsumerGroup(options, topics)
+                topic: 'zane_perfor_web',
+                groupId: 'WebPerformanceGroup',
+                commitOffsetsOnFirstJoin: true,
+            },
+            wx: {
+                topic: 'zane_perfor_wx',
+                groupId: 'WxPerformanceGroup',
+                commitOffsetsOnFirstJoin: true,
             },
         },
     };

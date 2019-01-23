@@ -132,16 +132,18 @@ class WxReportTaskService extends Service {
 
         if (system.is_use !== 0) return;
 
-         // kafka 连接池限制
-         const msgtab = query.time + query.ip;
-         if(this.kafkatotal && this.kafkalist.length >= this.kafkatotal) return;
-         this.kafkalist.push(msgtab);
+        // kafka 连接池限制
+        const msgtab = query.time + query.ip;
+        if (this.kafkatotal && this.kafkalist.length >= this.kafkatotal) return;
+        this.kafkalist.push(msgtab);
 
-        if (system.is_statisi_system === 0) this.savePages(item, () => {
-            // 释放
-            const index = this.kafkalist.indexOf(msgtab);
-            if(index > -1) this.kafkalist.splice(index,1);
-        });
+        if (system.is_statisi_system === 0) {
+            this.savePages(item, () => {
+                // 释放
+                const index = this.kafkalist.indexOf(msgtab);
+                if (index > -1) this.kafkalist.splice(index, 1);
+            });
+        }
         if (system.is_statisi_ajax === 0) this.saveAjaxs(item, system);
         if (system.is_statisi_error === 0) this.saveErrors(item);
     }
@@ -272,7 +274,7 @@ class WxReportTaskService extends Service {
                 pages.city = datas.city;
             }
             await pages.save();
-            
+
             fn && fn();
         } catch (err) {
             fn && fn();

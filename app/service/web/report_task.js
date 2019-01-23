@@ -16,7 +16,8 @@ class DataTimedTaskService extends Service {
         this.system = {};
         // kafka 消费池限制
         this.kafkalist = [];
-        this.kafkatotal = this.app.config.kafka.consumer.web.total_limit || 0;
+        this.kafkaConfig = this.app.config.kafka;
+        this.kafkatotal = this.kafkaConfig.consumer.web.total_limit || 0;
         // 缓存一次ip地址库信息
         this.ipCityFileCache();
     }
@@ -93,21 +94,31 @@ class DataTimedTaskService extends Service {
 
     // kafka 消费信息
     async saveWebReportDatasForKafka() {
-        this.app.kafka.consumer('web', message => {
-            try {
-                if (!message.value) return;
-                const json = {};
-                const query = JSON.parse(message.value);
-                if (json.time) return;
-                json.time = query.time;
+        if (this.kafkaConfig.consumer) {
+            this.app.kafka.consumer('web', message => {
+                this.consumerDatas(message);
+            });
+        } else if (this.kafkaConfig.consumerGroup) {
+            this.app.kafka.consumerGroup('web', message => {
+                this.consumerDatas(message);
+            });
+        }
+    }
 
-                this.getWebItemDataForKafka(query);
+    async consumerDatas(message) {
+        try {
+            if (!message.value) return;
+            const json = {};
+            const query = JSON.parse(message.value);
+            if (json.time) return;
+            json.time = query.time;
 
-            } catch (err) { 
-                this.app.coreLogger.error(`kafka 消息队列消费消息 error ${err}`);
-                console.log(err);
-            }
-        });
+            this.getWebItemDataForKafka(query);
+
+        } catch (err) {
+            this.app.coreLogger.error(`kafka 消息队列消费消息 error ${err}`);
+            console.log(err);
+        }
     }
 
     // 单个item储存数据
@@ -140,14 +151,16 @@ class DataTimedTaskService extends Service {
 
         // kafka 连接池限制
         const msgtab = query.time + query.ip;
-        if(this.kafkatotal && this.kafkalist.length >= this.kafkatotal) return;
+        if (this.kafkatotal && this.kafkalist.length >= this.kafkatotal) return;
         this.kafkalist.push(msgtab);
 
-        if (system.is_statisi_pages === 0) this.savePages(item, system.slow_page_time, () => {
-            // 释放
-            const index = this.kafkalist.indexOf(msgtab);
-            if(index > -1) this.kafkalist.splice(index,1);
-        });
+        if (system.is_statisi_pages === 0) {
+            this.savePages(item, system.slow_page_time, () => {
+                // 释放
+                const index = this.kafkalist.indexOf(msgtab);
+                if (index > -1) this.kafkalist.splice(index, 1);
+            });
+        }
         if (system.is_statisi_resource === 0 || system.is_statisi_ajax === 0) this.forEachResources(item, system);
         if (system.is_statisi_error === 0) this.saveErrors(item);
         if (system.is_statisi_system === 0) this.saveEnvironment(item);
