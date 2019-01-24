@@ -120,27 +120,32 @@ class IpTaskService extends Service {
     // g根据百度地图api获得地址信息
     async getIpDataForBaiduApi(ip, _id, copyip, appId) {
         if (!ip || ip === '127.0.0.1') return;
-        const url = `https://api.map.baidu.com/location/ip?ip=${ip}&ak=${this.app.config.BAIDUAK}&coor=bd09ll`;
-        const result = await this.app.curl(url, {
-            dataType: 'json',
-        });
-        if (result.data.status === 0 && result.data.content) {
-            const json = {
-                _ip: ip,
-                province: result.data.content.address_detail.province,
-                city: result.data.content.address_detail.city,
-            };
-            if (!this.cacheArr.includes(copyip)) {
-                this.cacheArr.push(copyip);
-                // 保存到地址库
-                this.saveIpDatasToDb(json, copyip);
-                // 更新redis
-                this.app.redis.set(copyip, JSON.stringify(json));
-                // 更新程序缓存
-                this.cacheJson[copyip] = json;
+        try {
+            const url = `https://api.map.baidu.com/location/ip?ip=${ip}&ak=${this.app.config.BAIDUAK}&coor=bd09ll`;
+            const result = await this.app.curl(url, {
+                dataType: 'json',
+            });
+            if (result.data.status === 0 && result.data.content) {
+                const json = {
+                    _ip: ip,
+                    province: result.data.content.address_detail.province,
+                    city: result.data.content.address_detail.city,
+                };
+                if (!this.cacheArr.includes(copyip)) {
+                    this.cacheArr.push(copyip);
+                    // 保存到地址库
+                    this.saveIpDatasToDb(json, copyip);
+                    // 更新redis
+                    this.app.redis.set(copyip, JSON.stringify(json));
+                    // 更新程序缓存
+                    this.cacheJson[copyip] = json;
+                }
+                // 更新用户地址信息
+                return await this.updateWebEnvironment(json, _id, appId);
             }
-            // 更新用户地址信息
-            return await this.updateWebEnvironment(json, _id, appId);
+        } catch (err) {
+            this.ctx.logger.info(`调用百度api发现了错误${err}`);
+            return {};
         }
     }
 
