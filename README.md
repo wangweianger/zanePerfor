@@ -1,4 +1,32 @@
 # zanePerfor一款完整、高性能、高可用的前端性能监控和统计平台
+## docker 安装配置环境
+1. 安装并保证有 docker-compose 的环境
+2. 修改 start-docker-compose.sh 里的 hostIP 为外网 IP
+⚠️ 不能是 `127.0.0.1` 或 `localhost`  
+
+3. docker-compose 启动方式
+> 方式一：
+```sh
+# 项目所在目录
+./start-docker-compose.sh
+```
+
+> 方式二
+```sh
+export hostIP='自己的外网IP' && docker-compose up -d --build
+```
+
+4. 启动 web 开发环境
+```sh
+npm run dev
+```
+
+5. 启动 web start 环境
+⚠️ 修改 config/config.prod.js 里的 redis 配置
+```sh
+npm start 
+```
+
 ## 开发功能进度说明
 >  * 集成框架选型及其相关配置（已完成）
 >  * 主重数据库相关配置开发（已完成）

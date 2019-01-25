@@ -1,0 +1,25 @@
+version: "0.1" 
+services:
+  redis: 
+    image: redis:3.2
+    ports: 
+      - "6379:6379"
+  mongo:
+    image: mongo:3.4
+    ports: 
+      - "27017:27017"
+  # 源 https://raw.githubusercontent.com/wurstmeister/kafka-docker/master/docker-compose.yml
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka:2.12-2.0.1
+    ports:
+      - "9092:9092"
+    environment:
+      # your docker host IP (Note: Do not use localhost or 127.0.0.1 as the host ip if you want to run multiple brokers.)
+      KAFKA_ADVERTISED_HOST_NAME: ${hostIP}
+      # KAFKA_ZOOKEEPER_CONNECT: zookeeper:2180
+      KAFKA_ZOOKEEPER_CONNECT: ${hostIP}:2181
+  
