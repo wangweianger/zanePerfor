@@ -7,7 +7,7 @@ module.exports = () => {
 
     config.keys = '_123456789';
 
-    config.middleware = [ ];
+    config.middleware = [];
 
     config.name = '性能监控系统';
 
@@ -18,9 +18,6 @@ module.exports = () => {
     // 务必修改config.debug = true;
     config.session_secret = 'node_performance_secret';
 
-    // 用于安全校验和回调域名根路径 开发路径域名（必填）
-    config.origin = 'http://127.0.0.1:7001';
-
     // 集群配置（一般默认即可）
     config.cluster = {
         listen: {
@@ -29,6 +26,9 @@ module.exports = () => {
             ip: address.ip(),
         },
     };
+
+    // 用于安全校验和回调域名根路径 开发路径域名（必填）
+    config.origin = `http://127.0.0.1:${config.cluster.listen.port}`;
 
     // 用户登录态持续时间 1 天
     config.user_login_timeout = 86400;
@@ -141,9 +141,9 @@ module.exports = () => {
     // shell重启
     config.shell_restart = {
         // mongodb重启shell,如果mongodb进程kill了，请求不了数据库时重启（可选填）
-        mongodb: [ path.resolve(__dirname, '../mongodb-restart.sh') ],
+        mongodb: [path.resolve(__dirname, '../mongodb-restart.sh')],
         // node.js服务重启shell,mongodb重启时，数据库连接池有可能会断，这时需要重启服务
-        servers: [ path.resolve(__dirname, '../servers-restart.sh') ],
+        servers: [path.resolve(__dirname, '../servers-restart.sh')],
     };
 
     // 百度地图api key
@@ -156,14 +156,14 @@ module.exports = () => {
     config.github = {
         client_id: 'xxxxxx',
         client_secret: 'xxxxxx',
-        scope: [ 'user' ],
+        scope: ['user'],
     };
 
     // 新浪微博 login
     config.weibo = {
         client_id: 'xxxxxx', // 微博的App Key
         client_secret: 'xxxxxx', // 微博的App Secret
-        scope: [ 'all' ],
+        scope: ['all'],
     };
 
     // wechat login
@@ -247,7 +247,7 @@ module.exports = () => {
     };
 
     config.security = {
-        domainWhiteList: [ 'http://127.0.0.1:18090' ],
+        domainWhiteList: ['http://127.0.0.1:18090'],
         csrf: {
             enable: false,
             ignore: '/api/v1/report/**',
