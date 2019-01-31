@@ -49,10 +49,10 @@ class ReportController extends Controller {
         );
 
         // 消费者
-        if (!isKafkaConsumer && !this.app.config.kafka.consumer.web.isone) {
+        if (!isKafkaConsumer && !this.app.config.kafka.consumer_tag_web) {
             this.ctx.service.web.reportTask.saveWebReportDatasForKafka();
             isKafkaConsumer = true;
-            this.app.config.kafka.consumer.web.isone = true;
+            this.app.config.kafka.consumer_tag_web = true;
         }
     }
 

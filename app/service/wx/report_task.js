@@ -13,12 +13,7 @@ class WxReportTaskService extends Service {
         // kafka 消费池限制
         this.kafkalist = [];
         this.kafkaConfig = this.app.config.kafka;
-        this.kafkatotal = 0;
-        if (this.kafkaConfig.consumer) {
-            this.kafkatotal = this.kafkaConfig.consumer.wx.total_limit || 0;
-        } else if (this.kafkaConfig.consumerGroup) {
-            this.kafkatotal = this.kafkaConfig.consumerGroup.wx.total_limit || 0;
-        }
+        this.kafkatotal = this.kafkaConfig.total_limit_wx;
         // 缓存一次ip地址库信息
         this.ipCityFileCache();
     }

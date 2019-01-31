@@ -94,13 +94,9 @@ module.exports = () => {
                 topic: 'zane_perfor_web',
                 offset: 0, // default 0
                 partition: 0, // default 0
-                isone: false, // 此参数默认不可更改
-                total_limit: 10000, // 消息队列消费池限制数, 0：不限制 number: 限制条数 高并发时服务优雅降级方案
             },
             wx: {
                 topic: 'zane_perfor_wx',
-                isone: false,
-                total_limit: 10000,
             },
         },
         consumerGroup: {
@@ -108,15 +104,19 @@ module.exports = () => {
                 topic: 'zane_perfor_web',
                 groupId: 'WebPerformanceGroup',
                 commitOffsetsOnFirstJoin: true,
-                total_limit: 10000,
             },
             wx: {
                 topic: 'zane_perfor_wx',
                 groupId: 'WxPerformanceGroup',
                 commitOffsetsOnFirstJoin: true,
-                total_limit: 10000,
             },
         },
+        // 消息队列消费池限制数, 0：不限制 number: 限制条数 高并发时服务优雅降级方案
+        total_limit_web: 10000,
+        // 此参数默认不可更改
+        consumer_tag_web: false,
+        total_limit_wx: 10000,
+        consumer_tag_wx: false,
     };
 
     // report_data_type=mongodb生效

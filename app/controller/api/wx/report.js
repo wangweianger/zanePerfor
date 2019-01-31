@@ -44,10 +44,10 @@ class AjaxsController extends Controller {
         );
 
         // 消费者
-        if (!isKafkaConsumer && !this.app.config.kafka.consumer.wx.isone) {
+        if (!isKafkaConsumer && !this.app.config.kafka.consumer_tag_wx) {
             this.ctx.service.wx.reportTask.saveWxReportDatasForKafka();
             isKafkaConsumer = true;
-            this.app.config.kafka.consumer.wx.isone = true;
+            this.app.config.kafka.consumer_tag_wx = true;
         }
     }
 
