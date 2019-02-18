@@ -55,9 +55,9 @@ module.exports = () => {
     config.ip_thread = 5;
 
     // 上报原始数据使用redis存储、kafka储存、还是使用mongodb存储
-    config.report_data_type = 'redis'; // redus  mongodb  kafka
+    config.report_data_type = 'redis'; // redis  mongodb  kafka
 
-    // 使用redis储存原始数据时，相关配置 （report_data_type=redus生效）
+    // 使用redis储存原始数据时，相关配置 （report_data_type=redis生效）
     config.redis_consumption = {
         // 定时任务执行时间
         task_time: '*/20 * * * * *',
