@@ -6,6 +6,7 @@
   "dependencies": {
     "address": "^1.0.3",
     "egg": "^2.2.1",
+    "egg-alinode": "^2.0.1",
     "egg-cors": "^2.1.0",
     "egg-mongoose": "^3.1.0",
     "egg-redis": "^2.0.0",

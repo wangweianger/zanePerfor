@@ -36,3 +36,8 @@ exports.kafka = {
     path: path.join(__dirname, '../lib/plugin/egg-kafka'),
 };
 
+exports.alinode = {
+    enable: true,
+    package: 'egg-alinode',
+};
+
