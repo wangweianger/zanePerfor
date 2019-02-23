@@ -22,7 +22,7 @@
 >  * Mongodb副本集读写分离开发（已完成）
 >  * 数据库分表（即分集合）针对于apges,ajaxs,errors,resource,enviroment大数据量表分表，不同应用存储到单独的表中（已完成）
 >  * 集群配置 （已完成）
->  * add github login （已完成）
+>  * github第三方登录 （已完成）
 >  * 新浪微博第三方登录 （已完成）
 >  * 微信授权第三方登录 （已完成）
 >  * Mongodb集群分片开发（优化中）
