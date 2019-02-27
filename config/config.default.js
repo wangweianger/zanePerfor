@@ -17,6 +17,7 @@ module.exports = () => {
 
     config.middleware = [];
 
+    // 线上环境此处替换为项目根域名 例如 blog.seosiwei.com
     config.host = '127.0.0.1';
 
     config.port = 7001;
@@ -28,7 +29,7 @@ module.exports = () => {
     config.cluster = {
         listen: {
             port: config.port,
-            hostname: config.host,
+            hostname: '127.0.0.1',
             ip: address.ip(),
         },
     };
@@ -176,6 +177,7 @@ module.exports = () => {
     };
 
     // 从 `Node.js 性能平台` 获取对应的接入参数 https://node.console.aliyun.com
+    // plugin.js 开启插件 enable: true
     exports.alinode = {
         appid: 'xxxxxx',
         secret: 'xxxxxx',
