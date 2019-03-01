@@ -1,7 +1,6 @@
 'use strict';
 
 const Controller = require('egg').Controller;
-let isKafkaConsumer = false;
 
 class AjaxsController extends Controller {
 
@@ -42,13 +41,6 @@ class AjaxsController extends Controller {
             'wx',
             JSON.stringify(query)
         );
-
-        // 消费者
-        if (!isKafkaConsumer && !this.app.config.kafka.consumer_tag_wx) {
-            this.ctx.service.wx.reportTask.saveWxReportDatasForKafka();
-            isKafkaConsumer = true;
-            this.app.config.kafka.consumer_tag_wx = true;
-        }
     }
 
     // 通过mongodb 数据库存储数据

@@ -1,7 +1,6 @@
 /* eslint-disable */
 'use strict';
 const Controller = require('egg').Controller;
-let isKafkaConsumer = false;
 
 class ReportController extends Controller {
     constructor(params) {
@@ -47,13 +46,6 @@ class ReportController extends Controller {
             'web',
             JSON.stringify(query)
         );
-
-        // 消费者
-        if (!isKafkaConsumer && !this.app.config.kafka.consumer_tag_web) {
-            this.ctx.service.web.reportTask.saveWebReportDatasForKafka();
-            isKafkaConsumer = true;
-            this.app.config.kafka.consumer_tag_web = true;
-        }
     }
 
     // 通过mongodb 数据库存储数据

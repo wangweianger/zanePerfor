@@ -56,7 +56,7 @@ module.exports = () => {
     config.ip_thread = 5;
 
     // 上报原始数据使用redis存储、kafka储存、还是使用mongodb存储
-    config.report_data_type = 'redis'; // redis  mongodb  kafka
+    config.report_data_type = 'kafka'; // redis  mongodb  kafka
 
     // 使用redis储存原始数据时，相关配置 （report_data_type=redis生效）
     config.redis_consumption = {
@@ -86,6 +86,8 @@ module.exports = () => {
             },
             wx: {
                 topic: 'zane_perfor_wx',
+                partition: 0, // default 0
+                attributes: 0, // default: 0
             },
         },
         // consumer 和 consumerGroup消费任选其一即可
@@ -98,6 +100,8 @@ module.exports = () => {
             },
             wx: {
                 topic: 'zane_perfor_wx',
+                offset: 0, // default 0
+                partition: 0, // default 0
             },
         },
         consumerGroup: {
@@ -114,10 +118,7 @@ module.exports = () => {
         },
         // 消息队列消费池限制数, 0：不限制 number: 限制条数 高并发时服务优雅降级方案
         total_limit_web: 10000,
-        // 此参数默认不可更改
-        consumer_tag_web: false,
         total_limit_wx: 10000,
-        consumer_tag_wx: false,
     };
 
     // report_data_type=mongodb生效
