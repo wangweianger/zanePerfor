@@ -40,7 +40,7 @@ module.exports = () => {
     // web浏览器端定时任务是否执行
     config.is_web_task_run = true;
 
-    // wx浏览器端定时任务是否执行
+    // wx小程序端定时任务是否执行
     config.is_wx_task_run = true;
 
     // 执行pvuvip定时任务的时间间隔 每分钟定时执行一次
