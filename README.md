@@ -33,7 +33,7 @@
 >  * Kafka消息队列的引入和使用 （已完成）
 
 ## 技术选型说明
-* egg.js,ejs,mongoose,redis,vue.js
+* egg.js,ejs,mongoose,redis,vue.js,kafka
 
 ## 项目开发文档
 * [系统高可用之Mongodb集群分片架构](https://blog.seosiwei.com/performance/colony.html)
@@ -119,7 +119,7 @@ https://github.com/wangweianger/wx-report-sdk
 ### github 登录授权
 https://blog.seosiwei.com/performance/github.html
 
-## docker 安装配置环境
+## docker 安装配置环境(非必须)
 1. 安装并保证有 docker-compose 的环境
 2. 修改 start-docker-compose.sh 里的 hostIP 为外网 IP
 ⚠️ 不能是 `127.0.0.1` 或 `localhost`
