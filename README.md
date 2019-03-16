@@ -33,7 +33,7 @@
 >  * Kafka消息队列的引入和使用 （已完成）
 
 ## 技术选型说明
-* egg.js,ejs,mongoose,redis,vue.js,kafka
+* egg.js, ejs, mongodb, redis, vue2, kafka
 
 ## 项目开发文档
 * [系统高可用之Mongodb集群分片架构](https://blog.seosiwei.com/performance/colony.html)
