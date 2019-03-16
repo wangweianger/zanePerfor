@@ -14,7 +14,7 @@ class PagesService extends Service {
         const beginTime = query.beginTime;
         const endTime = query.endTime;
         const url = query.url;
-        const tabtype = query.tabtype || 1;
+        let tabtype = query.tabtype || 1;
 
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
@@ -27,6 +27,7 @@ class PagesService extends Service {
             is_first_in: tabtype,
             create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) },
         }, }
+
         if (url) queryjson.$match.url = { $regex: new RegExp(url, 'i') };
 
         const group_id = { 
