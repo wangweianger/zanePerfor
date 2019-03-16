@@ -12,6 +12,7 @@ module.exports = app => {
         full_url: { type: String }, // 完整域名
         pre_url: { type: String }, // 用户访问的上一个页面，本页面来源
         speed_type: { type: Number }, // 访问速度类型 1：正常  2：慢
+        is_first_in: { type: Number }, // 是否是某次会话的首次进入 2: 首次  1：非首次
         mark_page: { type: String }, // 所有资源页面统一标识 html img css js 用户系统信息等
         mark_user: { type: String }, // 统一某一时间段用户标识
         load_time: { type: Number }, // 页面完全加载时间 单位：ms
@@ -29,7 +30,7 @@ module.exports = app => {
         screenheight: { type: Number }, // 屏幕高度
     });
 
-    WebPagesSchema.index({ speed_type: 1, url: 1, create_time: -1 });
+    WebPagesSchema.index({ speed_type: 1, is_first_in: 1, url: 1, create_time: -1 });
     WebPagesSchema.index({ create_time: -1 });
 
     app.models.WebPages = function(appId) {

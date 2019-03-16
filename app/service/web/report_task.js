@@ -58,10 +58,12 @@ class DataTimedTaskService extends Service {
         let query = await this.app.redis.rpop('web_repore_datas');
         if (!query) return;
         query = JSON.parse(query);
+        if (typeof query.isFristIn !== 'boolean') query.isFristIn = false;
 
         const item = {
             app_id: query.appId,
             create_time: new Date(query.time),
+            is_first_in: query.isFristIn ? 2 : 1,
             user_agent: query.user_agent,
             ip: query.ip,
             mark_page: this.app.randomString(),
@@ -123,9 +125,11 @@ class DataTimedTaskService extends Service {
 
     // 单个item储存数据
     async getWebItemDataForKafka(query) {
+        if (typeof query.isFristIn !== 'boolean') query.isFristIn = false;
         const item = {
             app_id: query.appId,
             create_time: new Date(query.time),
+            is_first_in: query.isFristIn ? 2 : 1,
             user_agent: query.user_agent,
             ip: query.ip,
             mark_page: this.app.randomString(),
@@ -255,6 +259,7 @@ class DataTimedTaskService extends Service {
                 pages.full_url = item.url;
                 pages.pre_url = item.pre_url;
                 pages.speed_type = speedType;
+                pages.is_first_in = item.is_first_in;
                 pages.mark_page = item.mark_page;
                 pages.mark_user = item.mark_user;
                 pages.load_time = performance.lodt;

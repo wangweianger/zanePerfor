@@ -14,14 +14,17 @@ class PagesService extends Service {
         const beginTime = query.beginTime;
         const endTime = query.endTime;
         const url = query.url;
+        const tabtype = query.tabtype || 1;
 
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
         type = type * 1;
+        tabtype = tabtype * 1;
 
         // 查询参数拼接
         const queryjson = { $match: {
             speed_type: type,
+            is_first_in: tabtype,
             create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) },
         }, }
         if (url) queryjson.$match.url = { $regex: new RegExp(url, 'i') };

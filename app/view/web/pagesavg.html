@@ -20,7 +20,11 @@
 		<h1 class="com_h1 fl">{{type==1?'页面性能':'慢资源追踪'}}</h1>
 		<commonsearch :done="getDataForTime"></commonsearch>
 	</div>
-	<div class="com_topic mb20 mt20"><span class="iconfont">&#xe63a;</span>统计某一页面的平均访问性能指标。</div>
+	<div class="com_topic mb20 mt20"><span class="iconfont">&#xe63a;</span>统计某一页面的平均访问性能指标，每次会话的首次访问性能指标。</div>
+	<div class="com_slide_tab_x mt30 mb30">
+		<div class="item" :class="{'active':tabtype==2}" @click="checkoutLabel(2)">首次渲染性能统计</div>
+		<div class="item" :class="{'active':tabtype==1}" @click="checkoutLabel(1)">平均渲染性能统计</div>
+	</div>
 	<div>
 		<!-- 公共搜索条件 -->
 		<div class="com_search">
@@ -91,6 +95,7 @@
 				type: util.getQueryString('type') || 1, //访问速度类型 1：正常  2：慢
 				url:'',
 				errText:'',
+				tabtype:2,
 			}
 		},
 		filters: {
@@ -107,6 +112,10 @@
 				this.endTime = times.endTime
 				this.getinit();
 			},
+			checkoutLabel(type) {
+				this.tabtype = type || 1;
+				this.getDataForTime();
+			},
 			getinit() {
 				this.isLoadend = false;
 				util.ajax({
@@ -120,6 +129,7 @@
 						beginTime: this.beginTime,
 						endTime: this.endTime,
 						url: this.url,
+						tabtype: this.tabtype,
 					},
 					success: data => {
 						this.isLoadend = true;

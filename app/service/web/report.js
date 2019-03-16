@@ -15,6 +15,7 @@ class WebReportService extends Service {
 
         const report = ctx.model.Web.WebReport();
         report.app_id = query.appId;
+        report.is_first_in = query.isFristIn ? 2 : 1;
         report.create_time = query.time;
         report.user_agent = ctx.headers['user-agent'];
         report.ip = ip;
