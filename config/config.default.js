@@ -17,12 +17,12 @@ module.exports = () => {
 
     config.middleware = [];
 
-    // 线上环境此处替换为项目根域名 例如 blog.seosiwei.com
+    // 线上环境此处替换为项目根域名 例如:blog.seosiwei.com (这里不需要填写http和斜杠等字符)
+    // 用于安全校验和回调域名根路径 开发路径域名
     config.host = '127.0.0.1';
 
     config.port = 7001;
 
-    // 用于安全校验和回调域名根路径 开发路径域名（必填）
     config.origin = `http://${config.host}:${config.port}`;
 
     // 集群配置（一般默认即可）
@@ -66,12 +66,12 @@ module.exports = () => {
         thread_web: 100,
         // 每次定时任务消费线程数(wx端)
         thread_wx: 100,
-        // 消息队列池限制数, 0：不限制 number: 限制条数 高并发时服务优雅降级方案
+        // 消息队列池限制数, 0：不限制 number: 限制条数，高并发时服务优雅降级方案
         total_limit_web: 10000,
         total_limit_wx: 10000,
     };
 
-    // kafka 配置 (report_data_type=kafka生效)
+    // kafka 配置 (report_data_type = kafka生效)
     // 配置参考 https://www.npmjs.com/package/kafka-node
     config.kafka = {
         client: { // kafkaClient
@@ -121,7 +121,7 @@ module.exports = () => {
         total_limit_wx: 10000,
     };
 
-    // report_data_type=mongodb生效
+    // report_data_type = mongodb 生效
     // db1与db3数据库同步每分钟执行一次
     config.report_task_time = '0 */1 * * * *';
     // db3同步db1上报数据线程数
@@ -132,7 +132,7 @@ module.exports = () => {
 
     // 文件缓存ip对应地理位置（文件名）
     config.ip_city_cache_file = {
-        isuse: false, // 是否开启本地文件缓存
+        isuse: false, // 是否开启本地文件缓存（数据量太大时建议不开启）
         web: 'web_ip_city_cache_file.txt',
         wx: 'wx_ip_city_cache_file.txt',
     };
@@ -143,9 +143,9 @@ module.exports = () => {
         wx: 10,
     };
 
-    // shell重启
+    // shell重启（可选填）
     config.shell_restart = {
-        // mongodb重启shell,如果mongodb进程kill了，请求不了数据库时重启（可选填）
+        // mongodb重启shell,如果mongodb进程kill了，请求不了数据库时重启
         mongodb: [ path.resolve(__dirname, '../mongodb-restart.sh') ],
         // node.js服务重启shell,mongodb重启时，数据库连接池有可能会断，这时需要重启服务
         servers: [ path.resolve(__dirname, '../servers-restart.sh') ],
@@ -178,7 +178,7 @@ module.exports = () => {
     };
 
     // 从 `Node.js 性能平台` 获取对应的接入参数 https://node.console.aliyun.com
-    // plugin.js 开启插件 enable: true
+    // 若要启用 请在 plugin.js 中开启： enable: true 选项
     exports.alinode = {
         appid: 'xxxxxx',
         secret: 'xxxxxx',
