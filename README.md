@@ -70,8 +70,11 @@
 
 ### npm引入使用方式
 ```js
+// install
+npm install web-report --save
+
 // 通用版本引入
-import Performance form 'web-report'
+import { Performance } form 'web-report'
 // 使用
 Performance({
     domain:'http://report.com/api/v1/report/web',
@@ -80,13 +83,13 @@ Performance({
     }
 })
 
-// 按需引入
 import {
-  axiosReport,
-  defaultReport,
-  fetchReport,
-  jqueryReport,
-  noneReport,
+    Performance,
+    axiosReport,
+    defaultReport,
+    fetchReport,
+    jqueryReport,
+    noneReport
 } from 'web-report'
 // 使用
 defaultReport({

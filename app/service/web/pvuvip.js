@@ -32,7 +32,7 @@ class PvuvivService extends Service {
     // 概况统计
     async getPvUvIpSurvey(appId, beginTime, endTime, type) {
         const querydata = { create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
-        const pv = Promise.resolve(this.app.models.WebEnvironment(appId).count(querydata).read('sp').exec());
+        const pv = Promise.resolve(this.app.models.WebPages(appId).count(querydata).read('sp').exec());
         const uv = Promise.resolve(this.app.models.WebEnvironment(appId).distinct('mark_uv', querydata).read('sp').exec());
         const ip = Promise.resolve(this.app.models.WebEnvironment(appId).distinct('ip', querydata).read('sp').exec());
         if (!type) {

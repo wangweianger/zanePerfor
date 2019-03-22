@@ -38,7 +38,7 @@ class WebReportService extends Service {
     // 获得pvuvip数据
     async savePvUvIpData(appId, endTime, type, query) {
         try {
-            const pvpro = Promise.resolve(this.app.models.WebEnvironment(appId).count(query).read('sp'));
+            const pvpro = Promise.resolve(this.app.models.WebPages(appId).count(query).read('sp'));
             const uvpro = Promise.resolve(this.app.models.WebEnvironment(appId).distinct('mark_uv', query).read('sp'));
             const ippro = Promise.resolve(this.app.models.WebEnvironment(appId).distinct('ip', query).read('sp'));
             let data = [];

@@ -58,25 +58,9 @@ class DataTimedTaskService extends Service {
         let query = await this.app.redis.rpop('web_repore_datas');
         if (!query) return;
         query = JSON.parse(query);
-        if (typeof query.isFristIn !== 'boolean') query.isFristIn = false;
 
-        const item = {
-            app_id: query.appId,
-            create_time: new Date(query.time),
-            is_first_in: query.isFristIn ? 2 : 1,
-            user_agent: query.user_agent,
-            ip: query.ip,
-            mark_page: this.app.randomString(),
-            mark_user: query.markUser,
-            mark_uv: query.markUv,
-            url: query.url,
-            pre_url: query.preUrl,
-            performance: query.performance,
-            error_list: query.errorList,
-            resource_list: query.resourceList,
-            screenwidth: query.screenwidth,
-            screenheight: query.screenheight,
-        };
+        const querytype = query.type || 1;
+        const item = await this.handleData(query);
 
         let system = {};
         // 做一次appId缓存
@@ -87,7 +71,7 @@ class DataTimedTaskService extends Service {
             this.cacheJson[item.app_id] = system;
         }
         if (system.is_use !== 0) return;
-        if (system.is_statisi_pages === 0) this.savePages(item, system.slow_page_time);
+        if (system.is_statisi_pages === 0 && querytype === 1) this.savePages(item, system.slow_page_time);
         if (system.is_statisi_resource === 0 || system.is_statisi_ajax === 0) this.forEachResources(item, system);
         if (system.is_statisi_error === 0) this.saveErrors(item);
         if (system.is_statisi_system === 0) this.saveEnvironment(item);
@@ -111,7 +95,7 @@ class DataTimedTaskService extends Service {
         try {
             if (!message.value) return;
             const json = {};
-            const query = JSON.parse(message.value);
+            const query = JSON.parse(message.value) || {};
             if (json.time) return;
             json.time = query.time;
 
@@ -125,24 +109,9 @@ class DataTimedTaskService extends Service {
 
     // 单个item储存数据
     async getWebItemDataForKafka(query) {
-        if (typeof query.isFristIn !== 'boolean') query.isFristIn = false;
-        const item = {
-            app_id: query.appId,
-            create_time: new Date(query.time),
-            is_first_in: query.isFristIn ? 2 : 1,
-            user_agent: query.user_agent,
-            ip: query.ip,
-            mark_page: this.app.randomString(),
-            mark_user: query.markUser,
-            mark_uv: query.markUv,
-            url: query.url,
-            pre_url: query.preUrl,
-            performance: query.performance,
-            error_list: query.errorList,
-            resource_list: query.resourceList,
-            screenwidth: query.screenwidth,
-            screenheight: query.screenheight,
-        };
+        const type = query.type || 1;
+        const item = await this.handleData(query);
+
         let system = {};
         // 做一次appId缓存
         if (this.cacheJson[item.app_id]) {
@@ -158,7 +127,7 @@ class DataTimedTaskService extends Service {
         if (this.kafkatotal && this.kafkalist.length >= this.kafkatotal) return;
         this.kafkalist.push(msgtab);
 
-        if (system.is_statisi_pages === 0) {
+        if (system.is_statisi_pages === 0 && type === 1) {
             this.savePages(item, system.slow_page_time, () => {
                 // 释放
                 const index = this.kafkalist.indexOf(msgtab);
@@ -241,6 +210,43 @@ class DataTimedTaskService extends Service {
         });
     }
 
+    // 数据操作层
+    async handleData(query) {
+        const type = query.type || 1;
+
+        let item = {
+            app_id: query.appId,
+            create_time: new Date(query.time),
+            user_agent: query.user_agent,
+            ip: query.ip,
+            mark_page: this.app.randomString(),
+            mark_user: query.markUser,
+            mark_uv: query.markUv,
+            url: query.url,
+        };
+
+        if (type === 1) {
+            // 页面级性能
+            if (typeof query.isFristIn !== 'boolean') query.isFristIn = false;
+            item = Object.assign(item, {
+                is_first_in: query.isFristIn ? 2 : 1,
+                pre_url: query.preUrl,
+                performance: query.performance,
+                error_list: query.errorList,
+                resource_list: query.resourceList,
+                screenwidth: query.screenwidth,
+                screenheight: query.screenheight,
+            });
+        } else if (type === 2 || type === 3) {
+            // AJAX性能
+            item = Object.assign(item, {
+                error_list: query.errorList,
+                resource_list: query.resourceList,
+            });
+        }
+        return item;
+    }
+
     // 储存网页性能数据
     async savePages(item, slowPageTime = 5, fn) {
         try {
@@ -248,7 +254,7 @@ class DataTimedTaskService extends Service {
             const performance = item.performance;
             if (item.performance && item.performance.lodt > 0) {
                 const newurl = url.parse(item.url);
-                const newName = newurl.protocol + '//' + newurl.host + newurl.pathname;
+                const newName = `${newurl.protocol}//${newurl.host}${newurl.pathname}${newurl.hash ? newurl.hash : ''}`;
 
                 slowPageTime = slowPageTime * 1000;
                 const speedType = performance.lodt >= slowPageTime ? 2 : 1;
