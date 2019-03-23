@@ -70,6 +70,7 @@ class DataTimedTaskService extends Service {
             system = await this.service.system.getSystemForAppId(item.app_id);
             this.cacheJson[item.app_id] = system;
         }
+        // 是否禁用上报
         if (system.is_use !== 0) return;
         if (system.is_statisi_pages === 0 && querytype === 1) this.savePages(item, system.slow_page_time);
         if (system.is_statisi_resource === 0 || system.is_statisi_ajax === 0) this.forEachResources(item, system);
@@ -120,6 +121,7 @@ class DataTimedTaskService extends Service {
             system = await this.service.system.getSystemForAppId(item.app_id);
             this.cacheJson[item.app_id] = system;
         }
+        // 是否禁用上报
         if (system.is_use !== 0) return;
 
         // kafka 连接池限制
@@ -202,6 +204,9 @@ class DataTimedTaskService extends Service {
                 this.cacheJson[item.app_id] = system;
             }
 
+            // 是否禁用上报
+            if (system.is_use !== 0) return;
+
             const querytype = item.type || 1;
             item = await this.handleData({
                 type: item.type,
@@ -222,7 +227,6 @@ class DataTimedTaskService extends Service {
                 isFristIn: item.is_first_in,
             });
 
-            if (system.is_use !== 0) return;
             if (system.is_statisi_pages === 0 && querytype === 1) this.savePages(item, system.slow_page_time);
             if (system.is_statisi_resource === 0 || system.is_statisi_ajax === 0) this.forEachResources(item, system);
             if (system.is_statisi_error === 0) this.saveErrors(item);
