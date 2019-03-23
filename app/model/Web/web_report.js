@@ -22,6 +22,7 @@ module.exports = app => {
         resource_list: { type: Mixed }, // 资源性能数据列表
         screenwidth: { type: Number }, // 屏幕宽度
         screenheight: { type: Number }, // 屏幕高度
+        type: { type: Number }, // 1:网页性能上报  2：后续操作ajax上报 3：后续操作错误上报
     });
     WebReportSchema.index({ create_time: 1 });
 

@@ -201,8 +201,29 @@ class DataTimedTaskService extends Service {
                 system = await this.service.system.getSystemForAppId(item.app_id);
                 this.cacheJson[item.app_id] = system;
             }
+
+            const querytype = item.type || 1;
+            item = await this.handleData({
+                type: item.type,
+                appId: item.app_id,
+                time: item.create_time,
+                user_agent: item.user_agent,
+                ip: item.ip,
+                markPage: item.mark_page,
+                markUser: item.mark_user,
+                markUv: item.mark_uv,
+                url: item.url,
+                preUrl: item.pre_url,
+                performance: item.performance,
+                errorList: item.error_list,
+                resourceList: item.resource_list,
+                screenwidth: item.screenwidth,
+                screenheight: item.screenheight,
+                isFristIn: item.is_first_in,
+            });
+
             if (system.is_use !== 0) return;
-            if (system.is_statisi_pages === 0) this.savePages(item, system.slow_page_time);
+            if (system.is_statisi_pages === 0 && querytype === 1) this.savePages(item, system.slow_page_time);
             if (system.is_statisi_resource === 0 || system.is_statisi_ajax === 0) this.forEachResources(item, system);
             if (system.is_statisi_error === 0) this.saveErrors(item);
             if (system.is_statisi_system === 0) this.saveEnvironment(item);
@@ -219,7 +240,7 @@ class DataTimedTaskService extends Service {
             create_time: new Date(query.time),
             user_agent: query.user_agent,
             ip: query.ip,
-            mark_page: this.app.randomString(),
+            mark_page: query.markPage || this.app.randomString(),
             mark_user: query.markUser,
             mark_uv: query.markUv,
             url: query.url,
