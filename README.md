@@ -100,7 +100,7 @@ defaultReport({
 })
 ```
 
-### 浏览器端上报SDK web-report-sdk：
+### 浏览器端上报SDK详细说明文档请参考：web-report-sdk：
 https://github.com/wangweianger/web-report-sdk
 
 ## 微信小程序端使用说明
@@ -118,7 +118,7 @@ new wxRepotSdk({
 })
 
 ```
-### 小程序端上报SDK wx-report-sdk：
+### 小程序端上报SDK详细说明文档请参考：wx-report-sdk：
 https://github.com/wangweianger/wx-report-sdk
 
 ## docker 安装配置环境(非必须)
