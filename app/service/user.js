@@ -1,5 +1,5 @@
 'use strict';
-
+const crypto = require('crypto');
 const Service = require('egg').Service;
 
 class UserService extends Service {
@@ -9,7 +9,12 @@ class UserService extends Service {
         // 检测用户是否存在
         const userInfo = await this.getUserInfoForUserName(userName);
         if (!userInfo.token) throw new Error('用户名不存在！');
-        if (userInfo.pass_word !== passWord) throw new Error('用户密码不正确！');
+
+        const newPwd = crypto.createHmac('sha256', passWord)
+            .update(this.app.config.user_pwd_salt_addition)
+            .digest('hex');
+
+        if (userInfo.pass_word !== newPwd) throw new Error('用户密码不正确！');
         if (userInfo.is_use !== 0) throw new Error('用户被冻结不能登录，请联系管理员！');
 
         // 清空以前的登录态
@@ -44,12 +49,15 @@ class UserService extends Service {
         const userInfo = await this.getUserInfoForUserName(userName);
         if (userInfo.token) throw new Error('用户注册：用户已存在！');
 
+        const newPwd = crypto.createHmac('sha256', passWord)
+            .update(this.app.config.user_pwd_salt_addition)
+            .digest('hex');
+
         // 新增用户
         const token = this.app.randomString();
-
         const user = this.ctx.model.User();
         user.user_name = userName;
-        user.pass_word = passWord;
+        user.pass_word = newPwd;
         user.token = token;
         user.create_time = new Date();
         user.level = userName === 'admin' ? 0 : 1;

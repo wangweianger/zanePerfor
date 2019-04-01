@@ -34,6 +34,9 @@ module.exports = () => {
         },
     };
 
+    // 用户密码加盐随机值
+    config.user_pwd_salt_addition = 'ZANEHELLOBEAUTIFUL';
+
     // 用户登录态持续时间 1 天
     config.user_login_timeout = 86400;
 
