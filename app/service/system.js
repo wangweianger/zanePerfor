@@ -44,7 +44,7 @@ class SystemService extends Service {
             data: result,
         });
         // 存储到redis
-        await this.app.redis.set(token, JSON.stringify(result));
+        this.updateSystemCache(token);
     }
     // 保存用户上报的数据
     async updateSystemData(ctx) {
