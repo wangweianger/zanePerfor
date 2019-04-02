@@ -15,10 +15,18 @@ class WebReportService extends Service {
     }
     // 定时执行每分钟的数据
     async getWebPvUvIpByMinute() {
+        let between = 0;
+        if (this.app.config.report_data_type === 'redis') {
+            const interval = parser.parseExpression(this.app.config.redis_consumption.task_time);
+            between = Math.abs(new Date(interval.next().toString()).getTime() - new Date(interval.next().toString()).getTime());
+        } else if (this.app.config.report_data_type === 'mongodb') {
+            const interval = parser.parseExpression(this.app.config.report_task_time);
+            between = Math.abs(new Date(interval.next().toString()).getTime() - new Date(interval.next().toString()).getTime());
+        }
+
         const interval = parser.parseExpression(this.app.config.pvuvip_task_minute_time);
-        interval.prev();
-        const endTime = new Date(interval.prev().toString());
-        const beginTime = new Date(endTime.getTime() - 60000);
+        const endTime = new Date(interval.prev().toString()).getTime() - between;
+        const beginTime = new Date(interval.prev().toString()).getTime() - between;
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
 
         const datas = await this.ctx.model.System.distinct('app_id', { type: 'web' }).read('sp').exec();

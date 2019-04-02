@@ -55,8 +55,12 @@ class PvUvIpController extends Controller {
         // 参数校验
         if (!appId) throw new Error('界面查询pvuvip：appId不能为空');
 
+        // 计算定时任务间隔
+        const interval = parser.parseExpression(this.app.config.pvuvip_task_minute_time);
+        const betweenTime = Math.abs(new Date(interval.next().toString()).getTime() - new Date(interval.next().toString()).getTime());
+
         const timestrat = new Date().getTime();
-        const beginTime = query.beginTime || new Date(timestrat - 3660000);
+        const beginTime = query.beginTime || new Date(timestrat - betweenTime * 30 - 60000);
         const endTime = query.endTime || new Date(timestrat - 60000);
 
         const datalist = await ctx.service.wx.pvuvip.getPvUvIpData(appId, beginTime, endTime) || [];

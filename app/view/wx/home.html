@@ -1,42 +1,48 @@
 <% include ./side.html %>
 <style scoped>
-	.survey{
+	.survey {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 	}
-	.survey .com{
-		font-size:50px;
-		width:350px;
+
+	.survey .com {
+		font-size: 50px;
+		width: 350px;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 	}
-	.survey .pv{
-		font-size:60px;
-		font-weight:bold;
-		color:#8776f7;
+
+	.survey .pv {
+		font-size: 60px;
+		font-weight: bold;
+		color: #8776f7;
 	}
-	.survey .com span{
-		font-size:16px;
-		margin-right:20px;
+
+	.survey .com span {
+		font-size: 16px;
+		margin-right: 20px;
 	}
-	.search_1 .inp{
-		background:#fff;
+
+	.search_1 .inp {
+		background: #fff;
 	}
+
 	@media (max-width: 768px) {
-		.survey .com{
-			margin-left:0!important;
-			font-size:20px;
+		.survey .com {
+			margin-left: 0 !important;
+			font-size: 20px;
 			width: 80px;
-			text-align:center;
-			display:flex;
+			text-align: center;
+			display: flex;
 			align-items: center;
 			flex-direction: column;
 		}
-		.survey .com span{
-			margin-right:3px;
-			display:block;
+
+		.survey .com span {
+			margin-right: 3px;
+			display: block;
 		}
 	}
 </style>
@@ -52,13 +58,14 @@
 			<h1 class="com_h2 mb20">查询某日概况</h1>
 			<div class='search mb20'>
 				<input id="zane-calendar-1" class="inp" type="text" placeholder="点击选择日期">
+				<div class="tipscolor mt10" v-if="errTextleft">{{errTextleft}}</div>
 			</div>
 			<div class="survey" v-if="surveyone.app_id">
 				<div class="com pv ml50"><span>PV: </span>{{surveyone.pv}}</div>
 				<div class="com uv"><span>UV: </span>{{surveyone.uv}}</div>
 				<div class="com ip"><span>IP: </span>{{surveyone.ip}}</div>
 				<div class="com ip"><span>跳出率: </span>{{surveyone.bounce||'0%'}}</div>
-				<div class="com ip"><span>平均访问深度: </span>{{surveyone.depth||0}}</div>
+				<div class="com ip"><span>访问深度: </span>{{surveyone.depth||0}}</div>
 			</div>
 		</div>
 		<div class="com_block mt20">
@@ -69,14 +76,16 @@
 				<div class="com ip"><span>IP: </span>{{today.ip||0}}</div>
 			</div>
 		</div>
-		<div class="com_block mt20" v-for="item in historylist">
-			<h1 class="com_h2 mb20">{{item.create_time|date}}</h1>
-			<div class="survey">
-				<div class="com pv ml50"><span>PV: </span>{{item.pv||0}}</div>
-				<div class="com uv"><span>UV: </span>{{item.uv||0}}</div>
-				<div class="com ip"><span>IP: </span>{{item.ip||0}}</div>
-				<div class="com ip"><span>跳出率: </span>{{item.bounce||'0%'}}</div>
-				<div class="com ip"><span>平均访问深度: </span>{{item.depth||0}}</div>
+		<div v-if="historylist.length" >
+			<div class="com_block mt20" v-for="(item,index) in historylist" :key="index">
+				<h1 class="com_h2 mb20">{{item.create_time|date}}</h1>
+				<div class="survey">
+					<div class="com pv ml50"><span>PV: </span>{{item.pv||0}}</div>
+					<div class="com uv"><span>UV: </span>{{item.uv||0}}</div>
+					<div class="com ip"><span>IP: </span>{{item.ip||0}}</div>
+					<div class="com ip"><span>跳出率: </span>{{item.bounce||'0%'}}</div>
+					<div class="com ip"><span>访问深度: </span>{{item.depth||0}}</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -102,270 +111,284 @@
 </div>
 
 <script>
-let myChartPV, myChartUV, myChartIP;
-new Vue({
-	el: '#vue_id',
-	data: function () {
-		return {
-			lable:1, //1:概况 2：pv|uv|ip
-			beginTime:'',
-			endTime:'',
-			timer:null,
-			appId: util.getStorage('local', 'appId'),
-			datalist:[],
-			today: {},
-			surveyone:{},
-			errText:'',
-			errTextleft:'',
-			historylist: [],
-		}
-	},
-	filters: {
-		date: window.Filter.date
-	},
-	mounted() {
-		this.getPvUvIpSurvey();
-		this.getHistoryPvUvIplist();
-		zaneDate({
-			elem: '#zane-calendar-1',
-			width: 300,  
-			done: (fulltime, begintime, endtime) => { 
-				let beginTime = begintime+' 00:00:00'
-				let endTime = begintime + ' 23:59:59'
-				const maxday = new Date(new Date().format('yyyy/MM/dd') + ' 00:00:00').getTime();
-				const beginday = new Date(beginTime).getTime();
-				if (beginday >= maxday) {
-					this.errTextleft = '选择时间不能大于今日，请选择小于今日的历史间进行查询。';
-					return;
-				}
-				this.errTextleft = '';
-				this.getPvUvIpSurveyOne(beginTime,endTime)
-			}, 
-		})
-		zaneDate({
-			elem: '#zane-calendar-2',
-			type:'doubleday',
-			format: 'yyyy/MM/dd HH:mm:ss',
-			showtime: true,
-			done: (fulltime, begintime, endtime) => {
-				this.errText = '';
-				let beginstrap = new Date(begintime).getTime();
-				let endstrap = new Date(endtime).getTime();
-				let between = endstrap - beginstrap;
-				if(between<0){
-					this.errText = "结束时间不能小于开始时间。";
-					return false;
-				}
-				if (between > 3600000) {
-					this.errText = "时间粒度选择1小时以内，支持所有时间段的查询。";
-					return false;
-				}
-				this.beginTime = begintime;
-				this.endTime = endtime;
-				this.getPvUvIpList();
-			},
-		})
-	},
-	methods: {
-		checkoutLabel(lable){
-			this.lable = lable;
-			this.beginTime = '';
-			this.endTime = '';
+	let myChartPV, myChartUV, myChartIP;
+	new Vue({
+		el: '#vue_id',
+		data: function () {
+			return {
+				lable: 1, //1:概况 2：pv|uv|ip
+				beginTime: '',
+				endTime: '',
+				timer: null,
+				appId: util.getStorage('local', 'appId'),
+				datalist: [],
+				today: {},
+				surveyone: {},
+				errText: '',
+				errTextleft: '',
+				historylist: [],
+			}
+		},
+		filters: {
+			date: window.Filter.date
+		},
+		mounted() {
+			this.xAxislist = [];
+			this.itemlist1 = [];
+			this.itemlist2 = [];
+			this.itemlist3 = [];
 
-			if(lable == 1){
-				this.getPvUvIpSurvey();
-			}else if(lable == 2){
-				this.getPvUvIpList();
-			};
-		},
-		// 概况
-		getPvUvIpSurvey(){
-			util.ajax({
-				type:'get',
-				url: `${config.baseApi}api/v1/wx/pvuvip/getPvUvIpSurvey`,
-				data:{
-					appId:this.appId,
-					beginTime: this.beginTime,
-					endTime: this.beginTime,
-				},
-				success: (data) => {
-					this.today = data.data;
-				}
-			})
-		},
-		// 某日概况
-		getPvUvIpSurveyOne(beginTime, endTime){
-			util.ajax({
-				type: 'get',
-				url: `${config.baseApi}api/v1/wx/pvuvip/getPvUvIpSurveyOne`,
-				data: {
-					appId: this.appId,
-					beginTime: beginTime,
-					endTime: endTime,
-				},
-				success: (data) => {
-					this.surveyone = data.data;
-				}
-			})
-		},
-		// 历史统计列表
-		getHistoryPvUvIplist() {
-			util.ajax({
-				type: 'get',
-				url: `${config.baseApi}api/v1/wx/pvuvip/getHistoryPvUvIplist`,
-				data: {
-					appId: this.appId,
-				},
-				success: (data) => {
-					this.historylist = data.data || [];
-				}
-			})
-		},
-		getPvUvIpList(isInter){
-			clearInterval(this.timer);
-			util.ajax({
-				url: `${config.baseApi}api/v1/wx/pvuvip/getPvUvIpList`,
-				data:{
-					appId: this.appId,
-					beginTime:this.beginTime,
-					endTime:this.endTime,
-				},
-				success: (data) => {
-					const xAxislist = [];
-					const itemlist1 = [];
-					const itemlist2 = [];
-					const itemlist3 = [];
-					data.data.forEach(item=>{
-						let time = new Date(item.time).format('HH:mm');
-						xAxislist.push(time);
-						itemlist1.push(item.pv)
-						itemlist2.push(item.uv)
-						itemlist3.push(item.ip)
-					});
-					this.drow('PV',xAxislist, itemlist1);
-					this.drow('UV', xAxislist, itemlist2);
-					this.drow('IP', xAxislist, itemlist3);
-					this.timer = setInterval(() => {
-						this.getPvUvIpOne();
-					}, 60000)
-				}
-			})
-		},
-		getPvUvIpOne(){
-			util.ajax({
-				url: `${config.baseApi}api/v1/wx/pvuvip/getPvUvIpOne`,
-				data: {
-					type: this.type,
-					appId: this.appId,
-				},
-				success: (data) => {
-					let datas = data.data;
-					let time = new Date(datas.time).format('mm');
-					// 动态数据接口 addData
-					myChartPV.addData(0, datas.pv, false, false, time);
-					myChartUV.addData(0, datas.uv, false, false, time);
-					myChartIP.addData(0, datas.ip, false, false, time);
-				}
-			})
-		},
-		drow(type, xAxislist, itemlist){
-			// 基于准备好的dom，初始化echarts图表
-			let color = '';
-			if(type=='PV'){
-				myChartPV = echarts.init(document.getElementById('pvuvip_pv'));
-				color = '#42aaff'
-			}else if(type == 'UV'){
-				myChartUV = echarts.init(document.getElementById('pvuvip_uv'));
-				color = '#58d17e'
-			}else if(type == 'IP'){
-				myChartIP = echarts.init(document.getElementById('pvuvip_ip'));
-				color = '#f46d85'
-			}
-			const option = {
-				tooltip: {
-					trigger: 'axis'
-				},
-				legend: {
-					data: [type]
-				},
-				color:[color],
-				toolbox: {
-					show: false,
-					feature: {
-						mark: { show: true },
-						magicType: { show: true, type: ['line', 'bar', 'stack', 'tiled'] },
-						restore: { show: true },
-						saveAsImage: { show: false }
+			this.getPvUvIpSurvey();
+			this.getHistoryPvUvIplist();
+			zaneDate({
+				elem: '#zane-calendar-1',
+				width: 300,
+				done: (fulltime, begintime, endtime) => {
+					let beginTime = begintime + ' 00:00:00'
+					let endTime = begintime + ' 23:59:59'
+					const maxday = new Date(new Date().format('yyyy/MM/dd') + ' 00:00:00').getTime();
+					const beginday = new Date(beginTime).getTime();
+					if (beginday >= maxday) {
+						this.errTextleft = '选择时间不能大于今日，请选择小于今日的历史间进行查询。';
+						return;
 					}
+					this.errTextleft = '';
+					this.getPvUvIpSurveyOne(beginTime, endTime)
 				},
-				grid:{
-					borderWidth:0,
+			})
+			zaneDate({
+				elem: '#zane-calendar-2',
+				type: 'doubleday',
+				format: 'yyyy/MM/dd HH:mm:ss',
+				showtime: true,
+				done: (fulltime, begintime, endtime) => {
+					this.errText = '';
+					let beginstrap = new Date(begintime).getTime();
+					let endstrap = new Date(endtime).getTime();
+					let between = endstrap - beginstrap;
+					if (between < 0) {
+						this.errText = "结束时间不能小于开始时间。";
+						return false;
+					}
+					if (between > 3600000) {
+						this.errText = "时间粒度选择1小时以内，支持所有时间段的查询。";
+						return false;
+					}
+					this.beginTime = begintime;
+					this.endTime = endtime;
+					this.getPvUvIpList();
 				},
-				xAxis: [
-					{
-						type: 'category',
-						data: xAxislist,
-						splitLine: {
-							show: false,
-						},
-						axisTick: {
-							show: true,
-							lineStyle: {
-								color: '#eee',
-							}
-						},
-						axisLabel: {
-							show: true,
-							textStyle: {
-								color: '#B7B7B7',
-								fontSize:10,
-							},
-						},
-					}
-				],
-				yAxis: [
-					{
-						type: 'value',
-						axisLabel: {
-							show: true,
-							textStyle: {
-								color: '#B7B7B7',
-							}
-						},
-						splitLine: {
-							show: true,
-							lineStyle: {
-								type: 'dashed',
-								color: '#eee',
-								width: 1,
-							}
-						},
-						axisLine: {
-							show: false,
-						},
-					}
-				],
-				series: [
-					{
-						name: type,
-						type: 'line',
-						smooth: true,
-						itemStyle: { normal: { areaStyle: { type: 'default' } } },
-						data: itemlist
+			})
+		},
+		methods: {
+			checkoutLabel(lable) {
+				this.lable = lable;
+				this.beginTime = '';
+				this.endTime = '';
+
+				if (lable == 1) {
+					this.getPvUvIpSurvey();
+					this.getHistoryPvUvIplist();
+				} else if (lable == 2) {
+					this.getPvUvIpList();
+				};
+			},
+			// 概况
+			getPvUvIpSurvey() {
+				util.ajax({
+					type: 'get',
+					url: `${config.baseApi}api/v1/wx/pvuvip/getPvUvIpSurvey`,
+					data: {
+						appId: this.appId,
+						beginTime: this.beginTime,
+						endTime: this.beginTime,
 					},
-				]
-			};
-			// 为echarts对象加载数据 
-			if (type == 'PV') {
-				myChartPV.setOption(option); 
-			} else if (type == 'UV') {
-				myChartUV.setOption(option); 
-			} else if (type == 'IP') {
-				myChartIP.setOption(option); 
+					success: (data) => {
+						this.today = data.data;
+					}
+				})
+			},
+			// 某日概况
+			getPvUvIpSurveyOne(beginTime, endTime) {
+				util.ajax({
+					type: 'get',
+					url: `${config.baseApi}api/v1/wx/pvuvip/getPvUvIpSurveyOne`,
+					data: {
+						appId: this.appId,
+						beginTime: beginTime,
+						endTime: endTime,
+					},
+					success: (data) => {
+						this.surveyone = data.data;
+					}
+				})
+			},
+			// 历史统计列表
+			getHistoryPvUvIplist() {
+				util.ajax({
+					type: 'get',
+					url: `${config.baseApi}api/v1/wx/pvuvip/getHistoryPvUvIplist`,
+					data: {
+						appId: this.appId,
+					},
+					success: (data) => {
+						this.historylist = data.data || [];
+					}
+				})
+			},
+			getPvUvIpList(isInter) {
+				clearInterval(this.timer);
+				util.ajax({
+					url: `${config.baseApi}api/v1/pvuvip/getPvUvIpList`,
+					data: {
+						appId: this.appId,
+						beginTime: this.beginTime,
+						endTime: this.endTime,
+					},
+					success: (data) => {
+						this.xAxislist = [];
+						this.itemlist1 = [];
+						this.itemlist2 = [];
+						this.itemlist3 = [];
+						data.data.forEach(item => {
+							let time = new Date(item.time).format('HH:mm');
+							this.xAxislist.push(time);
+							this.itemlist1.push(item.pv)
+							this.itemlist2.push(item.uv)
+							this.itemlist3.push(item.ip)
+						});
+						this.drow('PV', this.xAxislist, this.itemlist1);
+						this.drow('UV', this.xAxislist, this.itemlist2);
+						this.drow('IP', this.xAxislist, this.itemlist3);
+						this.timer = setInterval(() => {
+							this.getPvUvIpOne();
+						}, 60000)
+					}
+				})
+			},
+			getPvUvIpOne() {
+				util.ajax({
+					url: `${config.baseApi}api/v1/wx/pvuvip/getPvUvIpOne`,
+					data: {
+						type: this.type,
+						appId: this.appId,
+					},
+					success: (data) => {
+						let datas = data.data;
+						let time = new Date(datas.time).format('mm');
+						// 动态数据接口 addData
+						this.xAxislist.shift();
+						this.itemlist1.shift();
+						this.itemlist2.shift();
+						this.itemlist3.shift();
+
+						this.xAxislist.push(time);
+						this.itemlist1.push(datas.pv || 0)
+						this.itemlist2.push(datas.uv || 0)
+						this.itemlist3.push(datas.ip || 0)
+
+						myChartPV.setOption({ series: [{ data: this.itemlist1 }] });
+					}
+				})
+			},
+			drow(type, xAxislist, itemlist) {
+				// 基于准备好的dom，初始化echarts图表
+				let color = '';
+				if (type == 'PV') {
+					myChartPV = echarts.init(document.getElementById('pvuvip_pv'));
+					color = '#42aaff'
+				} else if (type == 'UV') {
+					myChartUV = echarts.init(document.getElementById('pvuvip_uv'));
+					color = '#58d17e'
+				} else if (type == 'IP') {
+					myChartIP = echarts.init(document.getElementById('pvuvip_ip'));
+					color = '#f46d85'
+				}
+				const option = {
+					tooltip: {
+						trigger: 'axis'
+					},
+					legend: {
+						data: [type]
+					},
+					color: [color],
+					toolbox: {
+						show: false,
+						feature: {
+							mark: { show: true },
+							magicType: { show: true, type: ['line', 'bar', 'stack', 'tiled'] },
+							restore: { show: true },
+							saveAsImage: { show: false }
+						}
+					},
+					grid: {
+						borderWidth: 0,
+					},
+					xAxis: [
+						{
+							type: 'category',
+							data: xAxislist,
+							splitLine: {
+								show: false,
+							},
+							axisTick: {
+								show: true,
+								lineStyle: {
+									color: '#eee',
+								}
+							},
+							axisLabel: {
+								show: true,
+								textStyle: {
+									color: '#B7B7B7',
+									fontSize: 10,
+								},
+							},
+						}
+					],
+					yAxis: [
+						{
+							type: 'value',
+							axisLabel: {
+								show: true,
+								textStyle: {
+									color: '#B7B7B7',
+								}
+							},
+							splitLine: {
+								show: true,
+								lineStyle: {
+									type: 'dashed',
+									color: '#eee',
+									width: 1,
+								}
+							},
+							axisLine: {
+								show: false,
+							},
+						}
+					],
+					series: [
+						{
+							name: type,
+							type: 'line',
+							smooth: true,
+							itemStyle: { normal: { areaStyle: { type: 'default' } } },
+							data: itemlist
+						},
+					]
+				};
+				// 为echarts对象加载数据 
+				if (type == 'PV') {
+					myChartPV.setOption(option);
+				} else if (type == 'UV') {
+					myChartUV.setOption(option);
+				} else if (type == 'IP') {
+					myChartIP.setOption(option);
+				}
 			}
-		}
-	},
-})
+		},
+	})
 
 
 </script>

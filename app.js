@@ -2,12 +2,14 @@
 
 module.exports = async app => {
     app.models = {};
-    if (app.config.report_data_type === 'kafka') {
-        app.beforeStart(async () => {
+    app.beforeStart(async () => {
+        const ctx = app.createAnonymousContext();
+        if (app.config.report_data_type === 'kafka') {
             // kafka消费者
-            const ctx = app.createAnonymousContext();
             ctx.service.web.reportTask.saveWebReportDatasForKafka();
             ctx.service.wx.reportTask.saveWxReportDatasForKafka();
-        });
-    }
+        } else if (app.config.report_data_type === 'redisPubSub') {
+            ctx.service.wx.reportTask.saveWxReportDatasForRedisPubSub();
+        }
+    });
 };

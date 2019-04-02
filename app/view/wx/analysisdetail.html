@@ -238,6 +238,9 @@
 					success: data => {
 						if (data.data && data.data.length) {
 							data.data.forEach((item,i)=>{
+								if(item.model && item.model.length>14){
+									item.model = item.model.substring(0,14)+'...'
+								}
 								if(data.data[i+1]){
 									let day = 0;
 									let hour = 0;

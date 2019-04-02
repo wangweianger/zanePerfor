@@ -46,7 +46,7 @@ module.exports = () => {
     // wx小程序端定时任务是否执行
     config.is_wx_task_run = true;
 
-    // 执行pvuvip定时任务的时间间隔 每分钟定时执行一次
+    // 执行pvuvip定时任务的时间间隔 每分钟定时执行一次 (可更改)
     config.pvuvip_task_minute_time = '0 */1 * * * *';
 
     // 执行pvuvip定时任务的时间间隔 每天定时执行一次

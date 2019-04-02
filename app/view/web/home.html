@@ -70,14 +70,16 @@
 				<div class="com ip"><span>IP: </span>{{today.ip||0}}</div>
 			</div>
 		</div>
-		<div class="com_block mt20" v-if="historylist.length" v-for="item in historylist">
-			<h1 class="com_h2 mb20">{{item.create_time|date}}</h1>
-			<div class="survey">
-				<div class="com pv ml50"><span>PV: </span>{{item.pv||0}}</div>
-				<div class="com uv"><span>UV: </span>{{item.uv||0}}</div>
-				<div class="com ip"><span>IP: </span>{{item.ip||0}}</div>
-				<div class="com ip"><span>跳出率: </span>{{item.bounce||'0%'}}</div>
-				<div class="com ip"><span>访问深度: </span>{{item.depth||0}}</div>
+		<div v-if="historylist.length">
+			<div class="com_block mt20" v-for="(item,index) in historylist" :key="index">
+				<h1 class="com_h2 mb20">{{item.create_time|date}}</h1>
+				<div class="survey">
+					<div class="com pv ml50"><span>PV: </span>{{item.pv||0}}</div>
+					<div class="com uv"><span>UV: </span>{{item.uv||0}}</div>
+					<div class="com ip"><span>IP: </span>{{item.ip||0}}</div>
+					<div class="com ip"><span>跳出率: </span>{{item.bounce||'0%'}}</div>
+					<div class="com ip"><span>访问深度: </span>{{item.depth||0}}</div>
+				</div>
 			</div>
 		</div>
 	</div>
