@@ -10,6 +10,7 @@ module.exports = app => {
         pv: { type: Number }, // PV统计
         uv: { type: Number }, // uv统计
         ip: { type: Number }, // ip统计
+        ajax: { type: Number }, // ajax访问量统计
         bounce: { type: String }, // 跳出率
         depth: { type: Number }, // 平均访问深度
         type: { type: Number, default: 1 }, // 1:每分钟数据  2：每小时数据

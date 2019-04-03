@@ -90,9 +90,10 @@ class PvUvIpController extends Controller {
         if (datalist.length) {
             result = {
                 time: datalist[0].create_time,
-                pv: datalist[0].pv,
-                uv: datalist[0].uv,
-                ip: datalist[0].ip,
+                pv: datalist[0].pv || 0,
+                uv: datalist[0].uv || 0,
+                ip: datalist[0].ip || 0,
+                ajax: datalist[0].ajax || 0,
             };
         } else {
             result = {
@@ -100,6 +101,7 @@ class PvUvIpController extends Controller {
                 pv: 0,
                 uv: 0,
                 ip: 0,
+                ajax: 0,
             };
         }
         ctx.body = this.app.result({
@@ -125,12 +127,14 @@ class PvUvIpController extends Controller {
                     pv: 0,
                     uv: 0,
                     ip: 0,
+                    ajax: 0,
                 };
                 datalist.forEach(item => {
                     if (date.getTime() === new Date(item.create_time).getTime()) {
-                        items.pv = item.pv;
-                        items.uv = item.uv;
-                        items.ip = item.ip;
+                        items.pv = item.pv || 0;
+                        items.uv = item.uv || 0;
+                        items.ip = item.ip || 0;
+                        items.ajax = item.ajax || 0;
                     }
                 });
                 result.push(items);

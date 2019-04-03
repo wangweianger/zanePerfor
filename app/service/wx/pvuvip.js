@@ -36,23 +36,26 @@ class PvuvivService extends Service {
         const pv = Promise.resolve(this.app.models.WxPages(appId).count(querydata).read('sp').exec());
         const uv = Promise.resolve(this.app.models.WxPages(appId).distinct('mark_uv', querydata).read('sp').exec());
         const ip = Promise.resolve(this.app.models.WxPages(appId).distinct('ip', querydata).read('sp').exec());
+        const ajax = Promise.resolve(this.app.models.WxAjaxs(appId).count(querydata).read('sp').exec());
         if (!type) {
-            const data1 = await Promise.all([ pv, uv, ip ]);
+            const data1 = await Promise.all([ pv, uv, ip, ajax ]);
             return {
                 pv: data1[0],
                 uv: data1[1].length,
                 ip: data1[2].length,
+                ajax: data1[3],
             };
         } else {
             const user = Promise.resolve(this.app.models.WxPages(appId).distinct('mark_user', querydata).read('sp').exec());
             const bounce = Promise.resolve(this.bounceRate(appId, querydata));
-            const data2 = await Promise.all([pv, uv, ip, user, bounce]);
+            const data2 = await Promise.all([ pv, uv, ip, ajax, user, bounce]);
             return {
                 pv: data2[0] || 0,
                 uv: data2[1].length || 0,
                 ip: data2[2].length || 0,
-                user: data2[3].length || 0,
-                bounce: data2[4] || 0,
+                ajax: data2[3],
+                user: data2[4].length || 0,
+                bounce: data2[5] || 0,
             };
         }
     }
@@ -76,6 +79,7 @@ class PvuvivService extends Service {
         pvuvip.pv = pvuvipdata.pv || 0;
         pvuvip.uv = pvuvipdata.uv || 0;
         pvuvip.ip = pvuvipdata.ip || 0;
+        pvuvip.ajax = pvuvipdata.ajax || 0;
         pvuvip.bounce = pvuvipdata.bounce ? (pvuvipdata.bounce / pvuvipdata.pv * 100).toFixed(2) + '%' : 0;
         pvuvip.depth = pvuvipdata.pv && pvuvipdata.user ? parseInt(pvuvipdata.pv / pvuvipdata.user) : 0;
         pvuvip.create_time = endTime;

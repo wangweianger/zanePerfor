@@ -50,7 +50,7 @@
 	<h1 class="com_h1">数据分析</h1>
 	<div class="com_slide_tab_x mt30 mb30">
 		<div class="item" :class="{'active':lable==1}" @click="checkoutLabel(1)">概况</div>
-		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">PV|UV|IP</div>
+		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">PV|AJAX|UV|IP</div>
 	</div>
 	<div v-show="lable==1">
 		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span>实时概况处理同步有1分钟以内的延迟,1分钟更新一次。</div>
@@ -64,6 +64,7 @@
 				<div class="com pv ml50"><span>PV: </span>{{surveyone.pv}}</div>
 				<div class="com uv"><span>UV: </span>{{surveyone.uv}}</div>
 				<div class="com ip"><span>IP: </span>{{surveyone.ip}}</div>
+				<div class="com ip"><span>AJAX: </span>{{surveyone.ajax}}</div>
 				<div class="com ip"><span>跳出率: </span>{{surveyone.bounce||'0%'}}</div>
 				<div class="com ip"><span>访问深度: </span>{{surveyone.depth||0}}</div>
 			</div>
@@ -74,6 +75,7 @@
 				<div class="com pv ml50"><span>PV: </span>{{today.pv||0}}</div>
 				<div class="com uv"><span>UV: </span>{{today.uv||0}}</div>
 				<div class="com ip"><span>IP: </span>{{today.ip||0}}</div>
+				<div class="com ip"><span>AJAX: </span>{{today.ajax||0}}</div>
 			</div>
 		</div>
 		<div v-if="historylist.length" >
@@ -83,6 +85,7 @@
 					<div class="com pv ml50"><span>PV: </span>{{item.pv||0}}</div>
 					<div class="com uv"><span>UV: </span>{{item.uv||0}}</div>
 					<div class="com ip"><span>IP: </span>{{item.ip||0}}</div>
+					<div class="com ip"><span>AJAX: </span>{{item.ajax||0}}</div>
 					<div class="com ip"><span>跳出率: </span>{{item.bounce||'0%'}}</div>
 					<div class="com ip"><span>访问深度: </span>{{item.depth||0}}</div>
 				</div>
@@ -94,6 +97,10 @@
 		<div class='search search_1 mb20'>
 			<input id="zane-calendar-2" class="inp" type="text" placeholder="时间粒度选择1小时以内">
 			<div class="tipscolor mt10" v-if="errText">{{errText}}</div>
+		</div>
+		<div class="com_block">
+			<h1 class="com_h2 mb20">实时访问AJAX</h1>
+			<div id="pvuvip_ajax" style="height:400px"></div>
 		</div>
 		<div class="com_block">
 			<h1 class="com_h2 mb20">实时访问PV</h1>
@@ -111,7 +118,7 @@
 </div>
 
 <script>
-	let myChartPV, myChartUV, myChartIP;
+	let myChartPV, myChartUV, myChartIP, myChartAJAX;
 	new Vue({
 		el: '#vue_id',
 		data: function () {
@@ -138,6 +145,7 @@
 			this.itemlist1 = [];
 			this.itemlist2 = [];
 			this.itemlist3 = [];
+			this.itemlist4 = [];
 
 			this.getPvUvIpSurvey();
 			this.getHistoryPvUvIplist();
@@ -252,16 +260,19 @@
 						this.itemlist1 = [];
 						this.itemlist2 = [];
 						this.itemlist3 = [];
+						this.itemlist4 = [];
 						data.data.forEach(item => {
 							let time = new Date(item.time).format('HH:mm');
 							this.xAxislist.push(time);
 							this.itemlist1.push(item.pv)
 							this.itemlist2.push(item.uv)
 							this.itemlist3.push(item.ip)
+							this.itemlist4.push(item.ajax)
 						});
 						this.drow('PV', this.xAxislist, this.itemlist1);
 						this.drow('UV', this.xAxislist, this.itemlist2);
 						this.drow('IP', this.xAxislist, this.itemlist3);
+						this.drow('AJAX', this.xAxislist, this.itemlist4);
 						this.timer = setInterval(() => {
 							this.getPvUvIpOne();
 						}, data.time || 60000)
@@ -283,13 +294,18 @@
 						this.itemlist1.shift();
 						this.itemlist2.shift();
 						this.itemlist3.shift();
+						this.itemlist4.shift();
 
 						this.xAxislist.push(time);
 						this.itemlist1.push(datas.pv || 0)
 						this.itemlist2.push(datas.uv || 0)
 						this.itemlist3.push(datas.ip || 0)
+						this.itemlist4.push(datas.ajax || 0)
 
 						myChartPV.setOption({ series: [{ data: this.itemlist1 }] });
+						myChartUV.setOption({ series: [{ data: this.itemlist2 }] });
+						myChartIP.setOption({ series: [{ data: this.itemlist3 }] });
+						myChartAJAX.setOption({ series: [{ data: this.itemlist4 }] });
 					}
 				})
 			},
@@ -305,6 +321,9 @@
 				} else if (type == 'IP') {
 					myChartIP = echarts.init(document.getElementById('pvuvip_ip'));
 					color = '#f46d85'
+				} else if (type == 'AJAX') {
+					myChartAJAX = echarts.init(document.getElementById('pvuvip_ajax'));
+					color = '#8776f7'
 				}
 				const option = {
 					tooltip: {
@@ -387,6 +406,8 @@
 					myChartUV.setOption(option);
 				} else if (type == 'IP') {
 					myChartIP.setOption(option);
+				} else if (type == 'AJAX') {
+					myChartAJAX.setOption(option);
 				}
 			}
 		},

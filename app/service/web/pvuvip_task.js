@@ -41,25 +41,29 @@ class WebReportService extends Service {
             const pvpro = Promise.resolve(this.app.models.WebPages(appId).count(query).read('sp'));
             const uvpro = Promise.resolve(this.app.models.WebEnvironment(appId).distinct('mark_uv', query).read('sp'));
             const ippro = Promise.resolve(this.app.models.WebEnvironment(appId).distinct('ip', query).read('sp'));
+            const ajpro = Promise.resolve(this.app.models.WebAjaxs(appId).count(query).read('sp'));
+
             let data = [];
             if (type === 1) {
-                data = await Promise.all([ pvpro, uvpro, ippro ]);
+                data = await Promise.all([ pvpro, uvpro, ippro, ajpro ]);
             } else if (type === 2) {
                 const user = Promise.resolve(this.app.models.WebEnvironment(appId).distinct('mark_user', query).read('sp'));
                 const bounce = Promise.resolve(this.ctx.service.web.pvuvip.bounceRate(appId, query));
-                data = await Promise.all([ pvpro, uvpro, ippro, user, bounce ]);
+                data = await Promise.all([ pvpro, uvpro, ippro, ajpro, user, bounce ]);
             }
             const pv = data[0] || 0;
             const uv = data[1].length || 0;
             const ip = data[2].length || 0;
-            const user = type === 2 ? data[3].length : 0;
-            const bounce = type === 2 ? data[4] : 0;
+            const ajax = data[3] || 0;
+            const user = type === 2 ? data[4].length : 0;
+            const bounce = type === 2 ? data[5] : 0;
 
             const pvuvip = this.ctx.model.Web.WebPvuvip();
             pvuvip.app_id = appId;
             pvuvip.pv = pv;
             pvuvip.uv = uv;
             pvuvip.ip = ip;
+            pvuvip.ajax = ajax;
             if (type === 2) pvuvip.bounce = bounce ? (bounce / pv * 100).toFixed(2) + '%' : 0;
             if (type === 2) pvuvip.depth = pv && user ? parseInt(pv / user) : 0;
             pvuvip.create_time = endTime;
