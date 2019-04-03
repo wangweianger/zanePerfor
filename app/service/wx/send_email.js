@@ -91,11 +91,12 @@ class SendEmailService extends Service {
                 <div>
                     <h1 style="font-size:20px;text-align:center;line-height:60px;">${systemMsg.system_name}应用${datas.day}详情</h1>
                     <div style="width:90%;margin:0 auto;background:#fff;border-radius:6px;padding:20px;overflow:hidden;">
-                        <h2 style="font-size:18px;line-height:50px;">PV/UV/IP统计</h2>
+                        <h2 style="font-size:18px;line-height:50px;">PV/UV/IP/AJAX统计</h2>
                         <div>
                             <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">PV：<span style="color:#8776f7;">${pvuvip.pv || 0}</span></div>
                             <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">UV：<span style="color:#8776f7;">${pvuvip.uv || 0}</span></div>
                             <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">IP：<span style="color:#8776f7;">${pvuvip.ip || 0}</span></div>
+                            <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">AJAX：<span style="color:#8776f7;">${pvuvip.ajax || 0}</span></div>
                             <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">跳出率：<span style="color:#8776f7;">${pvuvip.bounce || 0}</span></div>
                             <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">访问深度：<span style="color:#8776f7;">${pvuvip.depth || 0}</span></div>
                         </div>

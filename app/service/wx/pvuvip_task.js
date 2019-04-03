@@ -78,6 +78,7 @@ class WxReportService extends Service {
                     pv,
                     uv,
                     ip,
+                    ajax,
                     bounce: bounce ? (bounce / pv * 100).toFixed(2) + '%' : 0,
                     depth: pv && user ? parseInt(pv / user) : 0,
                 }, 'pvuvip');
