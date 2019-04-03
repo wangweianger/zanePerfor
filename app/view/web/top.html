@@ -71,6 +71,44 @@
 				<div class="empty tc mt20" v-if="!listjumpout.length">暂无数据!</div>
 			</div>
 		</div>
+		<div class="b-parent mt20" style="margin-top:20px;">
+			<div class="b-50">
+				<div class="com-title">
+					<div class="com-left"><span class="com-icon"></span>
+						<h1 class="com-h1">TOP10浏览器</h1>
+					</div>
+				</div>
+				<table class="table" v-if="listbrowser.length">
+					<tr>
+						<th class="w-300">页面地址</th>
+						<th>访问量</th>
+					</tr>
+					<tr v-for="(item,i) in listbrowser">
+						<td>{{i+1 +'、'+item._id.browser}}</td>
+						<td class="tc">{{item.count}}</td>
+					</tr>
+				</table>
+				<div class="empty tc mt20" v-if="!listbrowser.length">暂无数据!</div>
+			</div>
+			<div class="b-50">
+				<div class="com-title">
+					<div class="com-left"><span class="com-icon"></span>
+						<h1 class="com-h1">TOP10城市流量</h1>
+					</div>
+				</div>
+				<table class="table" v-if="listprovince.length">
+					<tr>
+						<th class="w-300">页面地址</th>
+						<th>访问量</th>
+					</tr>
+					<tr v-for="(item,i) in listprovince">
+						<td>{{i+1 +'、'+item._id.province}}</td>
+						<td class="tc">{{item.count}}</td>
+					</tr>
+				</table>
+				<div class="empty tc mt20" v-if="!listprovince.length">暂无数据!</div>
+			</div>
+		</div>
 	</div>
 	
 </div>
@@ -87,6 +125,8 @@
 				type:1,  // 1:今日  2：历史
 				listpages:[],
 				listjumpout:[],
+				listbrowser: [],
+				listprovince: [],
 			}
 		},
 		filters: {
@@ -116,8 +156,13 @@
 						endTime: this.endTime,
 					},
 					success: data => {
+						if (data.data.province && data.data.province.length) {
+							data.data.province = data.data.province.slice(0, 10);
+						}
 						this.listpages = data.data.top_pages || [];
 						this.listjumpout = data.data.top_jump_out || [];
+						this.listbrowser = data.data.top_browser || [];
+						this.listprovince = data.data.province || [];
 					}
 				})
 			},

@@ -273,7 +273,7 @@ class WxReportTaskService extends Service {
             pages.mark_uv = item.mark_uv;
             pages.net = item.net;
             pages.ip = item.ip;
-            pages.brand = item.system.brand;
+            pages.brand = item.system.brand.toLowerCase();
             pages.model = item.system.model;
             pages.screenWidth = item.system.screenWidth;
             pages.screenHeight = item.system.screenHeight;

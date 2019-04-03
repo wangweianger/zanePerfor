@@ -101,15 +101,17 @@ class AnalysisService extends Service {
         if (type === 1) {
             const pages = Promise.resolve(this.getRealTimeTopPages(appId, beginTime, endTime));
             const jump = Promise.resolve(this.getRealTimeTopJumpOut(appId, beginTime, endTime));
-            const all = await Promise.all([pages, jump]);
-            result = { top_pages: all[0], top_jump_out: all[1] }
+            const brand = Promise.resolve(this.getRealTimeTopBrand(appId, beginTime, endTime));
+            const province = Promise.resolve(this.getRealTimeTopProvince(appId, beginTime, endTime));
+            const all = await Promise.all([ pages, jump, brand, province ]);
+            result = { top_pages: all[0], top_jump_out: all[1], top_brand: all[2], province: all[3] }
         } else if (type === 2) {
-            result = await this.getDbTopPages(appId, beginTime, endTime) || {};
+            result = await this.getDbTopAnalysis(appId, beginTime, endTime) || {};
         }
         return result;
     };
     // 历史 top
-    async getDbTopPages(appId, beginTime, endTime) {
+    async getDbTopAnalysis(appId, beginTime, endTime) {
         let data = await this.ctx.model.Wx.WxStatis.findOne({ app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } });
         if (data) return data;
         // 不存在则储存
@@ -139,6 +141,7 @@ class AnalysisService extends Service {
             return result;
         } catch (err) { console.log(err); };
     }
+
     // top跳出率
     async getRealTimeTopJumpOut(appId, beginTime, endTime) {
         let result = await this.app.redis.get(`${appId}_top_jump_out_realtime`);
@@ -172,6 +175,55 @@ class AnalysisService extends Service {
         } catch (err) { console.log(err); }
     }
 
+    // top 手机品牌
+    async getRealTimeTopBrand(appId, beginTime, endTime) {
+        let result = await this.app.redis.get(`${appId}_top_brand_realtime`);
+        result = result ? JSON.parse(result) : await this.getRealTimeTopBrandForDb(appId, beginTime, endTime);
+        return result;
+    }
+    async getRealTimeTopBrandForDb(appId, beginTime, endTime, type) {
+        try {
+            const result = await this.app.models.WxPages(appId).aggregate([
+                { $match: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) }, }, },
+                {
+                    $group: {
+                        _id: { brand: "$brand", },
+                        count: { $sum: 1 },
+                    },
+                },
+                { $sort: { count: -1 } },
+                { $limit: this.app.config.top_alalysis_size.wx || 10 },
+            ]).read('sp').exec();
+            // 每分钟执行存储到redis
+            if (type === 1) this.app.redis.set(`${appId}_top_brand_realtime`, JSON.stringify(result));
+            return result;
+        } catch (err) { console.log(err); };
+    }
+
+    // 省份排行榜
+    async getRealTimeTopProvince(appId, beginTime, endTime) {
+        let result = await this.app.redis.get(`${appId}_top_province_realtime`);
+        result = result ? JSON.parse(result) : await this.getRealTimeTopProvinceForDb(appId, beginTime, endTime);
+        return result;
+    }
+    async getRealTimeTopProvinceForDb(appId, beginTime, endTime, type) {
+        try {
+            const result = await this.app.models.WxPages(appId).aggregate([
+                { $match: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) }, }, },
+                {
+                    $group: {
+                        _id: { province: "$province", },
+                        count: { $sum: 1 },
+                    },
+                },
+                { $sort: { count: -1 } },
+            ]).read('sp').exec();
+            // 每分钟执行存储到redis
+            if (type === 1) this.app.redis.set(`${appId}_top_province_realtime`, JSON.stringify(result));
+            return result;
+        } catch (err) { console.log(err); };
+    }
+
     // top排行榜 Task任务
     async saveRealTimeTopTask(appId, type, begin, end) {
         try {
@@ -183,16 +235,18 @@ class AnalysisService extends Service {
             }
             const pages = Promise.resolve(this.getRealTimeTopPagesForDb(appId, beginTime, endTime, type));
             const jump = Promise.resolve(this.getRealTimeTopJumpOutForDb(appId, beginTime, endTime, type));
+            const brand = Promise.resolve(this.getRealTimeTopBrandForDb(appId, beginTime, endTime, type));
+            const province = Promise.resolve(this.getRealTimeTopProvinceForDb(appId, beginTime, endTime, type));
             if (type === 2) {
                 // 每天数据存储到数据库
-                const provinces = Promise.resolve(this.getProvinceAvgCountForDb(appId, beginTime, endTime, type));
-                const all = await Promise.all([pages, jump, provinces]);
+                const all = await Promise.all([ pages, jump, brand, province ]);
 
                 const statis = this.ctx.model.Wx.WxStatis();
                 statis.app_id = appId;
                 statis.top_pages = all[0];
                 statis.top_jump_out = all[1];
-                statis.provinces = all[2];
+                statis.top_brand = all[2];
+                statis.provinces = all[3];
                 statis.create_time = beginTime;
                 const result = await statis.save();
 
@@ -201,7 +255,8 @@ class AnalysisService extends Service {
                     appId,
                     toppages: all[0],
                     topjumpout: all[1],
-                    provinces: all[2],
+                    topbrand: all[2],
+                    provinces: all[3],
                 }, 'toplist');
 
                 return result;
@@ -210,35 +265,10 @@ class AnalysisService extends Service {
     }
 
     // 省份流量统计
-    async getProvinceAvgCount(appId, beginTime, endTime, type) {
-        let result = null;
-        type = type * 1;
-        if (type === 1) {
-            result = await this.getProvinceAvgCountForDb(appId, beginTime, endTime, type);
-        } else if (type === 2) {
-            // 先查询是否存在
-            let data = await this.ctx.model.Wx.WxStatis.findOne({ app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } }).read('sp').exec();
-            // 不存在则储存
-            result = data ? data : await this.saveRealTimeTopTask(appId, 2, beginTime, endTime);
-        }
-        return result
+    async getProvinceAvgCount(appId, beginTime, endTime) {
+        return { provinces: await this.getRealTimeTopProvince(appId, beginTime, endTime) || [] };
     }
-
-    async getProvinceAvgCountForDb(appId, beginTime, endTime, type) {
-        try {
-            const result = await this.app.models.WxPages(appId).aggregate([
-                { $match: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
-                {
-                    $group: {
-                        _id: { province: "$province", },
-                        count: { $sum: 1 },
-                    },
-                },
-                { $sort: { count: -1 } },
-            ]).read('sp').exec();
-            return type === 1 ? { provinces: result } : result;
-        } catch (err) { console.log(err); }
-    }
+  
 }
 
 module.exports = AnalysisService;
