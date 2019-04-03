@@ -13,6 +13,7 @@ module.exports = app => {
         mark_user: { type: String }, // 统一某一时间段用户标识
         duration: { type: Number }, // 请求耗时
         name: { type: String }, // api路径
+        full_name: { type: String }, // api路径
         method: { type: String }, // 请求方式
         body_size: { type: Number }, // 返回资源大小
         options: { type: Mixed }, // 请求参数

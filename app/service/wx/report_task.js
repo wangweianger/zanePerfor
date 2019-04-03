@@ -3,6 +3,8 @@
 const Service = require('egg').Service;
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
+const querystring = require('querystring');
 class WxReportTaskService extends Service {
 
     constructor(params) {
@@ -302,17 +304,22 @@ class WxReportTaskService extends Service {
             slowAjaxTime = slowAjaxTime * 1000;
             const speedType = duration >= slowAjaxTime ? 2 : 1;
 
+            const newurl = url.parse(item.name);
+            const newName = newurl.protocol + '//' + newurl.host + newurl.pathname;
+            const querydata = newurl.query ? JSON.stringify(querystring.parse(newurl.query)) : '{}';
+
             const ajaxs = this.app.models.WxAjaxs(data.app_id)();
             ajaxs.app_id = data.app_id;
             ajaxs.create_time = data.create_time;
             ajaxs.speed_type = speedType;
-            ajaxs.name = item.name;
+            ajaxs.name = newName;
+            ajaxs.full_name = item.name;
             ajaxs.method = item.method;
             ajaxs.duration = item.duration;
             ajaxs.body_size = item.bodySize;
             ajaxs.mark_page = data.mark_page;
             ajaxs.mark_user = data.mark_user;
-            ajaxs.options = item.options;
+            ajaxs.options = item.options || querydata;
             ajaxs.path = data.pages.router;
             ajaxs.save();
         });
