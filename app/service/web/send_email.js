@@ -60,10 +60,16 @@ class SendEmailService extends Service {
         let provincehtml = '';
         let toppageshtml = '';
         let topjumpout = '';
+        let topbrowser = '';
 
         if (toplist.provinces && toplist.provinces.length) {
             for (let i = 0, len = toplist.provinces.length; i < len; i++) {
                 provincehtml += `<div style="display:inline-block;margin-right:20px;margin-bottom:20px;">${toplist.provinces[i]._id.province}：<span style="color:#8776f7;">${toplist.provinces[i].count}</span></div>`;
+            }
+        }
+        if (toplist.topbrowser && toplist.topbrowser.length) {
+            for (let i = 0, len = toplist.topbrowser.length; i < len; i++) {
+                topbrowser += `<div style="display:inline-block;margin-right:20px;margin-bottom:20px;">${toplist.topbrowser[i]._id.browser}：<span style="color:#8776f7;">${toplist.topbrowser[i].count}</span></div>`;
             }
         }
         if (toplist.toppages && toplist.toppages.length) {
@@ -105,6 +111,12 @@ class SendEmailService extends Service {
                         <h2 style="font-size:18px;line-height:50px;">省市流量排行</h2>
                         <div>
                             ` + provincehtml + `
+                        </div>
+                    </div>
+                    <div style="width:90%;margin:0 auto;margin-top:20px;background:#fff;border-radius:6px;padding:20px;overflow:hidden;">
+                        <h2 style="font-size:18px;line-height:50px;">省市流量排行</h2>
+                        <div>
+                            ` + topbrowser + `
                         </div>
                     </div>
                     <div style="width:90%;margin:0 auto;margin-top:20px;background:#fff;border-radius:6px;padding:20px;overflow:hidden;">
