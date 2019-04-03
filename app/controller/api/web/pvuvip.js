@@ -57,16 +57,18 @@ class PvUvIpController extends Controller {
 
         // 计算定时任务间隔
         const interval = parser.parseExpression(this.app.config.pvuvip_task_minute_time);
-        const betweenTime = Math.abs(new Date(interval.next().toString()).getTime() - new Date(interval.next().toString()).getTime());
+        const timer = interval.prev().toString();
+        const timestrat = new Date(interval.prev().toString()).getTime();
+        const betweenTime = Math.abs(new Date(timer).getTime() - timestrat);
 
-        const timestrat = new Date().getTime();
-        const beginTime = query.beginTime || new Date(timestrat - betweenTime * 30 - 60000);
-        const endTime = query.endTime || new Date(timestrat - 60000);
+        const beginTime = query.beginTime || new Date(timestrat - betweenTime * 30);
+        const endTime = query.endTime || new Date(timestrat);
 
         const datalist = await ctx.service.web.pvuvip.getPvUvIpData(appId, beginTime, endTime) || [];
         const result = await this.getTimeList(beginTime, endTime, datalist);
 
         ctx.body = this.app.result({
+            time: betweenTime,
             data: result,
         });
     }
@@ -78,9 +80,11 @@ class PvUvIpController extends Controller {
         // 参数校验
         if (!appId) throw new Error('界面查询pvuvip：appId不能为空');
 
-        const timestrat = new Date().getTime();
-        const beginTime = new Date(timestrat - 120000);
-        const endTime = new Date(timestrat - 60000);
+        // 计算定时任务间隔
+        const interval = parser.parseExpression(this.app.config.pvuvip_task_minute_time);
+        interval.prev();
+        const endTime = query.endTime || new Date(interval.prev().toString());
+        const beginTime = query.beginTime || new Date(interval.prev().toString());
 
         const datalist = await ctx.service.web.pvuvip.getPvUvIpData(appId, beginTime, endTime) || [];
         let result = {};

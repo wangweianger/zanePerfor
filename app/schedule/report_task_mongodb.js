@@ -16,7 +16,7 @@ module.exports = app => {
                 const value = app.config.cluster.listen.ip + ':' + app.config.cluster.listen.port;
                 if (preminute && preminute !== value) return;
                 if (!preminute) {
-                    await app.redis.set('report_task_for_mongodb', value, 'EX', 200);
+                    await app.redis.set('report_task_for_mongodb', value, 'EX', 20000);
                     const preminutetwo = await app.redis.get('report_task_for_mongodb');
                     if (preminutetwo !== value) return;
                 }

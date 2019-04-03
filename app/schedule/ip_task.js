@@ -15,7 +15,7 @@ module.exports = app => {
             const value = app.config.cluster.listen.ip + ':' + app.config.cluster.listen.port;
             if (preminute && preminute !== value) return;
             if (!preminute) {
-                await app.redis.set('ip_task_time', value, 'EX', 200);
+                await app.redis.set('ip_task_time', value, 'EX', 20000);
                 const preminutetwo = await app.redis.get('ip_task_time');
                 if (preminutetwo !== value) return;
             }

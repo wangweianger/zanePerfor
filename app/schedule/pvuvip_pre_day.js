@@ -15,7 +15,7 @@ module.exports = app => {
             const value = app.config.cluster.listen.ip + ':' + app.config.cluster.listen.port;
             if (preminute && preminute !== value) return;
             if (!preminute) {
-                await app.redis.set('pvuvip_task_day_time', value, 'EX', 2000);
+                await app.redis.set('pvuvip_task_day_time', value, 'EX', 20000);
                 const preminutetwo = await app.redis.get('pvuvip_task_day_time');
                 if (preminutetwo !== value) return;
             }

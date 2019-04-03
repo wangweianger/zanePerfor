@@ -15,18 +15,10 @@ class WxReportService extends Service {
     }
     // 定时执行每分钟的数据
     async getWxPvUvIpByMinute() {
-        let between = 0;
-        if (this.app.config.report_data_type === 'redis') {
-            const interval = parser.parseExpression(this.app.config.redis_consumption.task_time);
-            between = Math.abs(new Date(interval.next().toString()).getTime() - new Date(interval.next().toString()).getTime());
-        } else if (this.app.config.report_data_type === 'mongodb') {
-            const interval = parser.parseExpression(this.app.config.report_task_time);
-            between = Math.abs(new Date(interval.next().toString()).getTime() - new Date(interval.next().toString()).getTime());
-        }
-
         const interval = parser.parseExpression(this.app.config.pvuvip_task_minute_time);
-        const endTime = new Date(interval.prev().toString()).getTime() - between;
-        const beginTime = new Date(interval.prev().toString()).getTime() - between;
+        interval.prev();
+        const endTime = new Date(interval.prev().toString()).getTime();
+        const beginTime = new Date(interval.prev().toString()).getTime();
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
 
         const datas = await this.ctx.model.System.distinct('app_id', { type: 'wx' }).read('sp').exec();
