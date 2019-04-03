@@ -236,6 +236,7 @@
 			getHistoryPvUvIplist() {
 				util.ajax({
 					type: 'get',
+					nohideloading: true,
 					url: `${config.baseApi}api/v1/wx/pvuvip/getHistoryPvUvIplist`,
 					data: {
 						appId: this.appId,

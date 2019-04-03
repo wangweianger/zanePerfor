@@ -143,6 +143,11 @@ class PvUvIpController extends Controller {
                 break;
             }
         }
+        const length = result.length;
+        if (length > 1) {
+            const last = result[length - 1];
+            if (!last.pv) result.splice(length - 1, 1);
+        }
         return result;
     }
 }
