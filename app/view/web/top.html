@@ -156,13 +156,20 @@
 						endTime: this.endTime,
 					},
 					success: data => {
+						let province = [];
 						if (data.data.province && data.data.province.length) {
-							data.data.province = data.data.province.slice(0, 10);
+							data.data.province.forEach(item=>{
+								if(province.length <= 9){
+									if(item._id.province){
+										province.push(item)
+									}
+								}
+							})
 						}
 						this.listpages = data.data.top_pages || [];
 						this.listjumpout = data.data.top_jump_out || [];
 						this.listbrowser = data.data.top_browser || [];
-						this.listprovince = data.data.province || [];
+						this.listprovince = province || [];
 					}
 				})
 			},
