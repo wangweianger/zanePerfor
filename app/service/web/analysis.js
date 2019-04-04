@@ -288,10 +288,10 @@ class AnalysisService extends Service {
     // 定时获得实时流量统计
     async getRealTimeTopPvUvIpAjax(appId, beginTime, endTime) {
         const query = { app_id: appId, create_time: { $gte: beginTime, $lt: endTime } };
-        const pvpro = Promise.resolve(this.app.models.WebPages(appId).count(query).read('sp'));
-        const uvpro = Promise.resolve(this.app.models.WebEnvironment(appId).distinct('mark_uv', query).read('sp'));
-        const ippro = Promise.resolve(this.app.models.WebEnvironment(appId).distinct('ip', query).read('sp'));
-        const ajpro = Promise.resolve(this.app.models.WebAjaxs(appId).count(query).read('sp'));
+        const pvpro = Promise.resolve(this.ctx.service.web.pvuvip.pv(appId, query));
+        const uvpro = Promise.resolve(this.ctx.service.web.pvuvip.uv(appId, query));
+        const ippro = Promise.resolve(this.ctx.service.web.pvuvip.ip(appId, query));
+        const ajpro = Promise.resolve(this.ctx.service.web.pvuvip.ajax(appId, query));
         const data = await Promise.all([ pvpro, uvpro, ippro, ajpro ]);
         const pv = data[0] || 0;
         const uv = data[1].length || 0;

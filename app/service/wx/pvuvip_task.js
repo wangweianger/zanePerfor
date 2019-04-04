@@ -39,24 +39,24 @@ class WxReportService extends Service {
     async savePvUvIpData(appId, endTime, type, query) {
         try {
             query.app_id = appId;
-            const pvpro = Promise.resolve(this.app.models.WxPages(appId).count(query).read('sp'));
-            const uvpro = Promise.resolve(this.app.models.WxPages(appId).distinct('mark_uv', query).read('sp'));
-            const ippro = Promise.resolve(this.app.models.WxPages(appId).distinct('ip', query).read('sp'));
-            const ajpro = Promise.resolve(this.app.models.WxAjaxs(appId).count(query).read('sp'));
+            const pvpro = Promise.resolve(this.ctx.service.wx.pvuvip.pv(appId, query));
+            const uvpro = Promise.resolve(this.ctx.service.wx.pvuvip.uv(appId, query));
+            const ippro = Promise.resolve(this.ctx.service.wx.pvuvip.ip(appId, query));
+            const ajpro = Promise.resolve(this.ctx.service.wx.pvuvip.ajax(appId, query));
 
             let data = [];
             if (type === 1) {
                 data = await Promise.all([ pvpro, uvpro, ippro, ajpro ]);
             } else if (type === 2) {
-                const user = Promise.resolve(this.app.models.WxPages(appId).distinct('mark_user', query).read('sp'));
-                const bounce = Promise.resolve(this.ctx.service.wx.pvuvip.bounceRate(appId, query));
+                const user = Promise.resolve(this.ctx.service.wx.pvuvip.user(appId, query));
+                const bounce = Promise.resolve(this.ctx.service.wx.pvuvip.bounce(appId, query));
                 data = await Promise.all([ pvpro, uvpro, ippro, ajpro, user, bounce ]);
             }
             const pv = data[0] || 0;
-            const uv = data[1].length || 0;
-            const ip = data[2].length || 0;
+            const uv = data[1][0].count || 0;
+            const ip = data[2][0].count || 0;
             const ajax = data[3] || 0;
-            const user = type === 2 ? data[4].length : 0;
+            const user = type === 2 ? data[4][0].count : 0;
             const bounce = type === 2 ? data[5] : 0;
 
             const pvuvip = this.ctx.model.Wx.WxPvuvip();

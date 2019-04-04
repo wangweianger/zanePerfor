@@ -200,6 +200,7 @@ new Vue({
 		getPvUvIpSurvey(){
 			util.ajax({
 				type:'get',
+				nohideloading: true,
 				url: `${config.baseApi}api/v1/pvuvip/getPvUvIpSurvey`,
 				data:{
 					appId:this.appId,
@@ -230,7 +231,6 @@ new Vue({
 		getHistoryPvUvIplist(){
 			util.ajax({
 				type: 'get',
-				nohideloading: true,
 				url: `${config.baseApi}api/v1/pvuvip/getHistoryPvUvIplist`,
 				data: {
 					appId: this.appId,
