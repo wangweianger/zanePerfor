@@ -39,21 +39,14 @@ class WxReportTaskService extends Service {
     // 把redis消费数据经过加工之后同步到db3中 的定时任务（从redis中拉取数据）
     async saveWxReportDatasForRedis() {
         // 线程遍历
-        const totalcount = await this.app.redis.llen('wx_repore_datas');
-        let onecount = this.app.config.redis_consumption.thread_wx;
-        if (onecount > totalcount) onecount = totalcount;
-
+        const onecount = this.app.config.redis_consumption.thread_wx;
         for (let i = 0; i < onecount; i++) {
-            if (i === onecount - 1) {
-                this.getWebItemDataForRedis(true);
-            } else {
-                this.getWebItemDataForRedis();
-            }
+            this.getWebItemDataForRedis();
         }
     }
 
     // 单个item储存数据
-    async getWebItemDataForRedis(type) {
+    async getWebItemDataForRedis() {
         let query = await this.app.redis.rpop('wx_repore_datas');
         if (!query) return;
         query = JSON.parse(query);
@@ -87,7 +80,6 @@ class WxReportTaskService extends Service {
         if (system.is_statisi_system === 0) this.savePages(item);
         if (system.is_statisi_ajax === 0) this.saveAjaxs(item, system);
         if (system.is_statisi_error === 0) this.saveErrors(item);
-        if (type) this.app.redis.set('wx_task_begin_time', item.create_time);
     }
 
     // kafka 消费信息
