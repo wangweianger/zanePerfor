@@ -292,7 +292,7 @@ class WxReportTaskService extends Service {
         let slowAjaxTime = system.slow_ajax_time || 2;
 
         data.ajaxs.forEach(item => {
-            const duration = parseInt(item.duration || 0);
+            const duration = Math.abs(item.duration || 0);
             slowAjaxTime = slowAjaxTime * 1000;
             const speedType = duration >= slowAjaxTime ? 2 : 1;
 
