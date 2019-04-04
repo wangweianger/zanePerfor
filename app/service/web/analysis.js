@@ -287,15 +287,16 @@ class AnalysisService extends Service {
 
     // 定时获得实时流量统计
     async getRealTimeTopPvUvIpAjax(appId, beginTime, endTime) {
-        const query = { app_id: appId, create_time: { $gte: beginTime, $lt: endTime } };
+        const query = { create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
         const pvpro = Promise.resolve(this.ctx.service.web.pvuvip.pv(appId, query));
         const uvpro = Promise.resolve(this.ctx.service.web.pvuvip.uv(appId, query));
         const ippro = Promise.resolve(this.ctx.service.web.pvuvip.ip(appId, query));
         const ajpro = Promise.resolve(this.ctx.service.web.pvuvip.ajax(appId, query));
         const data = await Promise.all([ pvpro, uvpro, ippro, ajpro ]);
+
         const pv = data[0] || 0;
-        const uv = data[1].length || 0;
-        const ip = data[2].length || 0;
+        const uv = data[1][0].length ? data[1][0].count : 0;
+        const ip = data[2][0].length ? data[2][0].count : 0;
         const ajax = data[3] || 0;
         this.app.redis.set(`${appId}_pv_uv_ip_realtime`, JSON.stringify({ pv, uv, ip, ajax }));
     }

@@ -8,7 +8,7 @@ class WebReportService extends Service {
         const interval = parser.parseExpression(this.app.config.pvuvip_task_day_time);
         const endTime = new Date(interval.prev().toString());
         const beginTime = new Date(interval.prev().toString());
-        const query = { create_time: { $gte: beginTime, $lt: endTime } };
+        const query = { create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
 
         const datas = await this.ctx.model.System.distinct('app_id', { type: 'web' }).read('sp').exec();
         this.groupData(datas, 2, query, beginTime, endTime);
@@ -19,7 +19,7 @@ class WebReportService extends Service {
         interval.prev();
         const endTime = new Date(interval.prev().toString()).getTime();
         const beginTime = new Date(interval.prev().toString()).getTime();
-        const query = { create_time: { $gte: beginTime, $lt: endTime } };
+        const query = { create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
 
         const datas = await this.ctx.model.System.distinct('app_id', { type: 'web' }).read('sp').exec();
         this.groupData(datas, 1, query, endTime);
@@ -52,10 +52,10 @@ class WebReportService extends Service {
                 data = await Promise.all([ pvpro, uvpro, ippro, ajpro, user, bounce ]);
             }
             const pv = data[0] || 0;
-            const uv = data[1][0].count || 0;
-            const ip = data[2][0].count || 0;
+            const uv = data[1][0].length ? data[1][0].count : 0;
+            const ip = data[2][0].length ? data[2][0].count : 0;
             const ajax = data[3] || 0;
-            const user = type === 2 ? data[4][0].count : 0;
+            const user = type === 2 ? (data[4][0].length ? data[4][0].count : 0) : 0;
             const bounce = type === 2 ? data[5] : 0;
 
             const pvuvip = this.ctx.model.Web.WebPvuvip();

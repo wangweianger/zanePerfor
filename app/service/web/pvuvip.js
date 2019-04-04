@@ -1,4 +1,3 @@
-/* eslint-disable */
 'use strict';
 
 const Service = require('egg').Service;
@@ -36,74 +35,83 @@ class PvuvivService extends Service {
         const uv = Promise.resolve(this.uv(appId, querydata));
         const ip = Promise.resolve(this.ip(appId, querydata));
         const ajax = Promise.resolve(this.ajax(appId, querydata));
+        let json = {};
         if (!type) {
-            const data1 = await Promise.all([ pv, uv, ip, ajax ]);
-            return {
-                pv: data1[0],
-                uv: data1[1][0].count,
-                ip: data1[2][0].count,
-                ajax: data1[3],
+            const data = await Promise.all([ pv, uv, ip, ajax ]);
+            json = {
+                pv: data[0],
+                uv: data[1][0].length ? data[1][0].count : 0,
+                ip: data[2][0].length ? data[2][0].count : 0,
+                ajax: data[3],
             };
         } else {
             const user = Promise.resolve(this.user(appId, querydata));
             const bounce = Promise.resolve(this.bounce(appId, querydata));
-            const data2 = await Promise.all([ pv, uv, ip, ajax, user, bounce ]);
-            return {
-                pv: data2[0] || 0,
-                uv: data2[1][0].count || 0,
-                ip: data2[2][0].count || 0,
-                ajax: data1[3],
-                user: data2[4][0].count || 0,
-                bounce: data2[5] || 0,
+            const data = await Promise.all([ pv, uv, ip, ajax, user, bounce ]);
+            json = {
+                pv: data[0] || 0,
+                uv: data[1][0].length ? data[1][0].count : 0,
+                ip: data[2][0].length ? data[2][0].count : 0,
+                ajax: data[3],
+                user: data[4][0].length ? data[4][0].count : 0,
+                bounce: data[5] || 0,
             };
         }
+        return json;
     }
     // pv
     async pv(appId, querydata) {
-        return this.app.models.WebPages(appId).count(querydata).read('sp').exec();
+        return this.app.models.WebPages(appId).count(querydata).read('sp')
+            .exec();
     }
     // ajax
     async ajax(appId, querydata) {
-        return this.app.models.WebAjaxs(appId).count(querydata).read('sp').exec();
+        return this.app.models.WebAjaxs(appId).count(querydata).read('sp')
+            .exec();
     }
     // uv
     async uv(appId, querydata) {
         return this.app.models.WebEnvironment(appId).aggregate([
-            { $match: querydata, },
-            { $project: { "mark_uv": true } },
-            { $group: { _id: "$mark_uv" } },
-            { $group: { _id: null, count: { $sum: 1 } } }
-        ]).read('sp').exec();
+            { $match: querydata },
+            { $project: { mark_uv: true } },
+            { $group: { _id: '$mark_uv' } },
+            { $group: { _id: null, count: { $sum: 1 } } },
+        ]).read('sp')
+            .exec();
     }
     // ip
     async ip(appId, querydata) {
         return this.app.models.WebEnvironment(appId).aggregate([
-            { $match: querydata, },
-            { $project: { "ip": true } },
-            { $group: { _id: "$ip" } },
-            { $group: { _id: null, count: { $sum: 1 } } }
-        ]).read('sp').exec();
+            { $match: querydata },
+            { $project: { ip: true } },
+            { $group: { _id: '$ip' } },
+            { $group: { _id: null, count: { $sum: 1 } } },
+        ]).read('sp')
+            .exec();
     }
     // user
     async user(appId, querydata) {
         return this.app.models.WebEnvironment(appId).aggregate([
-            { $match: querydata, },
-            { $project: { "mark_user": true } },
-            { $group: { _id: "$mark_user" } },
-            { $group: { _id: null, count: { $sum: 1 } } }
-        ]).read('sp').exec();
+            { $match: querydata },
+            { $project: { mark_user: true } },
+            { $group: { _id: '$mark_user' } },
+            { $group: { _id: null, count: { $sum: 1 } } },
+        ]).read('sp')
+            .exec();
     }
     // 跳出率
     async bounce(appId, querydata) {
         const option = {
-            map: function () { emit(this.mark_user, 1); },
-            reduce: function (key, values) { return values.length == 1 },
+            map: function () { emit(this.mark_user, 1); }, // eslint-disable-line
+            reduce: function (key, values) { return values.length == 1 }, // eslint-disable-line
             query: querydata,
             keeptemp: false,
             out: { replace: 'webjumpout' },
-        }
-        const res = await this.app.models.WebEnvironment(appId).mapReduce(option)
-        const result = await res.model.find().where('value').equals(1).count().exec();
+        };
+        const res = await this.app.models.WebEnvironment(appId).mapReduce(option);
+        const result = await res.model.find().where('value').equals(1)
+            .count()
+            .exec();
         return result;
     }
     // 保存pvuvip数据
@@ -114,7 +122,7 @@ class PvuvivService extends Service {
         pvuvip.uv = pvuvipdata.uv || 0;
         pvuvip.ip = pvuvipdata.ip || 0;
         pvuvip.ajax = pvuvipdata.ajax || 0;
-        pvuvip.bounce = pvuvipdata.bounce ? (pvuvipdata.bounce / pvuvipdata.pv * 100).toFixed(2)+'%' : 0;
+        pvuvip.bounce = pvuvipdata.bounce ? (pvuvipdata.bounce / pvuvipdata.pv * 100).toFixed(2) + '%' : 0;
         pvuvip.depth = pvuvipdata.pv && pvuvipdata.user ? parseInt(pvuvipdata.pv / pvuvipdata.user) : 0;
         pvuvip.create_time = endTime;
         pvuvip.type = type;
