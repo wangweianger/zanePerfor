@@ -237,6 +237,8 @@ class AnalysisService extends Service {
             const jump = Promise.resolve(this.getRealTimeTopJumpOutForDb(appId, beginTime, endTime, type));
             const brand = Promise.resolve(this.getRealTimeTopBrandForDb(appId, beginTime, endTime, type));
             const province = Promise.resolve(this.getRealTimeTopProvinceForDb(appId, beginTime, endTime, type));
+            this.getRealTimeTopPvUvIpAjax(appId, beginTime, endTime)
+            
             if (type === 2) {
                 // 每天数据存储到数据库
                 const all = await Promise.all([ pages, jump, brand, province ]);
@@ -262,6 +264,21 @@ class AnalysisService extends Service {
                 return result;
             }
         } catch (err) { console.log(err); }
+    }
+
+    // 定时获得实时流量统计
+    async getRealTimeTopPvUvIpAjax(appId, beginTime, endTime) {
+        const query = { app_id: appId, create_time: { $gte: beginTime, $lt: endTime }};
+        const pvpro = Promise.resolve(this.app.models.WxPages(appId).count(query).read('sp'));
+        const uvpro = Promise.resolve(this.app.models.WxPages(appId).distinct('mark_uv', query).read('sp'));
+        const ippro = Promise.resolve(this.app.models.WxPages(appId).distinct('ip', query).read('sp'));
+        const ajpro = Promise.resolve(this.app.models.WxAjaxs(appId).count(query).read('sp'));
+        const data = await Promise.all([pvpro, uvpro, ippro, ajpro]);
+        const pv = data[0] || 0;
+        const uv = data[1].length || 0;
+        const ip = data[2].length || 0;
+        const ajax = data[3] || 0;
+        this.app.redis.set(`${appId}_pv_uv_ip_realtime`, JSON.stringify({ pv, uv, ip, ajax }));
     }
 
     // 省份流量统计

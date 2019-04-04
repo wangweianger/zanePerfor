@@ -10,12 +10,11 @@ class PvUvIpController extends Controller {
         const appId = query.appId;
         if (!appId) throw new Error('pvuvip概况统计：appId不能为空');
         // 今日数据概况
-        const endTime_today = new Date();
-        const beginTime_today = this.app.format(endTime_today, 'yyyy/MM/dd') + ' 00:00:00';
-        const result = await ctx.service.wx.pvuvip.getPvUvIpSurvey(appId, beginTime_today, endTime_today);
+        let result = await this.app.redis.get(`${appId}_pv_uv_ip_realtime`);
+        if (result) result = JSON.parse(result);
 
         ctx.body = this.app.result({
-            data: result,
+            data: result || {},
         });
     }
     // 某日概况

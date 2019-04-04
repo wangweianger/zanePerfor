@@ -15,6 +15,12 @@ class ReportController extends Controller {
         const query = ctx.request.body;
 
         if (!query.appId) throw new Error('web端上报数据操作：app_id不能为空');
+
+        ctx.body = {
+            code: 1000,
+            data: {},
+        };
+
         query.ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
         query.url = query.url || ctx.headers.referer;
         query.user_agent = ctx.headers['user-agent'];
@@ -22,11 +28,6 @@ class ReportController extends Controller {
         if (this.app.config.report_data_type === 'redis') this.saveWebReportDataForRedis(query);
         if (this.app.config.report_data_type === 'kafka') this.saveWebReportDataForKafka(query);
         if (this.app.config.report_data_type === 'mongodb') this.saveWebReportDataForMongodb(ctx);
-
-        ctx.body = {
-            code: 1000,
-            data: {},
-        };
     }
 
     // 通过redis 消息队列消费数据

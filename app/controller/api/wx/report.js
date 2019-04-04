@@ -12,16 +12,17 @@ class AjaxsController extends Controller {
 
         const query = ctx.request.body;
         if (!query.appId) throw new Error('wx端上报数据操作：app_id不能为空');
-        query.ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
-
-        if (this.app.config.report_data_type === 'redis') this.saveWxReportDataForRedis(query);
-        if (this.app.config.report_data_type === 'kafka') this.saveWxReportDataForKafka(query);
-        if (this.app.config.report_data_type === 'mongodb') this.saveWxReportDataForMongodb(ctx);
 
         ctx.body = {
             code: 1000,
             data: {},
         };
+
+        query.ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
+
+        if (this.app.config.report_data_type === 'redis') this.saveWxReportDataForRedis(query);
+        if (this.app.config.report_data_type === 'kafka') this.saveWxReportDataForKafka(query);
+        if (this.app.config.report_data_type === 'mongodb') this.saveWxReportDataForMongodb(ctx);
     }
 
     // 通过redis 消费者模式存储数据
