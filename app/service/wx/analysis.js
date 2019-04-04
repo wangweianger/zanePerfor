@@ -276,8 +276,8 @@ class AnalysisService extends Service {
         const data = await Promise.all([pvpro, uvpro, ippro, ajpro]);
 
         const pv = data[0] || 0;
-        const uv = data[1][0].length ? data[1][0].count : 0;
-        const ip = data[2][0].length ? data[2][0].count : 0;
+        const uv = data[1].length ? data[1][0].count : 0;
+        const ip = data[2].length ? data[2][0].count : 0;
         const ajax = data[3] || 0;
         this.app.redis.set(`${appId}_pv_uv_ip_realtime`, JSON.stringify({ pv, uv, ip, ajax }));
     }

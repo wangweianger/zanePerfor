@@ -41,8 +41,8 @@ class PvuvivService extends Service {
             const data = await Promise.all([ pv, uv, ip, ajax ]);
             josn = {
                 pv: data[0],
-                uv: data[1][0].length ? data[1][0].count : 0,
-                ip: data[2][0].length ? data[2][0].count : 0,
+                uv: data[1].length ? data[1][0].count : 0,
+                ip: data[2].length ? data[2][0].count : 0,
                 ajax: data[3],
             };
         } else {
