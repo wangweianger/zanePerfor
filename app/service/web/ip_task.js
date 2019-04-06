@@ -162,11 +162,11 @@ class IpTaskService extends Service {
     }
     // 更新IP相关信息
     async updateWebEnvironment(data, id, appId) {
-        const update = {
-            province: data.province,
-            city: data.city,
-        };
-        const result = await this.app.models.WebEnvironment(appId).findByIdAndUpdate(id, update).exec();
+        const result = await this.app.models.WebEnvironment(appId).update(
+            { _id: id },
+            { $set: { province: data.province, city: data.city } },
+            { upsert: true }
+        ).exec();
         return result;
     }
 }

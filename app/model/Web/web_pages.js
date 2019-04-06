@@ -28,6 +28,8 @@ module.exports = app => {
         ready_time: { type: Number }, // 页面准备时间
         screenwidth: { type: Number }, // 屏幕宽度
         screenheight: { type: Number }, // 屏幕高度
+    }, {
+        shardKey: { _id: 'hashed' },
     });
 
     WebPagesSchema.index({ speed_type: 1, is_first_in: 1, url: 1, create_time: -1 });

@@ -29,6 +29,7 @@ class PvuvivService extends Service {
             .limit(5)
             .exec();
     }
+    /* eslint-disable */
     // 概况统计
     async getPvUvIpSurvey(appId, beginTime, endTime, type) {
         const querydata = { create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
@@ -36,10 +37,9 @@ class PvuvivService extends Service {
         const uv = Promise.resolve(this.uv(appId, querydata));
         const ip = Promise.resolve(this.ip(appId, querydata));
         const ajax = Promise.resolve(this.ajax(appId, querydata));
-        let josn = {};
         if (!type) {
             const data = await Promise.all([ pv, uv, ip, ajax ]);
-            josn = {
+            return {
                 pv: data[0],
                 uv: data[1].length ? data[1][0].count : 0,
                 ip: data[2].length ? data[2][0].count : 0,
@@ -49,7 +49,7 @@ class PvuvivService extends Service {
             const user = Promise.resolve(this.user(appId, querydata));
             const bounce = Promise.resolve(this.bounce(appId, querydata));
             const data = await Promise.all([ pv, uv, ip, ajax, user, bounce ]);
-            josn = {
+            return {
                 pv: data[0] || 0,
                 uv: data[1].length ? data[1][0].count : 0,
                 ip: data[2].length ? data[2][0].count : 0,
@@ -58,8 +58,8 @@ class PvuvivService extends Service {
                 bounce: data[5] || 0,
             };
         }
-        return josn;
     }
+    /* eslint-enable */
     // pv
     async pv(appId, querydata) {
         return this.app.models.WxPages(appId).count(querydata).read('sp')
@@ -106,7 +106,6 @@ class PvuvivService extends Service {
             map: function () { emit(this.mark_user, 1); }, // eslint-disable-line
             reduce: function (key, values) { return values.length == 1 }, // eslint-disable-line
             query: querydata,
-            keeptemp: false,
             out: { replace: 'wxjumpout' },
         };
         const res = await this.app.models.WxPages(appId).mapReduce(option);

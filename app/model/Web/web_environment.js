@@ -20,6 +20,8 @@ module.exports = app => {
         county: { type: String }, // 国家
         province: { type: String }, // 省
         city: { type: String }, // 市
+    }, {
+        shardKey: { _id: 'hashed' },
     });
     WebEnvironmentSchema.index({ url: 1, create_time: -1 });
     WebEnvironmentSchema.index({ ip: 1, create_time: -1 });

@@ -21,6 +21,8 @@ module.exports = app => {
         next_hop_protocol: { type: String, default: 'http/1.1' }, // 资源请求类型
         mark_page: { type: String }, // 所有资源页面统一标识 html img css js 用户系统信息等
         mark_user: { type: String }, // 统一某一时间段用户标识
+    }, {
+        shardKey: { _id: 'hashed' },
     });
 
     WebResourceSchema.index({ speed_type: 1, name: 1, create_time: -1 });

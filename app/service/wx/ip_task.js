@@ -78,7 +78,7 @@ class IpTaskService extends Service {
         const timer = setInterval(() => {
             if (data[i] && data[i].ip) {
                 const ip = data[i].ip;
-                this.getIpData(ip, data[i]._id, data[i].app_id);
+                this.getIpData(ip, data[i]._id, data[i].app_id, data[i].path);
                 if (i === length && type) {
                     this.app.redis.set(`wx_ip_task_begin_time_${appId}`, data[i].create_time);
                     clearInterval(timer);
@@ -89,7 +89,7 @@ class IpTaskService extends Service {
     }
 
     // 根据ip获得地址信息 先查找数据库 再使用百度地图查询
-    async getIpData(ip, _id, appId) {
+    async getIpData(ip, _id, appId, path) {
         let copyip = ip.split('.');
         copyip = `${copyip[0]}.${copyip[1]}.${copyip[2]}`;
         let datas = null;
@@ -110,16 +110,16 @@ class IpTaskService extends Service {
         let result = null;
         if (datas) {
             // 直接更新
-            result = await this.updateWxPages(datas, _id, appId);
+            result = await this.updateWxPages(datas, _id, appId, path);
         } else {
             // 查询百度地图地址信息并更新
-            result = await this.getIpDataForBaiduApi(ip, _id, copyip, appId);
+            result = await this.getIpDataForBaiduApi(ip, _id, copyip, appId, path);
         }
         return result;
     }
 
     // g根据百度地图api获得地址信息
-    async getIpDataForBaiduApi(ip, _id, copyip, appId) {
+    async getIpDataForBaiduApi(ip, _id, copyip, appId, path) {
         if (!ip || ip === '127.0.0.1') return;
         const url = `https://api.map.baidu.com/location/ip?ip=${ip}&ak=${this.app.config.BAIDUAK}&coor=bd09ll`;
         const result = await this.app.curl(url, {
@@ -141,7 +141,7 @@ class IpTaskService extends Service {
                 this.cacheJson[copyip] = json;
             }
             // 更新用户地址信息
-            return await this.updateWxPages(json, _id, appId);
+            return await this.updateWxPages(json, _id, appId, path);
         }
     }
 
@@ -157,12 +157,12 @@ class IpTaskService extends Service {
         return await iplibrary.save();
     }
     // 更新IP相关信息
-    async updateWxPages(data, id, appId) {
-        const update = {
-            province: data.province,
-            city: data.city,
-        };
-        const result = await this.app.models.WxPages(appId).findByIdAndUpdate(id, update).exec();
+    async updateWxPages(data, id, appId, path) {
+        const result = await this.app.models.WxPages(appId).update(
+            { _id: id, path },
+            { $set: { province: data.province, city: data.city } },
+            { upsert: true }
+        ).exec();
         return result;
     }
 }

@@ -28,6 +28,8 @@ module.exports = app => {
         system: { type: String }, // 操作系统版本
         platform: { type: String }, // 客户端平台
         SDKVersion: { type: String }, // 客户端基础库版本
+    }, {
+        shardKey: { path: 'hashed' },
     });
 
     WxPagesSchema.index({ path: 1, create_time: -1 });

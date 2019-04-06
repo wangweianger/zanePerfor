@@ -18,6 +18,8 @@ module.exports = app => {
         call_url: { type: String }, // 调用页面的URL
         mark_page: { type: String }, // 所有资源页面统一标识 html img css js 用户系统信息等
         mark_user: { type: String }, // 统一某一时间段用户标识
+    }, {
+        shardKey: { _id: 'hashed' },
     });
 
     WebAjaxsSchema.index({ speed_type: 1, url: 1, create_time: -1 });

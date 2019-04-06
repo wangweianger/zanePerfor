@@ -105,7 +105,6 @@ class PvuvivService extends Service {
             map: function () { emit(this.mark_user, 1); }, // eslint-disable-line
             reduce: function (key, values) { return values.length == 1 }, // eslint-disable-line
             query: querydata,
-            keeptemp: false,
             out: { replace: 'webjumpout' },
         };
         const res = await this.app.models.WebEnvironment(appId).mapReduce(option);
