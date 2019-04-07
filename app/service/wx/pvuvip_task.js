@@ -6,9 +6,10 @@ class WxReportService extends Service {
     // 获得web端 pvuvip
     async getWxPvUvIpByDay() {
         const interval = parser.parseExpression(this.app.config.pvuvip_task_day_time);
+        interval.prev();
         const endTime = new Date(interval.prev().toString());
         const beginTime = new Date(interval.prev().toString());
-        const query = { create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
+        const query = { create_time: { $gte: beginTime, $lt: endTime } };
 
         const datas = await this.ctx.model.System.distinct('app_id', { type: 'wx' }).read('sp').exec();
         this.groupData(datas, 2, query, beginTime, endTime);
@@ -17,9 +18,9 @@ class WxReportService extends Service {
     async getWxPvUvIpByMinute() {
         const interval = parser.parseExpression(this.app.config.pvuvip_task_minute_time);
         interval.prev();
-        const endTime = new Date(interval.prev().toString()).getTime();
-        const beginTime = new Date(interval.prev().toString()).getTime();
-        const query = { create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
+        const endTime = new Date(interval.prev().toString());
+        const beginTime = new Date(interval.prev().toString());
+        const query = { create_time: { $gte: beginTime, $lt: endTime } };
 
         const datas = await this.ctx.model.System.distinct('app_id', { type: 'wx' }).read('sp').exec();
         this.groupData(datas, 1, query, endTime);
@@ -71,7 +72,6 @@ class WxReportService extends Service {
             pvuvip.type = type;
             await pvuvip.save();
 
-            // 触发日报邮件
             if (type === 2) {
                 this.ctx.service.wx.sendEmail.getDaliyDatas({
                     appId,
