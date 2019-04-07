@@ -6,7 +6,6 @@ class WebReportService extends Service {
     // 获得web端 pvuvip
     async getWebPvUvIpByDay() {
         const interval = parser.parseExpression(this.app.config.pvuvip_task_day_time);
-        interval.prev();
         const endTime = new Date(interval.prev().toString());
         const beginTime = new Date(interval.prev().toString());
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
