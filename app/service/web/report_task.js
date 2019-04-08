@@ -340,7 +340,7 @@ class DataTimedTaskService extends Service {
         ajaxs.url = newName;
         ajaxs.full_url = item.name;
         ajaxs.method = item.method;
-        ajaxs.duration = item.duration;
+        ajaxs.duration = duration;
         ajaxs.decoded_body_size = item.decodedBodySize;
         ajaxs.call_url = data.url;
         ajaxs.options = item.options || querydata;
@@ -382,7 +382,7 @@ class DataTimedTaskService extends Service {
         resours.name = newName;
         resours.method = item.method;
         resours.type = item.type;
-        resours.duration = item.duration;
+        resours.duration = duration;
         resours.decoded_body_size = item.decodedBodySize;
         resours.next_hop_protocol = item.nextHopProtocol;
         resours.mark_page = data.mark_page;

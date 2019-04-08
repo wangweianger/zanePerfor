@@ -307,7 +307,7 @@ class WxReportTaskService extends Service {
             ajaxs.name = newName;
             ajaxs.full_name = item.name;
             ajaxs.method = item.method;
-            ajaxs.duration = item.duration;
+            ajaxs.duration = duration;
             ajaxs.body_size = item.bodySize;
             ajaxs.mark_page = data.mark_page;
             ajaxs.mark_user = data.mark_user;
