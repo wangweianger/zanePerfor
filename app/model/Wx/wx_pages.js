@@ -29,7 +29,7 @@ module.exports = app => {
         platform: { type: String }, // 客户端平台
         SDKVersion: { type: String }, // 客户端基础库版本
     }, {
-        shardKey: { path: 'hashed' },
+        shardKey: { _id: 'hashed' },
     });
 
     WxPagesSchema.index({ path: 1, create_time: -1 });

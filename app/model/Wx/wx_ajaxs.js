@@ -20,7 +20,7 @@ module.exports = app => {
         speed_type: { type: Number }, // 访问速度类型 1：正常  2：慢
         path: { type: String }, // 所属path路径
     }, {
-        shardKey: { path: 'hashed' },
+        shardKey: { _id: 'hashed' },
     });
 
     WxAjaxsSchema.index({ speed_type: 1, name: 1, create_time: -1 });

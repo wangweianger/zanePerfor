@@ -21,7 +21,7 @@ module.exports = app => {
         options: { type: Mixed }, // ajax请求参数
         path: { type: String }, // 所属path路径
     }, {
-        shardKey: { path: 'hashed' },
+        shardKey: { _id: 'hashed' },
     });
 
     WxErrorsSchema.index({ type: 1, name: 1, create_time: 1 });

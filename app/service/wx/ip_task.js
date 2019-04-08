@@ -157,9 +157,9 @@ class IpTaskService extends Service {
         return await iplibrary.save();
     }
     // 更新IP相关信息
-    async updateWxPages(data, id, appId, path) {
+    async updateWxPages(data, id, appId) {
         const result = await this.app.models.WxPages(appId).update(
-            { _id: id, path },
+            { _id: id },
             { $set: { province: data.province, city: data.city } },
             { upsert: true }
         ).exec();
