@@ -316,7 +316,7 @@ class DataTimedTaskService extends Service {
 
         // 遍历所有资源进行存储
         data.resource_list.forEach(item => {
-            if (item.type === 'xmlhttprequest') {
+            if (item.type === 'xmlhttprequest' || item.type === 'fetchrequest') {
                 if (system.is_statisi_ajax === 0) this.saveAjaxs(data, item, system.slow_ajax_time);
             } else {
                 if (system.is_statisi_resource === 0) this.saveResours(data, item, system);
