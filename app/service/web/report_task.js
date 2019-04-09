@@ -329,7 +329,8 @@ class DataTimedTaskService extends Service {
         const newurl = url.parse(item.name);
         const newName = newurl.protocol + '//' + newurl.host + newurl.pathname;
         const querydata = newurl.query ? JSON.stringify(querystring.parse(newurl.query)) : '{}';
-        const duration = Math.abs(item.duration || 0);
+        let duration = Math.abs(item.duration || 0);
+        if (duration > 60000) duration = 60000;
         slowAjaxTime = slowAjaxTime * 1000;
         const speedType = duration >= slowAjaxTime ? 2 : 1;
 
@@ -354,7 +355,8 @@ class DataTimedTaskService extends Service {
     saveResours(data, item, system) {
         let slowTime = 2;
         let speedType = 1;
-        const duration = Math.abs(item.duration || 0);
+        let duration = Math.abs(item.duration || 0);
+        if (duration > 60000) duration = 60000;
 
         if (item.type === 'link' || item.type === 'css') {
             slowTime = (system.slow_css_time || 2) * 1000;
