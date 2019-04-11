@@ -106,7 +106,7 @@ class AnalysisService extends Service {
             const brand = Promise.resolve(this.getRealTimeTopBrand(appId, beginTime, endTime));
             const province = Promise.resolve(this.getRealTimeTopProvince(appId, beginTime, endTime));
             const all = await Promise.all([ pages, jump, brand, province ]);
-            result = { top_pages: all[0], top_jump_out: all[1], top_brand: all[2], province: all[3] };
+            result = { top_pages: all[0], top_jump_out: all[1], top_brand: all[2], provinces: all[3] };
         } else if (type === 2) {
             result = await this.getDbTopAnalysis(appId, beginTime, endTime) || {};
         }
@@ -207,10 +207,9 @@ class AnalysisService extends Service {
     }
 
     // 省份排行榜
-    async getRealTimeTopProvince(appId, beginTime, endTime, type = 1) {
-        type = type * 1;
+    async getRealTimeTopProvince(appId, beginTime, endTime) {
         let result = await this.app.redis.get(`${appId}_top_province_realtime`);
-        result = (result && type === 1) ? JSON.parse(result) : await this.getRealTimeTopProvinceForDb(appId, beginTime, endTime, type);
+        result = result ? JSON.parse(result) : await this.getRealTimeTopProvinceForDb(appId, beginTime, endTime);
         return result;
     }
     async getRealTimeTopProvinceForDb(appId, beginTime, endTime, type) {
@@ -292,7 +291,14 @@ class AnalysisService extends Service {
 
     // 省份流量统计
     async getProvinceAvgCount(appId, beginTime, endTime, type) {
-        return { provinces: await this.getRealTimeTopProvince(appId, beginTime, endTime, type) || [] };
+        if (type) type = type * 1;
+        if (type === 1) {
+            let res = await this.app.redis.get(`${appId}_top_province_realtime`);
+            res = res ? JSON.parse(res) : await this.getRealTimeTopProvinceForDb(appId, beginTime, endTime);
+            return { provinces: res };
+        } else if (type === 2) {
+            return await this.getDbTopAnalysis(appId, beginTime, endTime);
+        }
     }
 
 }
