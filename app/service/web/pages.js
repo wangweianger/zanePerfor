@@ -1,4 +1,3 @@
-/* eslint-disable */
 'use strict';
 const Service = require('egg').Service;
 
@@ -26,15 +25,15 @@ class PagesService extends Service {
             speed_type: type,
             is_first_in: tabtype,
             create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) },
-        }, }
+        } };
 
         if (url) queryjson.$match.url = { $regex: new RegExp(url, 'i') };
 
-        const group_id = { 
-            url: "$url", 
+        const group_id = {
+            url: '$url',
         };
-        
-        return url ? await this.oneThread(appId,queryjson, pageNo, pageSize, group_id)
+
+        return url ? await this.oneThread(appId, queryjson, pageNo, pageSize, group_id)
             : await this.moreThread(appId, type, beginTime, endTime, queryjson, pageNo, pageSize, group_id);
 
     }
@@ -42,8 +41,9 @@ class PagesService extends Service {
     // 获得多个页面的平均性能数据
     async moreThread(appId, type, beginTime, endTime, queryjson, pageNo, pageSize, group_id) {
         const result = [];
-        let distinct = await this.app.models.WebPages(appId).distinct('url', queryjson.$match).read('sp').exec() || [];
-        let copdistinct = distinct;
+        let distinct = await this.app.models.WebPages(appId).distinct('url', queryjson.$match).read('sp')
+            .exec() || [];
+        const copdistinct = distinct;
 
         const betinIndex = (pageNo - 1) * pageSize;
         if (distinct && distinct.length) {
@@ -61,24 +61,26 @@ class PagesService extends Service {
                             $group: {
                                 _id: group_id,
                                 count: { $sum: 1 },
-                                load_time: { $avg: "$load_time" },
-                                dns_time: { $avg: "$dns_time" },
-                                tcp_time: { $avg: "$tcp_time" },
-                                dom_time: { $avg: "$dom_time" },
-                                white_time: { $avg: "$white_time" },
-                                request_time: { $avg: "$request_time" },
-                                analysisDom_time: { $avg: "$analysisDom_time" },
-                                ready_time: { $avg: "$ready_time" },
-                            }
+                                load_time: { $avg: '$load_time' },
+                                dns_time: { $avg: '$dns_time' },
+                                tcp_time: { $avg: '$tcp_time' },
+                                dom_time: { $avg: '$dom_time' },
+                                white_time: { $avg: '$white_time' },
+                                request_time: { $avg: '$request_time' },
+                                analysisDom_time: { $avg: '$analysisDom_time' },
+                                ready_time: { $avg: '$ready_time' },
+                            },
                         },
-                    ]).read('sp').exec()
+                    ]).read('sp')
+                        .exec()
                 )
-            )
+            );
         }
         const all = await Promise.all(resolvelist) || [];
         all.forEach(item => {
             result.push(item[0]);
-        })
+        });
+        /* eslint-disable */
         result.sort(function (obj1, obj2) {
             let val1 = obj1.count;
             let val2 = obj2.count;
@@ -90,17 +92,19 @@ class PagesService extends Service {
                 return 0;
             }
         });
+        /* eslint-enable */
 
         return {
             datalist: result,
             totalNum: copdistinct.length,
-            pageNo: pageNo,
+            pageNo,
         };
     }
 
     // 单个页面查询平均信息
-    async oneThread(appId,queryjson, pageNo, pageSize, group_id) {
-        const count = Promise.resolve(this.app.models.WebPages(appId).distinct('url', queryjson.$match).read('sp').exec());
+    async oneThread(appId, queryjson, pageNo, pageSize, group_id) {
+        const count = Promise.resolve(this.app.models.WebPages(appId).distinct('url', queryjson.$match).read('sp')
+            .exec());
         const datas = Promise.resolve(
             this.app.models.WebPages(appId).aggregate([
                 queryjson,
@@ -108,27 +112,28 @@ class PagesService extends Service {
                     $group: {
                         _id: group_id,
                         count: { $sum: 1 },
-                        load_time: { $avg: "$load_time" },
-                        dns_time: { $avg: "$dns_time" },
-                        tcp_time: { $avg: "$tcp_time" },
-                        dom_time: { $avg: "$dom_time" },
-                        white_time: { $avg: "$white_time" },
-                        request_time: { $avg: "$request_time" },
-                        analysisDom_time: { $avg: "$analysisDom_time" },
-                        ready_time: { $avg: "$ready_time" },
-                    }
+                        load_time: { $avg: '$load_time' },
+                        dns_time: { $avg: '$dns_time' },
+                        tcp_time: { $avg: '$tcp_time' },
+                        dom_time: { $avg: '$dom_time' },
+                        white_time: { $avg: '$white_time' },
+                        request_time: { $avg: '$request_time' },
+                        analysisDom_time: { $avg: '$analysisDom_time' },
+                        ready_time: { $avg: '$ready_time' },
+                    },
                 },
                 { $skip: (pageNo - 1) * pageSize },
                 { $sort: { count: -1 } },
                 { $limit: pageSize },
-            ]).read('sp').exec()
+            ]).read('sp')
+                .exec()
         );
-        const all = await Promise.all([count, datas]);
+        const all = await Promise.all([ count, datas ]);
 
         return {
             datalist: all[1],
             totalNum: all[0].length,
-            pageNo: pageNo,
+            pageNo,
         };
     }
 
@@ -148,33 +153,36 @@ class PagesService extends Service {
         type = type * 1;
 
         // 查询参数拼接
-        const queryjson = { $match: { 
+        const queryjson = { $match: {
             speed_type: type,
-            url: url,
+            url,
             create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) },
-        }, }
+        } };
 
-        const count = Promise.resolve(this.app.models.WebPages(appId).count(queryjson.$match).read('sp').exec());
+        const count = Promise.resolve(this.app.models.WebPages(appId).count(queryjson.$match).read('sp')
+            .exec());
         const datas = Promise.resolve(
             this.app.models.WebPages(appId).aggregate([
                 queryjson,
                 { $sort: { create_time: -1 } },
                 { $skip: ((pageNo - 1) * pageSize) },
                 { $limit: pageSize },
-            ]).read('sp').exec()
+            ]).read('sp')
+                .exec()
         );
-        const all = await Promise.all([count, datas]);
+        const all = await Promise.all([ count, datas ]);
 
         return {
             datalist: all[1],
             totalNum: all[0],
-            pageNo: pageNo,
+            pageNo,
         };
     }
 
     // 单个页面详情
     async getPageDetails(appId, id) {
-        return await this.app.models.WebPages(appId).findOne({ _id: id }).read('sp').exec();
+        return await this.app.models.WebPages(appId).findOne({ _id: id }).read('sp')
+            .exec();
     }
 }
 

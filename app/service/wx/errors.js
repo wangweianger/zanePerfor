@@ -1,4 +1,3 @@
-/* eslint-disable */
 'use strict';
 
 const Service = require('egg').Service;
@@ -9,7 +8,7 @@ class ErroesService extends Service {
     async getAverageErrorList(ctx) {
         const query = ctx.request.query;
         const appId = query.appId;
-        let type = query.type;
+        const type = query.type;
         let pageNo = query.pageNo || 1;
         let pageSize = query.pageSize || this.app.config.pageSize;
         const beginTime = query.beginTime;
@@ -20,15 +19,15 @@ class ErroesService extends Service {
         pageSize = pageSize * 1;
 
         // 查询参数拼接
-        const queryjson = { $match: { }, }
+        const queryjson = { $match: { } };
         if (type) queryjson.$match.type = type;
-        if (url) queryjson.$match.name = { $regex: new RegExp(name, 'i') };
+        if (url) queryjson.$match.name = { $regex: new RegExp(url, 'i') };
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
         const group_id = {
-            name: "$name",
-            type: "$type",
-            msg: "$msg",
+            name: '$name',
+            type: '$type',
+            msg: '$msg',
         };
 
         return url ? await this.oneThread(appId, queryjson, pageNo, pageSize, group_id)
@@ -38,8 +37,9 @@ class ErroesService extends Service {
     // 平均求值数多线程
     async moreThread(appId, type, beginTime, endTime, queryjson, pageNo, pageSize, group_id) {
         const result = [];
-        let distinct = await this.app.models.WxErrors(appId).distinct('name', queryjson.$match).read('sp').exec() || [];
-        let copdistinct = distinct;
+        let distinct = await this.app.models.WxErrors(appId).distinct('name', queryjson.$match).read('sp')
+            .exec() || [];
+        const copdistinct = distinct;
 
         const betinIndex = (pageNo - 1) * pageSize;
         if (distinct && distinct.length) {
@@ -51,7 +51,7 @@ class ErroesService extends Service {
                 Promise.resolve(
                     this.app.models.WxErrors(appId).aggregate([
                         (type ?
-                            { $match: { type: type, name: distinct[i], create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } }
+                            { $match: { type, name: distinct[i], create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } }
                             :
                             { $match: { name: distinct[i], create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } }
                         ),
@@ -59,16 +59,18 @@ class ErroesService extends Service {
                             $group: {
                                 _id: group_id,
                                 count: { $sum: 1 },
-                            }
+                            },
                         },
-                    ]).read('sp').exec()
+                    ]).read('sp')
+                        .exec()
                 )
-            )
+            );
         }
         const all = await Promise.all(resolvelist) || [];
         all.forEach(item => {
             result.push(item[0]);
-        })
+        });
+        /* eslint-disable */
         result.sort(function (obj1, obj2) {
             let val1 = obj1.count;
             let val2 = obj2.count;
@@ -80,17 +82,19 @@ class ErroesService extends Service {
                 return 0;
             }
         });
+        /* eslint-enable */
 
         return {
             datalist: result,
             totalNum: copdistinct.length,
-            pageNo: pageNo,
+            pageNo,
         };
     }
 
     // 单个api接口查询平均信息
     async oneThread(appId, queryjson, pageNo, pageSize, group_id) {
-        const count = Promise.resolve(this.app.models.WxErrors(appId).distinct('name', queryjson.$match).read('sp').exec());
+        const count = Promise.resolve(this.app.models.WxErrors(appId).distinct('name', queryjson.$match).read('sp')
+            .exec());
         const datas = Promise.resolve(
             this.app.models.WxErrors(appId).aggregate([
                 queryjson,
@@ -98,18 +102,19 @@ class ErroesService extends Service {
                     $group: {
                         _id: group_id,
                         count: { $sum: 1 },
-                    }
+                    },
                 },
                 { $skip: (pageNo - 1) * pageSize },
                 { $sort: { count: -1 } },
                 { $limit: pageSize },
-            ]).read('sp').exec()
+            ]).read('sp')
+                .exec()
         );
-        const all = await Promise.all([count, datas]);
+        const all = await Promise.all([ count, datas ]);
         return {
             datalist: all[1],
             totalNum: all[0].length,
-            pageNo: pageNo,
+            pageNo,
         };
     }
 
@@ -118,30 +123,33 @@ class ErroesService extends Service {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
 
-        const query = { name: url, type: category }
+        const query = { name: url, type: category };
         if (beginTime && endTime) query.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        const count = Promise.resolve(this.app.models.WxErrors(appId).count(query).read('sp').exec());
+        const count = Promise.resolve(this.app.models.WxErrors(appId).count(query).read('sp')
+            .exec());
         const datas = Promise.resolve(
             this.app.models.WxErrors(appId).aggregate([
-                { $match: query, },
+                { $match: query },
                 { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
                 { $limit: pageSize },
-            ]).read('sp').exec()
+            ]).read('sp')
+                .exec()
         );
-        const all = await Promise.all([count, datas]);
+        const all = await Promise.all([ count, datas ]);
 
         return {
             datalist: all[1],
             totalNum: all[0],
-            pageNo: pageNo,
+            pageNo,
         };
     }
 
     // 单个error详情信息
     async getErrorDetail(appId, id) {
-        return await this.app.models.WxErrors(appId).findOne({ _id: id }).read('sp').exec() || {};
+        return await this.app.models.WxErrors(appId).findOne({ _id: id }).read('sp')
+            .exec() || {};
     }
 
 }

@@ -216,9 +216,9 @@ class AnalysisService extends Service {
     }
 
     // top省市排行榜
-    async getRealTimeTopProvince(appId, beginTime, endTime) {
+    async getRealTimeTopProvince(appId, beginTime, endTime, type) {
         let result = await this.app.redis.get(`${appId}_top_province_realtime`);
-        result = result ? JSON.parse(result) : await this.getRealTimeTopProvinceForDb(appId, beginTime, endTime);
+        result = (result && type === 2) ? JSON.parse(result) : await this.getRealTimeTopProvinceForDb(appId, beginTime, endTime);
         return result;
     }
     async getRealTimeTopProvinceForDb(appId, beginTime, endTime, type) {
@@ -302,8 +302,8 @@ class AnalysisService extends Service {
     }
 
     // 省份流量统计
-    async getProvinceAvgCount(appId, beginTime, endTime) {
-        return { provinces: await this.getRealTimeTopProvince(appId, beginTime, endTime) || [] };
+    async getProvinceAvgCount(appId, beginTime, endTime, type) {
+        return { provinces: await this.getRealTimeTopProvince(appId, beginTime, endTime, type) || [] };
     }
 }
 

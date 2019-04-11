@@ -1,4 +1,3 @@
-/* eslint-disable */
 'use strict';
 
 const Service = require('egg').Service;
@@ -11,23 +10,25 @@ class ResourceService extends Service {
         pageSize = pageSize * 1;
         speedType = speedType * 1;
 
-        const query = { $match: { url: url, speed_type: speedType }, };
+        const query = { $match: { url, speed_type: speedType } };
 
-        const count = Promise.resolve(this.app.models.WebResource(appId).count(query.$match).read('sp').exec());
+        const count = Promise.resolve(this.app.models.WebResource(appId).count(query.$match).read('sp')
+            .exec());
         const datas = Promise.resolve(
             this.app.models.WebResource(appId).aggregate([
                 query,
                 { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
                 { $limit: pageSize },
-            ]).read('sp').exec()
+            ]).read('sp')
+                .exec()
         );
-        const all = await Promise.all([count, datas]);
+        const all = await Promise.all([ count, datas ]);
 
         return {
             datalist: all[1],
             totalNum: all[0],
-            pageNo: pageNo,
+            pageNo,
         };
     }
 
@@ -47,13 +48,13 @@ class ResourceService extends Service {
         type = type * 1;
 
         // 查询参数拼接
-        const queryjson = { $match: { speed_type: type }, }
+        const queryjson = { $match: { speed_type: type } };
         if (url) queryjson.$match.name = { $regex: new RegExp(url, 'i') };
         if (beginTime && endTime) queryjson.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
         const group_id = {
-            url: "$name",
-            method: "$method",
+            url: '$name',
+            method: '$method',
         };
 
         return url ? await this.oneThread(appId, queryjson, pageNo, pageSize, group_id)
@@ -63,8 +64,9 @@ class ResourceService extends Service {
     // 平均求值数多线程
     async moreThread(appId, type, beginTime, endTime, queryjson, pageNo, pageSize, group_id) {
         const result = [];
-        let distinct = await this.app.models.WebResource(appId).distinct('name', queryjson.$match).read('sp').exec() || [];
-        let copdistinct = distinct;
+        let distinct = await this.app.models.WebResource(appId).distinct('name', queryjson.$match).read('sp')
+            .exec() || [];
+        const copdistinct = distinct;
 
         const betinIndex = (pageNo - 1) * pageSize;
         if (distinct && distinct.length) {
@@ -80,18 +82,20 @@ class ResourceService extends Service {
                             $group: {
                                 _id: group_id,
                                 count: { $sum: 1 },
-                                duration: { $avg: "$duration" },
-                                body_size: { $avg: "$decoded_body_size" },
-                            }
+                                duration: { $avg: '$duration' },
+                                body_size: { $avg: '$decoded_body_size' },
+                            },
                         },
-                    ]).read('sp').exec()
+                    ]).read('sp')
+                        .exec()
                 )
-            )
+            );
         }
         const all = await Promise.all(resolvelist) || [];
         all.forEach(item => {
             result.push(item[0]);
-        })
+        });
+        /* eslint-disable */
         result.sort(function (obj1, obj2) {
             let val1 = obj1.count;
             let val2 = obj2.count;
@@ -103,17 +107,19 @@ class ResourceService extends Service {
                 return 0;
             }
         });
+        /* eslint-enable */
 
         return {
             datalist: result,
             totalNum: copdistinct.length,
-            pageNo: pageNo,
+            pageNo,
         };
     }
 
     // 单个api接口查询平均信息
     async oneThread(appId, queryjson, pageNo, pageSize, group_id) {
-        const count = Promise.resolve(this.app.models.WebResource(appId).distinct('name', queryjson.$match).read('sp').exec());
+        const count = Promise.resolve(this.app.models.WebResource(appId).distinct('name', queryjson.$match).read('sp')
+            .exec());
         const datas = Promise.resolve(
             this.app.models.WebResource(appId).aggregate([
                 queryjson,
@@ -121,26 +127,27 @@ class ResourceService extends Service {
                     $group: {
                         _id: group_id,
                         count: { $sum: 1 },
-                        duration: { $avg: "$duration" },
-                        body_size: { $avg: "$decoded_body_size" },
-                    }
+                        duration: { $avg: '$duration' },
+                        body_size: { $avg: '$decoded_body_size' },
+                    },
                 },
                 { $skip: (pageNo - 1) * pageSize },
                 { $limit: pageSize },
                 { $sort: { count: -1 } },
-            ]).read('sp').exec()
+            ]).read('sp')
+                .exec()
         );
-        const all = await Promise.all([count, datas]);
+        const all = await Promise.all([ count, datas ]);
         return {
             datalist: all[1],
             totalNum: all[0].length,
-            pageNo: pageNo,
+            pageNo,
         };
     }
 
     // 获得单个resourc的平均性能数据
     async getOneResourceAvg(appId, url, beginTime, endTime) {
-        const query = { $match: { name: url }, };
+        const query = { $match: { name: url } };
         if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
         const datas = await this.app.models.WebResource(appId).aggregate([
@@ -149,11 +156,12 @@ class ResourceService extends Service {
                 $group: {
                     _id: null,
                     count: { $sum: 1 },
-                    duration: { $avg: "$duration" },
-                    body_size: { $avg: "$decoded_body_size" },
-                }
+                    duration: { $avg: '$duration' },
+                    body_size: { $avg: '$decoded_body_size' },
+                },
             },
-        ]).read('sp').exec();
+        ]).read('sp')
+            .exec();
 
         return datas && datas.length ? datas[0] : {};
     }
@@ -163,30 +171,33 @@ class ResourceService extends Service {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
 
-        const query = { $match: { name: url }, };
+        const query = { $match: { name: url } };
         if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
-        const count = Promise.resolve(this.app.models.WebResource(appId).count(query.$match).read('sp').exec());
+        const count = Promise.resolve(this.app.models.WebResource(appId).count(query.$match).read('sp')
+            .exec());
         const datas = Promise.resolve(
             this.app.models.WebResource(appId).aggregate([
                 query,
                 { $sort: { create_time: -1 } },
                 { $skip: (pageNo - 1) * pageSize },
                 { $limit: pageSize },
-            ]).read('sp').exec()
+            ]).read('sp')
+                .exec()
         );
-        const all = await Promise.all([count, datas]);
+        const all = await Promise.all([ count, datas ]);
 
         return {
             datalist: all[1],
             totalNum: all[0],
-            pageNo: pageNo,
+            pageNo,
         };
     }
 
     // 获得单个Resource详情信息
     async getOneResourceDetail(appId, id) {
-        return await this.app.models.WebResource(appId).findOne({ _id: id }).read('sp').exec() || {};
+        return await this.app.models.WebResource(appId).findOne({ _id: id }).read('sp')
+            .exec() || {};
     }
 }
 

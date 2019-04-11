@@ -1,4 +1,3 @@
-/* eslint-disable */
 'use strict';
 
 const Service = require('egg').Service;
@@ -10,8 +9,8 @@ class AnalysisService extends Service {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
 
-        const query = { $match: { }, };
-        if (ip) queryjson.$match.ip = ip;
+        const query = { $match: { } };
+        if (ip) query.$match.ip = ip;
         if (beginTime && endTime) query.$match.create_time = { $gte: new Date(beginTime), $lte: new Date(endTime) };
 
         return ip ? await this.oneThread(appId, query, pageNo, pageSize)
@@ -22,7 +21,7 @@ class AnalysisService extends Service {
     async moreThread(appId, beginTime, endTime, queryjson, pageNo, pageSize) {
         const result = [];
         let distinct = await this.app.models.WxPages(appId).distinct('mark_user', queryjson.$match).exec() || [];
-        let copdistinct = distinct;
+        const copdistinct = distinct;
 
         const betinIndex = (pageNo - 1) * pageSize;
         if (distinct && distinct.length) {
@@ -37,26 +36,27 @@ class AnalysisService extends Service {
                         {
                             $group: {
                                 _id: {
-                                    ip: "$ip",
-                                    markuser: "$mark_user",
-                                    brand: "$brand",
-                                    system: "$system",
+                                    ip: '$ip',
+                                    markuser: '$mark_user',
+                                    brand: '$brand',
+                                    system: '$system',
                                 },
-                            }
+                            },
                         },
-                    ]).read('sp').exec()
+                    ]).read('sp')
+                        .exec()
                 )
-            )
+            );
         }
         const all = await Promise.all(resolvelist) || [];
         all.forEach(item => {
             result.push(item[0]);
-        })
+        });
 
         return {
             datalist: result,
             totalNum: copdistinct.length,
-            pageNo: pageNo,
+            pageNo,
         };
     }
 
@@ -65,33 +65,35 @@ class AnalysisService extends Service {
         const count = Promise.resolve(this.app.models.WxPages(appId).distinct('mark_user', queryjson.$match).exec());
         const datas = Promise.resolve(
             this.app.models.WxPages(appId).aggregate([
-                query,
+                queryjson,
                 {
                     $group: {
                         _id: {
-                            ip: "$ip",
-                            markuser: "$mark_user",
-                            brand: "$brand",
-                            system: "$system",
+                            ip: '$ip',
+                            markuser: '$mark_user',
+                            brand: '$brand',
+                            system: '$system',
                         },
-                    }
+                    },
                 },
                 { $skip: (pageNo - 1) * pageSize },
                 { $sort: { count: -1 } },
                 { $limit: pageSize },
-            ]).read('sp').exec()
+            ]).read('sp')
+                .exec()
         );
-        const all = await Promise.all([count, datas]);
+        const all = await Promise.all([ count, datas ]);
         return {
             datalist: all[1],
             totalNum: all[0].length,
-            pageNo: pageNo,
+            pageNo,
         };
     }
 
     // 单个用户行为轨迹列表
     async getAnalysisOneList(appId, markuser) {
-        return await this.app.models.WxPages(appId).find({ mark_user: markuser }).read('sp').sort({cerate_time:1}) || {};
+        return await this.app.models.WxPages(appId).find({ mark_user: markuser }).read('sp')
+            .sort({ cerate_time: 1 }) || {};
     }
 
     // TOP datas
@@ -104,18 +106,18 @@ class AnalysisService extends Service {
             const brand = Promise.resolve(this.getRealTimeTopBrand(appId, beginTime, endTime));
             const province = Promise.resolve(this.getRealTimeTopProvince(appId, beginTime, endTime));
             const all = await Promise.all([ pages, jump, brand, province ]);
-            result = { top_pages: all[0], top_jump_out: all[1], top_brand: all[2], province: all[3] }
+            result = { top_pages: all[0], top_jump_out: all[1], top_brand: all[2], province: all[3] };
         } else if (type === 2) {
             result = await this.getDbTopAnalysis(appId, beginTime, endTime) || {};
         }
         return result;
-    };
+    }
     // 历史 top
     async getDbTopAnalysis(appId, beginTime, endTime) {
-        let data = await this.ctx.model.Wx.WxStatis.findOne({ app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } });
+        const data = await this.ctx.model.Wx.WxStatis.findOne({ app_id: appId, create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } });
         if (data) return data;
         // 不存在则储存
-        return await this.saveRealTimeTopTask(appId, 2, beginTime, endTime)
+        return await this.saveRealTimeTopTask(appId, 2, beginTime, endTime);
     }
     // top 页面
     async getRealTimeTopPages(appId, beginTime, endTime) {
@@ -126,20 +128,21 @@ class AnalysisService extends Service {
     async getRealTimeTopPagesForDb(appId, beginTime, endTime, type) {
         try {
             const result = await this.app.models.WxPages(appId).aggregate([
-                { $match: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) }, }, },
+                { $match: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
                 {
                     $group: {
-                        _id: { url: "$path", },
+                        _id: { url: '$path' },
                         count: { $sum: 1 },
                     },
                 },
                 { $sort: { count: -1 } },
                 { $limit: this.app.config.top_alalysis_size.wx || 10 },
-            ]).read('sp').exec();
+            ]).read('sp')
+                .exec();
             // 每分钟执行存储到redis
             if (type === 1) this.app.redis.set(`${appId}_top_pages_realtime`, JSON.stringify(result));
             return result;
-        } catch (err) { console.log(err); };
+        } catch (err) { console.log(err); }
     }
 
     // top跳出率
@@ -150,6 +153,7 @@ class AnalysisService extends Service {
     }
     async getRealTimeTopJumpOutForDb(appId, beginTime, endTime, type) {
         try {
+            /* eslint-disable */
             const option = {
                 map: function () { emit(this.mark_user, this.path); },
                 reduce: function (key, values) {
@@ -158,12 +162,13 @@ class AnalysisService extends Service {
                 query: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } },
                 out: { replace: 'collectionName' },
             }
-            const res = await this.app.models.WxPages(appId).mapReduce(option)
+            /* eslint-enable */
+            const res = await this.app.models.WxPages(appId).mapReduce(option);
             const result = await res.model.aggregate([
                 { $match: { value: { $ne: false } } },
                 {
                     $group: {
-                        _id: { value: "$value", },
+                        _id: { value: '$value' },
                         count: { $sum: 1 },
                     },
                 },
@@ -184,44 +189,47 @@ class AnalysisService extends Service {
     async getRealTimeTopBrandForDb(appId, beginTime, endTime, type) {
         try {
             const result = await this.app.models.WxPages(appId).aggregate([
-                { $match: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) }, }, },
+                { $match: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
                 {
                     $group: {
-                        _id: { brand: "$brand", },
+                        _id: { brand: '$brand' },
                         count: { $sum: 1 },
                     },
                 },
                 { $sort: { count: -1 } },
                 { $limit: this.app.config.top_alalysis_size.wx || 10 },
-            ]).read('sp').exec();
+            ]).read('sp')
+                .exec();
             // 每分钟执行存储到redis
             if (type === 1) this.app.redis.set(`${appId}_top_brand_realtime`, JSON.stringify(result));
             return result;
-        } catch (err) { console.log(err); };
+        } catch (err) { console.log(err); }
     }
 
     // 省份排行榜
-    async getRealTimeTopProvince(appId, beginTime, endTime) {
+    async getRealTimeTopProvince(appId, beginTime, endTime, type = 1) {
+        type = type * 1;
         let result = await this.app.redis.get(`${appId}_top_province_realtime`);
-        result = result ? JSON.parse(result) : await this.getRealTimeTopProvinceForDb(appId, beginTime, endTime);
+        result = (result && type === 2) ? JSON.parse(result) : await this.getRealTimeTopProvinceForDb(appId, beginTime, endTime);
         return result;
     }
     async getRealTimeTopProvinceForDb(appId, beginTime, endTime, type) {
         try {
             const result = await this.app.models.WxPages(appId).aggregate([
-                { $match: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) }, }, },
+                { $match: { create_time: { $gte: new Date(beginTime), $lte: new Date(endTime) } } },
                 {
                     $group: {
-                        _id: { province: "$province", },
+                        _id: { province: '$province' },
                         count: { $sum: 1 },
                     },
                 },
                 { $sort: { count: -1 } },
-            ]).read('sp').exec();
+            ]).read('sp')
+                .exec();
             // 每分钟执行存储到redis
             if (type === 1) this.app.redis.set(`${appId}_top_province_realtime`, JSON.stringify(result));
             return result;
-        } catch (err) { console.log(err); };
+        } catch (err) { console.log(err); }
     }
 
     // top排行榜 Task任务
@@ -237,8 +245,8 @@ class AnalysisService extends Service {
             const jump = Promise.resolve(this.getRealTimeTopJumpOutForDb(appId, beginTime, endTime, type));
             const brand = Promise.resolve(this.getRealTimeTopBrandForDb(appId, beginTime, endTime, type));
             const province = Promise.resolve(this.getRealTimeTopProvinceForDb(appId, beginTime, endTime, type));
-            this.getRealTimeTopPvUvIpAjax(appId, beginTime, endTime)
-            
+            this.getRealTimeTopPvUvIpAjax(appId, beginTime, endTime);
+
             if (type === 2) {
                 // 每天数据存储到数据库
                 const all = await Promise.all([ pages, jump, brand, province ]);
@@ -268,12 +276,12 @@ class AnalysisService extends Service {
 
     // 定时获得实时流量统计
     async getRealTimeTopPvUvIpAjax(appId, beginTime, endTime) {
-        const query = { create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) }};
+        const query = { create_time: { $gte: new Date(beginTime), $lt: new Date(endTime) } };
         const pvpro = Promise.resolve(this.ctx.service.wx.pvuvip.pv(appId, query));
         const uvpro = Promise.resolve(this.ctx.service.wx.pvuvip.uv(appId, query));
         const ippro = Promise.resolve(this.ctx.service.wx.pvuvip.ip(appId, query));
         const ajpro = Promise.resolve(this.ctx.service.wx.pvuvip.ajax(appId, query));
-        const data = await Promise.all([pvpro, uvpro, ippro, ajpro]);
+        const data = await Promise.all([ pvpro, uvpro, ippro, ajpro ]);
 
         const pv = data[0] || 0;
         const uv = data[1].length ? data[1][0].count : 0;
@@ -283,10 +291,10 @@ class AnalysisService extends Service {
     }
 
     // 省份流量统计
-    async getProvinceAvgCount(appId, beginTime, endTime) {
-        return { provinces: await this.getRealTimeTopProvince(appId, beginTime, endTime) || [] };
+    async getProvinceAvgCount(appId, beginTime, endTime, type) {
+        return { provinces: await this.getRealTimeTopProvince(appId, beginTime, endTime, type) || [] };
     }
-  
+
 }
 
 module.exports = AnalysisService;
