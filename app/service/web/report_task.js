@@ -207,8 +207,8 @@ class DataTimedTaskService extends Service {
                 time: item.create_time,
                 user_agent: item.user_agent,
                 ip: item.ip,
-                markPage: item.mark_page,
-                markUser: item.mark_user,
+                markPage: item.mark_page || '',
+                markUser: item.mark_user || '',
                 markUv: item.mark_uv,
                 url: item.url,
                 preUrl: item.pre_url,
@@ -238,8 +238,8 @@ class DataTimedTaskService extends Service {
             user_agent: query.user_agent,
             ip: query.ip,
             mark_page: query.markPage || this.app.randomString(),
-            mark_user: query.markUser,
-            mark_uv: query.markUv,
+            mark_user: query.markUser || '',
+            mark_uv: query.markUv || '',
             url: query.url,
         };
 

@@ -16,7 +16,6 @@ class WebReportService extends Service {
     // 定时执行每分钟的数据
     async getWebPvUvIpByMinute() {
         const interval = parser.parseExpression(this.app.config.pvuvip_task_minute_time);
-        interval.prev();
         const endTime = new Date(interval.prev().toString());
         const beginTime = new Date(interval.prev().toString());
         const query = { create_time: { $gte: beginTime, $lt: endTime } };
