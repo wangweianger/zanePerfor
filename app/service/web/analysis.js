@@ -216,9 +216,9 @@ class AnalysisService extends Service {
     }
 
     // top省市排行榜
-    async getRealTimeTopProvince(appId, beginTime, endTime, type) {
+    async getRealTimeTopProvince(appId, beginTime, endTime, type = 1) {
         let result = await this.app.redis.get(`${appId}_top_province_realtime`);
-        result = (result && type === 2) ? JSON.parse(result) : await this.getRealTimeTopProvinceForDb(appId, beginTime, endTime);
+        result = (result && type === 1) ? JSON.parse(result) : await this.getRealTimeTopProvinceForDb(appId, beginTime, endTime, type);
         return result;
     }
     async getRealTimeTopProvinceForDb(appId, beginTime, endTime, type) {
