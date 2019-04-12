@@ -9,11 +9,18 @@ class PvUvIpController extends Controller {
         const query = ctx.request.query;
         const appId = query.appId;
         if (!appId) throw new Error('pvuvip概况统计：appId不能为空');
+        // 计算定时任务间隔
+        const interval = parser.parseExpression(this.app.config.pvuvip_task_minute_time);
+        const timer = interval.prev().toString();
+        const timestrat = new Date(interval.prev().toString()).getTime();
+        const betweenTime = Math.abs(new Date(timer).getTime() - timestrat);
+
         // 今日数据概况
         let result = await this.app.redis.get(`${appId}_pv_uv_ip_realtime`);
         if (result) result = JSON.parse(result);
 
         ctx.body = this.app.result({
+            time: betweenTime,
             data: result,
         });
     }

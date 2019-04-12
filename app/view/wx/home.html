@@ -54,7 +54,7 @@
 		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">PV|AJAX|UV|IP</div>
 	</div>
 	<div v-show="lable==1">
-		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span>实时概况处理同步有1分钟以内的延迟，每{{timebetween}}分钟自动更新一次。</div>
+		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span>实时概况处理同步有{{timebetween}}分钟以内的延迟，每{{timebetween}}分钟自动更新一次。</div>
 		<div class="com_block mt20">
 			<h1 class="com_h2 mb20">查询某日概况</h1>
 			<div class='search mb20'>
@@ -94,9 +94,9 @@
 		</div>
 	</div>
 	<div v-show="lable==2">
-		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span> 实时数据处理同步有2分钟以内的延迟，实时统计每{{timebetween}}分钟自动更新一次。</div>
+		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span> 实时数据处理同步有{{timebetween}}分钟以内的延迟，实时统计每{{timebetween}}分钟自动更新一次。</div>
 		<div class='search search_1 mb20'>
-			<input id="zane-calendar-2" class="inp" type="text" placeholder="时间粒度选择1小时以内">
+			<input id="zane-calendar-2" class="inp" type="text" :placeholder="'时间粒度选择'+searchbetween+'小时以内'">
 			<div class="tipscolor mt10" v-if="errText">{{errText}}</div>
 		</div>
 		<div class="com_block">
@@ -136,6 +136,7 @@
 				errTextleft: '',
 				historylist: [],
 				timebetween:1,
+				searchbetween:1,
 			}
 		},
 		filters: {
@@ -176,12 +177,13 @@
 					let beginstrap = new Date(begintime).getTime();
 					let endstrap = new Date(endtime).getTime();
 					let between = endstrap - beginstrap;
+					let maxtime = this.timebetween * 60 * 1000 * 30;
 					if (between < 0) {
 						this.errText = "结束时间不能小于开始时间。";
 						return false;
 					}
-					if (between > 3600000) {
-						this.errText = "时间粒度选择1小时以内，支持所有时间段的查询。";
+					if (between > maxtime) {
+						this.errText = `时间粒度选择${this.searchbetween}小时以内，支持所有时间段的查询。`;
 						return false;
 					}
 					this.beginTime = begintime;
@@ -192,6 +194,7 @@
 		},
 		methods: {
 			checkoutLabel(lable) {
+				if(lable === this.lable) return;
 				this.lable = lable;
 				this.beginTime = '';
 				this.endTime = '';
@@ -215,6 +218,10 @@
 						endTime: this.beginTime,
 					},
 					success: (data) => {
+						if (data.time) {
+							this.timebetween = data.time / 1000 / 60;
+							this.searchbetween = data.time * 30 / 1000 / 60 / 60;
+						}
 						this.today = data.data;
 					}
 				})
@@ -257,7 +264,10 @@
 						endTime: this.endTime,
 					},
 					success: (data) => {
-						if(data.time) this.timebetween = data.time/1000/60;
+						if(data.time){
+							this.timebetween = data.time / 1000 / 60;
+							this.searchbetween = data.time * 30 / 1000 / 60 / 60;
+						}
 						this.xAxislist = [];
 						this.itemlist1 = [];
 						this.itemlist2 = [];
