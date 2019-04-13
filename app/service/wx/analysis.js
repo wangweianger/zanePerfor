@@ -93,7 +93,7 @@ class AnalysisService extends Service {
     // 单个用户行为轨迹列表
     async getAnalysisOneList(appId, markuser) {
         return await this.app.models.WxPages(appId).find({ mark_user: markuser }).read('sp')
-            .sort({ cerate_time: 1 }) || {};
+            .sort({ create_time: 1 }) || {};
     }
 
     // TOP datas

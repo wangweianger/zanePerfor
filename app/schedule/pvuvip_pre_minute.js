@@ -11,7 +11,7 @@ module.exports = app => {
         // 定时处pv，uv,ip统计信息 每分钟执行一次
         async task(ctx) {
             // 保证集群servers task不冲突
-            const preminute = await app.redis.get('pvuvip_task_minute_time');
+            const preminute = await app.redis.get('pvuvip_task_minute_time') || '';
             const value = app.config.cluster.listen.ip + ':' + app.config.cluster.listen.port;
             if (preminute && preminute !== value) return;
             if (!preminute) {
