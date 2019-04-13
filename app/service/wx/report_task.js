@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 const querystring = require('querystring');
-class WxReportTaskService extends Service {
+class ReportTaskService extends Service {
 
     constructor(params) {
         super(params);
@@ -351,4 +351,4 @@ class WxReportTaskService extends Service {
 
 }
 
-module.exports = WxReportTaskService;
+module.exports = ReportTaskService;

@@ -2,7 +2,7 @@
 
 const Service = require('egg').Service;
 
-class WebReportService extends Service {
+class ReportService extends Service {
 
     // 保存用户上报的数据
     async saveWebReportData(ctx) {
@@ -35,4 +35,4 @@ class WebReportService extends Service {
     }
 }
 
-module.exports = WebReportService;
+module.exports = ReportService;

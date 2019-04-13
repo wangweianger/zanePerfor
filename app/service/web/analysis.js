@@ -83,9 +83,11 @@ class AnalysisService extends Service {
                 .exec()
         );
         const all = await Promise.all([ count, datas ]);
+        const [ totalNum, datalist ] = all;
+
         return {
-            datalist: all[1],
-            totalNum: all[0].length,
+            datalist,
+            totalNum: totalNum.length,
             pageNo,
         };
     }
@@ -261,23 +263,24 @@ class AnalysisService extends Service {
             if (type === 2) {
                 // 每天数据存储到数据库
                 const all = await Promise.all([ pages, jump, browser, province ]);
+                const [ toppages, topjumpout, topbrowser, provinces ] = all;
 
                 const statis = this.ctx.model.Web.WebStatis();
                 statis.app_id = appId;
-                statis.top_pages = all[0];
-                statis.top_jump_out = all[1];
-                statis.top_browser = all[2];
-                statis.provinces = all[3];
+                statis.top_pages = toppages;
+                statis.top_jump_out = topjumpout;
+                statis.top_browser = topbrowser;
+                statis.provinces = provinces;
                 statis.create_time = beginTime;
                 const result = await statis.save();
 
                 // 触发日报邮件
                 this.ctx.service.web.sendEmail.getDaliyDatas({
                     appId,
-                    toppages: all[0],
-                    topjumpout: all[1],
-                    topbrowser: all[2],
-                    provinces: all[3],
+                    toppages,
+                    topjumpout,
+                    topbrowser,
+                    provinces,
                 }, 'toplist');
 
                 return result;

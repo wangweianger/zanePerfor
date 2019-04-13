@@ -1,7 +1,7 @@
 'use strict';
 const parser = require('cron-parser');
 const Service = require('egg').Service;
-class WebReportService extends Service {
+class PvuvipTaskService extends Service {
 
     // 获得web端 pvuvip
     async getWebPvUvIpByDay() {
@@ -87,4 +87,4 @@ class WebReportService extends Service {
 
 }
 
-module.exports = WebReportService;
+module.exports = PvuvipTaskService;

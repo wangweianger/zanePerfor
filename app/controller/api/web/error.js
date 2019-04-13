@@ -2,7 +2,7 @@
 
 const Controller = require('egg').Controller;
 
-class ResourceController extends Controller {
+class ErrorController extends Controller {
 
     // 获得error分类列表
     async getAverageErrorList() {
@@ -79,4 +79,4 @@ class ResourceController extends Controller {
     }
 }
 
-module.exports = ResourceController;
+module.exports = ErrorController;

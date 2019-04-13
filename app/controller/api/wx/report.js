@@ -2,7 +2,7 @@
 
 const Controller = require('egg').Controller;
 
-class AjaxsController extends Controller {
+class ReportController extends Controller {
 
     // 微信端用户数据上报
     async wxReport() {
@@ -51,4 +51,4 @@ class AjaxsController extends Controller {
 
 }
 
-module.exports = AjaxsController;
+module.exports = ReportController;

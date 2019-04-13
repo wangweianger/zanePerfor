@@ -83,8 +83,8 @@ class UserService extends Service {
     }
 
     // 查询用户列表信息（分页）
-    async getUserList(pageNos, pageSize, userName) {
-        pageNos = pageNos * 1;
+    async getUserList(pageNo, pageSize, userName) {
+        pageNo = pageNo * 1;
         pageSize = pageSize * 1;
 
         const query = {};
@@ -92,16 +92,17 @@ class UserService extends Service {
 
         const count = Promise.resolve(this.ctx.model.User.count(query).exec());
         const datas = Promise.resolve(
-            this.ctx.model.User.find(query).skip((pageNos - 1) * pageSize)
+            this.ctx.model.User.find(query).skip((pageNo - 1) * pageSize)
                 .limit(pageSize)
                 .exec()
         );
         const all = await Promise.all([ count, datas ]);
+        const [ totalNum, datalist ] = all;
 
         return {
-            datalist: all[1],
-            totalNum: all[0],
-            pageNo: pageNos,
+            datalist,
+            totalNum,
+            pageNo,
         };
     }
 

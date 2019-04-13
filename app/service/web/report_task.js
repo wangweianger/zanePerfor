@@ -6,7 +6,7 @@ const UAParser = require('ua-parser-js');
 const Service = require('egg').Service;
 const fs = require('fs');
 const path = require('path');
-class DataTimedTaskService extends Service {
+class ReportTaskService extends Service {
 
     constructor(params) {
         super(params);
@@ -487,4 +487,4 @@ class DataTimedTaskService extends Service {
     }
 }
 
-module.exports = DataTimedTaskService;
+module.exports = ReportTaskService;

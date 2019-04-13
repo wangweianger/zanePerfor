@@ -2,7 +2,7 @@
 
 const Service = require('egg').Service;
 
-class PvuvivService extends Service {
+class PvuvipService extends Service {
 
     // 保存用户上报的数据
     async getPvUvIpData(appId, beginTime, endTime) {
@@ -131,4 +131,4 @@ class PvuvivService extends Service {
     }
 }
 
-module.exports = PvuvivService;
+module.exports = PvuvipService;

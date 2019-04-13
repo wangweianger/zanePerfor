@@ -249,23 +249,24 @@ class AnalysisService extends Service {
             if (type === 2) {
                 // 每天数据存储到数据库
                 const all = await Promise.all([ pages, jump, brand, province ]);
+                const [ toppages, topjumpout, topbrand, provinces ] = all;
 
                 const statis = this.ctx.model.Wx.WxStatis();
                 statis.app_id = appId;
-                statis.top_pages = all[0];
-                statis.top_jump_out = all[1];
-                statis.top_brand = all[2];
-                statis.provinces = all[3];
+                statis.top_pages = toppages;
+                statis.top_jump_out = topjumpout;
+                statis.top_brand = topbrand;
+                statis.provinces = provinces;
                 statis.create_time = beginTime;
                 const result = await statis.save();
 
                 // 触发日报邮件
                 this.ctx.service.wx.sendEmail.getDaliyDatas({
                     appId,
-                    toppages: all[0],
-                    topjumpout: all[1],
-                    topbrand: all[2],
-                    provinces: all[3],
+                    toppages,
+                    topjumpout,
+                    topbrand,
+                    provinces,
                 }, 'toplist');
 
                 return result;

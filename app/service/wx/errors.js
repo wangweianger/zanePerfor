@@ -2,7 +2,7 @@
 
 const Service = require('egg').Service;
 
-class ErroesService extends Service {
+class ErrorsService extends Service {
 
     // 获得ERROR类型列表
     async getAverageErrorList(ctx) {
@@ -111,9 +111,11 @@ class ErroesService extends Service {
                 .exec()
         );
         const all = await Promise.all([ count, datas ]);
+        const [ totalNum, datalist ] = all;
+
         return {
-            datalist: all[1],
-            totalNum: all[0].length,
+            totalNum: totalNum.length,
+            datalist,
             pageNo,
         };
     }
@@ -138,10 +140,11 @@ class ErroesService extends Service {
                 .exec()
         );
         const all = await Promise.all([ count, datas ]);
+        const [ totalNum, datalist ] = all;
 
         return {
-            datalist: all[1],
-            totalNum: all[0],
+            totalNum,
+            datalist,
             pageNo,
         };
     }
@@ -154,4 +157,4 @@ class ErroesService extends Service {
 
 }
 
-module.exports = ErroesService;
+module.exports = ErrorsService;

@@ -139,9 +139,11 @@ class AjaxsService extends Service {
                 .exec()
         );
         const all = await Promise.all([ count, datas ]);
+        const [ totalNum, datalist ] = all;
+
         return {
-            datalist: all[1],
-            totalNum: all[0].length,
+            datalist,
+            totalNum: totalNum.length,
             pageNo,
         };
     }
@@ -187,10 +189,11 @@ class AjaxsService extends Service {
                 .exec()
         );
         const all = await Promise.all([ count, datas ]);
+        const [ totalNum, datalist ] = all;
 
         return {
-            datalist: all[1],
-            totalNum: all[0],
+            datalist,
+            totalNum,
             pageNo,
         };
     }

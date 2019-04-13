@@ -1,7 +1,7 @@
 'use strict';
 const parser = require('cron-parser');
 const Service = require('egg').Service;
-class WxReportService extends Service {
+class PvuvipTaskService extends Service {
 
     // 获得web端 pvuvip
     async getWxPvUvIpByDay() {
@@ -86,4 +86,4 @@ class WxReportService extends Service {
     }
 }
 
-module.exports = WxReportService;
+module.exports = PvuvipTaskService;
