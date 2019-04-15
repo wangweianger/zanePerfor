@@ -82,46 +82,10 @@ class PvuvipTaskService extends Service {
                     depth: pv && user ? parseInt(pv / user) : 0,
                 }, 'pvuvip');
             }
-
             // 流量峰值 超过历史top邮件触达
-            const highestPv = parseInt(await this.app.redis.get('wx_highest_pv_tips') || 0);
-            if (pv > highestPv) {
-                this.highestPvTipsEmail({ appId, pv, uv, ip, ajax });
-                this.app.redis.set('wx_highest_pv_tips', pv);
-            }
+            this.ctx.service.emails.highestPvTipsEmail({ appId, pv, uv, ip, ajax });
+
         } catch (err) { console.log(err); }
-    }
-
-    // 超过历史pv流量时发送邮件
-    async highestPvTipsEmail(json = {}) {
-        const { appId, pv, uv, ip, ajax } = json;
-        const systemMsg = await this.ctx.service.system.getSystemForAppId(appId);
-        if (systemMsg.is_use !== 0 && systemMsg.is_highest_use !== 0) return;
-
-        // 计算定时任务间隔
-        const interval = parser.parseExpression(this.app.config.pvuvip_task_minute_time);
-        const timer_1 = new Date(interval.prev().toString()).getTime();
-        const timer_2 = new Date(interval.prev().toString()).getTime();
-        const betTime = Math.abs(timer_1 - timer_2) / 1000 / 60;
-
-        const from = `${systemMsg.system_name}应用在${betTime}分钟内突破历史流量峰值啦~`;
-        const to = systemMsg.highest_list.toString();
-        const day = this.app.format(new Date(), 'yyyy/MM/dd HH:mm:ss');
-
-        const mailOptions = {
-            from: `${from}<${this.app.config.email.client.auth.user}>`,
-            to,
-            subject: day,
-            html: `
-                    <div style="fong-size:25px;text-align:center;margin:50px 0 30px;">${systemMsg.system_name}应用在${betTime}分钟内突破历史流量峰值啦~</div>
-                    <div style="margin-bottom:20px;">${day}</div>
-                    <div style="margin-bottom:20px;">AJAX请求量：${ajax || 0}</div>
-                    <div style="margin-bottom:20px;">PV请求量：${pv || 0}</div>
-                    <div style="margin-bottom:20px;">UV请求量：${uv || 0}</div>
-                    <div style="margin-bottom:20px;">IP请求量：${ip || 0}</div>
-                `,
-        };
-        this.app.email.sendMail(mailOptions);
     }
 }
 
