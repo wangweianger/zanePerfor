@@ -33,6 +33,8 @@ class EmailsService extends Service {
                             const result = await this.ctx.service.system.getSystemForAppId(citem.system_id);
                             systemMags[citem.system_id] = result;
                             citem.system_name = result.system_name;
+                        } else {
+                            citem.system_name = systemMags[citem.system_id].system_name;
                         }
                     }
                 }
@@ -59,7 +61,9 @@ class EmailsService extends Service {
         if (systemIds && systemIds.length) {
             systemIds.forEach(item => {
                 if (item.system_id && item.type === 'daliy') {
-                    this.ctx.service.system.handleDaliyEmail(item.system_id, email, 2, false);
+                    this.ctx.service.system.handleDaliyEmail(item.system_id, email, 2, false, 1);
+                } else if (item.system_id && item.type === 'highest') {
+                    this.ctx.service.system.handleDaliyEmail(item.system_id, email, 2, false, 2);
                 }
             });
         }
@@ -68,24 +72,25 @@ class EmailsService extends Service {
 
     // 更新 system_ids字段
     async updateSystemIds(opt) {
-        switch (opt.type) {
-        case 'daliy':
-            await this.updateDaliyList(opt.email, opt.appId, opt.handletype);
-            break;
-        default:
-            break;
-        }
-    }
-
-    // 更新日报字段
-    async updateDaliyList(emails, appId, handletype) {
+        let { email, appId, handletype, handleitem } = opt;
         handletype = handletype * 1;
+        handleitem = handleitem * 1;
+
+        let str = '';
+        let type = '';
+        if (handleitem === 1) {
+            str = '每日发送日报权限';
+            type = 'daliy';
+        } else if (handleitem === 2) {
+            str = '超过历史流量峰值邮件触达';
+            type = 'highest';
+        }
         const handleData = handletype === 1 ?
-            { $push: { system_ids: { $each: [{ system_id: appId, desc: '每日发送日报权限', type: 'daliy' }] } } } :
-            { $pull: { system_ids: { system_id: appId, type: 'daliy' } } };
+            { $push: { system_ids: { $each: [{ system_id: appId, desc: str, type }] } } } :
+            { $pull: { system_ids: { system_id: appId, type } } };
 
         const result = await this.ctx.model.Email.update(
-            { email: emails },
+            { email },
             handleData,
             { multi: true }).exec();
         return result;

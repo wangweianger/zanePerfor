@@ -25,6 +25,8 @@ module.exports = app => {
         is_statisi_error: { type: Number, default: 0 }, // 是否上报页面错误信息  0：是   1：否
         is_daily_use: { type: Number, default: 0 }, // 是否发送日报  0：是  1：否
         daliy_list: { type: Array }, // 日报列表
+        is_highest_use: { type: Number, default: 0 }, // 是否发送pv邮件  0：是  1：否
+        highest_list: { type: Array }, // 突破历史pv峰值时发送邮件列表
     });
 
     WebResourceSchema.index({ app_id: -1, create_time: 1, system_domain: -1, user_id: -1 });

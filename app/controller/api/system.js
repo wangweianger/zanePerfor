@@ -103,10 +103,11 @@ class SystemController extends Controller {
         const appId = query.appId;
         const email = query.email;
         const type = query.type || 1;
+        const item = query.item || 1;
 
-        if (!appId) throw new Error('删除某个系统：appId不能为空');
+        if (!appId) throw new Error('appId不能为空');
 
-        const result = await ctx.service.system.handleDaliyEmail(appId, email, type);
+        const result = await ctx.service.system.handleDaliyEmail(appId, email, type, true, item);
 
         ctx.body = this.app.result({
             data: result,

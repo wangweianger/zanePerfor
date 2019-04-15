@@ -147,9 +147,16 @@ class SystemService extends Service {
     }
 
     // 新增 | 删除 日报邮件
-    async handleDaliyEmail(appId, email, type, handleEmali = true) {
+    // item: 1:日报邮件发送  2：流量峰值邮件发送
+    async handleDaliyEmail(appId, email, type, handleEmali = true, item = 1) {
         type = type * 1;
-        const handleData = type === 1 ? { $addToSet: { daliy_list: email } } : { $pull: { daliy_list: email } };
+        item = item * 1;
+        let handleData = null;
+        if (item === 1) {
+            handleData = type === 1 ? { $addToSet: { daliy_list: email } } : { $pull: { daliy_list: email } };
+        } else if (item === 2) {
+            handleData = type === 1 ? { $addToSet: { highest_list: email } } : { $pull: { highest_list: email } };
+        }
         const result = await this.ctx.model.System.update(
             { app_id: appId },
             handleData,
@@ -159,19 +166,19 @@ class SystemService extends Service {
         this.updateSystemCache(appId);
 
         // 更新邮件相关信息
-        if (handleEmali) this.updateEmailSystemIds(email, appId, type);
+        if (handleEmali) this.updateEmailSystemIds(email, appId, type, item);
 
         return result;
     }
 
     // 更新邮件信息
-    async updateEmailSystemIds(email, appId, handletype = 1) {
+    async updateEmailSystemIds(email, appId, handletype = 1, handleitem = 1) {
         if (!email) return;
         await this.ctx.service.emails.updateSystemIds({
             email,
             appId,
-            type: 'daliy',
             handletype,
+            handleitem,
         });
     }
 }

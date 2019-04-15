@@ -163,6 +163,7 @@
 		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">阈值设置</div>
 		<div class="item" :class="{'active':lable==3}" @click="checkoutLabel(3)">统计设置</div>
 		<div class="item" :class="{'active':lable==5}" @click="checkoutEmail(5)">日报设置</div>
+		<div class="item" :class="{'active':lable==6}" @click="checkoutEmail(6)">流量触达</div>
 		<div class="item" :class="{'active':lable==4}" @click="checkoutLabel(4)">性能优化</div>
 
 	</div>
@@ -302,6 +303,21 @@ Performance({
 				<button class="btn btn-main" @click="isModelShow=true">+新增</button>
 			</div>
 		</div>
+		<div class="block" v-show="lable==6">
+			<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span>当应用突破历史流量峰值时会给相应的配置人员发送邮件!</div>
+			<h1 class="h1">是否开启发送流量峰值触达</h1>
+			<div class="content">
+				<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-highest" checked />
+			</div>
+			<h1 class="h1">设置接收邮箱</h1>
+			<div class="email_content">
+				<span v-if="!!highestlist.length">
+					<div class="item" v-for="item in highestlist" v-if="!!item" @click="handleEmail(item,2)">{{item}}<span
+							class="iconfont">&#xe613;</span></div>
+				</span>
+				<button class="btn btn-main" @click="isModelShow=true">+新增</button>
+			</div>
+		</div>
 	</div>
 
 	<!-- 弹出model -->
@@ -333,7 +349,6 @@ Performance({
 							<td class="tc">{{item.create_time|date('/',true)}}</td>
 							<td class="tc">
 								<button class="btn btn-main" @click="handleEmail(item.email,1)">增加</button>
-								<!-- <button class="btn btn-default" @click="handleEmail(item.email,2)">删除</button> -->
 							</td>
 						</tr>
 					</table>
@@ -366,6 +381,7 @@ new Vue({
 			email:'',
 			emaillist:[],
 			daliylist:[],
+			highestlist:[],
 		}
 	},
 	filters: {
@@ -392,21 +408,38 @@ new Vue({
 					if(!data.data.app_id) return;
 					this.systemInfo = data.data || {};
 					this.daliylist = this.systemInfo.daliy_list || [];
-					this.settingIsUse();
 					this.pagexingneng();
-					this.openDaily();
+					this.settingIsUse(1);
+					this.settingIsUse(2);
+					this.settingIsUse(3);
 				}
 			})
 		},
 		// 设置项目是否接收数据
-		settingIsUse() {
-			let elem = document.querySelector('.js-switch');
-			elem.checked = this.systemInfo.is_use == 0 ? true : false;
+		settingIsUse(type) {
+			let elem = null;
+			if (type === 1) {
+				elem = document.querySelector('.js-switch');
+				elem.checked = this.systemInfo.is_use == 0 ? true : false;
+			} else if (type === 2) {
+				elem = document.querySelector('.js-switch-rb');
+				elem.checked = this.systemInfo.is_daily_use == 0 ? true : false;
+			} else if (type === 3) {
+				elem = document.querySelector('.js-switch-highest');
+				elem.checked = this.systemInfo.is_highest_use == 0 ? true : false;
+			}
+
 			const init = new Switchery(elem, { color: '#8776f7' });
 			const _this = this;
 
 			elem.onchange = function () {
-				_this.systemInfo.is_use = elem.checked ? 0 : 1;
+				if (type === 1) {
+					_this.systemInfo.is_use = elem.checked ? 0 : 1;
+				} else if (type === 2) {
+					_this.systemInfo.is_daily_use = elem.checked ? 0 : 1;
+				} else if (type === 3) {
+					_this.systemInfo.is_highest_use = elem.checked ? 0 : 1;
+				}
 				util.ajax({
 					url: config.baseApi + 'api/v1/system/update',
 					data: _this.systemInfo,
@@ -513,22 +546,6 @@ new Vue({
 				}
 			})
 		},
-		openDaily() {
-			let elem = document.querySelector('.js-switch-rb');
-			elem.checked = this.systemInfo.is_daily_use == 0 ? true : false;
-			const init = new Switchery(elem, { color: '#8776f7' });
-			const _this = this;
-			elem.onchange = function () {
-				_this.systemInfo.is_daily_use = elem.checked ? 0 : 1;
-				util.ajax({
-					url: config.baseApi + 'api/v1/system/update',
-					data: _this.systemInfo,
-					success: data => {
-						popup.miss({ title: '操作成功!' })
-					}
-				})
-			};
-		},
 		checkoutEmail(lable){
 			if (lable == this.lable) return;
 			this.lable = lable;
@@ -571,8 +588,16 @@ new Vue({
 				}
 			})
 		},
-		handleEmail(email,type=1){
-			let index = this.daliylist.indexOf(email)
+		handleEmail(email, type = 1){
+			let index = -1;
+			let item = 1;
+			if (this.lable == 5) {
+				index = this.daliylist.indexOf(email)
+				item = 1;
+			} else if (this.lable == 6) {
+				index = this.highestlist.indexOf(email)
+				item = 2;
+			}
 			if(type === 1 && index > -1){
 				popup.miss({title:'请勿重复添加!'});
 				return;
@@ -582,11 +607,17 @@ new Vue({
 				data: {
 					appId: this.appId,
 					email: email,
-					type: type
+					type: type,
+					item: item,
 				},
 				success: data => {
-					if(type === 1 && index === -1) this.daliylist.push(email);
-					if (type === 2) this.daliylist.splice(index,1);
+					if (this.lable == 5) {
+						if (type === 1 && index === -1) this.daliylist.push(email);
+						if (type === 2) this.daliylist.splice(index, 1);
+					} else if (this.lable == 6) {
+						if (type === 1 && index === -1) this.highestlist.push(email);
+						if (type === 2) this.highestlist.splice(index, 1);
+					}
 					popup.miss({ title: '操作成功!' })
 				}
 			})
