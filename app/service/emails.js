@@ -115,7 +115,7 @@ class EmailsService extends Service {
 
         const from = `${systemMsg.system_name}应用在${betTime}分钟内突破历史流量峰值啦~`;
         const to = systemMsg.highest_list.toString();
-        const day = this.app.format(new Date(), 'yyyy/MM/dd HH:mm:ss');
+        const day = this.app.format(new Date(), 'yyyy/MM/dd hh:mm:ss');
 
         const mailOptions = {
             from: `${from}<${this.app.config.email.client.auth.user}>`,

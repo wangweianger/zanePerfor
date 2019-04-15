@@ -103,7 +103,7 @@ class PvUvIpController extends Controller {
             };
         } else {
             result = {
-                time: this.app.format(endTime, 'yyyy/MM/dd HH:mm') + ':00',
+                time: this.app.format(endTime, 'yyyy/MM/dd hh:mm') + ':00',
                 pv: 0,
                 uv: 0,
                 ip: 0,
@@ -127,7 +127,7 @@ class PvUvIpController extends Controller {
             try {
                 const obj = interval.next();
                 const date = new Date(obj.value.toString());
-                const timer = this.app.format(date, 'yyyy/MM/dd HH:mm:ss');
+                const timer = this.app.format(date, 'yyyy/MM/dd hh:mm:ss');
                 const items = {
                     time: timer,
                     pv: 0,

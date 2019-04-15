@@ -164,7 +164,7 @@ new Vue({
 		zaneDate({
 			elem: '#zane-calendar-2',
 			type:'doubleday',
-			format: 'yyyy/MM/dd HH:mm:ss',
+			format: 'yyyy/MM/dd hh:mm:ss',
 			showtime: true,
 			done: (fulltime, begintime, endtime) => {
 				this.errText = '';
@@ -268,7 +268,7 @@ new Vue({
 					this.itemlist3 = [];
 					this.itemlist4 = [];
 					data.data.forEach(item=>{
-						let time = new Date(item.time).format('HH:mm');
+						let time = new Date(item.time).format('hh:mm');
 						this.xAxislist.push(time);
 						this.itemlist1.push(item.pv)
 						this.itemlist2.push(item.uv)

@@ -81,7 +81,6 @@ class PvuvipTaskService extends Service {
                     depth: pv && user ? parseInt(pv / user) : 0,
                 }, 'pvuvip');
             }
-
             // 流量峰值 超过历史top邮件触达
             this.ctx.service.emails.highestPvTipsEmail({ appId, pv, uv, ip, ajax });
 
