@@ -281,13 +281,15 @@ class AnalysisService extends Service {
         const uvpro = Promise.resolve(this.ctx.service.wx.pvuvip.uv(appId, query));
         const ippro = Promise.resolve(this.ctx.service.wx.pvuvip.ip(appId, query));
         const ajpro = Promise.resolve(this.ctx.service.wx.pvuvip.ajax(appId, query));
-        const data = await Promise.all([ pvpro, uvpro, ippro, ajpro ]);
+        const flpro = Promise.resolve(this.ctx.service.wx.pvuvip.flow(appId, query));
+        const data = await Promise.all([ pvpro, uvpro, ippro, ajpro, flpro ]);
 
         const pv = data[0] || 0;
         const uv = data[1].length ? data[1][0].count : 0;
         const ip = data[2].length ? data[2][0].count : 0;
         const ajax = data[3] || 0;
-        this.app.redis.set(`${appId}_pv_uv_ip_realtime`, JSON.stringify({ pv, uv, ip, ajax }));
+        const flow = data[4].length ? data[4][0].amount : 0;
+        this.app.redis.set(`${appId}_pv_uv_ip_realtime`, JSON.stringify({ pv, uv, ip, ajax, flow }));
     }
 
     // 省份流量统计

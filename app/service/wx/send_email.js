@@ -105,6 +105,7 @@ class SendEmailService extends Service {
                             <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">AJAX：<span style="color:#8776f7;">${pvuvip.ajax || 0}</span></div>
                             <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">跳出率：<span style="color:#8776f7;">${pvuvip.bounce || 0}</span></div>
                             <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">访问深度：<span style="color:#8776f7;">${pvuvip.depth || 0}</span></div>
+                            <div style="display: inline-block;margin-right:20px;font-size:18px;padding:0 20px;">流量：<span style="color:#8776f7;">${this.flow(pvuvip.flow)}</span></div>
                         </div>
                     </div>
                     <div style="width:90%;margin:0 auto;margin-top:20px;background:#fff;border-radius:6px;padding:20px;overflow:hidden;">
@@ -141,6 +142,28 @@ class SendEmailService extends Service {
                 </div>
             </body>
         </html>`;
+    }
+    // 流量数字格式化
+    flow(val = 0) {
+        let value = val;
+        let index = 0;
+        while (value >= 1024) {
+            value = value / 1024;
+            index++;
+        }
+        value = value.toFixed(2);
+        if (index >= 4) {
+            value = value + 'T';
+        } else if (index >= 3) {
+            value = value + 'G';
+        } else if (index >= 2) {
+            value = value + 'M';
+        } else if (index >= 1) {
+            value = value + 'KB';
+        } else {
+            value = value + 'B';
+        }
+        return value;
     }
 }
 

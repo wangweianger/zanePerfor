@@ -82,6 +82,29 @@ let Filter = {
         }
         return result;
     },
+    // 流量单位
+    flow(val = 0) {
+        let result = 0;
+        let value = val;
+        let index = 0;
+        while (value >= 1024) {
+            value = value / 1024
+            index++;
+        }
+        value = value.toFixed(2);
+        if (index >= 4) {
+            value = value + 'T'
+        } else if (index >= 3) {
+            value = value + 'G'
+        } else if (index >= 2) {
+            value = value + 'M'
+        } else if (index >= 1) {
+            value = value + 'KB'
+        } else {
+            value = value + 'B'
+        }
+        return value;
+    },
 }
 
 window.Filter = {};

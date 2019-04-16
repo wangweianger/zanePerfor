@@ -134,6 +134,7 @@ class PvUvIpController extends Controller {
                     uv: 0,
                     ip: 0,
                     ajax: 0,
+                    flow: 0,
                 };
                 datalist.forEach(item => {
                     if (date.getTime() === new Date(item.create_time).getTime()) {
@@ -141,6 +142,8 @@ class PvUvIpController extends Controller {
                         items.uv = item.uv || 0;
                         items.ip = item.ip || 0;
                         items.ajax = item.ajax || 0;
+                        // items.flow = parseInt((item.flow || 0) / 1024);
+                        items.flow = parseFloat(((item.flow || 0) / 1024).toFixed(2));
                     }
                 });
                 result.push(items);

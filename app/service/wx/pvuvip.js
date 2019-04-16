@@ -37,18 +37,21 @@ class PvuvipService extends Service {
         const uv = Promise.resolve(this.uv(appId, querydata));
         const ip = Promise.resolve(this.ip(appId, querydata));
         const ajax = Promise.resolve(this.ajax(appId, querydata));
+        const flow = Promise.resolve(this.flow(appId, querydata));
+        
         if (!type) {
-            const data = await Promise.all([ pv, uv, ip, ajax ]);
+            const data = await Promise.all([ pv, uv, ip, ajax, flow ]);
             return {
-                pv: data[0],
+                pv: data[0] || 0,
                 uv: data[1].length ? data[1][0].count : 0,
                 ip: data[2].length ? data[2][0].count : 0,
-                ajax: data[3],
+                ajax: data[3] || 0,
+                flow: data[4].length ? data[4][0].amount : 0,
             };
         } else {
             const user = Promise.resolve(this.user(appId, querydata));
             const bounce = Promise.resolve(this.bounce(appId, querydata));
-            const data = await Promise.all([ pv, uv, ip, ajax, user, bounce ]);
+            const data = await Promise.all([ pv, uv, ip, ajax, user, bounce, flow ]);
             return {
                 pv: data[0] || 0,
                 uv: data[1].length ? data[1][0].count : 0,
@@ -56,6 +59,7 @@ class PvuvipService extends Service {
                 ajax: data[3],
                 user: data[4].length ? data[4][0].count : 0,
                 bounce: data[5] || 0,
+                flow: data[6].length ? data[6][0].amount : 0,
             };
         }
     }
@@ -114,6 +118,15 @@ class PvuvipService extends Service {
             .exec();
         return result;
     }
+    // 流量消费
+    async flow(appId, querydata) {
+        return this.app.models.WxAjaxs(appId).aggregate([
+            { $match: querydata },
+            { $group: { _id: null, amount: { $sum: '$body_size' } } },
+        ]).read('sp')
+            .exec();
+    }
+
     // 保存pvuvip数据
     async savePvUvIpData(appId, endTime, type, pvuvipdata) {
         const pvuvip = this.ctx.model.Wx.WxPvuvip();
@@ -122,6 +135,7 @@ class PvuvipService extends Service {
         pvuvip.uv = pvuvipdata.uv || 0;
         pvuvip.ip = pvuvipdata.ip || 0;
         pvuvip.ajax = pvuvipdata.ajax || 0;
+        pvuvip.flow = pvuvipdata.flow || 0;
         pvuvip.bounce = pvuvipdata.bounce ? (pvuvipdata.bounce / pvuvipdata.pv * 100).toFixed(2) + '%' : 0;
         pvuvip.depth = pvuvipdata.pv && pvuvipdata.user ? parseInt(pvuvipdata.pv / pvuvipdata.user) : 0;
         pvuvip.create_time = endTime;
