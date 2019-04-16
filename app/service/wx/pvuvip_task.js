@@ -83,8 +83,9 @@ class PvuvipTaskService extends Service {
                 }, 'pvuvip');
             }
             // 流量峰值 超过历史top邮件触达
-            this.ctx.service.emails.highestPvTipsEmail({ appId, pv, uv, ip, ajax });
-
+            if (type === 1) {
+                this.ctx.service.emails.highestPvTipsEmail({ appId, pv, uv, ip, ajax });
+            }
         } catch (err) { console.log(err); }
     }
 }
