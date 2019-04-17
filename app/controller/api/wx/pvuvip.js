@@ -142,8 +142,8 @@ class PvUvIpController extends Controller {
                         items.uv = item.uv || 0;
                         items.ip = item.ip || 0;
                         items.ajax = item.ajax || 0;
-                        // items.flow = parseInt((item.flow || 0) / 1024);
-                        items.flow = parseFloat(((item.flow || 0) / 1024).toFixed(2));
+                        items.flow = parseInt((item.flow || 0) / 1024);
+                        // items.flow = parseFloat(((item.flow || 0) / 1024).toFixed(2));
                     }
                 });
                 result.push(items);
