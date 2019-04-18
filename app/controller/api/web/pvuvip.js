@@ -101,6 +101,7 @@ class PvUvIpController extends Controller {
                 uv: datalist[0].uv || 0,
                 ip: datalist[0].ip || 0,
                 ajax: datalist[0].ajax || 0,
+                flow: parseInt((datalist[0].flow || 0) / 1024 / 1024),
             };
         } else {
             result = {
@@ -109,6 +110,7 @@ class PvUvIpController extends Controller {
                 uv: 0,
                 ip: 0,
                 ajax: 0,
+                flow: 0,
             };
         }
         ctx.body = this.app.result({
@@ -135,6 +137,7 @@ class PvUvIpController extends Controller {
                     uv: 0,
                     ip: 0,
                     ajax: 0,
+                    flow: 0,
                 };
                 datalist.forEach(item => {
                     if (date.getTime() === new Date(item.create_time).getTime()) {
@@ -142,6 +145,7 @@ class PvUvIpController extends Controller {
                         items.uv = item.uv || 0;
                         items.ip = item.ip || 0;
                         items.ajax = item.ajax || 0;
+                        items.flow = parseInt((item.flow || 0) / 1024 / 1024);
                     }
                 });
                 result.push(items);

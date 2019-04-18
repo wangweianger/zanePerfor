@@ -1,43 +1,57 @@
 <% include ./side.html %>
 <style scoped>
-	.survey{
+	.com_block {
+		padding-bottom: 10px;
+	}
+
+	.survey {
+		padding-left: 30px;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+		flex-wrap: wrap;
 	}
-	.survey .com{
+
+	.survey .com {
+		width: 185px;
 		font-size: 32px;
-		width: 350px;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		margin-right:25px;
+		margin-right: 35px;
+		margin-bottom: 20px;
 	}
-	.survey .pv{
+
+	.survey .pv {
 		font-size: 38px;
 		font-weight: bold;
 		color: #8776f7;
+		flex-wrap: wrap;
 	}
-	.survey .com span{
+
+	.survey .com span {
 		font-size: 22px;
 		margin-right: 20px;
 	}
-	.search_1 .inp{
-		background:#fff;
+
+	.search_1 .inp {
+		background: #fff;
 	}
+
 	@media (max-width: 768px) {
-		.survey .com{
-			margin-left:0!important;
-			font-size:20px;
-			width: 80px;
-			text-align:center;
-			display:flex;
+		.survey .com {
+			margin-left: 0 !important;
+			font-size: 20px;
+			width: 100px;
+			text-align: center;
+			display: flex;
 			align-items: center;
 			flex-direction: column;
 		}
-		.survey .com span{
-			margin-right:3px;
-			display:block;
+
+		.survey .com span {
+			margin-right: 3px;
+			display: block;
 		}
 	}
 </style>
@@ -56,39 +70,42 @@
 				<div class="tipscolor mt10" v-if="errTextleft">{{errTextleft}}</div>
 			</div>
 			<div class="survey" v-if="surveyone.app_id">
-				<div class="com pv ml50"><span>PV: </span>{{surveyone.pv}}</div>
+				<div class="com pv"><span>PV: </span>{{surveyone.pv}}</div>
 				<div class="com uv"><span>UV: </span>{{surveyone.uv}}</div>
 				<div class="com ip"><span>IP: </span>{{surveyone.ip}}</div>
 				<div class="com ip"><span>AJAX: </span>{{surveyone.ajax}}</div>
 				<div class="com ip"><span>跳出率: </span>{{surveyone.bounce||'0%'}}</div>
 				<div class="com ip"><span>访问深度: </span>{{surveyone.depth||0}}</div>
+				<div class="com ip"><span>流量: </span>{{surveyone.flow|flow}}</div>
 			</div>
 		</div>
 		<div class="com_block mt20">
 			<h1 class="com_h2 mb20">今日概况</h1>
 			<div class="survey">
-				<div class="com pv ml50"><span>PV: </span>{{today.pv||0}}</div>
+				<div class="com pv"><span>PV: </span>{{today.pv||0}}</div>
 				<div class="com uv"><span>UV: </span>{{today.uv||0}}</div>
 				<div class="com ip"><span>IP: </span>{{today.ip||0}}</div>
 				<div class="com ip"><span>AJAX: </span>{{today.ajax||0}}</div>
+				<div class="com ip"><span>流量: </span>{{today.flow|flow}}</div>
 			</div>
 		</div>
 		<div v-if="historylist.length">
 			<div class="com_block mt20" v-for="(item,index) in historylist" :key="index">
 				<h1 class="com_h2 mb20">{{item.create_time|date}}</h1>
 				<div class="survey">
-					<div class="com pv ml50"><span>PV: </span>{{item.pv||0}}</div>
+					<div class="com pv"><span>PV: </span>{{item.pv||0}}</div>
 					<div class="com uv"><span>UV: </span>{{item.uv||0}}</div>
 					<div class="com ip"><span>IP: </span>{{item.ip||0}}</div>
 					<div class="com ip"><span>AJAX: </span>{{item.ajax||0}}</div>
 					<div class="com ip"><span>跳出率: </span>{{item.bounce||'0%'}}</div>
 					<div class="com ip"><span>访问深度: </span>{{item.depth||0}}</div>
+					<div class="com ip"><span>流量: </span>{{item.flow|flow}}</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div v-show="lable==2">
-		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span> 实时数据处理同步有{{timebetween}}分钟以内的延迟，实时统计每{{timebetween}}分钟自动更新一次。</div>
+		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span> 实时数据处理同步有{{timebetween}}分钟以内的延迟，实时统计每{{timebetween}}分钟自动更新一次。流量统计以（M）为单位。</div>
 		<div class='search search_1 mb20'>
 			<input id="zane-calendar-2" class="inp" type="text" :placeholder="'时间粒度选择'+searchbetween+'小时以内'">
 			<div class="tipscolor mt10" v-if="errText">{{errText}}</div>
@@ -109,11 +126,15 @@
 			<h1 class="com_h2 mb20">实时访问IP</h1>
 			<div id="pvuvip_ip" style="height:400px"></div>
 		</div>
+		<div class="com_block mt20">
+			<h1 class="com_h2 mb20">实时流量统计</h1>
+			<div id="pvuvip_flow" style="height:400px"></div>
+		</div>
 	</div>
 </div>
 
 <script>
-let myChartPV, myChartUV, myChartIP, myChartAJAX;
+let myChartPV, myChartUV, myChartIP, myChartAJAX, myChartFLOW;
 new Vue({
 	el: '#vue_id',
 	data: function () {
@@ -134,7 +155,8 @@ new Vue({
 		}
 	},
 	filters: {
-		date: window.Filter.date
+		date: window.Filter.date,
+		flow: window.Filter.flow,
 	},
 	mounted() {
 		this.xAxislist = [];
@@ -142,6 +164,7 @@ new Vue({
 		this.itemlist2 = [];
 		this.itemlist3 = [];
 		this.itemlist4 = [];
+		this.itemlist5 = [];
 
 		this.getPvUvIpSurvey();
 		this.getHistoryPvUvIplist();
@@ -267,6 +290,7 @@ new Vue({
 					this.itemlist2 = [];
 					this.itemlist3 = [];
 					this.itemlist4 = [];
+					this.itemlist5 = [];
 					data.data.forEach(item=>{
 						let time = new Date(item.time).format('hh:mm');
 						this.xAxislist.push(time);
@@ -274,11 +298,13 @@ new Vue({
 						this.itemlist2.push(item.uv)
 						this.itemlist3.push(item.ip)
 						this.itemlist4.push(item.ajax)
+						this.itemlist5.push(item.flow)
 					});
 					this.drow('PV', this.xAxislist, this.itemlist1);
 					this.drow('UV', this.xAxislist, this.itemlist2);
 					this.drow('IP', this.xAxislist, this.itemlist3);
 					this.drow('AJAX', this.xAxislist, this.itemlist4);
+					this.drow('FLOW', this.xAxislist, this.itemlist5);
 					this.timer = setInterval(() => {
 						this.getPvUvIpOne();
 					}, data.time || 60000)
@@ -301,17 +327,20 @@ new Vue({
 					this.itemlist2.shift();
 					this.itemlist3.shift();
 					this.itemlist4.shift();
+					this.itemlist5.shift();
 
 					this.xAxislist.push(time);
 					this.itemlist1.push(datas.pv || 0)
 					this.itemlist2.push(datas.uv || 0)
 					this.itemlist3.push(datas.ip || 0)
 					this.itemlist4.push(datas.ajax || 0)
+					this.itemlist5.push(datas.flow || 0)
 
 					myChartPV.setOption({ series: [{ data: this.itemlist1 }] });
 					myChartUV.setOption({ series: [{ data: this.itemlist2 }] });
 					myChartIP.setOption({ series: [{ data: this.itemlist3 }] });
 					myChartAJAX.setOption({ series: [{ data: this.itemlist4 }] });
+					myChartFLOW.setOption({ series: [{ data: this.itemlist5 }] });
 				}
 			})
 		},
@@ -329,6 +358,9 @@ new Vue({
 				color = '#f46d85'
 			} else if (type == 'AJAX') {
 				myChartAJAX = echarts.init(document.getElementById('pvuvip_ajax'));
+				color = '#8776f7'
+			} else if (type == 'FLOW') {
+				myChartFLOW = echarts.init(document.getElementById('pvuvip_flow'));
 				color = '#8776f7'
 			}
 			const option = {
@@ -414,6 +446,8 @@ new Vue({
 				myChartIP.setOption(option); 
 			} else if (type == 'AJAX') {
 				myChartAJAX.setOption(option);
+			} else if (type == 'FLOW') {
+				myChartFLOW.setOption(option);
 			}
 		}
 	},

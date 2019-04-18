@@ -56,7 +56,7 @@ class PvuvipService extends Service {
                 pv: data[0] || 0,
                 uv: data[1].length ? data[1][0].count : 0,
                 ip: data[2].length ? data[2][0].count : 0,
-                ajax: data[3],
+                ajax: data[3] || 0,
                 user: data[4].length ? data[4][0].count : 0,
                 bounce: data[5] || 0,
                 flow: data[6].length ? data[6][0].amount : 0,

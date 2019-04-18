@@ -99,7 +99,7 @@ class EmailsService extends Service {
 
     // 超过历史pv流量峰值时发送邮件
     async highestPvTipsEmail(json = {}) {
-        const { appId, pv, uv, ip, ajax } = json;
+        const { appId, pv, uv, ip, ajax, flow } = json;
         const highestPv = parseInt(await this.app.redis.get(`${appId}_highest_pv_tips`) || 0);
         if (pv <= highestPv || !pv) return;
         this.app.redis.set(`${appId}_highest_pv_tips`, pv);
@@ -128,6 +128,7 @@ class EmailsService extends Service {
                     <div style="margin-bottom:20px;">PV请求量：${pv || 0}</div>
                     <div style="margin-bottom:20px;">UV请求量：${uv || 0}</div>
                     <div style="margin-bottom:20px;">IP请求量：${ip || 0}</div>
+                    <div style="margin-bottom:20px;">流量消费：${this.app.flow(flow) || 0}</div>
                 `,
         };
         this.app.email.sendMail(mailOptions);

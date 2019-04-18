@@ -277,6 +277,19 @@ class ReportTaskService extends Service {
                 slowPageTime = slowPageTime * 1000;
                 const speedType = performance.lodt >= slowPageTime ? 2 : 1;
 
+                // 算出页面资源大小
+                let totalSize = 0;
+                const sourslist = item.resource_list || [];
+                for (let i = 0; i < sourslist.length; i++) {
+                    if (
+                        sourslist[i].decodedBodySize &&
+                        sourslist[i].type !== 'fetchrequest' &&
+                        sourslist[i].type !== 'xmlhttprequest'
+                    ) {
+                        totalSize += sourslist[i].decodedBodySize;
+                    }
+                }
+
                 pages.app_id = item.app_id;
                 pages.create_time = item.create_time;
                 pages.url = newName;
@@ -290,7 +303,8 @@ class ReportTaskService extends Service {
                 pages.dns_time = performance.dnst;
                 pages.tcp_time = performance.tcpt;
                 pages.dom_time = performance.domt;
-                pages.resource_list = item.resource_list;
+                pages.resource_list = sourslist;
+                pages.total_res_size = totalSize;
                 pages.white_time = performance.wit;
                 pages.redirect_time = performance.rdit;
                 pages.unload_time = performance.uodt;
