@@ -408,6 +408,7 @@ new Vue({
 					if(!data.data.app_id) return;
 					this.systemInfo = data.data || {};
 					this.daliylist = this.systemInfo.daliy_list || [];
+					this.highestlist = this.systemInfo.highest_list || [];
 					this.pagexingneng();
 					this.settingIsUse(1);
 					this.settingIsUse(2);
