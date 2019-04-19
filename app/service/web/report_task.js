@@ -128,6 +128,10 @@ class ReportTaskService extends Service {
                 const index = this.kafkalist.indexOf(msgtab);
                 if (index > -1) this.kafkalist.splice(index, 1);
             });
+        } else {
+            // 释放
+            const index = this.kafkalist.indexOf(msgtab);
+            if (index > -1) this.kafkalist.splice(index, 1);
         }
         if (system.is_statisi_resource === 0 || system.is_statisi_ajax === 0) this.forEachResources(item, system);
         if (system.is_statisi_error === 0) this.saveErrors(item);

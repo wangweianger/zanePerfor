@@ -30,6 +30,7 @@ class ReportService extends Service {
         report.userInfo = query.userInfo;
         report.pages = query.pages;
         report.ajaxs = query.ajaxs;
+        report.type = query.type || 1;
         report.save();
         return {};
     }

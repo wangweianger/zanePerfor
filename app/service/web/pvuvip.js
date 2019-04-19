@@ -118,8 +118,9 @@ class PvuvipService extends Service {
     }
     // 流量消费
     async flow(appId, querydata) {
+        const pagequery = Object.assign({}, querydata, { is_first_in: 2 });
         const pageflow = Promise.resolve(this.app.models.WebPages(appId).aggregate([
-            { $match: querydata },
+            { $match: pagequery },
             { $group: { _id: null, amount: { $sum: '$total_res_size' } } },
         ]).read('sp')
             .exec());

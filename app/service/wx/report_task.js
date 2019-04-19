@@ -51,21 +51,8 @@ class ReportTaskService extends Service {
         if (!query) return;
         query = JSON.parse(query);
 
-        const item = {
-            app_id: query.appId,
-            create_time: new Date(query.time),
-            errs: query.errs,
-            ip: query.ip,
-            mark_page: this.app.randomString(),
-            mark_user: query.markuser || '',
-            mark_uv: query.markuv || '',
-            net: query.net,
-            system: query.system,
-            loc: query.loc,
-            userInfo: query.userInfo,
-            pages: query.pages,
-            ajaxs: query.ajaxs,
-        };
+        const querytype = query.type || 1;
+        const item = await this.handleData(query);
 
         let system = {};
         // 做一次appId缓存
@@ -77,7 +64,7 @@ class ReportTaskService extends Service {
         }
 
         if (system.is_use !== 0) return;
-        if (system.is_statisi_system === 0) this.savePages(item);
+        if (system.is_statisi_system === 0 && querytype === 1) this.savePages(item);
         if (system.is_statisi_ajax === 0) this.saveAjaxs(item, system);
         if (system.is_statisi_error === 0) this.saveErrors(item);
     }
@@ -110,21 +97,8 @@ class ReportTaskService extends Service {
 
     // 单个item储存数据
     async getWxItemDataForKafka(query) {
-        const item = {
-            app_id: query.appId,
-            create_time: new Date(query.time),
-            errs: query.errs,
-            ip: query.ip,
-            mark_page: this.app.randomString(),
-            mark_user: query.markuser || '',
-            mark_uv: query.markuv || '',
-            net: query.net,
-            system: query.system,
-            loc: query.loc,
-            userInfo: query.userInfo,
-            pages: query.pages,
-            ajaxs: query.ajaxs,
-        };
+        const type = query.type || 1;
+        const item = await this.handleData(query);
 
         let system = {};
         // 做一次appId缓存
@@ -142,12 +116,16 @@ class ReportTaskService extends Service {
         if (this.kafkatotal && this.kafkalist.length >= this.kafkatotal) return;
         this.kafkalist.push(msgtab);
 
-        if (system.is_statisi_system === 0) {
+        if (system.is_statisi_system === 0 && type === 1) {
             this.savePages(item, () => {
                 // 释放
                 const index = this.kafkalist.indexOf(msgtab);
                 if (index > -1) this.kafkalist.splice(index, 1);
             });
+        } else {
+            // 释放
+            const index = this.kafkalist.indexOf(msgtab);
+            if (index > -1) this.kafkalist.splice(index, 1);
         }
         if (system.is_statisi_ajax === 0) this.saveAjaxs(item, system);
         if (system.is_statisi_error === 0) this.saveErrors(item);
@@ -219,11 +197,42 @@ class ReportTaskService extends Service {
                 this.cacheJson[item.app_id] = system;
             }
             if (system.is_use !== 0) return;
-            if (system.is_statisi_system === 0) this.savePages(item);
+
+            const querytype = item.type || 1;
+            item = await this.handleData(item);
+
+            if (system.is_statisi_system === 0 && querytype === 1) this.savePages(item);
             if (system.is_statisi_ajax === 0) this.saveAjaxs(item, system);
             if (system.is_statisi_error === 0) this.saveErrors(item);
             if (index === length && type) this.app.redis.set('wx_task_begin_time', item.create_time);
         });
+    }
+
+    // 数据操作层
+    async handleData(query) {
+        const type = query.type || 1;
+        let item = {
+            app_id: query.appId,
+            create_time: new Date(query.time),
+            errs: query.errs,
+            mark_page: this.app.randomString(),
+            mark_user: query.markuser || '',
+            mark_uv: query.markuv || '',
+            pages: query.pages,
+            ajaxs: query.ajaxs,
+        };
+
+        if (type === 1) {
+            // 页面级性能
+            item = Object.assign(item, {
+                ip: query.ip,
+                net: query.net,
+                system: query.system,
+                loc: query.loc,
+                userInfo: query.userInfo,
+            });
+        }
+        return item;
     }
 
     // 储存网页性能数据
@@ -263,17 +272,17 @@ class ReportTaskService extends Service {
             pages.mark_page = item.mark_page;
             pages.mark_user = item.mark_user;
             pages.mark_uv = item.mark_uv;
-            pages.net = item.net;
-            pages.ip = item.ip;
-            pages.brand = item.system.brand.toLowerCase();
-            pages.model = item.system.model;
-            pages.screenWidth = item.system.screenWidth;
-            pages.screenHeight = item.system.screenHeight;
-            pages.language = item.system.language;
-            pages.version = item.system.version;
-            pages.system = item.system.system;
-            pages.platform = item.system.platform;
-            pages.SDKVersion = item.system.SDKVersion;
+            if (item.net) pages.net = item.net;
+            if (item.ip) pages.ip = item.ip;
+            if (item.system) pages.brand = item.system.brand.toLowerCase();
+            if (item.system) pages.model = item.system.model;
+            if (item.system) pages.screenWidth = item.system.screenWidth;
+            if (item.system) pages.screenHeight = item.system.screenHeight;
+            if (item.system) pages.language = item.system.language;
+            if (item.system) pages.version = item.system.version;
+            if (item.system) pages.system = item.system.system;
+            if (item.system) pages.platform = item.system.platform;
+            if (item.system) pages.SDKVersion = item.system.SDKVersion;
             if (datas) {
                 pages.province = datas.province;
                 pages.city = datas.city;
