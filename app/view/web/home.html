@@ -59,7 +59,7 @@
 	<h1 class="com_h1">数据分析</h1>
 	<div class="com_slide_tab_x mt30 mb30">
 		<div class="item" :class="{'active':lable==1}" @click="checkoutLabel(1)">概况</div>
-		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">PV|UV|IP</div>
+		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">PV|AJAX|UV|IP|FLOW</div>
 	</div>
 	<div v-show="lable==1">
 		<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span>实时概况处理同步有{{timebetween}}分钟以内的延迟，每{{timebetween}}分钟自动更新一次。</div>
