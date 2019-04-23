@@ -7,7 +7,7 @@ class UserService extends Service {
     // 用户登录
     async login(userName, passWord) {
         // 检测用户是否存在
-        const userInfo = await this.getUserInfoForUserName(userName);
+        const userInfo = await this.getUserInfoForUserName(userName) || {};
         if (!userInfo.token) throw new Error('用户名不存在！');
 
         const newPwd = crypto.createHmac('sha256', passWord)
@@ -62,7 +62,8 @@ class UserService extends Service {
         user.create_time = new Date();
         user.level = userName === 'admin' ? 0 : 1;
         user.usertoken = token;
-        const result = await user.save();
+        const result = await user.save() || {};
+        delete result.pass_word;
 
         // 设置redis登录态
         this.app.redis.set(`${token}_user_login`, JSON.stringify(result), 'EX', this.app.config.user_login_timeout);
@@ -79,7 +80,9 @@ class UserService extends Service {
 
     // 根据用户名称查询用户信息
     async getUserInfoForUserName(userName) {
-        return await this.ctx.model.User.findOne({ user_name: userName }).exec() || {};
+        const result = await this.ctx.model.User.findOne({ user_name: userName }).exec() || {};
+        delete result.pass_word;
+        return result;
     }
 
     // 查询用户列表信息（分页）
@@ -121,7 +124,7 @@ class UserService extends Service {
             { multi: true }
         ).exec();
         // 清空登录态
-        if (usertoken) this.app.redis.set(`${usertoken}_user_login`, '');
+        this.app.redis.set(`${usertoken}_user_login`, '');
         return result;
     }
 
@@ -201,7 +204,9 @@ class UserService extends Service {
             user.create_time = new Date();
             user.level = 1;
             user.usertoken = random_key;
-            userInfo = await user.save();
+            userInfo = await user.save() || {};
+            delete userInfo.pass_word;
+
             // 设置redis登录态
             this.app.redis.set(`${random_key}_user_login`, JSON.stringify(userInfo), 'EX', this.app.config.user_login_timeout);
             // 设置登录cookie
