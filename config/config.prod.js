@@ -5,10 +5,9 @@ module.exports = () => {
 
     config.debug = false;
 
-    // 用于安全校验和回调域名根路径 生产线域名（必填）
-    config.host = 'https://xxx.xxx.com';
-
-    config.origin = `http://${config.host}:${config.port}`;
+    // 用于安全校验和回调域名根路径 开发路径域名（必填）
+    // 线上环境此处替换为项目根域名 例如:https://blog.seosiwei.com (这里需要填写http|https和斜杠等字符)
+    config.origin = 'https://www.xxx.com';
 
     // 百度地图api key
     config.BAIDUAK = 'xxxxxxxxxx';
