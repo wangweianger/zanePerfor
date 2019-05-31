@@ -1,4 +1,10 @@
 # zanePerfor一款完整、高性能、高可用的前端性能监控和统计平台
+[![Node](https://img.shields.io/badge/node-8.9.0~10.15.1-green.svg?style=plastic)](https://nodejs.org/en/)
+[![Vue](https://img.shields.io/badge/vue-2.0+-blue.svg?style=plastic)](https://cn.vuejs.org/)
+[![Egg](https://img.shields.io/badge/egg-2.0-green.svg?style=plastic)](https://eggjs.org/)
+[![Mogodb](https://img.shields.io/badge/mogodb-4.0+-brightgreen.svg?style=plastic)](https://www.mongodb.com/)
+[![Redis](https://img.shields.io/badge/redis-5.0+-green.svg?style=plastic)](https://redis.io/)
+
 ## 开发功能进度说明
 >  * 集成框架选型及其相关配置（已完成）
 >  * 主重数据库相关配置开发（已完成）
@@ -34,9 +40,6 @@
 >  * Kafka消息队列的引入和使用 （已完成）
 >  * 应用突破历史流量峰值时触发邮件通知、开发流量预警功能（已完成）
 >  * 用户访问实时消费流量统计功能(ajax，页面，资源)（已完成)
-
-## 技术选型说明
-* egg.js, ejs, mongodb, redis, vue2, kafka
 
 ## 项目开发文档
 * [zanePerfor在高流量高并发项目下的架构配置建议实践说明](https://blog.seosiwei.com/detail/53)
