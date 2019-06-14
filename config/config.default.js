@@ -46,7 +46,7 @@ module.exports = () => {
     // wx小程序端定时任务是否执行
     config.is_wx_task_run = true;
 
-    // 执行pvuvip定时任务的时间间隔 每分钟定时执行一次 (可更改)
+    // 执行pvuvip定时任务的时间间隔 每2分钟定时执行一次 (可更改)
     config.pvuvip_task_minute_time = '0 */2 * * * *';
 
     // 执行pvuvip定时任务的时间间隔 每天定时执行一次
@@ -59,7 +59,7 @@ module.exports = () => {
     config.ip_thread = 5;
 
     // 上报原始数据使用redis存储、kafka储存、还是使用mongodb存储
-    config.report_data_type = 'redis'; // redis  mongodb  kafka
+    config.report_data_type = 'redis'; // redis kafka mongodb
 
     // 使用redis储存原始数据时，相关配置 （report_data_type=redis生效）
     config.redis_consumption = {
@@ -131,7 +131,7 @@ module.exports = () => {
     config.report_thread = 10;
 
     // 解析用户ip地址为城市是使用redis还是使用mongodb
-    config.ip_redis_or_mongodb = 'redis'; // redus  mongodb
+    config.ip_redis_or_mongodb = 'redis'; // redis  mongodb
 
     // 文件缓存ip对应地理位置（文件名）
     config.ip_city_cache_file = {
