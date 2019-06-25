@@ -42,8 +42,8 @@
 >  * 用户访问实时消费流量统计功能(ajax，页面，资源)（已完成)
 
 ## 项目开发文档
-* [zanePerfor在高流量高并发项目下的架构配置建议实践说明](https://blog.seosiwei.com/detail/53)
 * [zanePerfor是什么?](https://blog.seosiwei.com/performance/index.html)
+* [zanePerfor在高流量高并发项目下的架构配置建议实践说明](https://blog.seosiwei.com/detail/53)
 * [系统高可用之Mongodb集群分片架构](https://blog.seosiwei.com/performance/colony.html)
 * [系统高可用之Mongodb副本集读写分离架构](https://blog.seosiwei.com/performance/replica_set.html)
 * [Servers集群模式下避免定时任务的多次执行](https://blog.seosiwei.com/performance/repeart_task.html)
