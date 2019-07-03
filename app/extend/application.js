@@ -76,26 +76,15 @@ module.exports = {
         return fmt;
     },
     // 流量数字格式化
-    flow(val = 0) {
-        let value = val;
+    flow(value = 0) {
         let index = 0;
-        while (value >= 1024) {
-            value = value / 1024;
-            index++;
+        while (value >= 1024 && index < 4) {
+          value = value / 1024;
+          index++;
         }
-        value = value.toFixed(2);
-        if (index >= 4) {
-            value = value + 'T';
-        } else if (index >= 3) {
-            value = value + 'G';
-        } else if (index >= 2) {
-            value = value + 'M';
-        } else if (index >= 1) {
-            value = value + 'KB';
-        } else {
-            value = value + 'B';
-        }
-        return value;
+        value = Number(value.toFixed(2));
+        const units = ['B', 'KB', 'M', 'G', 'T'];
+        return index >= 4 ? `${value}${units[4]}` : `${value}${units[index]}`;
     },
     // 重启mongodb服务器
     restartMongodbs(type, ctx, catcherr) {
