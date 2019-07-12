@@ -32,7 +32,7 @@
 >  * 新浪微博第三方登录 （已完成）
 >  * 微信授权第三方登录 （已完成）
 >  * Mongodb集群分片开发（优化中）
->  * 项目性能优化（优化中）
+>  * 项目性能优化（已完成）
 >  * 邮件触发服务开发（已完成)
 >  * 每日日报邮件发送（已完成）
 >  * 页面后续操作过程中出现的Error错误、Ajax性能、资源加载的上报（已完成）
@@ -42,8 +42,8 @@
 >  * 用户访问实时消费流量统计功能(ajax，页面，资源)（已完成)
 
 ## 项目开发文档
-* [zanePerfor在高流量高并发项目下的架构配置建议实践说明](https://blog.seosiwei.com/detail/53)
 * [zanePerfor是什么?](https://blog.seosiwei.com/performance/index.html)
+* [zanePerfor在高流量高并发项目下的架构配置建议实践说明](https://blog.seosiwei.com/detail/53)
 * [系统高可用之Mongodb集群分片架构](https://blog.seosiwei.com/performance/colony.html)
 * [系统高可用之Mongodb副本集读写分离架构](https://blog.seosiwei.com/performance/replica_set.html)
 * [Servers集群模式下避免定时任务的多次执行](https://blog.seosiwei.com/performance/repeart_task.html)
@@ -63,7 +63,6 @@
 ## 浏览器端使用说明
 ### 使用SDK方式上报数据
 * 使用web SDK进行数据上报，使用方式请参考 web-report-sdk SDK详情
-* 例如
 
 ### npm引入使用方式
 ```js
