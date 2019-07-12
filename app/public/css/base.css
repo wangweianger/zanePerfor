@@ -73,7 +73,7 @@ iframe { display: none; }
     z-index:1010;
 }
 
-#footer{font-size:12px;color:#ddd;position: absolute;left:45%;bottom:10px;}
+#footer{font-size: 12px;color: #ddd;position: fixed;right: 10px;bottom: 10px;}
 #footer a{color:#ddd;}
 /****阿里icon*****/
 @font-face {

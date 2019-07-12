@@ -31,9 +31,9 @@
 						<td class="tc">{{item.is_use==0?'正常':'冻结'}}</td>
 						<td class="tc">{{item.create_time|date('/',true)}}</td>
 						<td class="tc">
-							<button v-if="item.is_use==0?true:false" class="btn btn-default" @click="setIsUse(item)">冻结</button>
-							<button v-if="item.is_use==1?true:false" class="btn btn-main" @click="setIsUse(item)">解冻</button>
-							<button class="ml10 btn btn-default" @click="deleteUser(item)">删除</button>
+							<button v-if="(item.is_use==0&&userMsg.level==0)?true:false" class="btn btn-default" @click="setIsUse(item)">冻结</button>
+							<button v-if="(item.is_use==1&&userMsg.level==0)?true:false" class="btn btn-main" @click="setIsUse(item)">解冻</button>
+							<button v-if="userMsg.level==0?true:false" class="ml10 btn btn-default" @click="deleteUser(item)">删除</button>
 						</td>
 					</tr>
 				</table>
@@ -57,12 +57,15 @@
 				pageSize: 6,
 				totalNum: 0,
 				username:'',
+				userMsg: {},
 			}
 		},
 		filters: {
 			date: window.Filter.date,
 		},
 		mounted() {
+			const userMsg = util.getStorage('local', 'userMsg');
+			this.userMsg = userMsg ? JSON.parse(userMsg) : {};
 			this.getUserList();
 		},
 		methods: {
