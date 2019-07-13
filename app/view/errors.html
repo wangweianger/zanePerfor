@@ -1,71 +1,83 @@
 <style scoped>
-	.home_body {
-		width: 80%;
-		margin: 100px auto 100px;
-	}
-	.com_block table.table .btn{
-		padding:5px 8px;
-	}
+    .home_body {
+        width: 80%;
+        margin: 100px auto 100px;
+    }
+    
+    .com_block table.table .btn {
+        padding: 5px 8px;
+    }
 </style>
-<div class="com_content home_body" id="home_body" v-cloak>
-	<div class="com_title">
-		<div class="h1">系统重启信息</div>
-	</div>
-	<div v-show="isLoadend && datalist.length">
-		<div class="com_block mt20">
-			<div class="overflow_table">
-				<table class="table">
-					<tr class="light_color">
-						<th class="tc w-100">重启DB</th>
-						<th class="tc w-200">脚本链接</th>
-						<th class="tc w-300">导致重启错误信息</th>
-						<th class="tc w-100">重启时间</th>
-					</tr>
-					<tr v-for="item in datalist">
-						<td class="tc">{{item.dbname}}</td>
-						<td class="tc">{{item.shell}}</td>
-						<td class="tc">{{item.catch_error}}</td>
-						<td class="tc">{{item.create_time|date('/',true)}}</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-	</div>
-	<div v-if="isLoadend && !datalist.length" class="empty mt30 tc">暂无数据！</div>
+<div class="com_content home_body" id="home_body" v-if="userMsg.level==0" v-cloak>
+    <div class="com_title">
+        <div class="h1">系统重启信息</div>
+    </div>
+    <div v-show="isLoadend && datalist.length">
+        <div class="com_block mt20">
+            <div class="overflow_table">
+                <table class="table">
+                    <tr class="light_color">
+                        <th class="tc w-100">重启DB</th>
+                        <th class="tc w-200">脚本链接</th>
+                        <th class="tc w-300">导致重启错误信息</th>
+                        <th class="tc w-100">重启时间</th>
+                    </tr>
+                    <tr v-for="item in datalist">
+                        <td class="tc">{{item.dbname}}</td>
+                        <td class="tc">{{item.shell}}</td>
+                        <td class="tc">{{item.catch_error}}</td>
+                        <td class="tc">{{item.create_time|date('/',true)}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div v-if="isLoadend && !datalist.length" class="empty mt30 tc">暂无数据！</div>
 </div>
 <script>
-	new Vue({
-		el: '#home_body',
-		data: function () {
-			return {
-				datalist:[],
-				isLoadend:false,
-			}
-		},
-		filters: {
-			date: window.Filter.date,
-		},
-		mounted() {
-			this.getSysDbErrorList();
-		},
-		methods: {
-			getSysDbErrorList(){
-				this.isLoadend = false;
-				util.ajax({
-					type:'get',
-					url: `${config.baseApi}api/v1/errors/getSysDbErrorList`,
-					success: data => {
-						this.isLoadend = true;
-						if(data.data && data.data.length){
-							let result = [];
-							data.data.forEach((item,i)=>{
-								if(item) result[i] = JSON.parse(item);
-							})
-							this.datalist = result;
-						}
-					}
-				})
-			},
-		},
-	})
+    new Vue({
+        el: '#home_body',
+        data: function() {
+            return {
+                datalist: [],
+                isLoadend: false,
+                userMsg: {}
+            }
+        },
+        filters: {
+            date: window.Filter.date,
+        },
+        mounted() {
+            const userMsg = util.getStorage('local', 'userMsg');
+            this.userMsg = userMsg ? JSON.parse(userMsg) : {};
+            this.userId = this.userMsg._id;
+
+            //非管理员禁止查看此页面
+            if (this.userMsg.level !== 0) {
+                alert("你无权限访问此页面，请返回");
+                window.history.back();
+            }
+
+            this.getSysDbErrorList();
+        },
+        methods: {
+            getSysDbErrorList() {
+                this.isLoadend = false;
+                util.ajax({
+                    type: 'get',
+                    url: `${config.baseApi}api/v1/errors/getSysDbErrorList`,
+                    success: data => {
+                        this.isLoadend = true;
+                        if (data.data && data.data.length) {
+                            let result = [];
+                            data.data.forEach((item, i) => {
+                                if (item) result[i] = JSON.parse(item);
+                            })
+                            this.datalist = result;
+                        }
+                    }
+                })
+            },
+        },
+    })
 </script>
