@@ -132,7 +132,7 @@ class utilfn {
                     sessionStorage.setItem("weixin-url", window.location.href); //记录没有登陆前的访问页面
                     location.href = config.loginUrl + '?redirecturl=' + encodeURIComponent(location.href);
                 }
-                popup.confirm({ title: data.desc || '登录失败,请重新登录!', yes: () => { login() }, no: () => { login() } });
+                popup.confirm({ maskHide: false, title: data.desc || '登录失败,请重新登录!', yes: () => { login() }, no: () => { login() } });
             } else {
                 popup.alert({
                     type: 'msg',
