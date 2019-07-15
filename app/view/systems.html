@@ -1,270 +1,294 @@
 <style scoped>
-	.home_body {
-		width: 80%;
-		margin: 100px auto 100px;
-	}
-	.com_block table.table .btn{
-		padding:5px 8px;
-	}
-	.table .user{
-		display:inline-block;
-		padding:5px 8px;
-		background:#f5f5f5;
-		border:solid 1px #ddd;
-		border-radius: 20px;
-		font-size:14px;
-		color:#333;
-		cursor:pointer;
-		font-weight:bold;
-		margin:0 10px 10px 0;
-	}
-	.table .user .iconfont{
-		color:#aaa;
-		font-size:20px;
-		margin-left:5px;
-	}
-	.com_model .content{
-		width:800px;
-		height:600px;
-	}
-	.com_model .content .main{
-		padding:20px;
-	}
-	.com_model .content .iconfont{
-		font-size:30px;
-		color:#aaa;
-		margin:0px 20px 0 0 ;
-		cursor: pointer;
-	}
-	.com_search {
-		padding: 0;
-	}
+    .home_body {
+        width: 80%;
+        margin: 100px auto 100px;
+    }
+    
+    .com_block table.table .btn {
+        padding: 5px 8px;
+    }
+    
+    .table .user {
+        display: inline-block;
+        padding: 5px 8px;
+        background: #f5f5f5;
+        border: solid 1px #ddd;
+        border-radius: 20px;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        font-weight: bold;
+        margin: 0 10px 10px 0;
+    }
+    
+    .table .user .iconfont {
+        color: #aaa;
+        font-size: 20px;
+        margin-left: 5px;
+    }
+    
+    .com_model .content {
+        width: 800px;
+        height: 600px;
+    }
+    
+    .com_model .content .main {
+        padding: 20px;
+    }
+    
+    .com_model .content .iconfont {
+        font-size: 30px;
+        color: #aaa;
+        margin: 0px 20px 0 0;
+        cursor: pointer;
+    }
+    
+    .com_search {
+        padding: 0;
+    }
 </style>
-<div class="com_content home_body" id="home_body" v-cloak>
-	<div class="com_title">
-		<div class="h1">系统列表</div>
-		<div class="right">
-			<button class="btn btn-main" @click="addsystem">+添加应用</button>
-		</div>
-	</div>
-	<div v-if="isLoadend && datalist.length">
-		<div class="com_block mt20">
-			<h1 class="com_h2 mb20">WEB应用系统</h1>
-			<div class="overflow_table">
-				<table class="table">
-					<tr class="light_color">
-						<th class="tc w-100">应用名称</th>
-						<th class="tc w-200">应用类型</th>
-						<th class="tc w-200">应用链接</th>
-						<th class="tc w-300">appId</th>
-						<th class="tc w-100">是否可用</th>
-						<th class="tc">开放用户</th>
-						<th class="tc w-200">操作</th>
-					</tr>
-					<tr v-for="item in datalist">
-						<td class="tc"><strong>{{item.system_name}}</strong></td>
-						<td class="tc">{{item.type}}</td>
-						<td class="tc">{{item.system_domain}}</td>
-						<td class="tc">{{item.app_id}}</td>
-						<td class="tc">{{item.is_use==0?'是':'否'}}</td>
-						<td class="tc">
-							<span class="user" v-for="user in item.userlist" @click="deleteUser(item,user)">{{user.user_name}}<span class="iconfont">&#xe674;</span></span>
-						</td>
-						<td class="tc">
-							<button v-if="userMsg.level==0?true:false" class="btn btn-main" @click="addUser(item)">分配用户</button>
-							<button v-if="userMsg.level==0?true:false" class="ml10 btn btn-default" @click="deleteSystem(item)">删除应用</button>
-						</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-	</div>
-	<div v-if="isLoadend && !datalist.length" class="empty mt30 tc">暂无应用！</div>
-	<!-- 弹出model -->
-	<div class="com_model" v-show="isModelShow">
-		<div class="mask" @click="isModelShow=false"></div>
-		<div class="content">
-			<h1 class="com_h2 mt20 ml20">用户列表 <span class="iconfont fr" @click="isModelShow=false">&#xe674;</span></h1>
-			<div class="main">
-				<div class="com_search">
-					<div class="item">
-						<div>
-							<span class='name'>用户名搜索</span>
-							<input class="inp" v-model="username" placeholder="选填、输入用吗名称" type="text">
-							<button class="btn btn-default" @click="searchUserList">搜索</button>
-						</div>
-					</div>
-				</div>
-				<div class="overflow_table">
-					<table class="table" v-if="isUserLoadend&&userlist.length">
-						<tr class="light_color">
-							<th class="tc w-100">用户名称</th>
-							<th class="tc w-200">用户级别</th>
-							<th class="tc w-300">是否冻结</th>
-							<th class="tc w-200">操作</th>
-						</tr>
-						<tr v-for="(item,i) in userlist" :key="i">
-							<td class="tc">{{item.user_name}}</td>
-							<td class="tc">{{item.level==0?'管理员':'普通用户'}}</td>
-							<td class="tc">{{item.is_use==0?'正常':'冻结'}}</td>
-							<td class="tc">
-								<button class="btn btn-main" @click="addSystemUser(item)">分配</button>
-							</td>
-						</tr>
-					</table>
-				</div>
-			</div>
-			<!--  分页 -->
-			<div class="tc common_page_style mt10" v-show="isUserLoadend&&userlist.length">
-				<div id="copot-page" class="copot-page"></div>
-			</div>
-			<!-- 暂无数据 -->
-			<div class="tc" v-if="!userlist.length">暂无用户!</div>
-		</div>
-	</div>
+<div class="com_content home_body" id="home_body" v-if="userMsg.level==0" v-cloak>
+    <div class="com_title">
+        <div class="h1">系统列表</div>
+        <div class="right">
+            <button class="btn btn-main" @click="addsystem">+添加应用</button>
+        </div>
+    </div>
+    <div v-if="isLoadend && datalist.length">
+        <div class="com_block mt20">
+            <h1 class="com_h2 mb20">WEB应用系统</h1>
+            <div class="overflow_table">
+                <table class="table">
+                    <tr class="light_color">
+                        <th class="tc w-100">应用名称</th>
+                        <th class="tc w-200">应用类型</th>
+                        <th class="tc w-200">应用链接</th>
+                        <th class="tc w-300">appId</th>
+                        <th class="tc w-100">是否可用</th>
+                        <th class="tc">开放用户</th>
+                        <th class="tc w-200">操作</th>
+                    </tr>
+                    <tr v-for="item in datalist">
+                        <td class="tc"><strong>{{item.system_name}}</strong></td>
+                        <td class="tc">{{item.type}}</td>
+                        <td class="tc">{{item.system_domain}}</td>
+                        <td class="tc">{{item.app_id}}</td>
+                        <td class="tc">{{item.is_use==0?'是':'否'}}</td>
+                        <td class="tc">
+                            <span class="user" v-for="user in item.userlist" @click="deleteUser(item,user)">{{user.user_name}}<span class="iconfont">&#xe674;</span></span>
+                        </td>
+                        <td class="tc">
+                            <button v-if="userMsg.level==0?true:false" class="btn btn-main" @click="addUser(item)">分配用户</button>
+                            <button v-if="userMsg.level==0?true:false" class="ml10 btn btn-default" @click="deleteSystem(item)">删除应用</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div v-if="isLoadend && !datalist.length" class="empty mt30 tc">暂无应用！</div>
+    <!-- 弹出model -->
+    <div class="com_model" v-show="isModelShow">
+        <div class="mask" @click="isModelShow=false"></div>
+        <div class="content">
+            <h1 class="com_h2 mt20 ml20">用户列表 <span class="iconfont fr" @click="isModelShow=false">&#xe674;</span></h1>
+            <div class="main">
+                <div class="com_search">
+                    <div class="item">
+                        <div>
+                            <span class='name'>用户名搜索</span>
+                            <input class="inp" v-model="username" placeholder="选填、输入用吗名称" type="text">
+                            <button class="btn btn-default" @click="searchUserList">搜索</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="overflow_table">
+                    <table class="table" v-if="isUserLoadend&&userlist.length">
+                        <tr class="light_color">
+                            <th class="tc w-100">用户名称</th>
+                            <th class="tc w-200">用户级别</th>
+                            <th class="tc w-300">是否冻结</th>
+                            <th class="tc w-200">操作</th>
+                        </tr>
+                        <tr v-for="(item,i) in userlist" :key="i">
+                            <td class="tc">{{item.user_name}}</td>
+                            <td class="tc">{{item.level==0?'管理员':'普通用户'}}</td>
+                            <td class="tc">{{item.is_use==0?'正常':'冻结'}}</td>
+                            <td class="tc">
+                                <button class="btn btn-main" @click="addSystemUser(item)">分配</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <!--  分页 -->
+            <div class="tc common_page_style mt10" v-show="isUserLoadend&&userlist.length">
+                <div id="copot-page" class="copot-page"></div>
+            </div>
+            <!-- 暂无数据 -->
+            <div class="tc" v-if="!userlist.length">暂无用户!</div>
+        </div>
+    </div>
 </div>
 <script>
-	new Vue({
-		el: '#home_body',
-		data: function () {
-			return {
-				userId:'',
-				datalist:[],
-				userMsg:{},
-				isLoadend:false,
-				isUserLoadend:false,
-				pageNo: 1,
-				pageSize: 6,
-				totalNum: 0,
-				userlist:[],
-				isModelShow:false,
-				username:'',
-			}
-		},
-		filters: {
-			systemType: window.Filter.systemType,
-		},
-		mounted() {
-			const userMsg = util.getStorage('local', 'userMsg');
-			this.userMsg = userMsg ? JSON.parse(userMsg) : {};
-			this.userId = this.userMsg._id;
-			this.getMsgForUserId();
-		},
-		methods: {
-			getMsgForUserId() {
-				util.ajax({
-					type:'get',
-					url: config.baseApi + 'api/v1/system/web/list',
-					success:  (data) => {
-						this.isLoadend = true;
-						if(data.data && data.data.length){
-							this.datalist = data.data;
-						}
-					}
-				})
-			},
-			addsystem() {
-				location.href = `/selectype`
-			},
-			selectSystem(type,item){
-				if(type===1){
-					location.href = '/web/setting';	
-				}else if(type === 2){
-					location.href = '/web/home';	
-				}
-				util.setStorage('local','appId',item.app_id)
-			},
-			getUserList(){
-				this.isUserLoadend = false;
-				util.ajax({
-					url: `${config.baseApi}api/v1/user/getUserList`,
-					data:{
-						pageNo: this.pageNo,
-						pageSize: this.pageSize,
-						userName:this.username,
-					},
-					success: data => {
-						this.isUserLoadend = true;
-						if (!data.data.datalist && !data.data.datalist.length){
-							this.userlist =[];
-							return;
-						} 
-						this.userlist = data.data.datalist
-						new Page({
-							parent: $('#copot-page'),
-							nowPage: this.pageNo,
-							pageSize: this.pageSize,
-							totalCount: data.data.totalNum,
-							callback: (nowPage, totalPage) => {
-								this.pageNo = nowPage;
-								this.getUserList();
-							}
-						});
-					}
-				})
-			},
-			searchUserList(){
-				this.pageNo = 1;
-				this.isUserLoadend = false;
-				this.getUserList();
-			},
-			deleteUser(item, user){
-				if(this.userMsg.level != 0){
-					popup.alert({title:'抱歉你不是管理员没有相关权限!'});
-					return;
-				}
-				const _this = this;
-				popup.confirm({
-					title: '确定删除此用户吗？', yes() {
-						util.ajax({
-							url: `${config.baseApi}api/v1/system/deleteUser`,
-							data:{
-								appId: item.app_id,
-								userToken: user.token
-							},
-							success: data => {
-								_this.getMsgForUserId();
-								popup.miss({title:'操作成功!'})
-							}
-						})
-					}
-				})
-			},
-			addUser(item){
-				this.app_id = item.app_id;
-				this.isModelShow = true;
-				if(!this.userlist.length) this.getUserList();
-			},
-			addSystemUser(item){
-				util.ajax({
-					url: `${config.baseApi}api/v1/system/addUser`,
-					data: {
-						appId: this.app_id,
-						userToken: item.token
-					},
-					success: data => {
-						this.getMsgForUserId();
-						popup.miss({ title: '操作成功!' })
-					}
-				})
-			},
-			deleteSystem(item){
-				const _this = this;
-				popup.confirm({
-					title: '确定要删除此系统吗？', yes() {
-						util.ajax({
-							url: `${config.baseApi}api/v1/system/deleteSystem`,
-							data: {
-								appId: item.app_id,
-							},
-							success: data => {
-								_this.getMsgForUserId();
-								popup.miss({ title: '操作成功!' })
-							}
-						})
-					}
-				})
-			}
-		},
-	})
+    new Vue({
+        el: '#home_body',
+        data: function() {
+            return {
+                userId: '',
+                datalist: [],
+                userMsg: {},
+                isLoadend: false,
+                isUserLoadend: false,
+                pageNo: 1,
+                pageSize: 6,
+                totalNum: 0,
+                userlist: [],
+                isModelShow: false,
+                username: '',
+            }
+        },
+        filters: {
+            systemType: window.Filter.systemType,
+        },
+        mounted() {
+            const userMsg = util.getStorage('local', 'userMsg');
+            this.userMsg = userMsg ? JSON.parse(userMsg) : {};
+            this.userId = this.userMsg._id;
+
+            //非管理员禁止查看此页面
+            if (this.userMsg.level !== 0) {
+                alert("你无权限访问此页面，请返回");
+                window.history.back();
+            }
+
+            this.getMsgForUserId();
+        },
+        methods: {
+            getMsgForUserId() {
+                util.ajax({
+                    type: 'get',
+                    url: config.baseApi + 'api/v1/system/web/list',
+                    success: (data) => {
+                        this.isLoadend = true;
+                        if (data.data && data.data.length) {
+                            this.datalist = data.data;
+                        }
+                    }
+                })
+            },
+            addsystem() {
+                location.href = `/selectype`
+            },
+            selectSystem(type, item) {
+                if (type === 1) {
+                    location.href = '/web/setting';
+                } else if (type === 2) {
+                    location.href = '/web/home';
+                }
+                util.setStorage('local', 'appId', item.app_id)
+            },
+            getUserList() {
+                this.isUserLoadend = false;
+                util.ajax({
+                    url: `${config.baseApi}api/v1/user/getUserList`,
+                    data: {
+                        pageNo: this.pageNo,
+                        pageSize: this.pageSize,
+                        userName: this.username,
+                    },
+                    success: data => {
+                        this.isUserLoadend = true;
+                        if (!data.data.datalist && !data.data.datalist.length) {
+                            this.userlist = [];
+                            return;
+                        }
+                        this.userlist = data.data.datalist
+                        new Page({
+                            parent: $('#copot-page'),
+                            nowPage: this.pageNo,
+                            pageSize: this.pageSize,
+                            totalCount: data.data.totalNum,
+                            callback: (nowPage, totalPage) => {
+                                this.pageNo = nowPage;
+                                this.getUserList();
+                            }
+                        });
+                    }
+                })
+            },
+            searchUserList() {
+                this.pageNo = 1;
+                this.isUserLoadend = false;
+                this.getUserList();
+            },
+            deleteUser(item, user) {
+                if (this.userMsg.level != 0) {
+                    popup.alert({
+                        title: '抱歉你不是管理员没有相关权限!'
+                    });
+                    return;
+                }
+                const _this = this;
+                popup.confirm({
+                    title: '确定删除此用户吗？',
+                    yes() {
+                        util.ajax({
+                            url: `${config.baseApi}api/v1/system/deleteUser`,
+                            data: {
+                                appId: item.app_id,
+                                userToken: user.token
+                            },
+                            success: data => {
+                                _this.getMsgForUserId();
+                                popup.miss({
+                                    title: '操作成功!'
+                                })
+                            }
+                        })
+                    }
+                })
+            },
+            addUser(item) {
+                this.app_id = item.app_id;
+                this.isModelShow = true;
+                if (!this.userlist.length) this.getUserList();
+            },
+            addSystemUser(item) {
+                util.ajax({
+                    url: `${config.baseApi}api/v1/system/addUser`,
+                    data: {
+                        appId: this.app_id,
+                        userToken: item.token
+                    },
+                    success: data => {
+                        this.getMsgForUserId();
+                        popup.miss({
+                            title: '操作成功!'
+                        })
+                    }
+                })
+            },
+            deleteSystem(item) {
+                const _this = this;
+                popup.confirm({
+                    title: '确定要删除此系统吗？',
+                    yes() {
+                        util.ajax({
+                            url: `${config.baseApi}api/v1/system/deleteSystem`,
+                            data: {
+                                appId: item.app_id,
+                            },
+                            success: data => {
+                                _this.getMsgForUserId();
+                                popup.miss({
+                                    title: '操作成功!'
+                                })
+                            }
+                        })
+                    }
+                })
+            }
+        },
+    })
 </script>
