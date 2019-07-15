@@ -8,7 +8,7 @@
         padding: 5px 8px;
     }
 </style>
-<div class="com_content home_body" id="home_body" v-if="userMsg.level==0" v-cloak>
+<div class="com_content home_body" id="home_body" v-if="userMsg.level==0?true:false" v-cloak>
     <div class="com_title">
         <div class="h1">用户列表</div>
         <div class="right">
@@ -32,9 +32,9 @@
                         <td class="tc">{{item.is_use==0?'正常':'冻结'}}</td>
                         <td class="tc">{{item.create_time|date('/',true)}}</td>
                         <td class="tc">
-                            <button v-if="(item.is_use==0&&userMsg.level==0)?true:false" class="btn btn-default" @click="setIsUse(item)">冻结</button>
-                            <button v-if="(item.is_use==1&&userMsg.level==0)?true:false" class="btn btn-main" @click="setIsUse(item)">解冻</button>
-                            <button v-if="userMsg.level==0?true:false" class="ml10 btn btn-default" @click="deleteUser(item)">删除</button>
+                            <button v-if="item.is_use==0?true:false" class="btn btn-default" @click="setIsUse(item)">冻结</button>
+                            <button v-if="item.is_use==1?true:false" class="btn btn-main" @click="setIsUse(item)">解冻</button>
+                            <button class="ml10 btn btn-default" @click="deleteUser(item)">删除</button>
                         </td>
                     </tr>
                 </table>
@@ -67,6 +67,19 @@
         mounted() {
             const userMsg = util.getStorage('local', 'userMsg');
             this.userMsg = userMsg ? JSON.parse(userMsg) : {};
+            
+            //非管理员禁止查看此页面
+            if (this.userMsg.level !== 0) {
+                popup.confirm({
+                    title: '你无权限访问此页面，请返回', yes: () => {
+                        window.history.back();
+                    }, no: () => {
+                        window.history.back();
+                    }
+                })
+                return;
+            }
+
             this.getUserList();
         },
         methods: {
@@ -99,12 +112,6 @@
                                 this.getUserList();
                             }
                         });
-
-                        //非管理员禁止查看此页面
-                        if (this.userMsg.level !== 0) {
-                            alert("你无权限访问此页面，请返回");
-                            window.history.back();
-                        }
                     }
                 })
             },

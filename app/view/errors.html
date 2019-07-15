@@ -8,7 +8,7 @@
         padding: 5px 8px;
     }
 </style>
-<div class="com_content home_body" id="home_body" v-if="userMsg.level==0" v-cloak>
+<div class="com_content home_body" id="home_body" v-if="userMsg.level==0?true:false" v-cloak>
     <div class="com_title">
         <div class="h1">系统重启信息</div>
     </div>
@@ -50,12 +50,17 @@
         mounted() {
             const userMsg = util.getStorage('local', 'userMsg');
             this.userMsg = userMsg ? JSON.parse(userMsg) : {};
-            this.userId = this.userMsg._id;
 
-            //非管理员禁止查看此页面
+            // 非管理员禁止查看此页面
             if (this.userMsg.level !== 0) {
-                alert("你无权限访问此页面，请返回");
-                window.history.back();
+                popup.confirm({
+                    title: '你无权限访问此页面，请返回', yes: () => {
+                        window.history.back();
+                    }, no: () => {
+                        window.history.back();
+                    }
+                })
+                return;
             }
 
             this.getSysDbErrorList();
