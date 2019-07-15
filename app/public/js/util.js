@@ -125,10 +125,14 @@ class utilfn {
         //判断code 并处理
         var dataCode = parseInt(data.code);
         if (!json.isGoingLogin && dataCode == 1004) {
-            //判断app或者web
+            // 判断app或者web
             if (window.location.href.indexOf(config.loginUrl) == -1) {
-                sessionStorage.setItem("weixin-url", window.location.href); //记录没有登陆前的访问页面
-                location.href = config.loginUrl + '?redirecturl=' + encodeURIComponent(location.href);
+                $('#main').html('');
+                function login(){
+                    sessionStorage.setItem("weixin-url", window.location.href); //记录没有登陆前的访问页面
+                    location.href = config.loginUrl + '?redirecturl=' + encodeURIComponent(location.href);
+                }
+                popup.confirm({ title: data.desc || '登录失败,请重新登录!', yes: () => { login() }, no: () => { login() } });
             } else {
                 popup.alert({
                     type: 'msg',
