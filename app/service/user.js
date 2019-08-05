@@ -2,9 +2,18 @@
 const crypto = require('crypto');
 const Service = require('egg').Service;
 
+/**
+ * @class UserService
+ * @extends {Service}
+ */
 class UserService extends Service {
 
-    // 用户登录
+    /* 用户登录
+     * @param {*} userName
+     * @param {*} passWord
+     * @return
+     * @memberof UserService
+    */
     async login(userName, passWord) {
         // 检测用户是否存在
         const userInfo = await this.getUserInfoForUserName(userName) || {};
@@ -36,14 +45,23 @@ class UserService extends Service {
         return userInfo;
     }
 
-    // 登出
+    /* 登出
+     * @param {*} usertoken
+     * @returns
+     * @memberof UserService
+     */
     logout(usertoken) {
         this.ctx.cookies.set('usertoken', '');
         this.app.redis.set(`${usertoken}_user_login`, '');
         return {};
     }
 
-    // 用户注册
+    /* 用户注册
+     * @param {*} userName
+     * @param {*} passWord
+     * @returns
+     * @memberof UserService
+     */
     async register(userName, passWord) {
         // 检测用户是否存在
         const userInfo = await this.getUserInfoForUserName(userName);
@@ -78,12 +96,22 @@ class UserService extends Service {
         return result;
     }
 
-    // 根据用户名称查询用户信息
+    /* 根据用户名称查询用户信息
+     * @param {*} userName
+     * @returns
+     * @memberof UserService
+     */
     async getUserInfoForUserName(userName) {
         return await this.ctx.model.User.findOne({ user_name: userName }).exec() || {};
     }
 
-    // 查询用户列表信息（分页）
+    /* 查询用户列表信息（分页）
+     * @param {*} pageNo
+     * @param {*} pageSize
+     * @param {*} userName
+     * @returns
+     * @memberof UserService
+     */
     async getUserList(pageNo, pageSize, userName) {
         pageNo = pageNo * 1;
         pageSize = pageSize * 1;
@@ -107,12 +135,22 @@ class UserService extends Service {
         };
     }
 
-    // 通过redis登录key获取用户信息
+    /* 通过redis登录key获取用户信息
+     * @param {*} usertoken
+     * @returns
+     * @memberof UserService
+     */
     async getUserInfoForUsertoken(usertoken) {
         return this.app.redis.get(`${usertoken}_user_login`) || {};
     }
 
-    // 冻结解冻用户
+    /* 冻结解冻用户
+     * @param {*} id
+     * @param {*} isUse
+     * @param {*} usertoken
+     * @returns
+     * @memberof UserService
+     */
     async setIsUse(id, isUse, usertoken) {
         // 冻结用户信息
         isUse = isUse * 1;
@@ -126,7 +164,12 @@ class UserService extends Service {
         return result;
     }
 
-    // 删除用户
+    /* 删除用户
+     * @param {*} id
+     * @param {*} usertoken
+     * @returns
+     * @memberof UserService
+     */
     async delete(id, usertoken) {
         // 删除
         const result = await this.ctx.model.User.findOneAndRemove({ _id: id }).exec();
@@ -135,7 +178,11 @@ class UserService extends Service {
         return result;
     }
 
-    // 更新用户登录态随机数
+    /* 更新用户登录态随机数
+     * @param {*} opt
+     * @returns
+     * @memberof UserService
+     */
     async updateUserToken(opt) {
         const query = {};
         if (opt.username) {
@@ -152,7 +199,11 @@ class UserService extends Service {
         return result;
     }
 
-    // 根据token查询用户信息
+    /* 根据token查询用户信息
+     * @param {*} usertoken
+     * @returns
+     * @memberof UserService
+     */
     async finUserForToken(usertoken) {
         let user_info = await this.app.redis.get(`${usertoken}_user_login`);
 
@@ -165,12 +216,21 @@ class UserService extends Service {
         return await this.ctx.model.User.findOne({ token: user_info.token }).exec();
     }
 
-    // 根据github node_id 获得用户是否已存在
+    /* 根据github node_id 获得用户是否已存在
+     * @param {*} id
+     * @returns
+     * @memberof UserService
+     */
     async getUserInfoForGithubId(id) {
         return await this.ctx.model.User.findOne({ token: id }).exec() || {};
     }
 
-    // github | 新浪微博 | 微信 register
+    /* github | 新浪微博 | 微信 register
+     * @param {*} userinfo
+     * @param {*} token
+     * @returns
+     * @memberof UserService
+     */
     async githubRegister(userinfo, token) {
         let userInfo = {};
         userInfo = await this.getUserInfoForGithubId(token);
