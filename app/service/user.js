@@ -1,5 +1,6 @@
 'use strict';
 const crypto = require('crypto');
+const _ = require('lodash');
 const Service = require('egg').Service;
 
 /**
@@ -15,10 +16,14 @@ class UserService extends Service {
      * @memberof UserService
     */
     async login(userName, passWord) {
-        // 检测用户是否存在
-        const userInfo = await this.getUserInfoForUserName(userName) || {};
+        const { isLdap } = await this.app.config.ldap;
+        let userInfo = await this.getUserInfoForUserName(userName) || {};
+        if (isLdap && _.isEmpty(userInfo)) {
+            await this.getUserInfoByIdap(userName, passWord);
+            await this.register(userName, passWord);
+            userInfo = await this.getUserInfoForUserName(userName);
+        }
         if (!userInfo.token) throw new Error('用户名不存在！');
-
         const newPwd = crypto.createHmac('sha256', passWord)
             .update(this.app.config.user_pwd_salt_addition)
             .digest('hex');
@@ -44,7 +49,11 @@ class UserService extends Service {
 
         return userInfo;
     }
-
+    async getUserInfoByIdap(userName, passWord) {
+        const result = await this.ctx.service.ldap.search(userName);
+        if (result.userPassword !== passWord) throw new Error('用户密码不正确！');
+        return result;
+    }
     /* 登出
      * @param {*} usertoken
      * @returns
