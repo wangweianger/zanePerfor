@@ -169,10 +169,10 @@ module.exports = () => {
 
     // ldap
     config.ldap = {
+        isuse: false, // 是否采用ldap;
         server: 'ldap://xxx', // ldap服务器地址
         ou: 'xx', // ou
         dc: 'xx', // dc, 非com的另外一层的dc，例如 dc=foobar,dc=com, 这里填 foobar
-        isLdap: false, // 是否采用ldap;
     };
 
     // 新浪微博 login

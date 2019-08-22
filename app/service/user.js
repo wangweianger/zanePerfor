@@ -1,6 +1,5 @@
 'use strict';
 const crypto = require('crypto');
-const _ = require('lodash');
 const Service = require('egg').Service;
 
 /**
@@ -16,14 +15,15 @@ class UserService extends Service {
      * @memberof UserService
     */
     async login(userName, passWord) {
-        const { isLdap } = await this.app.config.ldap;
+        const { isuse } = await this.app.config.ldap;
         let userInfo = await this.getUserInfoForUserName(userName) || {};
-        if (isLdap && _.isEmpty(userInfo)) {
+        if (isuse && !userInfo.token) {
+            // 如果开启了ldap功能则去ldap查询用户是否存在，存在则注册
             await this.getUserInfoByIdap(userName, passWord);
-            await this.register(userName, passWord);
-            userInfo = await this.getUserInfoForUserName(userName);
+            userInfo = await this.register(userName, passWord);
+        } else if (!userInfo.token) {
+            throw new Error('用户名不存在！');
         }
-        if (!userInfo.token) throw new Error('用户名不存在！');
         const newPwd = crypto.createHmac('sha256', passWord)
             .update(this.app.config.user_pwd_salt_addition)
             .digest('hex');
@@ -50,9 +50,13 @@ class UserService extends Service {
         return userInfo;
     }
     async getUserInfoByIdap(userName, passWord) {
-        const result = await this.ctx.service.ldap.search(userName);
-        if (result.userPassword !== passWord) throw new Error('用户密码不正确！');
-        return result;
+        try {
+            const result = await this.ctx.service.ldap.search(userName) || {};
+            if (result.userPassword !== passWord) throw new Error('用户账号有误！');
+            return result;
+        } catch (err) {
+            throw new Error('LAPD登录失败！');
+        }
     }
     /* 登出
      * @param {*} usertoken
