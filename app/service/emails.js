@@ -5,7 +5,15 @@ const parser = require('cron-parser');
 
 class EmailsService extends Service {
 
-    // 保存用户上报的数据
+    /*
+     * 保存用户上报的数据
+     *
+     * @param {*} pageNos
+     * @param {*} pageSize
+     * @param {*} email
+     * @returns
+     * @memberof EmailsService
+     */
     async getList(pageNos, pageSize, email) {
         pageNos = pageNos * 1;
         pageSize = pageSize * 1;
@@ -49,6 +57,12 @@ class EmailsService extends Service {
         };
     }
 
+    /*
+     * @param {*} email
+     * @param {*} name
+     * @returns
+     * @memberof EmailsService
+     */
     async addEmail(email, name) {
         const emails = this.ctx.model.Email();
         emails.email = email;
@@ -57,6 +71,14 @@ class EmailsService extends Service {
         return await emails.save();
     }
 
+    /*
+     *
+     * @param {*} id
+     * @param {*} systemIds
+     * @param {*} email
+     * @returns
+     * @memberof EmailsService
+     */
     async deleteEmail(id, systemIds, email) {
         const result = await this.ctx.model.Email.findOneAndRemove({ _id: id }).exec();
         if (systemIds && systemIds.length) {
@@ -71,7 +93,13 @@ class EmailsService extends Service {
         return result;
     }
 
-    // 更新 system_ids字段
+    /*
+     * 更新 system_ids字段
+     *
+     * @param {*} opt
+     * @returns
+     * @memberof EmailsService
+     */
     async updateSystemIds(opt) {
         let { email, appId, handletype, handleitem } = opt;
         handletype = handletype * 1;
@@ -97,7 +125,13 @@ class EmailsService extends Service {
         return result;
     }
 
-    // 超过历史pv流量峰值时发送邮件
+    /*
+     * 超过历史pv流量峰值时发送邮件
+     *
+     * @param {*} [json={}]
+     * @returns
+     * @memberof EmailsService
+     */
     async highestPvTipsEmail(json = {}) {
         const { appId, pv, uv, ip, ajax, flow } = json;
         const highestPv = parseInt(await this.app.redis.get(`${appId}_highest_pv_tips`) || 0);

@@ -4,7 +4,12 @@ const Service = require('egg').Service;
 
 class SystemService extends Service {
 
-    // 保存用户上报的数据
+    /*
+     * 保存用户上报的数据
+     *
+     * @param {*} ctx
+     * @memberof SystemService
+     */
     async saveSystemData(ctx) {
         const query = ctx.request.body;
         const type = query.type;
@@ -46,7 +51,13 @@ class SystemService extends Service {
         // 存储到redis
         this.updateSystemCache(token);
     }
-    // 保存用户上报的数据
+
+    /*
+     * 保存用户上报的数据
+     *
+     * @param {*} ctx
+     * @memberof SystemService
+     */
     async updateSystemData(ctx) {
         const query = ctx.request.body;
         const appId = query.app_id;
@@ -80,31 +91,64 @@ class SystemService extends Service {
         // 更新redis缓存
         this.updateSystemCache(appId);
     }
-    // 更新redis缓存
+
+    /*
+     * 更新redis缓存
+     *
+     * @param {*} appId
+     * @memberof SystemService
+     */
     async updateSystemCache(appId) {
         const system = await this.getSystemForDb(appId);
         await this.app.redis.set(appId, JSON.stringify(system));
     }
-    // 获得某个系统信息(redis)
+
+    /*
+     * 获得某个系统信息(redis)
+     *
+     * @param {*} appId
+     * @return
+     * @memberof SystemService
+     */
     async getSystemForAppId(appId) {
         if (!appId) throw new Error('查询某个系统信：appId不能为空');
 
         const result = await this.app.redis.get(appId) || '{}';
         return JSON.parse(result);
     }
-    // 获得某个系统信息(数据库)
+
+    /*
+     * 获得某个系统信息(数据库)
+     *
+     * @param {*} appId
+     * @returns
+     * @memberof SystemService
+     */
     async getSystemForDb(appId) {
         if (!appId) throw new Error('查询某个系统信：appId不能为空');
 
         return await this.ctx.model.System.findOne({ app_id: appId }).exec() || {};
     }
-    // 根据用户id获取系统列表
+
+    /*
+     * 根据用户id获取系统列表
+     *
+     * @param {*} ctx
+     * @returns
+     * @memberof SystemService
+     */
     async getSysForUserId(ctx) {
         const token = ctx.request.query.token;
         if (!token) return [];
         return await ctx.model.System.where('user_id').elemMatch({ $eq: token }).exec() || [];
     }
-    // 获得系统列表信息
+
+    /*
+     * 获得系统列表信息
+     *
+     * @returns
+     * @memberof SystemService
+     */
     async getWebSystemList() {
         return await this.ctx.model.System.aggregate([
             {
@@ -117,21 +161,42 @@ class SystemService extends Service {
             },
         ]).exec();
     }
-    // 删除系统中某个用户
+
+    /*
+     * 删除系统中某个用户
+     *
+     * @param {*} appId
+     * @param {*} userToken
+     * @returns
+     * @memberof SystemService
+     */
     async deleteWebSystemUser(appId, userToken) {
         return await this.ctx.model.System.update(
             { app_id: appId },
             { $pull: { user_id: userToken } },
             { multi: true }).exec();
     }
-    // 系统中新增某个用户
+
+    /* 系统中新增某个用户
+     * @param {*} appId
+     * @param {*} userToken
+     * @return
+     * @memberof SystemService
+     */
     async addWebSystemUser(appId, userToken) {
         return await this.ctx.model.System.update(
             { app_id: appId },
             { $addToSet: { user_id: userToken } },
             { multi: true }).exec();
     }
-    // 删除某个系统
+
+    /*
+     * 删除某个系统
+     *
+     * @param {*} appId
+     * @return
+     * @memberof SystemService
+     */
     async deleteSystem(appId) {
         const result = await this.ctx.model.System.findOneAndRemove({ app_id: appId }).exec();
         this.app.redis.set(appId, '', 'EX', 200);
@@ -146,8 +211,17 @@ class SystemService extends Service {
         return result;
     }
 
-    // 新增 | 删除 日报邮件
-    // item: 1:日报邮件发送  2：流量峰值邮件发送
+    /*
+     * 新增 | 删除 日报邮件
+     * item: 1:日报邮件发送  2：流量峰值邮件发送
+     * @param {*} appId
+     * @param {*} email
+     * @param {*} type
+     * @param {boolean} [handleEmali=true]
+     * @param {number} [item=1]
+     * @return
+     * @memberof SystemService
+     */
     async handleDaliyEmail(appId, email, type, handleEmali = true, item = 1) {
         type = type * 1;
         item = item * 1;
@@ -171,7 +245,16 @@ class SystemService extends Service {
         return result;
     }
 
-    // 更新邮件信息
+    /*
+     * 更新邮件信息
+     *
+     * @param {*} email
+     * @param {*} appId
+     * @param {number} [handletype=1]
+     * @param {number} [handleitem=1]
+     * @returns
+     * @memberof SystemService
+     */
     async updateEmailSystemIds(email, appId, handletype = 1, handleitem = 1) {
         if (!email) return;
         await this.ctx.service.emails.updateSystemIds({

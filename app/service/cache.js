@@ -3,6 +3,11 @@
 const Service = require('egg').Service;
 
 class CacheService extends Service {
+    /*
+     * @param {*} key
+     * @returns
+     * @memberof CacheService
+     */
     async get(key) {
         const { redis, logger } = this.app;
         const t = Date.now();
@@ -14,6 +19,12 @@ class CacheService extends Service {
         return data;
     }
 
+    /*
+     * @param {*} key
+     * @param {*} value
+     * @param {*} seconds
+     * @memberof CacheService
+     */
     async setex(key, value, seconds) {
         const { redis, logger } = this.app;
         const t = Date.now();
@@ -23,6 +34,12 @@ class CacheService extends Service {
         logger.debug('Cache', 'set', key, (duration + 'ms').green);
     }
 
+    /*
+     * @param {*} key
+     * @param {*} seconds
+     * @returns
+     * @memberof CacheService
+     */
     async incr(key, seconds) {
         const { redis, logger } = this.app;
         const t = Date.now();

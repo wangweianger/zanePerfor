@@ -12,6 +12,14 @@ class LdapService extends Service {
             url: server,
         });
     }
+
+    /*
+     *
+     *
+     * @param {*} userName
+     * @returns
+     * @memberof LdapService
+     */
     search(userName) {
         const { ou, dc } = this.config;
         return new Promise((resolve, reject) => {

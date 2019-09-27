@@ -4,8 +4,13 @@ const Service = require('egg').Service;
 
 class RemoveService extends Service {
 
-
-    // 定时删除原始上报数据 一天删一次
+    /*
+     * 定时删除原始上报数据 一天删一次
+     *
+     * @param {string} [type='web']
+     * @returns
+     * @memberof RemoveService
+     */
     async deleteDb1WebData(type = 'web') {
         try {
             const interval = parser.parseExpression(this.app.config.pvuvip_task_day_time);
@@ -26,7 +31,15 @@ class RemoveService extends Service {
         }
     }
 
-    // 清空db2 number日之前所有性能数据
+    /*
+     * 清空db2 number日之前所有性能数据
+     *
+     * @param {*} appId
+     * @param {*} number
+     * @param {string} [type='web']
+     * @returns
+     * @memberof RemoveService
+     */
     async deleteDb2WebData(appId, number, type = 'web') {
         number = number * 1;
         const interval = parser.parseExpression(this.app.config.pvuvip_task_day_time);
