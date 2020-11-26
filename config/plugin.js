@@ -27,12 +27,12 @@ exports.cors = {
 };
 
 exports.email = {
-    enable: true,
+    enable: false,
     path: path.join(__dirname, '../lib/plugin/egg-email'),
 };
 
 exports.kafka = {
-    enable: true,
+    enable: false,
     path: path.join(__dirname, '../lib/plugin/egg-kafka'),
 };
 
