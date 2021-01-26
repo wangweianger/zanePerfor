@@ -112,8 +112,13 @@ class IpTaskService extends Service {
             // 直接更新
             result = await this.updateWxPages(datas, _id, appId, path);
         } else {
-            // 查询百度地图地址信息并更新
-            result = await this.getIpDataForBaiduApi(ip, _id, copyip, appId, path);
+            if (this.app.config.location.type === 'baidu') {
+                // 查询百度地图地址信息并更新
+                result = await this.getIpDataForBaiduApi(ip, _id, copyip, appId, path);
+            } else {
+                // 使用 ip-api 查询 ip 地址并进行更新
+                result = await this.getIpDataForIP_API(ip, _id, copyip, appId, path);
+            }
         }
         return result;
     }
@@ -122,7 +127,7 @@ class IpTaskService extends Service {
     async getIpDataForBaiduApi(ip, _id, copyip, appId, path) {
         if (!ip || ip === '127.0.0.1') return;
         try {
-            const url = `https://api.map.baidu.com/location/ip?ip=${ip}&ak=${this.app.config.BAIDUAK}&coor=bd09ll`;
+            const url = `https://api.map.baidu.com/location/ip?ip=${ip}&ak=${this.app.config.location.BAIDUAK}&coor=bd09ll`;
             const result = await this.app.curl(url, {
                 dataType: 'json',
             });
@@ -146,6 +151,38 @@ class IpTaskService extends Service {
             }
         } catch (err) {
             this.ctx.logger.info(`调用百度api发现了错误${err}`);
+            return {};
+        }
+    }
+
+    // 根据ip-api.com的api获得地址信息 (国内、国外都可以)
+    async getIpDataForIP_API(ip, _id, copyip, appId, path) {
+        if (!ip || ip === '127.0.0.1') return;
+        try {
+            const url = `http://ip-api.com/json/${ip}?lang=${this.app.config.location.lang || 'zh-CN'}`;
+            const result = await this.app.curl(url, {
+                dataType: 'json',
+            });
+            if (result.data.status === 'success') {
+                const json = {
+                    _ip: ip,
+                    province: result.data.country,
+                    city: result.data.city,
+                };
+                if (!this.cacheArr.includes(copyip)) {
+                    this.cacheArr.push(copyip);
+                    // 保存到地址库
+                    this.saveIpDatasToDb(json, copyip);
+                    // 更新redis
+                    this.app.redis.set(copyip, JSON.stringify(json));
+                    // 更新程序缓存
+                    this.cacheJson[copyip] = json;
+                }
+                // 更新用户地址信息
+                return await this.updateWxPages(json, _id, appId, path);
+            }
+        } catch (err) {
+            this.ctx.logger.info(`调用ip-api.com发现了错误${err}`);
             return {};
         }
     }

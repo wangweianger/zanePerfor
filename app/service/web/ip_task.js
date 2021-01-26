@@ -111,11 +111,14 @@ class IpTaskService extends Service {
             // 直接更新
             result = await this.updateWebEnvironment(datas, _id, appId);
         } else {
-            // 查询百度地图地址信息并更新
-            // result = await this.getIpDataForBaiduApi(ip, _id, copyip, appId);
-            // 使用 ip-api 查询 ip 地址并进行更新
-            result = await this.getIpDataForIP_API(ip, _id, copyip, appId);
-        } 
+            if (this.app.config.location.type === 'baidu') {
+                // 查询百度地图地址信息并更新
+                result = await this.getIpDataForBaiduApi(ip, _id, copyip, appId);
+            } else {
+                // 使用 ip-api 查询 ip 地址并进行更新
+                result = await this.getIpDataForIP_API(ip, _id, copyip, appId);
+            }
+        }
         return result;
     }
 
@@ -123,7 +126,7 @@ class IpTaskService extends Service {
     async getIpDataForBaiduApi(ip, _id, copyip, appId) {
         if (!ip || ip === '127.0.0.1') return;
         try {
-            const url = `https://api.map.baidu.com/location/ip?ip=${ip}&ak=${this.app.config.BAIDUAK}&coor=bd09ll`;
+            const url = `https://api.map.baidu.com/location/ip?ip=${ip}&ak=${this.app.config.location.BAIDUAK}&coor=bd09ll`;
             const result = await this.app.curl(url, {
                 dataType: 'json',
             });
@@ -155,7 +158,7 @@ class IpTaskService extends Service {
     async getIpDataForIP_API(ip, _id, copyip, appId) {
         if (!ip || ip === '127.0.0.1') return;
         try {
-            const url = `http://ip-api.com/json/${ip}`;
+            const url = `http://ip-api.com/json/${ip}?lang=${this.app.config.location.lang || 'zh-CN'}`;
             const result = await this.app.curl(url, {
                 dataType: 'json',
             });

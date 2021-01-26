@@ -154,8 +154,13 @@ module.exports = () => {
         servers: [ path.resolve(__dirname, '../servers-restart.sh') ],
     };
 
-    // 百度地图api key
-    config.BAIDUAK = '这里替换为你的百度KEY';
+    // ip 解析 为 省市区
+    config.location = {
+        type: 'ip-api', // baidu | ip-api,
+        lang: 'zh-CN',
+        BAIDUAK: '这里替换为你的百度KEY', // type = baidu 时生效
+    };
+
 
     // 分页条数
     config.pageSize = 50;
