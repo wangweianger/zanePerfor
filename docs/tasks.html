@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>zanePerfor性能监控统计平台</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		*{margin:0;padding:0;}
+		a{color:rgb(135, 118, 247);text-decoration: none;}
+		.body{font-size:16px;}
+		.header {width:100%;overflow:hidden;margin:0 auto;height:60px;line-height:60px;position: fixed;left:0;top:0;background:#fff;border-bottom:solid 1px #ddd;}
+		.inlin-block{display:inline-block;}
+		.header .logo{font-size:25px;display:flex;align-items: center;flex-direction: row;width:150px;float:left;margin-left:20px;}
+		.header .logo img{width:40px;height:auto;margin-right:10px;}
+		.header .right{float:right;text-decoration: none;color:#333;}
+		.header .desc{color:#999;margin-left:50px;font-size:13px;}
+		.main{border-top:solid 1px #ddd;}
+		.side{width:180px;height:100%;padding:20px;border-right:solid 1px #ddd;font-size:14px;position:fixed;left:0;top:60px;}
+		.side a{color:#333;text-decoration: none;}
+		.side .item{margin-bottom:15px;}
+		.side .item.active a{color:rgb(135, 118, 247);}
+		.content{overflow:hidden;margin-left:230px;margin-top:60px;padding:30px 30px 100px 130px;max-width:1200px;}
+		h1{font-size:30px;}
+		h2{font-size:20px;border-bottom:solid 1px #ddd;padding-bottom:10px;}
+		h3{font-size:16px;font-weight:bold;}
+		p{font-size:14px;line-height:35px;}
+		strong{font-weight:bold;font-size:16px;}
+		blockquote {padding: 0 10px;color: #777;border-left: 5px solid #ddd;}
+		.mt10{margin-top:10px;}
+		.mt20{margin-top:20px;}
+		.mt30{margin-top:30px;}
+		.mr20{margin-right:20px;}
+		.mb10{margin-bottom:10px;}
+		.mb20{margin-bottom:20px;}
+		.mb30{margin-bottom:30px;}
+		ul li {list-style: none;font-size:14px;line-height:35px;display:flex;flex-direction: row;align-items: center;}
+		ul li:before{content:'';display:inline-block;width:5px;height:5px;border-radius:100%;background:#ccc;margin-right:8px;}
+		.red{color:red;}
+		.toggle_slide{display:none;}
+		img{max-width:100%;}
+		@media (max-width: 768px) {
+			.toggle_slide{display:block;width:60px;height:60px;text-align:center;float:left;cursor: pointer;}
+			.toggle_slide img{width:40px;height:40px;margin-top:10px;}
+			.side{display: none;background:#fff;top:61px;}
+			.content{margin-left: 0px;padding: 30px 20px 100px 20px;}
+			.header .logo{margin-left:0;}
+			.header .desc{display:none;}
+			.header .right{margin-right:8px;font-size:14px;}
+		}
+	</style>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/themes/prism-okaidia.css" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/prism.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/components/prism-javascript.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+	<script>$(function () { $(".toggle_slide").click(function () { if ($(".side").css("display") == 'block') { $(".side").css("display", "none"); } else { $(".side").css("display", "block"); } }); })</script>
+	</head>
+
+<body>
+	<div class="header">
+		<div class="toggle_slide"><img src="https://cdn.seosiwei.com/Sb4GfHisSa5Wsbka2anshJjhTmsTBrCK.png?imageslim"></div>
+		<div class="inlin-block logo">
+			<img src="https://img.allpyra.com/d5d9737d-8111-4c1e-8f03-0913ec1b2c51.png" alt="logo">
+			<div>zanePerfor</div>
+		</div>
+		<div class="inlin-block desc">前端性能监控业务平台</div>
+		<a class="right mr20" target="_blank" href="https://github.com/wangweianger/zanePerfor">GITHUB地址</a>
+		<a class="right mr20" target="_blank" href="https://blog.seosiwei.com/">我的博客</a>
+	</div>
+	<div class="main">
+		<div class="side">
+			<div class="item active" data-mark="index"><a href="/performance/index.html">zanePerfor是什么?</a></div>
+			<div class="item" data-mark="project"><a href="/performance/project.html">项目服务架构</a></div>
+			<div class="item" data-mark="SDK"><a href="/performance/SDK.html">上报SDK</a></div>
+			<div class="item" data-mark="simple_deployment"><a href="/performance/simple_deployment.html">快速部署入门体验</a></div>
+			<div class="item" data-mark="configs"><a href="/performance/configs.html">项目配置说明</a></div>
+			<div class="item" data-mark="tasks"><a href="/performance/tasks.html">定时任务说明</a></div>
+			<div class="item" data-mark="repeart_task"><a href="/performance/repeart_task.html">集群定时任务避免重复执行</a></div>
+			<div class="item" data-mark="iptask"><a href="/performance/iptask.html">IP解析地址性能说明</a></div>
+			<div class="item" data-mark="oneservers"><a href="/performance/oneservers.html">单机部署服务稳定说明</a></div>
+			<div class="item" data-mark="github"><a href="/performance/github.html">github OAuth</a></div>
+			<div class="item"><a href="/performance/wait.html">redis集群搭建</a></div>
+			<div class="item"><a href="/performance/wait.html">Mongodb索引优化</a></div>
+			<div class="item" data-mark="replica_set"><a href="/performance/replica_set.html">Mongodb副本集读写分离</a></div>
+			<div class="item" data-mark="colony"><a href="/performance/colony.html">Mongodb集群分片</a></div>
+			<div class="item"><a href="/performance/wait.html">servers(负载均衡)</a></div>
+			<div class="item"><a href="/performance/wait.html">消息队列升级改造</a></div>
+			<div class="item"><a href="/performance/wait.html">未来规划</a></div>
+		</div>
+		<div class="content">
+			<h1 class="mb20">项目定时任务功能说明</h1>
+			<h2>一：消息队列消费者Task (建议上报使用此Task)</h2>
+			<pre><code class="language-javascript">
+// 是否执行由 config.report_data_type = 'redis' 配置决定
+// 此定时任务执行频次由 config.redis_consumption.task_time 决定
+schedule/report_task_redis.js
+</code></pre>
+			<p>开启此定时任务，消费者端会定时消费用户上报的原始数据并储存到db中，是非常重要的配置，是后续逻辑处理数据的来源。</p>
+			<blockquote>
+				<p>配置优势：性能强，使用消息队列，支持秒杀形式的高并发数据上报，并且能实现限流的功能，实现servers集群很方便</p>
+			</blockquote>
+			<h2 class="mt30">二：db3同步db1数据Task（不建议使用此Task）</h2>
+			<pre><code class="language-javascript">
+// 是否执行由 config.report_data_type = 'mongodb' 配置决定
+// 此定时任务执行频次由 config.redis_consumption.task_time 决定
+schedule/report_task_mongodb.js
+</code></pre>
+			<p>开启此定时任务，用户上报的原始数据会先储存到db1，然后再经过定时任务把需要的数据同步到db3</p>
+			<blockquote>
+				<p>配置劣势：性能比消息队列差很多，配置也稍复杂，没有做限流逻辑，实现了servers集群Task的不重复执行</p>
+			</blockquote>
+			<h2 class="mt30">三：每分钟PV,UV,IP统计Task</h2>
+			<pre><code class="language-javascript">
+// 此定时任务执行频次由 config.pvuvip_task_minute_time 决定
+schedule/pvuvip_pre_minute.js
+</code></pre>
+			<blockquote>
+				<p>备注：此Task实现了servers集群模式下的Task不重复执行</p>
+			</blockquote>
+			<h2 class="mt30">四：每天凌晨执行一次的Task</h2>
+			<pre><code class="language-javascript">
+// 此定时任务执行频次由 config.pvuvip_task_day_time 决定
+// 此定时任务主要负责 每日PV,UV,IP,TOP排行，城市流量排行等每日统计功能的Task
+schedule/pvuvip_pre_day.js
+</code></pre>
+			<blockquote>
+				<p>备注：此Task实现了servers集群模式下的Task不重复执行</p>
+			</blockquote>
+			<h2 class="mt30">五：定时解析用户IP地理位置Task</h2>
+			<pre><code class="language-javascript">
+// 此定时任务执行频次由 config.ip_task_time 决定
+// 此定时任务主要是根据用户的IP地址得到城市位置信息，方便后期的省，城市的相关统计
+schedule/ip_task.js
+</code></pre>
+			<blockquote>
+				<p>备注：此Task实现了servers集群模式下的Task不重复执行</p>
+				<p>性能说明：此Task会先从本地文件查询，若无再从redis或者mongodb数据库查询</p>
+			</blockquote>
+			<h2 class="mt30">六：定时删除用户原始上报数据Task</h2>
+			<pre><code class="language-javascript">
+// 此定时任务 需要 config.report_data_type = 'mongodb' 时才会执行
+// 定时删除用户前2天之前上报的原始数据
+schedule/delete_report.js
+</code></pre>
+		</div>
+	</div>
+	<script>
+		var href = location.href;
+		var liobjs = $('.side').find('div')
+		for (var i = 0, len = liobjs.length; i < len; i++) {
+			var attrr = $(liobjs[i]).attr('data-mark')
+			if (href.indexOf(attrr) != -1) {
+				liobjs.removeClass('active')
+				$(liobjs[i]).addClass('active')
+			}
+		}
+	</script>
+</body>
+
+</html>

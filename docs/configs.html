@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>zanePerfor性能监控统计平台</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		*{margin:0;padding:0;}
+		a{color:rgb(135, 118, 247);text-decoration: none;}
+		.body{font-size:16px;}
+		.header {width:100%;overflow:hidden;margin:0 auto;height:60px;line-height:60px;position: fixed;left:0;top:0;background:#fff;border-bottom:solid 1px #ddd;}
+		.inlin-block{display:inline-block;}
+		.header .logo{font-size:25px;display:flex;align-items: center;flex-direction: row;width:150px;float:left;margin-left:20px;}
+		.header .logo img{width:40px;height:auto;margin-right:10px;}
+		.header .right{float:right;text-decoration: none;color:#333;}
+		.header .desc{color:#999;margin-left:50px;font-size:13px;}
+		.main{border-top:solid 1px #ddd;}
+		.side{width:180px;height:100%;padding:20px;border-right:solid 1px #ddd;font-size:14px;position:fixed;left:0;top:60px;}
+		.side a{color:#333;text-decoration: none;}
+		.side .item{margin-bottom:15px;}
+		.side .item.active a{color:rgb(135, 118, 247);}
+		.content{overflow:hidden;margin-left:230px;margin-top:60px;padding:30px 30px 100px 130px;max-width:1200px;}
+		h1{font-size:30px;}
+		h2{font-size:20px;border-bottom:solid 1px #ddd;padding-bottom:10px;}
+		h3{font-size:16px;font-weight:bold;}
+		p{font-size:14px;line-height:35px;}
+		strong{font-weight:bold;font-size:16px;}
+		blockquote {padding: 0 10px;color: #777;border-left: 5px solid #ddd;}
+		.mt10{margin-top:10px;}
+		.mt20{margin-top:20px;}
+		.mt30{margin-top:30px;}
+		.mr20{margin-right:20px;}
+		.mb10{margin-bottom:10px;}
+		.mb20{margin-bottom:20px;}
+		.mb30{margin-bottom:30px;}
+		ul li {list-style: none;font-size:14px;line-height:35px;display:flex;flex-direction: row;align-items: center;}
+		ul li:before{content:'';display:inline-block;width:5px;height:5px;border-radius:100%;background:#ccc;margin-right:8px;}
+		.red{color:red;}
+		.toggle_slide{display:none;}
+		img{max-width:100%;}
+		@media (max-width: 768px) {
+			.toggle_slide{display:block;width:60px;height:60px;text-align:center;float:left;cursor: pointer;}
+			.toggle_slide img{width:40px;height:40px;margin-top:10px;}
+			.side{display: none;background:#fff;top:61px;}
+			.content{margin-left: 0px;padding: 30px 20px 100px 20px;}
+			.header .logo{margin-left:0;}
+			.header .desc{display:none;}
+			.header .right{margin-right:8px;font-size:14px;}
+		}
+	</style>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/themes/prism-okaidia.css" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/prism.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/components/prism-javascript.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+	<script>$(function () { $(".toggle_slide").click(function () { if ($(".side").css("display") == 'block') { $(".side").css("display", "none"); } else { $(".side").css("display", "block"); } }); })</script>
+	</head>
+<body>
+	<div class="header">
+		<div class="toggle_slide"><img src="https://cdn.seosiwei.com/Sb4GfHisSa5Wsbka2anshJjhTmsTBrCK.png?imageslim"></div>
+		<div class="inlin-block logo">
+			<img src="https://img.allpyra.com/d5d9737d-8111-4c1e-8f03-0913ec1b2c51.png" alt="logo">
+			<div>zanePerfor</div>
+		</div>
+		<div class="inlin-block desc">前端性能监控业务平台</div>
+		<a class="right mr20" target="_blank" href="https://github.com/wangweianger/zanePerfor">GITHUB地址</a>
+		<a class="right mr20" target="_blank" href="https://blog.seosiwei.com/">我的博客</a>
+	</div>
+	<div class="main">
+		<div class="side">
+			<div class="item active" data-mark="index"><a href="/performance/index.html">zanePerfor是什么?</a></div>
+			<div class="item" data-mark="project"><a href="/performance/project.html">项目服务架构</a></div>
+			<div class="item" data-mark="SDK"><a href="/performance/SDK.html">上报SDK</a></div>
+			<div class="item" data-mark="simple_deployment"><a href="/performance/simple_deployment.html">快速部署入门体验</a></div>
+			<div class="item" data-mark="configs"><a href="/performance/configs.html">项目配置说明</a></div>
+			<div class="item" data-mark="tasks"><a href="/performance/tasks.html">定时任务说明</a></div>
+			<div class="item" data-mark="repeart_task"><a href="/performance/repeart_task.html">集群定时任务避免重复执行</a></div>
+			<div class="item" data-mark="iptask"><a href="/performance/iptask.html">IP解析地址性能说明</a></div>
+			<div class="item" data-mark="oneservers"><a href="/performance/oneservers.html">单机部署服务稳定说明</a></div>
+			<div class="item" data-mark="github"><a href="/performance/github.html">github OAuth</a></div>
+			<div class="item"><a href="/performance/wait.html">redis集群搭建</a></div>
+			<div class="item"><a href="/performance/wait.html">Mongodb索引优化</a></div>
+			<div class="item" data-mark="replica_set"><a href="/performance/replica_set.html">Mongodb副本集读写分离</a></div>
+			<div class="item" data-mark="colony"><a href="/performance/colony.html">Mongodb集群分片</a></div>
+			<div class="item"><a href="/performance/wait.html">servers(负载均衡)</a></div>
+			<div class="item"><a href="/performance/wait.html">消息队列升级改造</a></div>
+			<div class="item"><a href="/performance/wait.html">未来规划</a></div>
+		</div>
+		<div class="content">
+			<h1 class="mb20">config重要配置说明</h1>
+			<h3 class="mt30">一：定时任务启动配置</h3>
+			<pre><code class="language-javascript">
+// 浏览器端是否开启定时任务，如果不开启，所有的web相关的统计将不会执行（pv,uv,ip,top,省流量统计等）				
+config.is_web_task_run = true;
+
+// 小程序端是否开启定时任务，如果不开启，所有的web相关的统计将不会执行（pv,uv,ip,top,省流量统计等）
+config.is_wx_task_run = true;
+</code></pre>
+			<blockquote>
+				<p>备注：此配置项可以把整个项目拆分成2个项目，针对于web的项目和针对于小程序的项目，可以按需配置</p>
+			</blockquote>
+			<h3 class="mt30">二：使用redis消息队列还是使用mongodb储存上报原始数据</h3>
+			<pre><code class="language-javascript">
+// 此配置有两个值：redus || mongodb
+// 如果使用redis则上报的原始数据使用redis消息队列存储
+// 如果使用mongodb则上报的原始数据使用mongodb数据库储存
+config.report_data_type = 'redis';
+</code></pre>
+			<blockquote>
+				<p>备注：此配置项对上报的方式有很大的影响，推荐使用 redis 消息队列（配置更简单，性能更强）</p>
+			</blockquote>
+			<pre><code class="language-javascript">
+// 如果	config.report_data_type = 'redis'; 则需要配置以下参数
+config.redis_consumption = {
+	// 消费者消费生产数据的定时任务
+	task_time: '*/20 * * * * *',
+
+	// 每次定时任务消费线程数(web端)
+	thread_web: 1000, // 此配置每次回消费 60/20 * 1000 = 3000 条数据
+
+	// 每次定时任务消费线程数(wx端) （如果值为0则不执行消费任务）
+	thread_wx: 0,
+
+	// 消息队列池限制数, 0：不限制 number: 限制条数 高并发时服务优雅降级方案
+	total_limit_web: 100000,
+	total_limit_wx: 100000,
+};
+</code></pre>
+			<blockquote>
+				<p>备注：(total_limit_web|total_limit_wx)只有消息队列时可用，若不想限制填为0即可</p>
+			</blockquote>
+			<h3 class="mt30">三：定时任务时间说明</h3>
+			<pre><code class="language-javascript">
+// 此配置于	config.report_data_type = 'mongodb' 相关联，表示每分钟db3从db1同步数据的时间间隔，默认1s
+config.report_task_time = '0 */1 * * * *';
+
+// 每分钟定时统计任务 （包括：pv,uv,ip,top排行）
+config.pvuvip_task_minute_time = '0 */1 * * * *';
+
+// 每天定时统计任务 （包括：pv,uv,ip,top排行，省份流量统计排行）
+config.pvuvip_task_day_time = '0 0 0 */1 * *';
+
+// ip解析为城市信息定时任务时间间隔
+config.ip_task_time = '0 */1 * * * *';
+</code></pre>
+			<h3 class="mt30">四：IP定时任务解析器使用redis还是mongodb</h3>
+			<pre><code class="language-javascript">
+// 此配置有两个值 redus || mongodb，标识ip解析为城市地址是查询的数据方式
+config.ip_redis_or_mongodb = 'redis'
+</code></pre>
+			<blockquote>
+				<p>备注：ip解析为城市在使用数据库查询之前会优先去本地缓存文件查询一遍，如果没有才会去数据库匹配</p>
+			</blockquote>
+			<h3 class="mt30">五：IP定时任务解析器使用本地缓存设置</h3>
+			<pre><code class="language-javascript">
+// 缓存IP地址对应城市信息的本地json文件，优先级高于	config.ip_redis_or_mongodb 配置
+config.ip_city_cache_file = {
+	web: 'web_ip_city_cache_file.txt',
+	wx: 'wx_ip_city_cache_file.txt',
+};
+</code></pre>
+			<h3 class="mt30">六：IP定时任务解析器使用redis还是mongodb</h3>
+<pre><code class="language-javascript">
+// 此配置表示 db3同步db1的线程数 只有当 config.report_data_type = 'mongodb' 时才会生效
+config.report_thread = 10; // 此配置同步数据相当于10个线程在跑
+
+// ip地址解析为城市信息线程数 数字越大每次跑的数据越多
+config.ip_thread = 10; // 此配置默认每次跑 10 * 60 = 600 条
+</code></pre>
+			<h3 class="mt30">七：数据库和servers出现意外时的重启脚本</h3>
+<pre><code class="language-javascript">
+config.shell_restart = {
+	// mongodb重启shell,如果mongodb服务崩溃了，服务重启脚本（可选填）
+	mongodb: [ '/data/performance/mongodb-restart.sh' ],
+
+	// node.js服务重启shell,mongodb重启时，数据库连接池有可能会断，这时重启服务（可选填）
+	servers: [ '/data/performance/servers-restart.sh' ],
+};
+</code></pre>
+<blockquote>
+	<p>备注：此配置一般用在单机模式下的保证服务正常方案，集群模式下可不填写</p>
+	<p>程序中有一套检测数据库是否正常机制，如果检测不正常则会重启db，和servers，一直重复直到重启成功，以此保证单机的高可用方案</p>
+</blockquote>
+		</div>
+	</div>
+	<script>
+		var href = location.href;
+		var liobjs = $('.side').find('div')
+		for (var i = 0, len = liobjs.length; i < len; i++) {
+			var attrr = $(liobjs[i]).attr('data-mark')
+			if (href.indexOf(attrr) != -1) {
+				liobjs.removeClass('active')
+				$(liobjs[i]).addClass('active')
+			}
+		}
+	</script>
+</body>
+</html>

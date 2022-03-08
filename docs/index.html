@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>zanePerfor性能监控统计平台</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		*{margin:0;padding:0;}
+		a{color:rgb(135, 118, 247);text-decoration: none;}
+		.body{font-size:16px;}
+		.header {width:100%;overflow:hidden;margin:0 auto;height:60px;line-height:60px;position: fixed;left:0;top:0;background:#fff;border-bottom:solid 1px #ddd;}
+		.inlin-block{display:inline-block;}
+		.header .logo{font-size:25px;display:flex;align-items: center;flex-direction: row;width:150px;float:left;margin-left:20px;}
+		.header .logo img{width:40px;height:auto;margin-right:10px;}
+		.header .right{float:right;text-decoration: none;color:#333;}
+		.header .desc{color:#999;margin-left:50px;font-size:13px;}
+		.main{border-top:solid 1px #ddd;}
+		.side{width:180px;height:100%;padding:20px;border-right:solid 1px #ddd;font-size:14px;position:fixed;left:0;top:60px;}
+		.side a{color:#333;text-decoration: none;}
+		.side .item{margin-bottom:15px;}
+		.side .item.active a{color:rgb(135, 118, 247);}
+		.content{overflow:hidden;margin-left:230px;margin-top:60px;padding:30px 30px 100px 130px;max-width:1200px;}
+		h1{font-size:30px;}
+		h2{font-size:20px;border-bottom:solid 1px #ddd;padding-bottom:10px;}
+		h3{font-size:16px;font-weight:bold;}
+		p{font-size:14px;line-height:35px;}
+		strong{font-weight:bold;font-size:16px;}
+		blockquote {padding: 0 10px;color: #777;border-left: 5px solid #ddd;}
+		.mt10{margin-top:10px;}
+		.mt20{margin-top:20px;}
+		.mt30{margin-top:30px;}
+		.mr20{margin-right:20px;}
+		.mb10{margin-bottom:10px;}
+		.mb20{margin-bottom:20px;}
+		.mb30{margin-bottom:30px;}
+		ul li {list-style: none;font-size:14px;line-height:35px;display:flex;flex-direction: row;align-items: center;}
+		ul li:before{content:'';display:inline-block;width:5px;height:5px;border-radius:100%;background:#ccc;margin-right:8px;}
+		.red{color:red;}
+		.toggle_slide{display:none;}
+		img{max-width:100%;}
+		@media (max-width: 768px) {
+			.toggle_slide{display:block;width:60px;height:60px;text-align:center;float:left;cursor: pointer;}
+			.toggle_slide img{width:40px;height:40px;margin-top:10px;}
+			.side{display: none;background:#fff;top:61px;}
+			.content{margin-left: 0px;padding: 30px 20px 100px 20px;}
+			.header .logo{margin-left:0;}
+			.header .desc{display:none;}
+			.header .right{margin-right:8px;font-size:14px;}
+		}
+	</style>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/themes/prism-okaidia.css" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/prism.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/components/prism-javascript.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+	<script>$(function () { $(".toggle_slide").click(function () { if ($(".side").css("display") == 'block') { $(".side").css("display", "none"); } else { $(".side").css("display", "block"); } }); })</script>
+	</head>
+<body>
+	<div class="header">
+		<div class="toggle_slide"><img src="https://cdn.seosiwei.com/Sb4GfHisSa5Wsbka2anshJjhTmsTBrCK.png?imageslim"></div>
+		<div class="inlin-block logo">
+			<img src="https://img.allpyra.com/d5d9737d-8111-4c1e-8f03-0913ec1b2c51.png" alt="logo">
+			<div>zanePerfor</div>
+		</div>
+		<div class="inlin-block desc">前端性能监控业务平台</div>
+		<a class="right mr20" target="_blank" href="https://github.com/wangweianger/zanePerfor">GITHUB地址</a>
+		<a class="right mr20" target="_blank" href="https://blog.seosiwei.com/">我的博客</a>
+	</div>
+	<div class="main">
+		<div class="side">
+			<div class="item active" data-mark="index"><a href="/performance/index.html">zanePerfor是什么?</a></div>
+			<div class="item" data-mark="project"><a href="/performance/project.html">项目服务架构</a></div>
+			<div class="item" data-mark="SDK"><a href="/performance/SDK.html">上报SDK</a></div>
+			<div class="item" data-mark="simple_deployment"><a href="/performance/simple_deployment.html">快速部署入门体验</a></div>
+			<div class="item" data-mark="configs"><a href="/performance/configs.html">项目配置说明</a></div>
+			<div class="item" data-mark="tasks"><a href="/performance/tasks.html">定时任务说明</a></div>
+			<div class="item" data-mark="repeart_task"><a href="/performance/repeart_task.html">集群定时任务避免重复执行</a></div>
+			<div class="item" data-mark="iptask"><a href="/performance/iptask.html">IP解析地址性能说明</a></div>
+			<div class="item" data-mark="oneservers"><a href="/performance/oneservers.html">单机部署服务稳定说明</a></div>
+			<div class="item" data-mark="github"><a href="/performance/github.html">github OAuth</a></div>
+			<div class="item"><a href="/performance/wait.html">redis集群搭建</a></div>
+			<div class="item"><a href="/performance/wait.html">Mongodb索引优化</a></div>
+			<div class="item" data-mark="replica_set"><a href="/performance/replica_set.html">Mongodb副本集读写分离</a></div>
+			<div class="item" data-mark="colony"><a href="/performance/colony.html">Mongodb集群分片</a></div>
+			<div class="item"><a href="/performance/wait.html">servers(负载均衡)</a></div>
+			<div class="item"><a href="/performance/wait.html">消息队列升级改造</a></div>
+			<div class="item"><a href="/performance/wait.html">未来规划</a></div>
+		</div>
+		<div class="content">
+			<h1 class="mb20">zanePerfor是什么?</h1>
+			<p><strong>zanePerfor是一个服务于性能监控的业务平台项目</strong>，目前实现了浏览器，微信小程序的相关基础性能统计。</p>
+			<blockquote>
+				<p>备注：zanePerfor目前还不完善，处于开发初期，我会长期的维护和升级</p>
+				<p>展望：zanePerfor的目标是解决中小应用的性能统计，支持通用的数据统计和定制化的统计开发，解决高并发下的应用高可用</p>
+				<p>性能：目前架构理论上来说可支持每日(百万、千万)级PV，未来会持续开发和优化</p>
+			</blockquote>
+			<h2 class="mt30">zanePerfor目前实现了哪些功能？</h2>
+			<h3 class="mt20">浏览器端(WEB)</h3>
+			<ul class="mt10">
+				<li>页面级的性能上报（多页面 || 单页面应用程序通用）</li>
+				<li>页面AJAX性能上报</li>
+				<li>页面所有加载资源性能上报（图片,js,css）</li>
+				<li>页面所有错误信息上报（js,css,ajax）</li>
+			</ul>
+			<h3 class="mt20">微信小程序端</h3>
+			<ul class="mt10">
+				<li>path路径对应的AJAX性能上报</li>
+				<li>小程序错误信息上报（js,ajax,img）</li>
+				<li>用户设备信息及其网络信息上报</li>
+			</ul>
+			<h3 class="mt20">后端界面展示功能（web,小程序通用）</h3>
+			<ul class="mt10">
+				<li>统计每分钟应用的PV,UV,IP信息，统计每天的PV,UV,IP,跳出率，用户访问平均深度</li>
+				<li>统计实时和每天的应用top最高访问排行，跳出率最高排行</li>
+				<li>统计实时和每天的全国省份流量热力图</li>
+				<li>统计每个用户每次访问的行为轨迹</li>
+			</ul>
+			<h2 class="mt30">下面用图来展示实现的大致功能</h2>
+			<h3 class="mt20 mb20">实时PV,UV,IP统计</h3>
+			<div class="block"><img class="big-img w-100" src="https://img.allpyra.com/b3d2738f-9977-476f-8cec-7aa8b5f37558.png"></div>
+			<h3 class="mt20 mb20">单页面性能详情列表</h3>
+			<div class="block"><img class="big-img w-100" src="https://img.allpyra.com/e8a94332-5d66-4592-a85f-740dee135e7c.png"></div>
+			<h3 class="mt20 mb20">单个AJAX性能详情</h3>
+			<div class="block"><img class="big-img w-100" src="https://img.allpyra.com/d7571b3d-ba93-42d3-909c-8604d781f3a6.png"></div>
+			<h3 class="mt20 mb20">用户轨迹跟着</h3>
+			<div class="block"><img class="big-img w-100" src="https://img.allpyra.com/8b8a93bf-9905-4b52-b1fd-3881e4d7aa8a.png"></div>
+			<h3 class="mt20 mb20">省份实时流量统计</h3>
+			<div class="block"><img class="big-img w-100" src="https://img.allpyra.com/75dee98e-da32-4f7a-80ff-d212410b3e7f.png"></div>
+		</div>
+	</div>
+	<script>
+		var href = location.href;
+		var liobjs = $('.side').find('div')
+		for (var i = 0, len = liobjs.length; i < len; i++) {
+			var attrr = $(liobjs[i]).attr('data-mark')
+			if (href.indexOf(attrr) != -1) {
+				liobjs.removeClass('active')
+				$(liobjs[i]).addClass('active')
+			}
+		}
+	</script>
+</body>
+</html>
