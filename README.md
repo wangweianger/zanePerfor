@@ -42,16 +42,12 @@
 >  * 用户访问实时消费流量统计功能(ajax，页面，资源)（已完成)
 
 ## 项目开发文档
-* [zanePerfor是什么?](https://blog.seosiwei.com/performance/index.html)
-* [zanePerfor在高流量高并发项目下的架构配置建议实践说明](https://blog.seosiwei.com/detail/53)
-* [系统高可用之Mongodb集群分片架构](https://blog.seosiwei.com/performance/colony.html)
-* [系统高可用之Mongodb副本集读写分离架构](https://blog.seosiwei.com/performance/replica_set.html)
-* [Servers集群模式下避免定时任务的多次执行](https://blog.seosiwei.com/performance/repeart_task.html)
-* [IP解析城市地理位置逻辑说明](https://blog.seosiwei.com/performance/iptask.html)
-* [项目定时任务功能说明](https://blog.seosiwei.com/performance/tasks.html)
-* [github 登录授权说明](https://blog.seosiwei.com/performance/github.html)
-* [简单通用的Node前后端Token登录机制和github授权登录方式](https://blog.seosiwei.com/detail/49)
-* [zanePerfor中集成kafka的开发实践和限流优雅降级](https://blog.seosiwei.com/detail/51)
+* [zanePerfor是什么?](https://github.com/wangweianger/zanePerfor/blob/master/docs/index.md)
+* [zanePerfor在高流量高并发项目下的架构配置建议实践说明](https://juejin.cn/post/6844903815255179272)
+* [系统高可用之Mongodb集群分片架构](https://juejin.cn/post/6844903714369568782)
+* [系统高可用之Mongodb副本集读写分离架构](https://juejin.cn/post/6844903713715273742)
+* [github 登录授权说明](https://github.com/wangweianger/zanePerfor/blob/master/docs/github.md)
+* [zanePerfor中集成kafka的开发实践和限流优雅降级](https://juejin.cn/post/6844903766139879438)
 
 ## 项目说明
 * 项目已部署到正式环境，并已稳定运行一段时间，请放心使用。
@@ -144,6 +140,16 @@ npm run dev
 ```sh
 npm start 
 ```
+
+### 展示效果
+
+![](https://github.com/wangweianger/zanePerfor/blob/master/demo/01.png "")
+![](https://github.com/wangweianger/zanePerfor/blob/master/demo/02.png "")
+![](https://github.com/wangweianger/zanePerfor/blob/master/demo/03.png "")
+![](https://github.com/wangweianger/zanePerfor/blob/master/demo/04.png "")
+![](https://github.com/wangweianger/zanePerfor/blob/master/demo/09.png "")
+![](https://github.com/wangweianger/zanePerfor/blob/master/demo/012.png "")
+![](https://github.com/wangweianger/zanePerfor/blob/master/demo/01.png "")
 
 ### 交流和建议群
 * 自发布以来有感兴趣的童鞋遇到了各种问题，大部分情况下是通过邮件进行沟通，为了方便解决大家部署中遇到的各种问题，下面贴出一个QQ交流群，有问题或者建议可提出。
