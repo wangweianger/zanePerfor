@@ -150,9 +150,6 @@ npm start
 ![](https://github.com/wangweianger/zanePerfor/blob/master/demo/09.png "")
 ![](https://github.com/wangweianger/zanePerfor/blob/master/demo/012.png "")
 
-### 交流和建议群
-* 自发布以来有感兴趣的童鞋遇到了各种问题，大部分情况下是通过邮件进行沟通，为了方便解决大家部署中遇到的各种问题，下面贴出一个QQ交流群，有问题或者建议可提出。
-![](https://github.com/wangweianger/zanePerfor/blob/master/demo/ewm.jpg "")
 
 
 
