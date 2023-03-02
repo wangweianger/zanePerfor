@@ -33,7 +33,7 @@
 ### 单个AJAX性能详情
 ![](https://github.com/wangweianger/zanePerfor/blob/master/demo/06.png)
 
-### 用户轨迹跟着
+### 用户轨迹跟踪
 ![](https://github.com/wangweianger/zanePerfor/blob/master/demo/09.png)
 
 ### 省份实时流量统计
