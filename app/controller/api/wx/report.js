@@ -1,5 +1,5 @@
 'use strict';
-
+const { getUserIp } = require('../../../util');
 const Controller = require('egg').Controller;
 
 class ReportController extends Controller {
@@ -16,7 +16,7 @@ class ReportController extends Controller {
         const query = ctx.request.body;
         if (!query.appId) throw new Error('wx端上报数据操作：app_id不能为空');
 
-        query.ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
+        query.ip = getUserIp(ctx);
 
         if (this.app.config.report_data_type === 'redis') this.saveWxReportDataForRedis(query);
         if (this.app.config.report_data_type === 'kafka') this.saveWxReportDataForKafka(query);

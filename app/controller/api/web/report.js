@@ -1,5 +1,6 @@
 /* eslint-disable */
 'use strict';
+const { getUserIp } = require('../../../util')
 const Controller = require('egg').Controller;
 
 class ReportController extends Controller {
@@ -18,7 +19,7 @@ class ReportController extends Controller {
         const query = ctx.request.body;
         if (!query.appId) throw new Error('web端上报数据操作：app_id不能为空');
 
-        query.ip = ctx.get('X-Real-IP') || ctx.get('X-Forwarded-For') || ctx.ip;
+        query.ip = getUserIp(ctx);
         query.url = query.url || ctx.headers.referer;
         query.user_agent = ctx.headers['user-agent'];
 
@@ -30,7 +31,7 @@ class ReportController extends Controller {
     // 通过redis 消息队列消费数据
     async saveWebReportDataForRedis(query) {
         try {
-            if (this.app.config.redis_consumption.total_limit_web){
+            if (this.app.config.redis_consumption.total_limit_web) {
                 // 限流
                 const length = await this.app.redis.llen('web_repore_datas');
                 if (length >= this.app.config.redis_consumption.total_limit_web) return;

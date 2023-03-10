@@ -1,628 +1,678 @@
 <% include ./side.html %>
-<link href="//cdn.bootcss.com/switchery/0.8.2/switchery.min.css" rel="stylesheet">
-<style scoped>
-	.setting-body {
-	margin: 15px;
-	background: #fff;
-	padding: 20px; }
-	.setting-body .block {
-		overflow: hidden; 
-	}
-	.setting-body .block .h1 {
-		font-size: 16px;
-		font-weight: 300;
-		line-height: 35px;
-		border-bottom: solid 1px #eee;
-		padding-bottom: 8px; 
-	}
-	.setting-body .block .content {
-		margin: 15px 0 20px 50px; 
-	}
-	.setting-body .block .content .script-text {
-		max-width: 1200px;
-		background: #f4f4f4;
-		color: #333;
-		font-size: 14px;
-		border: none;
-		padding: 10px; 
-	}
-	.setting-body .block .code code {
-		padding: 4px 8px;
-		background: #000;
-		color: #fff;
-		font-size: 12px;
-		border-radius: 5px;
-		margin: 0 3px; 
-	}
-	.setting-body .block-center {
-		width: 500px;
-		margin-left: 150px; 
-	}
-	.setting-body .block-two {
-		overflow: hidden; 
-	}
-	.setting-body .block-two .block-center {
-		width: 500px; 
-	}
-	.setting-body .block-two .onepart {
-		width: 40%;
-		float: left;
-		margin-right: 10%; 
-	}
-	.setting-body .button {
-		width: 200px;
-		height: 45px;
-		background: #2077ff;
-		color: #fff;
-		border: none;
-		font-size: 16px;
-		border-radius: 3px;
-		cursor: pointer;
-		margin-left: 155px; 
-	}
-	.setting-body .item {
-		margin-bottom: 20px;
-		font-size: 14px; 
-	}
-	.setting-body .item .left {
-		display: inline-block;
-		width: 150px;
-		text-align: right; 
-	}
-	.setting-body .item input {
-		height: 40px;
-		background: #f4f4f4;
-		border: none;
-		width: 300px;
-		padding-left: 10px; 
-	}
-	.setting-body p{
-		font-size:14px;
-		color:#999;
-		line-height:30px;
-	}
-	.btns .btn-main{
-		border-radius:20px;
-	}
-	.margin_left{
-		max-width:1200px;
-		margin-left:80px;
-	}
-	.email_content{
-		padding: 30px;
-	}
-	.email_content .item{
-		display: inline-block;
-		padding:6px 5px 5px 15px;
-		border:solid 1px #8776f7;
-		color:#8776f7;
-		border-radius:20px;
-		margin-right:20px;
-	}
-	.email_content .item span{
-		padding:5px 8px;
-		color:#d6d5d5;
-		font-size:25px;
-		cursor:pointer;
-	}
-	.email_content .btn{
-		border-radius:20px;
-	}
-	.com_model .content{
-		width:800px;
-		height:600px;
-	}
-	.com_model .content .main{
-		padding:20px;
-	}
-	.com_model .content .iconfont{
-		font-size:30px;
-		color:#aaa;
-		margin:0px 20px 0 0 ;
-		cursor: pointer;
-	}
-	.com_search {
-		padding: 0;
-	}
-	@media (max-width: 768px) {
-		.setting-body .block .content {
-			margin: 15px 0 20px 5px;
+	<link href="//cdn.bootcss.com/switchery/0.8.2/switchery.min.css" rel="stylesheet">
+	<style scoped>
+		.setting-body {
+			margin: 15px;
+			background: #fff;
+			padding: 20px;
 		}
-		.content .btn{
-			margin-bottom:5px;
-		}
-		.com_slide_tab_x .item{
-			padding:0;
-			margin-right:20px;
-		}
-		.setting-body .block-center{
-			margin-left:0;
-		}
-		.setting-body{
-			margin: 10px;
-    		padding: 10px;
-		}
-		.setting-body .item{
-			font-size:12px;
-		}
-		.setting-body .item .left{
-			width:120px;
-		}
-		.setting-body .block-two .onepart {
-			width: 100%;
-		}
-		.margin_left{
-			margin-left:0;
-		}
-	}
-</style>
-<div class="com_content_body main pb100" id="vue_id" v-cloak>
-	<h1 class="com_h1">系统设置</h1>
-	<div class="com_slide_tab_x mt30 mb30">
-		<div class="item" :class="{'active':lable==1}" @click="checkoutLabel(1)">部署说明</div>
-		<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">阈值设置</div>
-		<div class="item" :class="{'active':lable==3}" @click="checkoutLabel(3)">统计设置</div>
-		<div class="item" :class="{'active':lable==5}" @click="checkoutEmail(5)">日报设置</div>
-		<div class="item" :class="{'active':lable==6}" @click="checkoutEmail(6)">流量触达</div>
-		<div class="item" :class="{'active':lable==4}" @click="checkoutLabel(4)">性能优化</div>
 
-	</div>
-	<div class="setting-body">
-		<div class="block" v-show="lable==1">
-			<div class="h1 mb20"><span class="left">APPID：</span><strong>{{systemInfo.app_id}}</strong></div>
-			<h1 class="h1">1、启用数据接收</h1>
-			<div class="content">
-				<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch" checked />
-			</div>
-			<h1 class="h1">2、使用SDK部署方式</h1>
-			<div class="content">
-				<div class="item">2.1、下载需要的SDK</div>
-				<a href="/public/file/web-report-default.min.js.zip"><button class="btn btn-default">通用SDK</button></a>
-				<a href="/public/file/web-report-fetch.min.js.zip"><button class="btn btn-default ml10">Fetch专用SDK</button></a>
-				<a href="/public/file/web-report-jquery.min.js.zip"><button class="btn btn-default ml10">Jquery专用SDK</button></a>
-				<a href="/public/file/web-report-axios.min.js.zip"><button class="btn btn-default ml10">Axios专用SDK</button></a>
-				<a href="/public/file/web-report-none.min.js.zip"><button class="btn btn-default ml10">业务代码触发SDK</button></a>
-				<div class="item mt20">2.2、详细使用文档请参考以下SDK链接</div>
-				<p>在html的头部引以下下代码</p>
-				<div class="script-text mb20">
-					<pre><\script src="/dist/performance-report-default.min.js"><\/script>
-<\script>
+		.setting-body .block {
+			overflow: hidden;
+		}
+
+		.setting-body .block .h1 {
+			font-size: 16px;
+			font-weight: 300;
+			line-height: 35px;
+			border-bottom: solid 1px #eee;
+			padding-bottom: 8px;
+		}
+
+		.setting-body .block .content {
+			margin: 15px 0 20px 50px;
+		}
+
+		.setting-body .block .content .script-text {
+			max-width: 1200px;
+			background: #f4f4f4;
+			color: #333;
+			font-size: 14px;
+			border: none;
+			padding: 10px;
+		}
+
+		.setting-body .block .code code {
+			padding: 4px 8px;
+			background: #000;
+			color: #fff;
+			font-size: 12px;
+			border-radius: 5px;
+			margin: 0 3px;
+		}
+
+		.setting-body .block-center {
+			width: 500px;
+			margin-left: 150px;
+		}
+
+		.setting-body .block-two {
+			overflow: hidden;
+		}
+
+		.setting-body .block-two .block-center {
+			width: 500px;
+		}
+
+		.setting-body .block-two .onepart {
+			width: 40%;
+			float: left;
+			margin-right: 10%;
+		}
+
+		.setting-body .button {
+			width: 200px;
+			height: 45px;
+			background: #2077ff;
+			color: #fff;
+			border: none;
+			font-size: 16px;
+			border-radius: 3px;
+			cursor: pointer;
+			margin-left: 155px;
+		}
+
+		.setting-body .item {
+			margin-bottom: 20px;
+			font-size: 14px;
+		}
+
+		.setting-body .item .left {
+			display: inline-block;
+			width: 150px;
+			text-align: right;
+		}
+
+		.setting-body .item input {
+			height: 40px;
+			background: #f4f4f4;
+			border: none;
+			width: 300px;
+			padding-left: 10px;
+		}
+
+		.setting-body p {
+			font-size: 14px;
+			color: #999;
+			line-height: 30px;
+		}
+
+		.btns .btn-main {
+			border-radius: 20px;
+		}
+
+		.margin_left {
+			max-width: 1200px;
+			margin-left: 80px;
+		}
+
+		.email_content {
+			padding: 30px;
+		}
+
+		.email_content .item {
+			display: inline-block;
+			padding: 6px 5px 5px 15px;
+			border: solid 1px #8776f7;
+			color: #8776f7;
+			border-radius: 20px;
+			margin-right: 20px;
+		}
+
+		.email_content .item span {
+			padding: 5px 8px;
+			color: #d6d5d5;
+			font-size: 25px;
+			cursor: pointer;
+		}
+
+		.email_content .btn {
+			border-radius: 20px;
+		}
+
+		.com_model .content {
+			width: 800px;
+			height: 600px;
+		}
+
+		.com_model .content .main {
+			padding: 20px;
+		}
+
+		.com_model .content .iconfont {
+			font-size: 30px;
+			color: #aaa;
+			margin: 0px 20px 0 0;
+			cursor: pointer;
+		}
+
+		.com_search {
+			padding: 0;
+		}
+
+		@media (max-width: 768px) {
+			.setting-body .block .content {
+				margin: 15px 0 20px 5px;
+			}
+
+			.content .btn {
+				margin-bottom: 5px;
+			}
+
+			.com_slide_tab_x .item {
+				padding: 0;
+				margin-right: 20px;
+			}
+
+			.setting-body .block-center {
+				margin-left: 0;
+			}
+
+			.setting-body {
+				margin: 10px;
+				padding: 10px;
+			}
+
+			.setting-body .item {
+				font-size: 12px;
+			}
+
+			.setting-body .item .left {
+				width: 120px;
+			}
+
+			.setting-body .block-two .onepart {
+				width: 100%;
+			}
+
+			.margin_left {
+				margin-left: 0;
+			}
+		}
+	</style>
+	<div class="com_content_body main pb100" id="vue_id" v-cloak>
+		<h1 class="com_h1">系统设置</h1>
+		<div class="com_slide_tab_x mt30 mb30">
+			<div class="item" :class="{'active':lable==1}" @click="checkoutLabel(1)">部署说明</div>
+			<div class="item" :class="{'active':lable==2}" @click="checkoutLabel(2)">阈值设置</div>
+			<div class="item" :class="{'active':lable==3}" @click="checkoutLabel(3)">统计设置</div>
+			<div class="item" :class="{'active':lable==5}" @click="checkoutEmail(5)">日报设置</div>
+			<div class="item" :class="{'active':lable==6}" @click="checkoutEmail(6)">流量触达</div>
+			<div class="item" :class="{'active':lable==4}" @click="checkoutLabel(4)">性能优化</div>
+
+		</div>
+		<div class="setting-body">
+			<div class="block" v-show="lable==1">
+				<div class="h1 mb20"><span class="left">APPID：</span><strong>{{systemInfo.app_id}}</strong></div>
+				<h1 class="h1">1、启用数据接收</h1>
+				<div class="content">
+					<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch" checked />
+				</div>
+				<h1 class="h1">2、使用SDK部署方式</h1>
+				<div class="content">
+					<div class="item">2.1、下载需要的SDK</div>
+					<a href="/public/file/web-report-default.min.js.zip"><button
+							class="btn btn-default">通用SDK</button></a>
+					<a href="/public/file/web-report-fetch.min.js.zip"><button
+							class="btn btn-default ml10">Fetch专用SDK</button></a>
+					<a href="/public/file/web-report-jquery.min.js.zip"><button
+							class="btn btn-default ml10">Jquery专用SDK</button></a>
+					<a href="/public/file/web-report-axios.min.js.zip"><button
+							class="btn btn-default ml10">Axios专用SDK</button></a>
+					<a href="/public/file/web-report-none.min.js.zip"><button
+							class="btn btn-default ml10">业务代码触发SDK</button></a>
+					<div class="item mt20">2.2、详细使用文档请参考以下SDK链接</div>
+					<p>在html的头部引以下下代码</p>
+					<div class="script-text mb20">
+						<pre>&lt;script src="/dist/performance-report-default.min.js">&lt;/script>
+&lt;script>
 Performance({
   	domain: '{{location.origin}}/api/v1/report/web', 
   	add:{
   		appId:'{{systemInfo.app_id}}'
   	}
 })
-<\/script>
+&lt;/script>
 </pre>
-				</div>
-				<a href="https://github.com/wangweianger/performance-report" target="_target">浏览器端性能上报SDK使用文档</a>
-			</div>
-			<h1 class="h1">3、部署脚本说明</h1>
-			<div class="content code">
-				<p>复制生成的代码，将其粘贴在<code>&lt;head&gt;</code>中。</p>
-				<p class="notice">注意：需要将代码粘贴在<code>&lt;meta&gt;</code>后面，所有<code>&lt;script&gt;</code>前面。</p>
-			</div>
-		</div>
-		<div class="block" v-show="lable==2">
-			<h1 class="h1">各项阀值设置</h1>
-			<div class="block-center">
-				<div class="item mt20">
-					<span class="left">应用名称：</span>
-					<input type="text" v-model.trim="systemInfo.system_name" placeholder="我的博客">
-				</div>
-				<div class="item">
-					<span class="left">应用域名：</span>
-					<input type="text" v-model.trim="systemInfo.system_domain" placeholder="输入域名">
-				</div>
-				<div class="item">
-					<span class="left">页面慢加载阀值(s)：</span>
-					<input type="text" v-model.trim="systemInfo.slow_page_time" placeholder="默认8s">
-				</div>
-				<div class="item">
-					<span class="left">AJAX慢加载阀值(s)：</span>
-					<input type="text" v-model.trim="systemInfo.slow_ajax_time" placeholder="默认8s">
-				</div>
-				<div class="item">
-					<span class="left">JS慢加载阀值(s)：</span>
-					<input type="text" v-model.trim="systemInfo.slow_js_time" placeholder="默认2s">
-				</div>
-				<div class="item">
-					<span class="left">CSS慢加载阀值(s)：</span>
-					<input type="text" v-model.trim="systemInfo.slow_css_time" placeholder="默认1s">
-				</div>
-				<div class="item">
-					<span class="left">IMG慢加载阀值(s)：</span>
-					<input type="text" v-model.trim="systemInfo.slow_img_time" placeholder="默认2s">
-				</div>
-				<button class="button left-botton" @click="updateSystem">保存</button>
-			</div>
-		</div>
-		<div class="block block-two" v-show="lable==3">
-			<div class="block-center">
-				<div class="onepart">
-					<h1 class="h1">是否统计页面性能指标:</h1>
-					<div class="content">
-						<span class="mr10">是否启用:</span>
-						<input type="checkbox" class="js-switch-item js-switch-1" checked />
 					</div>
+					<a href="https://github.com/wangweianger/performance-report" target="_target">浏览器端性能上报SDK使用文档</a>
 				</div>
-				<div class="onepart">
-					<h1 class="h1">是否统计AJAX性能指标:</h1>
-					<div class="content">
-						<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-2" checked />
+				<h1 class="h1">3、部署脚本说明</h1>
+				<div class="content code">
+					<p>复制生成的代码，将其粘贴在<code>&lt;head&gt;</code>中。</p>
+					<p class="notice">注意：需要将代码粘贴在<code>&lt;meta&gt;</code>后面，所有<code>&lt;script&gt;</code>前面。</p>
+				</div>
+			</div>
+			<div class="block" v-show="lable==2">
+				<h1 class="h1">各项阀值设置</h1>
+				<div class="block-center">
+					<div class="item mt20">
+						<span class="left">应用名称：</span>
+						<input type="text" v-model.trim="systemInfo.system_name" placeholder="我的博客">
 					</div>
-				</div>
-				<div class="onepart">
-					<h1 class="h1">是否统计资源性能指标:</h1>
-					<div class="content">
-						<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-3" checked />
-					</div>
-				</div>
-				<div class="onepart">
-					<h1 class="h1">是否存储访问者系统信息:</h1>
-					<div class="content">
-						<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-4" checked />
-					</div>
-				</div>
-				<div class="onepart">
-					<h1 class="h1">是否统计错误信息:</h1>
-					<div class="content">
-						<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-5" checked />
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="block" v-show="lable==4">
-			<h1 class="h1">手动删除数据库数据</h1>
-			<div class="margin_left mt30">
-				<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span>上报端数据(db1)会定时同步到应用端(db2),同步时间一般会在5分钟以内，可以清空之前的无用数据,同时后台也有定时任务定期删除。</div>
-				<h1 class="h1">清空上报端1日之前数据</h1>
-				<div class="btns mt30 ml30">
-					<button class="btn btn-main" @click="removeWebDB1Data">清空1日之前数据</button>
-				</div>
-				<div class="com_topic mb20 mt30"><span class="iconfont">&#xe63a;</span>考虑到查询性能和数据的更新频率，应用端(db2)数据可以酌情的删除一些数据。</div>
-				<h1 class="h1">清空应用端一段时间的数据</h1>
-				<div class="btns mt30 ml30">
-					<div><button class="btn btn-main" @click="removeWebDB2Data(10)">清空10日之前数据</button></div>
-					<div><button class="btn btn-main mt20" @click="removeWebDB2Data(20)">清空20日之前数据</button></div>
-					<div><button class="btn btn-main mt20" @click="removeWebDB2Data(30)">清空30日之前数据</button></div>
-				</div>
-			</div>
-		</div>
-		<div class="block" v-show="lable==5">
-			<h1 class="h1">是否开启发送日报</h1>
-			<div class="content">
-				<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-rb" checked />
-			</div>
-			<h1 class="h1">设置接收邮箱</h1>
-			<div class="email_content">
-				<span v-if="!!daliylist.length">
-					<div class="item" v-for="item in daliylist" v-if="!!item" @click="handleEmail(item,2)">{{item}}<span class="iconfont">&#xe613;</span></div>
-				</span>
-				<button class="btn btn-main" @click="isModelShow=true">+新增</button>
-			</div>
-		</div>
-		<div class="block" v-show="lable==6">
-			<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span>当应用突破历史流量峰值时会给相应的配置人员发送邮件!</div>
-			<h1 class="h1">是否开启发送流量峰值触达</h1>
-			<div class="content">
-				<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-highest" checked />
-			</div>
-			<h1 class="h1">设置接收邮箱</h1>
-			<div class="email_content">
-				<span v-if="!!highestlist.length">
-					<div class="item" v-for="item in highestlist" v-if="!!item" @click="handleEmail(item,2)">{{item}}<span
-							class="iconfont">&#xe613;</span></div>
-				</span>
-				<button class="btn btn-main" @click="isModelShow=true">+新增</button>
-			</div>
-		</div>
-	</div>
-
-	<!-- 弹出model -->
-	<div class="com_model" v-show="isModelShow">
-		<div class="mask" @click="isModelShow=false"></div>
-		<div class="content">
-			<h1 class="com_h2 mt20 ml20">邮件列表 <span class="iconfont fr" @click="isModelShow=false">&#xe674;</span></h1>
-			<div class="main">
-				<div class="com_search">
 					<div class="item">
-						<div>
-							<span class='name'>邮件地址搜索</span>
-							<input class="inp" v-model="email" placeholder="选填、输入邮件地址" type="text">
-							<button class="btn btn-default" @click="searchEmailList">搜索</button>
+						<span class="left">应用域名：</span>
+						<input type="text" v-model.trim="systemInfo.system_domain" placeholder="输入域名">
+					</div>
+					<div class="item">
+						<span class="left">页面慢加载阀值(s)：</span>
+						<input type="text" v-model.trim="systemInfo.slow_page_time" placeholder="默认8s">
+					</div>
+					<div class="item">
+						<span class="left">AJAX慢加载阀值(s)：</span>
+						<input type="text" v-model.trim="systemInfo.slow_ajax_time" placeholder="默认8s">
+					</div>
+					<div class="item">
+						<span class="left">JS慢加载阀值(s)：</span>
+						<input type="text" v-model.trim="systemInfo.slow_js_time" placeholder="默认2s">
+					</div>
+					<div class="item">
+						<span class="left">CSS慢加载阀值(s)：</span>
+						<input type="text" v-model.trim="systemInfo.slow_css_time" placeholder="默认1s">
+					</div>
+					<div class="item">
+						<span class="left">IMG慢加载阀值(s)：</span>
+						<input type="text" v-model.trim="systemInfo.slow_img_time" placeholder="默认2s">
+					</div>
+					<button class="button left-botton" @click="updateSystem">保存</button>
+				</div>
+			</div>
+			<div class="block block-two" v-show="lable==3">
+				<div class="block-center">
+					<div class="onepart">
+						<h1 class="h1">是否统计页面性能指标:</h1>
+						<div class="content">
+							<span class="mr10">是否启用:</span>
+							<input type="checkbox" class="js-switch-item js-switch-1" checked />
+						</div>
+					</div>
+					<div class="onepart">
+						<h1 class="h1">是否统计AJAX性能指标:</h1>
+						<div class="content">
+							<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-2"
+								checked />
+						</div>
+					</div>
+					<div class="onepart">
+						<h1 class="h1">是否统计资源性能指标:</h1>
+						<div class="content">
+							<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-3"
+								checked />
+						</div>
+					</div>
+					<div class="onepart">
+						<h1 class="h1">是否存储访问者系统信息:</h1>
+						<div class="content">
+							<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-4"
+								checked />
+						</div>
+					</div>
+					<div class="onepart">
+						<h1 class="h1">是否统计错误信息:</h1>
+						<div class="content">
+							<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-item js-switch-5"
+								checked />
 						</div>
 					</div>
 				</div>
-				<div class="overflow_table">
-					<table class="table" v-if="isEmailLoadend&&emaillist.length">
-						<tr class="light_color">
-							<th class="tc w-100">邮件号码</th>
-							<th class="tc w-200">所属人员</th>
-							<th class="tc w-300">创建时间</th>
-							<th class="tc w-200">操作</th>
-						</tr>
-						<tr v-for="(item,i) in emaillist" :key="i">
-							<td class="tc">{{item.email}}</td>
-							<td class="tc">{{item.name}}</td>
-							<td class="tc">{{item.create_time|date('/',true)}}</td>
-							<td class="tc">
-								<button class="btn btn-main" @click="handleEmail(item.email,1)">增加</button>
-							</td>
-						</tr>
-					</table>
+			</div>
+			<div class="block" v-show="lable==4">
+				<h1 class="h1">手动删除数据库数据</h1>
+				<div class="margin_left mt30">
+					<div class="com_topic mb20"><span
+							class="iconfont">&#xe63a;</span>上报端数据(db1)会定时同步到应用端(db2),同步时间一般会在5分钟以内，可以清空之前的无用数据,同时后台也有定时任务定期删除。
+					</div>
+					<h1 class="h1">清空上报端1日之前数据</h1>
+					<div class="btns mt30 ml30">
+						<button class="btn btn-main" @click="removeWebDB1Data">清空1日之前数据</button>
+					</div>
+					<div class="com_topic mb20 mt30"><span
+							class="iconfont">&#xe63a;</span>考虑到查询性能和数据的更新频率，应用端(db2)数据可以酌情的删除一些数据。</div>
+					<h1 class="h1">清空应用端一段时间的数据</h1>
+					<div class="btns mt30 ml30">
+						<div><button class="btn btn-main" @click="removeWebDB2Data(10)">清空10日之前数据</button></div>
+						<div><button class="btn btn-main mt20" @click="removeWebDB2Data(20)">清空20日之前数据</button></div>
+						<div><button class="btn btn-main mt20" @click="removeWebDB2Data(30)">清空30日之前数据</button></div>
+					</div>
 				</div>
 			</div>
-			<!--  分页 -->
-			<div class="tc common_page_style mt10" v-show="isEmailLoadend&&emaillist.length">
-				<div id="copot-page" class="copot-page"></div>
+			<div class="block" v-show="lable==5">
+				<h1 class="h1">是否开启发送日报</h1>
+				<div class="content">
+					<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-rb" checked />
+				</div>
+				<h1 class="h1">设置接收邮箱</h1>
+				<div class="email_content">
+					<span v-if="!!daliylist.length">
+						<div class="item" v-for="item in daliylist" v-if="!!item" @click="handleEmail(item,2)">
+							{{item}}<span class="iconfont">&#xe613;</span></div>
+					</span>
+					<button class="btn btn-main" @click="isModelShow=true">+新增</button>
+				</div>
 			</div>
-			<!-- 暂无数据 -->
-			<div class="tc" v-if="!emaillist.length">暂无邮箱!</div>
+			<div class="block" v-show="lable==6">
+				<div class="com_topic mb20"><span class="iconfont">&#xe63a;</span>当应用突破历史流量峰值时会给相应的配置人员发送邮件!</div>
+				<h1 class="h1">是否开启发送流量峰值触达</h1>
+				<div class="content">
+					<span class="mr10">是否启用:</span><input type="checkbox" class="js-switch-highest" checked />
+				</div>
+				<h1 class="h1">设置接收邮箱</h1>
+				<div class="email_content">
+					<span v-if="!!highestlist.length">
+						<div class="item" v-for="item in highestlist" v-if="!!item" @click="handleEmail(item,2)">
+							{{item}}<span class="iconfont">&#xe613;</span></div>
+					</span>
+					<button class="btn btn-main" @click="isModelShow=true">+新增</button>
+				</div>
+			</div>
 		</div>
+
+		<!-- 弹出model -->
+		<div class="com_model" v-show="isModelShow">
+			<div class="mask" @click="isModelShow=false"></div>
+			<div class="content">
+				<h1 class="com_h2 mt20 ml20">邮件列表 <span class="iconfont fr" @click="isModelShow=false">&#xe674;</span>
+				</h1>
+				<div class="main">
+					<div class="com_search">
+						<div class="item">
+							<div>
+								<span class='name'>邮件地址搜索</span>
+								<input class="inp" v-model="email" placeholder="选填、输入邮件地址" type="text">
+								<button class="btn btn-default" @click="searchEmailList">搜索</button>
+							</div>
+						</div>
+					</div>
+					<div class="overflow_table">
+						<table class="table" v-if="isEmailLoadend&&emaillist.length">
+							<tr class="light_color">
+								<th class="tc w-100">邮件号码</th>
+								<th class="tc w-200">所属人员</th>
+								<th class="tc w-300">创建时间</th>
+								<th class="tc w-200">操作</th>
+							</tr>
+							<tr v-for="(item,i) in emaillist" :key="i">
+								<td class="tc">{{item.email}}</td>
+								<td class="tc">{{item.name}}</td>
+								<td class="tc">{{item.create_time|date('/',true)}}</td>
+								<td class="tc">
+									<button class="btn btn-main" @click="handleEmail(item.email,1)">增加</button>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<!--  分页 -->
+				<div class="tc common_page_style mt10" v-show="isEmailLoadend&&emaillist.length">
+					<div id="copot-page" class="copot-page"></div>
+				</div>
+				<!-- 暂无数据 -->
+				<div class="tc" v-if="!emaillist.length">暂无邮箱!</div>
+			</div>
+		</div>
+
 	</div>
-
-</div>
-<script src="//cdn.bootcss.com/switchery/0.8.2/switchery.min.js"></script>
-<script>
-new Vue({
-	el: '#vue_id',
-	data: function () {
-		return {
-			lable:1, //1:概况 2：pv|uv|ip
-			appId: util.getStorage('local', 'appId'),
-			systemInfo:{},
-			pageNo: 1,
-			pageSize: 6,
-			totalNum: 0,
-			isModelShow: false,
-			isEmailLoadend: false,
-			email:'',
-			emaillist:[],
-			daliylist:[],
-			highestlist:[],
-		}
-	},
-	filters: {
-		date: window.Filter.date,
-	},
-	mounted() {
-		this.getDetail();
-	},
-	methods: {
-		checkoutLabel(lable){
-			if(lable == this.lable) return;
-			this.lable = lable;
-			this.beginTime = '';
-			this.endTime = '';
-		},
-		getDetail() {
-			util.ajax({
-				type:'get',
-				url: config.baseApi + 'api/v1/system/getSystemForId',
-				data: {
-					appId: this.appId
+	<script src="//cdn.bootcss.com/switchery/0.8.2/switchery.min.js"></script>
+	<script>
+		new Vue({
+			el: '#vue_id',
+			data() {
+				return {
+					lable: 1, // 1:概况 2：pv|uv|ip
+					appId: util.getStorage('local', 'appId'),
+					systemInfo: {},
+					pageNo: 1,
+					pageSize: 6,
+					totalNum: 0,
+					isModelShow: false,
+					isEmailLoadend: false,
+					email: '',
+					emaillist: [],
+					daliylist: [],
+					highestlist: [],
+				};
+			},
+			filters: {
+				date: window.Filter.date,
+			},
+			mounted() {
+				this.getDetail();
+			},
+			methods: {
+				checkoutLabel(lable) {
+					if (lable == this.lable) return;
+					this.lable = lable;
+					this.beginTime = '';
+					this.endTime = '';
 				},
-				success: data => {
-					if(!data.data.app_id) return;
-					this.systemInfo = data.data || {};
-					this.daliylist = this.systemInfo.daliy_list || [];
-					this.highestlist = this.systemInfo.highest_list || [];
-					this.pagexingneng();
-					this.settingIsUse(1);
-					this.settingIsUse(2);
-					this.settingIsUse(3);
-				}
-			})
-		},
-		// 设置项目是否接收数据
-		settingIsUse(type) {
-			let elem = null;
-			if (type === 1) {
-				elem = document.querySelector('.js-switch');
-				elem.checked = this.systemInfo.is_use == 0 ? true : false;
-			} else if (type === 2) {
-				elem = document.querySelector('.js-switch-rb');
-				elem.checked = this.systemInfo.is_daily_use == 0 ? true : false;
-			} else if (type === 3) {
-				elem = document.querySelector('.js-switch-highest');
-				elem.checked = this.systemInfo.is_highest_use == 0 ? true : false;
-			}
-
-			const init = new Switchery(elem, { color: '#8776f7' });
-			const _this = this;
-
-			elem.onchange = function () {
-				if (type === 1) {
-					_this.systemInfo.is_use = elem.checked ? 0 : 1;
-				} else if (type === 2) {
-					_this.systemInfo.is_daily_use = elem.checked ? 0 : 1;
-				} else if (type === 3) {
-					_this.systemInfo.is_highest_use = elem.checked ? 0 : 1;
-				}
-				util.ajax({
-					url: config.baseApi + 'api/v1/system/update',
-					data: _this.systemInfo,
-					success: data => {
-						popup.miss({ title: '操作成功!' })
-					}
-				})
-			};
-		},
-		updateSystem() {
-			if (!this.systemInfo.system_name) { popup.alert({ title: '请正确填写应用名称!' }); return false; }
-			if (!this.systemInfo.system_domain) { popup.alert({ title: '请正确填写应用域名!' }); return false; }
-			util.ajax({
-				url: config.baseApi + 'api/v1/system/update',
-				data: this.systemInfo,
-				success: data => {
-					popup.miss({ title: "操作成功！" });
-				}
-			})
-		},
-		// 页面性能指标
-		pagexingneng() {
-			var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch-item'));
-			elems.forEach((html, index) => {
-				switch (index) {
-					case 0:
-						html.checked = this.systemInfo.is_statisi_pages == 0 ? true : false;
-						break;
-					case 1:
-						html.checked = this.systemInfo.is_statisi_ajax == 0 ? true : false;
-						break;
-					case 2:
-						html.checked = this.systemInfo.is_statisi_resource == 0 ? true : false;
-						break;
-					case 3:
-						html.checked = this.systemInfo.is_statisi_system == 0 ? true : false;
-						break;
-					case 4:
-						html.checked = this.systemInfo.is_statisi_error == 0 ? true : false;
-						break;
-				}
-				var switchery = new Switchery(html, { color: '#8776f7' });
-				html.onchange = () => {
-					let value = html.checked ? 0 : 1
-					switch (index) {
-						case 0:
-							this.systemInfo.is_statisi_pages = value;
-							break;
-						case 1:
-							this.systemInfo.is_statisi_ajax = value;
-							break;
-						case 2:
-							this.systemInfo.is_statisi_resource = value;
-							break;
-						case 3:
-							this.systemInfo.is_statisi_system = value;
-							break;
-						case 4:
-							this.systemInfo.is_statisi_error = value;
-							break;
-					}
-					this.setDatas();
-				}
-
-			});
-		},
-		setDatas() {
-			util.ajax({
-				url: config.baseApi + 'api/v1/system/update',
-				data: this.systemInfo,
-				success: data => {
-					popup.miss({ title: '操作成功!' })
-				}
-			})
-		},
-		removeWebDB1Data(){
-			popup.confirm({title:'确定清空1日之前所有数据吗？',yes:()=>{
-				util.ajax({
-					url:`${config.baseApi}api/v1/remove/deleteDb1WebData`,
-					data: {
-						type: 'web',
-						appId: this.appId,
-					},
-					success:data=>{
-						popup.alert({title:'操作成功!'})
-					}
-				})
-			}})
-		},
-		removeWebDB2Data(number){
-			popup.confirm({
-				title: `确定清空${number}日之前所有数据吗？`, yes: () => {
+				getDetail() {
 					util.ajax({
-						url: `${config.baseApi}api/v1/remove/deleteDb2WebData`,
-						data:{
-							number: number,
-							type: 'web',
+						type: 'get',
+						url: config.baseApi + 'api/v1/system/getSystemForId',
+						data: {
 							appId: this.appId,
 						},
 						success: data => {
-							popup.alert({ title: '操作成功!' })
-						}
-					})
-				}
-			})
-		},
-		checkoutEmail(lable){
-			if (lable == this.lable) return;
-			this.lable = lable;
-			this.beginTime = '';
-			this.endTime = '';
-			this.getEmailList();
-		},
-		searchEmailList() {
-			this.pageNo = 1;
-			this.isEmailLoadend = false;
-			this.getEmailList();
-		},
-		getEmailList() {
-			this.isUserLoadend = false;
-			util.ajax({
-				type: 'get',
-				url: config.baseApi + 'api/v1/emails/list',
-				data: {
-					pageNo: this.pageNo,
-					pageSize: this.pageSize,
-					email: this.email,
+							if (!data.data.app_id) return;
+							this.systemInfo = data.data || {};
+							this.daliylist = this.systemInfo.daliy_list || [];
+							this.highestlist = this.systemInfo.highest_list || [];
+							this.pagexingneng();
+							this.settingIsUse(1);
+							this.settingIsUse(2);
+							this.settingIsUse(3);
+						},
+					});
 				},
-				success: data => {
-					this.isEmailLoadend = true;
-					if (!data.data.datalist && !data.data.datalist.length) {
-						this.emaillist = [];
+				// 设置项目是否接收数据
+				settingIsUse(type) {
+					let elem = null;
+					if (type === 1) {
+						elem = document.querySelector('.js-switch');
+						elem.checked = this.systemInfo.is_use == 0;
+					} else if (type === 2) {
+						elem = document.querySelector('.js-switch-rb');
+						elem.checked = this.systemInfo.is_daily_use == 0;
+					} else if (type === 3) {
+						elem = document.querySelector('.js-switch-highest');
+						elem.checked = this.systemInfo.is_highest_use == 0;
+					}
+
+					const init = new Switchery(elem, { color: '#8776f7' });
+					const _this = this;
+
+					elem.onchange = function () {
+						if (type === 1) {
+							_this.systemInfo.is_use = elem.checked ? 0 : 1;
+						} else if (type === 2) {
+							_this.systemInfo.is_daily_use = elem.checked ? 0 : 1;
+						} else if (type === 3) {
+							_this.systemInfo.is_highest_use = elem.checked ? 0 : 1;
+						}
+						util.ajax({
+							url: config.baseApi + 'api/v1/system/update',
+							data: _this.systemInfo,
+							success: data => {
+								popup.miss({ title: '操作成功!' });
+							},
+						});
+					};
+				},
+				updateSystem() {
+					if (!this.systemInfo.system_name) { popup.alert({ title: '请正确填写应用名称!' }); return false; }
+					if (!this.systemInfo.system_domain) { popup.alert({ title: '请正确填写应用域名!' }); return false; }
+					util.ajax({
+						url: config.baseApi + 'api/v1/system/update',
+						data: this.systemInfo,
+						success: data => {
+							popup.miss({ title: '操作成功！' });
+						},
+					});
+				},
+				// 页面性能指标
+				pagexingneng() {
+					const elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch-item'));
+					elems.forEach((html, index) => {
+						switch (index) {
+							case 0:
+								html.checked = this.systemInfo.is_statisi_pages == 0;
+								break;
+							case 1:
+								html.checked = this.systemInfo.is_statisi_ajax == 0;
+								break;
+							case 2:
+								html.checked = this.systemInfo.is_statisi_resource == 0;
+								break;
+							case 3:
+								html.checked = this.systemInfo.is_statisi_system == 0;
+								break;
+							case 4:
+								html.checked = this.systemInfo.is_statisi_error == 0;
+								break;
+						}
+						const switchery = new Switchery(html, { color: '#8776f7' });
+						html.onchange = () => {
+							const value = html.checked ? 0 : 1;
+							switch (index) {
+								case 0:
+									this.systemInfo.is_statisi_pages = value;
+									break;
+								case 1:
+									this.systemInfo.is_statisi_ajax = value;
+									break;
+								case 2:
+									this.systemInfo.is_statisi_resource = value;
+									break;
+								case 3:
+									this.systemInfo.is_statisi_system = value;
+									break;
+								case 4:
+									this.systemInfo.is_statisi_error = value;
+									break;
+							}
+							this.setDatas();
+						};
+
+					});
+				},
+				setDatas() {
+					util.ajax({
+						url: config.baseApi + 'api/v1/system/update',
+						data: this.systemInfo,
+						success: data => {
+							popup.miss({ title: '操作成功!' });
+						},
+					});
+				},
+				removeWebDB1Data() {
+					popup.confirm({
+						title: '确定清空1日之前所有数据吗？', yes: () => {
+							util.ajax({
+								url: `${config.baseApi}api/v1/remove/deleteDb1WebData`,
+								data: {
+									type: 'web',
+									appId: this.appId,
+								},
+								success: data => {
+									popup.alert({ title: '操作成功!' });
+								},
+							});
+						},
+					});
+				},
+				removeWebDB2Data(number) {
+					popup.confirm({
+						title: `确定清空${number}日之前所有数据吗？`, yes: () => {
+							util.ajax({
+								url: `${config.baseApi}api/v1/remove/deleteDb2WebData`,
+								data: {
+									number,
+									type: 'web',
+									appId: this.appId,
+								},
+								success: data => {
+									popup.alert({ title: '操作成功!' });
+								},
+							});
+						},
+					});
+				},
+				checkoutEmail(lable) {
+					if (lable == this.lable) return;
+					this.lable = lable;
+					this.beginTime = '';
+					this.endTime = '';
+					this.getEmailList();
+				},
+				searchEmailList() {
+					this.pageNo = 1;
+					this.isEmailLoadend = false;
+					this.getEmailList();
+				},
+				getEmailList() {
+					this.isUserLoadend = false;
+					util.ajax({
+						type: 'get',
+						url: config.baseApi + 'api/v1/emails/list',
+						data: {
+							pageNo: this.pageNo,
+							pageSize: this.pageSize,
+							email: this.email,
+						},
+						success: data => {
+							this.isEmailLoadend = true;
+							if (!data.data.datalist && !data.data.datalist.length) {
+								this.emaillist = [];
+								return;
+							}
+							this.emaillist = data.data.datalist;
+							new Page({
+								parent: $('#copot-page'),
+								nowPage: this.pageNo,
+								pageSize: this.pageSize,
+								totalCount: data.data.totalNum,
+								callback: (nowPage, totalPage) => {
+									this.pageNo = nowPage;
+									this.getEmailList();
+								},
+							});
+						},
+					});
+				},
+				handleEmail(email, type = 1) {
+					let index = -1;
+					let item = 1;
+					if (this.lable == 5) {
+						index = this.daliylist.indexOf(email);
+						item = 1;
+					} else if (this.lable == 6) {
+						index = this.highestlist.indexOf(email);
+						item = 2;
+					}
+					if (type === 1 && index > -1) {
+						popup.miss({ title: '请勿重复添加!' });
 						return;
 					}
-					this.emaillist = data.data.datalist
-					new Page({
-						parent: $('#copot-page'),
-						nowPage: this.pageNo,
-						pageSize: this.pageSize,
-						totalCount: data.data.totalNum,
-						callback: (nowPage, totalPage) => {
-							this.pageNo = nowPage;
-							this.getEmailList();
-						}
+					util.ajax({
+						url: `${config.baseApi}api/v1/system/handleDaliyEmail`,
+						data: {
+							appId: this.appId,
+							email,
+							type,
+							item,
+						},
+						success: data => {
+							if (this.lable == 5) {
+								if (type === 1 && index === -1) this.daliylist.push(email);
+								if (type === 2) this.daliylist.splice(index, 1);
+							} else if (this.lable == 6) {
+								if (type === 1 && index === -1) this.highestlist.push(email);
+								if (type === 2) this.highestlist.splice(index, 1);
+							}
+							popup.miss({ title: '操作成功!' });
+						},
 					});
-				}
-			})
-		},
-		handleEmail(email, type = 1){
-			let index = -1;
-			let item = 1;
-			if (this.lable == 5) {
-				index = this.daliylist.indexOf(email)
-				item = 1;
-			} else if (this.lable == 6) {
-				index = this.highestlist.indexOf(email)
-				item = 2;
-			}
-			if(type === 1 && index > -1){
-				popup.miss({title:'请勿重复添加!'});
-				return;
-			}
-			util.ajax({
-				url: `${config.baseApi}api/v1/system/handleDaliyEmail`,
-				data: {
-					appId: this.appId,
-					email: email,
-					type: type,
-					item: item,
 				},
-				success: data => {
-					if (this.lable == 5) {
-						if (type === 1 && index === -1) this.daliylist.push(email);
-						if (type === 2) this.daliylist.splice(index, 1);
-					} else if (this.lable == 6) {
-						if (type === 1 && index === -1) this.highestlist.push(email);
-						if (type === 2) this.highestlist.splice(index, 1);
-					}
-					popup.miss({ title: '操作成功!' })
-				}
-			})
-		},
-	},
-})
-</script>
+			},
+		});
+	</script>
