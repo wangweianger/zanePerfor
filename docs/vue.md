@@ -2,7 +2,7 @@
 
 - 进去app目录下public文件夹，解压web-report-vue-min.zip。将里面的文件复制到自己项目下,找到public文件夹或者根目录文件夹下的index.html。添加以下代码:
 
-- ```js
+```js
    <script src ="./web-report-vue-min.js"></script>
    <script defer>
    window.Performance({
@@ -14,7 +14,7 @@
   </script>
   ```
 
-​	这里向大家分享一下不同环境下使用的方法: 
+这里向大家分享一下不同环境下使用的方法: 
 
 - Vue2: 可以在**.env.build**等环境配置文件配置环境变量，例如： VUE_APP_BASE_URL=/abc/index
 
@@ -34,34 +34,35 @@ window.Performance({
 
 - 然后在Vite.config.ts中新增插件：createHtmlPlugin -> npm install createHtmlPlugin -D。然后在plugins中配置以下代码
 
-  ```js
-  createHtmlPlugin({
-          minify: true,
-          pages: [
-            {
-              // entry: "src/main.ts",
-              filename: "index.html",
-              template: "index.html",
-              injectOptions: {
-                data: {
-                  // title: "index",
-                  injectScript: `<script type ="module" src="/src/utils/inject.ts" defer></script>`,
-                },
-              },
+```js
+createHtmlPlugin({
+        minify: true,
+        pages: [
+        {
+            // entry: "src/main.ts",
+            filename: "index.html",
+            template: "index.html",
+            injectOptions: {
+            data: {
+                // title: "index",
+                injectScript: `<script type ="module" src="/src/utils/inject.ts" defer></script>`,
             },
-          ],
-        }),
-  ```
+            },
+        },
+        ],
+    }),
+```
 
-  在src下的utils文件夹新增文件inject.ts
+在src下的utils文件夹新增文件inject.ts
 
-  ```js
-  window.Performance({
-      domain: `${window._process_env.VITE_BUILD_HOST}/api/v1/report/web`,
-      add: {
-        appId: "ZzdSi3P1XXXX2161087",
-      },
-    });
-  ```
+```js
+window.Performance({
+    domain: `${window._process_env.VITE_BUILD_HOST}/api/v1/report/web`,
+    add: {
+    appId: "ZzdSi3P1XXXX2161087",
+    },
+});
+```
 
-  这样就可以动态的引入各个环境的域名前缀，部署到各个环境啦。
+这样就可以动态的引入各个环境的域名前缀，部署到各个环境啦。
+
