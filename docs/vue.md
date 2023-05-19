@@ -16,7 +16,7 @@
 
 这里向大家分享一下不同环境下使用的方法: 
 
-- Vue2: 可以在**.env.build**等环境配置文件配置环境变量，例如： VUE_APP_BASE_URL=/abc/index
+- Vue2: 可以在 **.env.build** 等环境配置文件配置环境变量，例如： `VUE_APP_BASE_URL=/abc/index`
 
 ```js
 <script src="<%= VUE_APP_BASE_URL %>/cdn/sdk/web-report-axios.min.js"></script>
@@ -30,7 +30,7 @@ window.Performance({
 </script>
 ```
 
-- Vue3: 可以在**.env.build**等环境配置文件配置环境变量，例如： VITE_BUILD_HOST = 'http://xxxxx:7001'
+- Vue3: 可以在 **.env.build** 等环境配置文件配置环境变量，例如： `VITE_BUILD_HOST = 'http://xxxxx:7001'`
 
 - 然后在Vite.config.ts中新增插件：createHtmlPlugin -> npm install createHtmlPlugin -D。然后在plugins中配置以下代码
 
